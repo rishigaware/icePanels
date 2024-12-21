@@ -15,13 +15,13 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
 
 // CORS configuration
-const allowedOrigins = process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : [];
+// const allowedOrigins = process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : [];
 
 app.use(
   cors({
-    origin: allowedOrigins,
-    methods: '*',
-    credentials: true,
+    origin: allowedOrigins,  // Allow all origins if '*'
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Specify allowed methods
+    credentials: true,  // Allow credentials (cookies, authorization headers, etc.)
   })
 );
 
