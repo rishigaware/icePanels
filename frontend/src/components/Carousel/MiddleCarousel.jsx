@@ -7,12 +7,11 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import { useUser } from "../../context/UserContext";
 
-
 export default function MiddleCarousel() {
+  const { user, setUser, url } = useUser();
   const [images, setImages] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const toast = useRef(null); // Reference for Toast
-  const { user, setUser, url } = useUser();
 
   // Fetch images from the backend
   const fetchImages = () => {

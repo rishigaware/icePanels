@@ -20,7 +20,7 @@ const HomeHeading = () => {
     const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal visibility
     const { user,setUser } = useUser();
 
-    const balance = 1500; // Example balance value
+    const balance = 100000; // Example balance value
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 

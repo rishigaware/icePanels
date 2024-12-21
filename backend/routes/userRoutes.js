@@ -24,6 +24,7 @@ router.get('/deposit-transaction', userController.getDepositTransactions);
 router.get('/get-all-ids', userController.getAllIds); // Add a new website record
 // Route to get user balance
 router.get('/get-balance/:userId', userController.getBalanceController);
+router.get('/hello', userController.getHelloController);
 
 
 module.exports = router;

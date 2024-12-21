@@ -46,10 +46,13 @@
 
 const admin = require('firebase-admin');
 require('dotenv').config(); // Load environment variables
+const path = require('path'); // Import path module
 
-const serviceAccount = require(process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH); // Load service account from env
+const serviceAccountPath = path.resolve(__dirname, process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH);
+
+const serviceAccount = require(serviceAccountPath); // Load service account from env
 const databaseURL = process.env.FIREBASE_DATABASE_URL; // Use database URL from env
-
+console.log(process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH)
 let db;
 
 // Try to initialize Firebase Admin SDK

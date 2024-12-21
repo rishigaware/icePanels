@@ -6,12 +6,16 @@ const UserContext = createContext();
 // UserProvider component to wrap the app and provide user data
 export const UserProvider = ({ children }) => {
   // State to manage the user object
-  const [url, setUrl] = useState("http://localhost:3000");
+  const [url, setUrl] = useState("https://betting-accounts-manager.vercel.app");
   const [user, setUser] = useState(() => {
-    // Retrieve the user object from localStorage if available
     const storedUser = localStorage.getItem('user');
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
+    try {
+        return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+        console.error("Error parsing user from localStorage:", error);
+        return null;
+    }
+});
 
   // Sync user state with localStorage
   useEffect(() => {

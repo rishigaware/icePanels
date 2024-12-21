@@ -598,3 +598,17 @@ exports.getBalanceController = async (req, res) => {
     return res.status(500).json({ message: 'Server error', error });
   }
 };
+
+
+// Controller to get a simple Hello message
+exports.getHelloController = async (req, res) => {
+  try {
+    console.log("Request received for Hello endpoint");
+
+    // Respond with a simple message
+    res.status(200).json({ message: 'Hello' });
+  } catch (error) {
+    console.error('Error in getHelloController:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};

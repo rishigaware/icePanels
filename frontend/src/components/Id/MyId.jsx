@@ -45,7 +45,7 @@ const MyId = () => {
         }
 
         const data = await response.json();
-        console.log(data)
+        // console.log(data)
 
         const sortedData = data.sort((a, b) => {
           const timestampA = a.createdAt._seconds;
