@@ -1,0 +1,111 @@
+/* Modal Overlay */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(65, 65, 65, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal Content */
+.modalContent {
+    background: white;
+    color: #0051a8;
+    padding: 20px 30px;
+    border-radius: 10px;
+    width: 400px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+
+.closeButton:hover {
+    color: #333;
+}
+
+/* Form Elements */
+.heading {
+    font-size: 1.8rem;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #007bff;
+}
+
+.formGroup {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.input {
+    padding: 8px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color: #0056b3;
+}
+
+/* Styling for the placeholder text */
+.input::placeholder {
+    color: #6f9ed0; /* Light gray color for placeholder text */
+    font-style: italic; /* Italicized placeholder text */
+    font-size: 14px; /* You can adjust the font size as needed */
+}
+
+.errorText {
+    color: red;
+    font-size: 0.9rem;
+}
+
+.submitButton {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submitButton:hover {
+    background-color: #0056b3;
+}
+
+
+
+.signupLink {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end; /* Aligns the button to the right */
+  }
+  
+  .signupTrigger {
+    margin-top: 10px;
+    background: transparent;  /* Make background transparent */
+    border: none;              /* Remove the border */
+    color: #007bff;            /* Set text color */
+    cursor: pointer;          /* Change cursor to pointer */
+    /* text-decoration: underline; */
+    padding: 0;                /* Remove padding around button */
+    font-size: 1rem;           /* Adjust font size if necessary */
+  }
+  
+  .signupTrigger:hover {
+    color: #0056b3;            /* Change text color on hover */
+  }
+  

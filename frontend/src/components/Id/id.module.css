@@ -1,0 +1,100 @@
+/* Bottom Navbar Container */
+.bottomNavbar {
+  width: 100%;
+  position: fixed;
+  top: 60px; /* Place it right below the top navbar */
+  left: 0;
+  background-color: rgb(237, 237, 237);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 999; /* Ensure navbar is below the top navbar */
+  display: flex;
+  padding: 10px 10px;
+  align-items: center;
+  height: 60px; /* Set a fixed height for the navbar */
+  justify-content: space-between; /* Distribute space between the two sections */
+}
+
+/* Left half of the navbar (for My IDs) */
+.leftHalf {
+  display: flex;
+  justify-content: center; /* Center the content in the left half */
+  flex: 1; /* Allow it to take up half the space */
+}
+
+/* Right half of the navbar (for Create ID) */
+.rightHalf {
+  display: flex;
+  justify-content: center; /* Center the content in the right half */
+  flex: 1; /* Allow it to take up half the space */
+}
+
+/* Vertical Divider (center line) */
+.centerDivider {
+  width: 1px;
+  height: 40px; /* Adjust height as needed */
+  background-color: #bbb;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Shadow effect for the divider */
+  margin: 0 10px; /* Add spacing between the button and divider */
+}
+
+/* Buttons styling */
+.navButton {
+  width: 100%; /* Make the button fill its container */
+  padding: 4px 16px;
+  border: none;
+  background-color: #d2d2d2;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  position: relative; /* Needed for positioning the underline */
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  box-sizing: border-box; /* Ensure padding doesn't affect width calculation */
+}
+
+/* Hover and focus effect */
+.navButton:hover {
+  background-color: #326ad8; /* Red background */
+}
+
+/* Selected Button (Active) Styling */
+.navButtonActive {
+  background-color: #3c7af8; /* Red background */
+  font-weight: bold;
+}
+
+/* Underline effect when button is selected */
+.navButtonActive::after {
+  content: "";
+  position: absolute;
+  bottom: -8px; /* Adjust the distance of the underline from the button */
+  left: 0;
+  width: 100%;
+  height: 2px;
+  margin-top: 15px;
+  background-color: rgb(20, 145, 255); /* White underline */
+}
+
+/* Section Content Styling */
+.section {
+  padding: 20px;
+}
+
+/* Responsive Design for Bottom Navbar */
+@media (max-width: 768px) {
+  .bottomNavbar {
+    padding: 8px 15px;
+  }
+  .navButton {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .bottomNavbar {
+    padding: 6px 10px;
+  }
+  .navButton {
+    font-size: 0.8rem;
+  }
+}

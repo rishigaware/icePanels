@@ -1,0 +1,112 @@
+/* LoginPopup.module.css */
+
+/* Modal Overlay */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(37, 35, 35, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modalContent {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    width: 400px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    position: relative;
+  }
+  
+  /* Heading Styling */
+  .loginHeading {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  /* Form Group Styling - Align Left */
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Aligns content to the left */
+    margin-bottom: 15px;
+  }
+  
+  .formGroup label {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #005fc4;
+    margin-left: 10px
+  }
+  
+  .formGroup input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    color: #005fc4;
+    border-radius: 8px;
+    transition: border-color 0.3s;
+    outline: none;
+  }
+  
+  .formGroup input:focus {
+    border-color: #007bff;
+  }
+  
+  /* Card Style Button */
+  .cardButton {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    background: #007bff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+  }
+  
+  .cardButton:hover {
+    background: #0056b3;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  .p{
+    color: #0056b3;
+  }
+
+  .signupLink {
+    margin-top: 20px;
+    color: #0056b3;
+    display: flex;
+    justify-content: flex-end; /* Aligns the button to the right */
+  }
+  
+  .signupTrigger {
+    margin-top: 10px;
+    background: transparent;  /* Make background transparent */
+    border: none;              /* Remove the border */
+    color: #007bff;            /* Set text color */
+    cursor: pointer;          /* Change cursor to pointer */
+    /* text-decoration: underline; */
+    padding: 0;                /* Remove padding around button */
+    font-size: 1rem;           /* Adjust font size if necessary */
+  }
+  
+  .signupTrigger:hover {
+    color: #0056b3;            /* Change text color on hover */
+  }
+  

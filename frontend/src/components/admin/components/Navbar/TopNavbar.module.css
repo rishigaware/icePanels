@@ -1,0 +1,184 @@
+/* Navbar Container
+.navbar {
+  width: 100%;
+  position: fixed;
+  top: 0; 
+  background-color: rgb(237, 237, 237);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000; 
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  align-items: center;
+  height: 60px; 
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logoImage {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.logoText {
+  font-size: 1.5rem;
+  color: white;
+}
+
+.navLinks {
+  display: flex;
+  gap: 10px;
+}
+
+.navButton {
+  padding: 8px 16px;
+  border: none;
+  background-color: #0e9bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.navButton:hover {
+  background-color: #007bb5;
+}
+
+.walletBalance {
+  font-size: 1rem;
+  color: white;
+  margin-right: 10px;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 8px 15px;
+  }
+  .logoText {
+    font-size: 1.3rem;
+  }
+  .navButton {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 6px 10px;
+  }
+  .logoText {
+    font-size: 1.1rem;
+  }
+  .navButton {
+    font-size: 0.8rem;
+  }
+}
+
+.body-content {
+  padding-top: 60px; 
+  overflow-y: scroll;
+  height: 100vh;
+}
+
+ */
+
+ .navbar {
+  width: 100vw;
+  position: fixed;
+  top: 0; 
+  left: 0;
+  background-color: #3b70d9; /* Red background */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000; 
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  align-items: center;
+  height: 60px; 
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logoImage {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.logoText {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+}
+
+.navButton {
+  background-color: #0081f2;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.navButton:hover {
+  background-color: #62aeff;
+}
+
+
+
+
+
+
+
+.navButton {
+  margin-left: 10px;
+  right: 0;
+  background-color: transparent; /* Remove background */
+  color: #00397b; /* Text color */
+  border: 2px solid #0341fd; /* Border color */
+  padding: 6px 10px; /* Adjust height & width */
+  font-size: 12px; /* Text size */
+  border-radius: 4px; /* Optional: rounded corners */
+  margin-top: 4px;
+  right: 0;
+  cursor: pointer;
+}
+.navButton:hover {
+  margin-top: 4px;
+  margin-right: 5px;
+  
+  background-color: #3e82ff; /* Background color on hover */
+  color: rgb(217, 244, 255); /* Text color on hover */
+  border: 2px solid #ffffff; /* Border color */
+}
+
+
+.walletContainer {
+  display: flex;           /* Use flexbox for layout */
+  flex-direction: column;  /* Stack items vertically */
+  align-items: center;     /* Optional: Center items horizontally */
+  text-align: center;      /* Optional: Center text */
+}
+
+.walletBalance {
+  font-size: 10px;         /* Adjust font size as needed */
+  margin-bottom: 5px;      /* Optional: Add space between the "Wallet" and the balance */
+  margin-top: 4px;
+  color: #9fd2ff;
+}
+
+.balanceAmount {
+  margin-top: -2px;
+  font-size: 12px;         /* Adjust font size for the balance */
+  color: aqua;
+}

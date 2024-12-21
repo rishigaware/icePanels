@@ -1,0 +1,187 @@
+
+.profilePage {
+  width: 100vw;           /* Full width of the viewport */
+  margin: 10vh 0 10vh 0;
+  padding: 15px 0 15px 0;
+  display: flex;          /* Use Flexbox for layout */
+  justify-content: center;/* Center horizontally */
+  align-items: center;    /* Center vertically */
+  flex-direction: column; /* Stack the carousels vertically */
+  overflow-y: auto;       /* Allow scrolling vertically */
+  /* background: #000; */
+}
+/* Add the heading style just below the TopNavbar */
+.heading {
+  color: white; /* Set the text color to white */
+  top:0;
+  font-size: 24px; /* Optional: Adjust the font size */
+  font-weight: bold; /* Optional: Make the font bold */
+}
+
+/* Container for Cards */
+.container {
+  display: flex;
+  gap: 20px; /* Spacing between cards */
+  justify-content: center; /* Horizontally center cards */
+  align-items: center; /* Vertically center cards */
+  width: 100%; /* Full width of the screen */
+}
+/* Card Styling */
+.card {
+  background: linear-gradient(to right, #9bc6eb, #3a8fbf);
+  border-radius: 12px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for cards */
+  padding: 20px;
+  width: 80vw; /* Each card takes 80% of the viewport width */
+  height: auto; /* Dynamic height based on content */
+  display: flex; /* Enable flexbox */
+  flex-direction: column; /* Stack content vertically */
+  justify-content: center; /* Vertically center content */
+  align-items: center; /* Horizontally center content */
+  transition: transform 0.3s, box-shadow 0.3s; /* Smooth hover effect */
+  position: relative;
+}
+
+/* Card Hover Effect */
+.card:hover {
+  transform: translateY(-5px); /* Slight lift on hover */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Card Title */
+.card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #133488;
+  text-align: center;
+}
+
+/* Card Text */
+.card p {
+  font-size: 1rem;
+  color: #162b62;
+  margin: 10px 0;
+  line-height: 0.5;
+}
+
+/* Input Styling */
+.card input {
+  color: #484b50;
+  padding: 0;
+  background: linear-gradient(to right, #9bc6eb, #3a8fbf);
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  max-width: 300px; /* Set a maximum width for larger screens */
+  font-size: 14px;
+}
+.card p input {
+  margin-left: 10px; /* Add space between <strong> and <input> */
+}
+
+.card input:focus {
+  outline: none;
+  border-color: #2575fc;
+  background-color: #e6f7ff; /* Light blue color when focused */
+}
+
+
+.editInput {
+  background-color: #434343; /* Light gray background for inputs in edit mode */
+  color: #2575fc;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 45%;
+  height: 20%;
+  margin: -5px 0px;
+}
+
+.editButton{
+  background-color: #4075de; /* Red background */
+    color: rgb(186, 248, 255);
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.saveButton {
+  background-color: #199fff; /* Red background */
+  color: rgb(18, 74, 164);
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.editButton:hover,
+.saveButton:hover {
+  background-color: #00a6f2; /* Lighter blue color for the background */
+}
+
+.buttonContainer {
+  margin-top: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column; /* Stack cards vertically */
+    gap: 15px; /* Adjust spacing for smaller screens */
+  }
+
+  .card {
+    width: 90%; /* Cards take up most of the screen width on smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .card h2 {
+    font-size: 1.3rem; /* Slightly smaller heading */
+  }
+
+  .card p {
+    font-size: 0.9rem; /* Slightly smaller text */
+  }
+}
+
+
+
+.balanceContainer {
+  width: 80%; /* Set width to 80% */
+  margin: 20px auto; /* Center horizontally with auto margins */
+  padding: 20px; /* Add padding inside the container */
+  text-align: center; /* Center all text */
+  background: linear-gradient(to right, #9bc6eb, #3a8fbf);
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for cards */
+  position: relative;
+
+}
+
+.logoutButton {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: linear-gradient(to right, #9bc6eb, #3a8fbf);
+  color: rgb(5, 100, 122);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px; /* Adjust font size */
+}
+
+.logoutButton:hover {
+  background: linear-gradient(to right, #9bc6eb, #3a8fbf);
+}
+
+
+.amount {
+  font-size: 2rem; /* Twice the size of normal text */
+  font-weight: bold; /* Make the text bold */
+  color: #03438b; /* Darker text color */
+  margin-bottom: 10px; /* Space below the amount */
+}
+
+.wallet {
+  font-size: 1rem; /* Normal size for balance text */
+  color: #1a4bc7;
+}
+

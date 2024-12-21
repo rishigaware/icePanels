@@ -1,0 +1,4 @@
+.main {
+  background-color: rgb(251, 251, 251);
+  height: 100vh; /* Ensure it covers the entire viewport */
+}

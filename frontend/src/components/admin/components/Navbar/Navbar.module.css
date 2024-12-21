@@ -1,0 +1,49 @@
+/* Navbar Container */
+.navbar {
+  width: 100%;
+  position: fixed; /* Fix navbar at the bottom */
+  bottom: 0; /* Position it at the bottom */
+  left: 0;
+  background-color: black; /* Default background color */
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2); /* Optional: Add a shadow for better visibility */
+  z-index: 1000; /* Ensure the navbar stays on top of content */
+  display: flex;
+  justify-content: center; /* Center the content horizontally */
+  padding: 10px 0; /* Add vertical padding */
+}
+
+/* Icon styling */
+.whatsappIcon {
+  font-size: 18px;
+}
+
+/* Global Styles for Material-UI components */
+:global(.MuiBottomNavigationAction-root) {
+  color: rgb(255, 255, 255); /* Change icon color to white */
+}
+
+:global(.Mui-selected) {
+  color: #0e9bff; /* Highlight the selected icon with a different color */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 8px 0; /* Adjust padding for smaller screens */
+  }
+
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 6px 0; /* Further reduce padding on very small screens */
+  }
+
+}
+
+/* Body content styling (to allow scrolling) */
+.body-content {
+  padding-bottom: 60px; /* Ensure content is not hidden behind the navbar */
+  overflow-y: scroll; /* Enable scrolling for the body content */
+  height: 100vh; /* Full viewport height */
+}

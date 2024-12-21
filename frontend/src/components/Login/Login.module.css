@@ -1,0 +1,97 @@
+/* Container Overlay */
+.loginContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw; /* Full viewport width */
+  background: white; /* Changed background to white */
+}
+
+.loginForm {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  width: 80%; /* Card width set to 80% */
+  max-width: 400px; /* Added a max-width for better responsiveness */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  position: relative;
+  
+}
+
+/* Heading Styling */
+.loginHeading {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Form Group Styling */
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.formGroup label {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #005fc4;
+  margin-left: 10px;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  color: #005fc4;
+  border-radius: 8px;
+  transition: border-color 0.3s;
+  outline: none;
+}
+
+.formGroup input:focus {
+  border-color: #007bff;
+}
+
+/* Login Button */
+.loginButton {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+  background: #007bff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.loginButton:hover {
+  background: #0056b3;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Signup Link Styling */
+.signupLink {
+  margin-top: 20px;
+  text-align: center;
+  color: #0056b3;
+}
+
+.signupLink a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.signupLink a:hover {
+  text-decoration: underline;
+}

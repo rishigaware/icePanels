@@ -1,0 +1,239 @@
+.navbar {
+    height: 5%; /* Adjusts the height of the navbar */
+    width: 100%; /* Stretches across the full width of the viewport */
+    background-color: #3267d2; /* Red background */
+    position: fixed; /* Fixes the navbar relative to the viewport */
+    top: 0; /* Ensures it sticks to the top of the screen */
+    left: 0; /* Ensures it sticks to the left edge */
+    z-index: 1001; /* Places it above the .top section */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for cards */
+  
+  }
+  
+  .top {
+    height: 30vh; /* Occupies 30% of the viewport height */
+    width: 100vw; /* Occupies full viewport width */
+    background-color: #3267d2; /* Red background */
+    display: flex;
+    align-items: center; /* Centers content vertically */
+    justify-content: center; /* Centers content horizontally */
+    position: fixed; /* Fixes the element relative to the viewport */
+    top: 5%; /* Positions it below the navbar */
+    left: 0; /* Ensures it sticks to the left edge */
+    z-index: 1000; /* Keeps it below the navbar */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for cards */
+  }
+  
+  .topSquare {
+    width: 80%;
+    height: 60%;
+    background-color: #3267d2; /* Red background */
+    display: flex; /* Enable flexbox for alignment */
+    justify-content: center; /* Center children horizontally */
+    align-items: center; /* Center children vertically */
+    gap: 0; /* Ensure no space between items */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for cards */
+
+  }
+  .first {
+    height: 100px;
+    width: 70px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    background: #1a1a1a;
+    color: #fff; /* Ensures all text is white */
+    display: flex;
+    align-items: center; /* Align items to the top */
+    justify-content: start; /* Center items horizontally */
+    flex-direction: column; /* Stack h3 and icon vertically */
+    text-align: center; /* Center align text inside the div */
+    padding-top: 5px; /* Add padding to position h3 away from the top edge */
+  }
+  
+  .deposit {
+    color: #fff; /* Ensure h3 color is white */
+    margin: 0; /* Remove default margins for better alignment */
+    font-size: 10px; /* Adjust font size if needed */
+  }
+  
+  .first svg {
+    font-size: 45px; /* Stretch the logo */
+    color: #fff; /* Ensure the logo matches the text color */
+    margin-top: auto; /* Push the icon below the h3 */
+  }
+  
+  .second {
+    height: 150px;
+    width: 150px;
+    border-radius: 10px;
+    background: #010101;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .second {
+    height: 150px;
+    width: 150px;
+    border-radius: 10px;
+    background: #131313;
+    color: #fff;
+    display: flex;
+    flex-direction: column; /* Stack content vertically */
+    align-items: center;
+    justify-content: space-around; /* Space items evenly */
+    text-align: center;
+    padding: 10px;
+  }
+  
+  /* .logo {
+    font-size: 60px;
+  } */
+  
+  .balance {
+    color: #8ed9ff;
+    margin: 0;
+    font-size: 8px; /* Adjust size */
+  }
+  
+  .balanceIcon {
+    font-size: 5px;
+    color: #1fee49;
+  }
+  
+  .balanceAmount {
+    margin-top: 0;
+    font-size: 12px;
+    color: #fff;
+  }
+  
+  
+  
+  .third {
+    height: 100px;
+    width: 70px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background: #1a1a1a;
+    color: #5abaff; /* Ensures all text is white */
+    display: flex;
+    align-items: center; /* Align items to the top */
+    justify-content: start; /* Center items horizontally */
+    flex-direction: column; /* Stack h3 and icon vertically */
+    text-align: center; /* Center align text inside the div */
+    padding-top: 5px; /* Add padding to position h3 away from the top edge */
+  }
+  
+  .withdraw {
+    color: #fff; /* Ensure h3 color is white */
+    margin: 0; /* Remove default margins for better alignment */
+    font-size: 10px; /* Adjust font size if needed */
+  }
+  
+  .third svg {
+    font-size: 40px; /* Stretch the logo */
+    color: #fff; /* Ensure the logo matches the text color */
+    margin-top: 0; /* Push the icon below the h3 */
+  }
+  
+  .createId {
+    width: 97vw; /* Almost full viewport width */
+    height: 35px; /* Adjust the height as needed */
+    background-color: #3666c4; /* Red background */
+    color: white; /* White text */
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Space between left and right elements */
+    padding: 0 10px; /* Adds horizontal padding */
+    top: 36vh; /* Places it directly below the .top section (which is 30vh) */
+    border-radius: 15px; /* Rounded corners */
+    position: fixed; /* Fixes it relative to the viewport */
+    left: 1.5vw; /* Centers horizontally with a small margin */
+    z-index: 999; /* Keeps it on top of other content but below the navbar */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for cards */
+
+  }
+  
+  .leftSide {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adds space between the icon and text */
+  }
+  
+  .createIdIcon {
+    color: white;
+  }
+  
+  .createIdText {
+    font-size: 16px;
+    color: white;
+    font-weight: 500;
+  }
+  
+  .createIdArrow {
+    color: white;
+  }
+  
+  .arrow {
+    color: #fff; /* Ensures the right arrow is white */
+    transition: transform 0.3s ease; /* Adds smooth transition on hover */
+  }
+  
+  .arrow:hover {
+    transform: translateX(5px); /* Moves the arrow slightly to the right on hover */
+  }
+  
+  .buttonlogin {
+    background-color: transparent; /* Remove background */
+    color: #1e3d9c; /* Text color */
+    border: 2px solid #3a6bff; /* Border color */
+    padding: 6px 10px; /* Adjust height & width */
+    font-size: 12px; /* Text size */
+    border-radius: 4px; /* Optional: rounded corners */
+    cursor: pointer;
+    margin-top: 4px;
+    margin-right: 5px;
+
+    right: 0;
+}
+
+.buttonlogout {
+    right: 0;
+    background-color: transparent; /* Remove background */
+    color: #00397b; /* Text color */
+    border: 2px solid #0341fd; /* Border color */
+    padding: 6px 10px; /* Adjust height & width */
+    font-size: 12px; /* Text size */
+    border-radius: 4px; /* Optional: rounded corners */
+    margin-top: 4px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+
+/* Hover Effect */
+.buttonlogin:hover,
+.buttonlogout:hover {
+  margin-top: 4px;
+    margin-right: 5px;
+    
+    background-color: #3e82ff; /* Background color on hover */
+    color: rgb(217, 244, 255); /* Text color on hover */
+    border: 2px solid #ffffff; /* Border color */
+}
+  
+
+.balanceContainer {
+  display: flex;               /* Use flexbox to align items horizontally */
+  align-items: center;         /* Vertically center the items */
+  gap: 5px;                    /* Optional: Add some space between the icon and the text */
+  color: #1fee49;
+  font-size: 2px;
+}
+
+.balanceAmount {
+  margin: 0;                   /* Remove any default margins */
+  font-size: 15px;
+  color: #e4f6ff;
+}

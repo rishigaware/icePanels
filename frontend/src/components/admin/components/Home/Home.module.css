@@ -1,0 +1,62 @@
+body{
+  background-color: #f9f9f9;
+
+}
+.carouselContainer {
+  margin-top: 35vh;
+  width: 100vw;           /* Full width of the viewport */
+  height: 100%;
+  padding: 70px 0 70px 0;
+  display: flex;          /* Use Flexbox for layout */
+  justify-content: center;/* Center horizontally */
+  align-items: center;    /* Center vertically */
+  flex-direction: column; /* Stack the carousels vertically */
+  overflow-y: auto;       /* Allow scrolling vertically */
+}
+
+.carousel {
+
+  width: 100%;            /* Ensure the carousel takes up the full width of its container */
+  height: 100%;           /* Ensure the carousel takes up the full height of its container */
+  margin-bottom: 30px;    /* Adds spacing between each carousel */
+}
+
+.secondCarousel{
+  margin-top: 30px;
+}
+
+
+.socialIcons {
+  display: flex;
+  justify-content: center; /* Center icons horizontally */
+  align-items: center; /* Center icons vertically */
+  gap: 20px; /* Add space between icons */
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+.socialIcons a {
+  text-decoration: none; /* Remove underline */
+  font-size: 36px; /* Icon size */
+  transition: transform 0.3s ease, color 0.3s ease; /* Smooth hover and color transition */
+}
+
+.socialIcons a:nth-child(1) {
+  color: #E1306C; /* Instagram color */
+}
+
+.socialIcons a:nth-child(2) {
+  color: #25D366; /* WhatsApp color */
+}
+
+.socialIcons a:nth-child(3) {
+  color: #0088cc; /* Telegram color */
+}
+
+.socialIcons a:nth-child(4) {
+  color: #1877F2; /* Facebook color */
+}
+
+.socialIcons a:hover {
+  transform: scale(1.2); /* Slightly enlarge the icon on hover */
+}

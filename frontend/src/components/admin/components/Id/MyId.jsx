@@ -1,0 +1,434 @@
+import React, { useState, useEffect, useRef } from "react";
+import styles from "./MyId.module.css";
+import { useUser } from "../../../../context/UserContext";
+import { useNavigate } from "react-router-dom";
+import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
+import { Toast } from "primereact/toast";
+import { PulseLoader } from "react-spinners";
+import { PiHandDepositDuotone } from "react-icons/pi";
+import { BiMoneyWithdraw } from "react-icons/bi";
+import IdDepositPopup from "./IdDepositPopup";
+import WithdrawalPopup from "./WithdrawalPopup";
+
+const MyId = () => {
+  const toast = useRef(null); // Add a reference for Toast
+  const { user } = useUser();
+  const [myIds, setMyIds] = useState([]);
+  const [menuOpen, setMenuOpen] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [needRefetch, setNeedRefetch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(""); // State for the search query
+
+  const [walletBalance, setWalletBalance] = useState(100);
+  const [showIdDepositPopup, setShowIdDepositPopup] = useState(false); // State to toggle popup
+  const [changePasswordPopup, setChangePasswordPopup] = useState(false); // State to toggle popup
+  // const [WithdrawalPopup, setWithdrwalPopup] = useState(false);
+  const [isWithdrawalPopupVisible, setIsWithdrawalPopupVisible] = useState(false);
+
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchIds = async () => {
+      try {
+        if (!user?.id) {
+          throw new Error("User ID is missing");
+        }
+
+        const response = await fetch(
+          `http://localhost:3000/api/admin/get-all-ids`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch IDs");
+        }
+
+        const data = await response.json();
+        // console.log(data)
+
+        const sortedData = data.sort((a, b) => {
+          const timestampA = a.createdAt._seconds;
+          const timestampB = b.createdAt._seconds;
+
+          return timestampB - timestampA;
+        });
+
+        setMyIds(sortedData);
+      } catch (err) {
+        console.error(err.message);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user?.id || needRefetch) {
+      fetchIds();
+      setNeedRefetch(false);
+    }
+  }, [user?.id, needRefetch]);
+  
+// Accept API Call
+const handleAccept = async (item) => {
+  try {
+    const response = await fetch(
+      "http://localhost:3000/api/admin/accept-id",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: item.id, // Send the current ID
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to accept ID");
+    }
+    toast.current.show({
+      severity: 'success',
+      summary: 'ID Accepted',
+      detail: 'ID Accepted Successfully',
+      life: 2000,
+    });
+    setNeedRefetch(true); // Trigger refetch to get updated data
+  } catch (err) {
+    console.error(err.message);
+    toast.current.show({
+      severity: 'error',
+      summary: 'Error accepting',
+      detail: 'Error accepting ID',
+      life: 2000,
+    });
+  }
+};
+
+// Reject API Call
+const handleReject = async (item) => {
+  try {
+    const response = await fetch(
+      "http://localhost:3000/api/admin/reject-id",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: item.id, // Send the current ID
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to reject ID");
+    }
+
+    toast.current.show({
+      severity: 'error',
+      summary: 'ID Rejected',
+      detail: 'ID Rejected Successfully',
+      life: 2000,
+    });
+    setNeedRefetch(true); // Trigger refetch to get updated data
+  } catch (err) {
+    console.error(err.message);
+    toast.current.show({
+      severity: 'error',
+      summary: 'Rejecting erro',
+      detail: 'Error rejecting ID',
+      life: 2000,
+    });
+
+  }
+};
+
+  const handleIdClick = (item) => {
+    setSelectedId(item);
+    console.log(item);
+    setChangePasswordPopup(true)
+  };
+
+  const handleClosePopup = () => {
+    setSelectedId(null);
+  };
+
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp * 1000);
+    return date.toLocaleString();
+  };
+
+  const handlePasswordChange = async () => {
+    try {
+      if (!user?.id || !selectedId?.id) {
+        throw new Error("User ID or selected ID is missing");
+      }
+
+      const response = await fetch(
+        `http://localhost:3000/api/user/change-id-password`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: user.id,
+            selectedId: selectedId.id,
+            newPassword: newPassword,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        toast.current.show({
+          severity: 'error',
+          summary: 'Failed Change',
+          detail: 'Failed to change password',
+          life: 2000,
+        });
+        throw new Error("Failed to change password");
+      }
+
+      toast.current.show({
+        severity: 'success',
+        summary: 'Password changed',
+        detail: 'Password changed successfully',
+        life: 2000,
+      });
+      const data = await response.json();
+
+      setNewPassword("");
+      setSelectedId(null);
+
+      setNeedRefetch(true);
+    } catch (err) {
+      console.error(err);
+      alert("Error changing password");
+    }
+  };
+
+  const handleDepositClick = (item) => {
+    // console.log(item)
+    setSelectedId(item)
+    setChangePasswordPopup(false)
+    setIsWithdrawalPopupVisible(false)
+    setShowIdDepositPopup(true); // Show deposit popup
+  };
+  const handleWithdrawalClick = (item) => {
+    // console.log(item)
+    setSelectedId(item)
+    setChangePasswordPopup(false)
+    setShowIdDepositPopup(false); // Show deposit popup
+    setIsWithdrawalPopupVisible(true);
+  }
+
+  const closeDepositPopup = () => {
+    setShowIdDepositPopup(false); // Close deposit popup
+  };
+  const closeWithdrawalPopup = () => {
+    setIsWithdrawalPopupVisible(false); // Close withdrawal popup
+  };
+
+  const handleCreateId = () => {
+    setNeedRefetch(true);
+  };
+
+  const filteredIds = myIds.filter(
+    (id) =>
+      id.websiteName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      id.websiteUrl.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      id.username.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  if (loading) {
+    return (
+      <div className={styles.loading}>
+        <PulseLoader color="#4592ef" loading={loading} size={15} />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <p className={styles.error}>
+        <strong>No Id's created yet</strong>
+      </p>
+    );
+  }
+
+  return (
+    <div className={styles.container}>
+      <input
+        type="text"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        placeholder="Search by website name, URL, or username"
+        className={styles.searchInput} // Add styling in your CSS file
+      />
+
+      {filteredIds.length === 0 ? (
+        <p className={styles.noIds}>No IDs match your search criteria.</p>
+      ) : (
+        filteredIds.map((item, index) => (
+          <div key={item.id} className={styles.idCard}>
+            <div className={styles.logo} onClick={() => handleIdClick(item)}>
+              <img
+                src={`http://localhost:3000/${item.imgUrl}`}
+                alt={`${item.websiteName} logo`}
+              />
+            </div>
+
+            <div className={styles.details}>
+              <p className={styles.websiteName}>{item.websiteName}</p>
+              <span>
+                <a
+                  href={item.websiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.websiteLink}
+                >
+                  {item.websiteUrl}
+                </a>
+              </span>
+              <p className={styles.userId}>
+                <strong>CreatedBy : </strong>
+                {item.createdBy}
+              </p>
+            </div>
+
+            <div className={styles.iconContainer}>
+              <div className={styles.statusContainer}>
+                <p className={styles.statusText}>
+                  <span
+                    className={
+                      item.status === "Requested"
+                        ? styles.statusRequested
+                        : item.status === "Created"
+                        ? styles.statusCreated
+                        : item.status === "Username Exists"
+                        ? styles.statusUsernameExist
+                        : styles.statusActive // Default case if no match
+                    }
+                  >
+                    {item.status}
+                  </span>
+                </p>
+              </div>
+
+              <div className={styles.actionIcons}>
+                <AiOutlineCheckCircle
+                  style={{ color: "green", fontSize: "30px" }}
+                  className={`${styles.icon} ${styles.acceptIcon}`}
+                  title="Accept"
+                  onClick={() => handleAccept(item)}
+                />
+
+                <AiOutlineCloseCircle
+                  style={{ color: "red", fontSize: "30px" }}
+                  className={`${styles.icon} ${styles.rejectIcon}`}
+                  title="Reject"
+                  onClick={() => handleReject(item)}
+                />
+              </div>
+            </div>
+
+          </div>
+        ))
+      )}
+
+      
+
+      {selectedId && changePasswordPopup && (
+        <div className={styles.popup}>
+          <div className={styles.popupContent}>
+            <button onClick={handleClosePopup} className={styles.closeButton}>
+              &times;
+            </button>
+            <div className={styles.popupHeader}>
+              <img
+                src={`http://localhost:3000/${selectedId.imgUrl}`}
+                alt={`${selectedId.websiteName} logo`}
+                className={styles.popupLogo}
+              />
+              <h2>{selectedId.websiteName}</h2>
+              <p>{selectedId.websiteUrl}</p>
+            </div>
+
+            <div className={styles.popupBody}>
+              <p>
+                <strong>Username:</strong> {selectedId.username}
+              </p>
+              <p>
+                <strong>Password:</strong> {selectedId.password}
+              </p>
+              <p className={styles.popStatusText}>
+              <strong>Status :&nbsp;</strong>
+
+                  <span
+                    className={
+                      selectedId.popStatus === "Requested"
+                        ? styles.popStatusRequested
+                        : selectedId.status === "Created"
+                        ? styles.popStatusCreated
+                        : selectedId.status === "Username Exists"
+                        ? styles.popStatusUsernameExist
+                        : styles.popStatusActive // Default case if no match
+                    }
+                  >
+                    {selectedId.status}
+                  </span>
+                </p>
+              <p>
+                <strong>Created At:</strong>{" "}
+                {formatDate(selectedId.createdAt._seconds)}
+              </p>
+            </div>
+
+            <div className={styles.changePasswordSection}>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Enter new password"
+                className={styles.passwordInput}
+              />
+              <button
+                onClick={handlePasswordChange}
+                className={styles.changePasswordButton}
+              >
+                Change Password
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Deposit Popup */}
+      {showIdDepositPopup && (
+        <IdDepositPopup
+          onClose={closeDepositPopup}
+          walletBalance={walletBalance} // Pass the wallet balance dynamically
+          setWalletBalance={setWalletBalance} // Pass the setWalletBalance function
+          selectedId={selectedId} // Pass the selected ID to the popup component
+        />
+      )}
+
+{/* //withdrawalpopup */}
+      {isWithdrawalPopupVisible && (
+        <WithdrawalPopup
+          onClose={closeWithdrawalPopup}
+          walletBalance={walletBalance}
+          setWalletBalance={setWalletBalance}
+          selectedId={selectedId}
+        />
+      )}
+      <Toast ref={toast} />
+
+    </div>
+  );
+};
+
+export default MyId;
