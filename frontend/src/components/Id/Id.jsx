@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import styles from "./Id.module.css";
+import styles from "./id.module.css";
 import TopNavbar from "../Navbar/TopNavbar";
 import MyIds from "./MyId";
 import CreateId from "./CreateId";
