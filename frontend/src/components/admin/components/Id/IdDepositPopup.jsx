@@ -2,8 +2,6 @@ import React, { useState, useRef } from "react";
 import { FaCopy } from "react-icons/fa"; // Importing FontAwesome copy icon
 // import styles from "./IdDepositPopup.module.css";
 import { useUser } from "../../../../context/UserContext";
-
-
 import { FileUpload } from "primereact/fileupload";
 import { Toast } from "primereact/toast";
 import "primereact/resources/themes/lara-light-indigo/theme.css";

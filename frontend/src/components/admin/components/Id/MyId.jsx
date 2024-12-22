@@ -12,7 +12,7 @@ import WithdrawalPopup from "./WithdrawalPopup";
 
 const MyId = () => {
   const toast = useRef(null); // Add a reference for Toast
-  const { user } = useUser();
+  const { user, url } = useUser();
   const [myIds, setMyIds] = useState([]);
   const [menuOpen, setMenuOpen] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -39,12 +39,13 @@ const MyId = () => {
         }
 
         const response = await fetch(
-          `http://localhost:3000/api/admin/get-all-ids`
+          `https://betting-accounts-backend.onrender.com/api/admin/get-all-ids`
         );
 
         if (!response.ok) {
           throw new Error("Failed to fetch IDs");
         }
+
 
         const data = await response.json();
         // console.log(data)
@@ -75,7 +76,7 @@ const MyId = () => {
 const handleAccept = async (item) => {
   try {
     const response = await fetch(
-      "http://localhost:3000/api/admin/accept-id",
+      `${url}/api/admin/accept-id`,
       {
         method: "POST",
         headers: {
@@ -112,7 +113,7 @@ const handleAccept = async (item) => {
 const handleReject = async (item) => {
   try {
     const response = await fetch(
-      "http://localhost:3000/api/admin/reject-id",
+      `${url}/api/admin/reject-id`,
       {
         method: "POST",
         headers: {
@@ -169,7 +170,7 @@ const handleReject = async (item) => {
       }
 
       const response = await fetch(
-        `http://localhost:3000/api/user/change-id-password`,
+        `${url}/api/user/change-id-password`,
         {
           method: "POST",
           headers: {
@@ -277,7 +278,7 @@ const handleReject = async (item) => {
           <div key={item.id} className={styles.idCard}>
             <div className={styles.logo} onClick={() => handleIdClick(item)}>
               <img
-                src={`http://localhost:3000/${item.imgUrl}`}
+                src={`${url}/${item.imgUrl}`}
                 alt={`${item.websiteName} logo`}
               />
             </div>
@@ -350,7 +351,7 @@ const handleReject = async (item) => {
             </button>
             <div className={styles.popupHeader}>
               <img
-                src={`http://localhost:3000/${selectedId.imgUrl}`}
+                src={`${url}/${selectedId.imgUrl}`}
                 alt={`${selectedId.websiteName} logo`}
                 className={styles.popupLogo}
               />
