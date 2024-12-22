@@ -28,7 +28,7 @@
 }
 /* Card Styling */
 .card {
-  background: linear-gradient(to right, #9bc6eb, #3a8fbf);
+  background: linear-gradient(to right, #c1e1fd, #62a4fb);
   border-radius: 12px;
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for cards */
   padding: 20px;
@@ -68,7 +68,7 @@
 .card input {
   color: #484b50;
   padding: 0;
-  background: linear-gradient(to right, #9bc6eb, #3a8fbf);
+  background: linear-gradient(to right, #c1e1fd, #62a4fb);
   border: 1px solid #ccc;
   border-radius: 5px;
   max-width: 300px; /* Set a maximum width for larger screens */
@@ -86,7 +86,7 @@
 
 
 .editInput {
-  background-color: #434343; /* Light gray background for inputs in edit mode */
+  background: linear-gradient(to right, #c1e1fd, #62a4fb);
   color: #2575fc;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -103,8 +103,8 @@
     border-radius: 4px;
 }
 .saveButton {
-  background-color: #199fff; /* Red background */
-  color: rgb(18, 74, 164);
+  background-color: #4193ff; /* Red background */
+  color: rgb(221, 235, 255);
   border: none;
   cursor: pointer;
   border-radius: 4px;
@@ -112,7 +112,7 @@
 
 .editButton:hover,
 .saveButton:hover {
-  background-color: #00a6f2; /* Lighter blue color for the background */
+  background-color: #3888ff; /* Lighter blue color for the background */
 }
 
 .buttonContainer {
@@ -148,7 +148,7 @@
   margin: 20px auto; /* Center horizontally with auto margins */
   padding: 20px; /* Add padding inside the container */
   text-align: center; /* Center all text */
-  background: linear-gradient(to right, #9bc6eb, #3a8fbf);
+  background: linear-gradient(to right, #c1e1fd, #62a4fb);
   border-radius: 8px; /* Rounded corners */
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for cards */
   position: relative;
@@ -159,7 +159,7 @@
   position: absolute;
   bottom: 10px;
   right: 10px;
-  background: linear-gradient(to right, #9bc6eb, #3a8fbf);
+  background: linear-gradient(to right, #c1e1fd, #62a4fb);
   color: rgb(5, 100, 122);
   border: none;
   padding: 8px 12px;
