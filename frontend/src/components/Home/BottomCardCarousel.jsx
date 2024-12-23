@@ -76,7 +76,7 @@ const BottomCardCarousel = () => {
           severity: 'success',
           summary: 'File Selected',
           detail: 'Image uploaded successfully',
-          life: 2000,
+          life: 1000,
         });
       } else {
         throw new Error('No file selected.');
@@ -112,7 +112,7 @@ const BottomCardCarousel = () => {
           severity: 'success',
           summary: 'Image Added',
           detail: 'Image Added successfully',
-          life: 2000,
+          life: 1000,
         });
       })
       .catch((error) => {
@@ -143,7 +143,7 @@ const BottomCardCarousel = () => {
         severity: 'success',
         summary: 'Deleted Successfully',
         detail: 'Successfully deleted image:',
-        life: 2000,
+        life: 1000,
       });
       
       console.log("File deleted and database updated.");
@@ -152,7 +152,7 @@ const BottomCardCarousel = () => {
         severity: 'error',
         summary: 'Error deleting:',
         detail: "Error deleting image:",
-        life: 2000,
+        life: 1000,
       });
     }
   };

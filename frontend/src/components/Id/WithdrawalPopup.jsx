@@ -102,7 +102,7 @@ export default function WithdrawalPopup({
         severity: "success",
         summary: "Withdrawal Successful",
         detail: "Your withdrawal has been processed successfully.",
-        life: 3000,
+        life: 1000,
       });
 
       // Close the popup
@@ -114,7 +114,7 @@ export default function WithdrawalPopup({
         severity: "error",
         summary: "Error",
         detail: "Something went wrong. Please try again.",
-        life: 3000,
+        life: 1000,
       });
     }
   };

@@ -10,7 +10,7 @@ import LoginPopup from '../Login/LoginPopup';
 
 
 const ProfilePage = () => {
-  const { user, setUser, url } = useUser();  // Get user and setUser from context
+  const { user, setUser } = useUser();  // Get user and setUser from context
   const navigate = useNavigate(); // For navigation
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal visibility
 
@@ -47,7 +47,7 @@ const ProfilePage = () => {
       }
 
     // Send GET request with user.id as a query parameter
-    fetch(`${url}/api/admin/get-accountdetails?userId=${user.id}`)
+    fetch(`http://localhost:3000/api/admin/get-accountdetails?userId=${user.id}`)
       .then(response => {
         if (response.ok) {
           return response.json();
@@ -103,7 +103,7 @@ const ProfilePage = () => {
     const userId = user.id;
 
     try {
-      const response = await fetch(`${url}/api/admin/update-accountdetails`, {
+      const response = await fetch('http://localhost:3000/api/admin/update-accountdetails', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -120,10 +120,22 @@ const ProfilePage = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Payment Details Updated:');
+        // console.log('Payment Details Updated:');
+        toast.current.show({
+          severity: 'success',
+          summary: 'Payment Details Updated',
+          detail: 'Payment Details Updated successfully:',
+          life: 1000,
+        });
         setIsPaymentEditing(false);  // Disable editing after successful update
       } else {
         const errorData = await response.json();
+        toast.current.show({
+          severity: 'error',
+          summary: 'Account Details error',
+          detail: 'Account Details Update error:',
+          life: 1000,
+        });
         console.error('Error updating payment details:', errorData.message);
       }
     } catch (error) {
@@ -145,7 +157,7 @@ const ProfilePage = () => {
   
     try {
       // Send POST request to update profile data
-      const response = await fetch(`${url}/api/user/update-profile`, {
+      const response = await fetch('http://localhost:3000/api/admin/update-profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -158,15 +170,21 @@ const ProfilePage = () => {
       if (response.ok) {
         // Successfully updated the profile
         const data = await response.json();
-        console.log('Profile Updated:');
+        // console.log('Profile Updated:');
+        toast.current.show({
+          severity: 'success',
+          summary: 'Profile Updated',
+          detail: 'Profile Updated Successfully',
+          life: 1000,
+        });
   
         // Update the user context with the updated information, keeping the userId intact
         setUser((prevUser) => ({
           ...prevUser, // Spread the previous user data
-          name: data.updatedUser.name,  // Update the name
-          phoneNumber: data.updatedUser.phoneNumber,  // Update the phone number
-          email: data.updatedUser.email,  // Update the email
-          password: data.updatedUser.password,  // Only update the password if necessary
+          name: data.updatedAdmin.name,  // Update the name
+          phoneNumber: data.updatedAdmin.phoneNumber,  // Update the phone number
+          email: data.updatedAdmin.email,  // Update the email
+          password: data.updatedAdmin.password,  // Only update the password if necessary
         }));
   
         // Update localStorage with the updated user information (excluding password)
@@ -194,7 +212,7 @@ const ProfilePage = () => {
         
       <div className={styles.balanceContainer}>
           <div className={styles.amount}>
-            <strong>₹ 1,00,000</strong>  {/* Replace with actual deposit amount */}
+            <strong>₹ 500,000,000,000</strong>  {/* Replace with actual deposit amount */}
           </div>
           <p className={styles.wallet}>
             <strong>Wallet Balance</strong>

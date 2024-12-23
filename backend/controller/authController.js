@@ -23,17 +23,21 @@ exports.loginController = async (req, res) => {
         return res.status(401).json({ message: 'Invalid password' });
       }
 
-      // Log the admin object before returning
-      // console.log('Admin found:', admin);
+      // Structure the admin object to match the user structure
+      const adminWithId = {
+        id: adminId,
+        username: admin.username,
+        email: admin.email || '', // Add email if available
+        role: 'admin', // Explicitly define the role
+        ...admin, // Include other admin fields
+      };
+      delete adminWithId.password; // Exclude the password
 
-      // Combine admin data with the id and exclude the password
-      const adminWithId = { id: adminId, ...admin };
       return res.status(200).json({
         message: 'Admin login successful',
-        user: adminWithId, // Exclude password
+        user: adminWithId,
       });
     }
-
     // If not found in the admin collection, check in the user collection
     snapshot = await db.collection('user').where('username', '==', username).get();
 

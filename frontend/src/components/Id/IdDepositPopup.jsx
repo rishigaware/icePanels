@@ -102,15 +102,20 @@ export default function IdDepositPopup({ onClose, walletBalance = 0, setWalletBa
       }
   
       const data = await response.json();
-      console.log("Deposit created:", data);
-  
-      // Show success toast
+      // console.log("Deposit created:", data);
       toast.current.show({
-        severity: "success",
-        summary: "Transaction Successful",
-        detail: "Transaction was successfully created.",
-        life: 3000,
+        severity: 'success',
+        summary: 'Deposit Requested',
+        detail: 'Deposit Requested successfully',
+        life: 1000,
       });
+      // Show success toast
+      // toast.current.show({
+      //   severity: "success",
+      //   summary: "Transaction Successful",
+      //   detail: "Transaction was successfully created.",
+      //   life: 3000,
+      // });
   
       onClose(); // Optionally close the modal
     } catch (error) {
@@ -119,9 +124,9 @@ export default function IdDepositPopup({ onClose, walletBalance = 0, setWalletBa
       // Show error toast
       toast.current.show({
         severity: "error",
-        summary: "Transaction Failed",
+        summary: "Error While Deposite",
         detail: error.message,
-        life: 3000,
+        life: 1000,
       });
     }
   };

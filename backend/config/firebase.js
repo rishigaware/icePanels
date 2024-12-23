@@ -52,7 +52,7 @@ const serviceAccountPath = path.resolve(__dirname, process.env.FIREBASE_SERVICE_
 
 const serviceAccount = require(serviceAccountPath); // Load service account from env
 const databaseURL = process.env.FIREBASE_DATABASE_URL; // Use database URL from env
-console.log(process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH)
+// console.log(process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH)
 let db;
 
 // Try to initialize Firebase Admin SDK

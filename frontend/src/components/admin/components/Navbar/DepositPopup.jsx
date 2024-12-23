@@ -71,7 +71,7 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
   const handleCopy = (text) => {
     navigator.clipboard
       .writeText(text)
-      .then(() => toast.current.show({ severity: "info", summary: "Copied", detail: "Copied to clipboard", life: 2000 }))
+      .then(() => toast.current.show({ severity: "info", summary: "Copied", detail: "Copied to clipboard", life: 1000 }))
       .catch((err) => console.error("Failed to copy text: ", err));
   };
 
@@ -91,7 +91,7 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
           severity: 'success',
           summary: 'File Selected',
           detail: 'File uploaded successfully',
-          life: 2000,
+          life: 1000,
         });
       } else {
         throw new Error('No file selected.');

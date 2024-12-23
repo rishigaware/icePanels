@@ -128,7 +128,7 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
   const handleCopy = (text) => {
     navigator.clipboard
       .writeText(text)
-      .then(() => toast.current.show({ severity: "info", summary: "Copied", detail: "Copied to clipboard", life: 2000 }))
+      .then(() => toast.current.show({ severity: "info", summary: "Copied", detail: "Copied to clipboard", life: 1000 }))
       .catch((err) => console.error("Failed to copy text: ", err));
   };
 
@@ -148,7 +148,7 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
           severity: 'success',
           summary: 'File Selected',
           detail: 'File uploaded successfully',
-          life: 2000,
+          life: 1000,
         });
       } else {
         throw new Error('No file selected.');
@@ -158,7 +158,7 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
         severity: 'error',
         summary: 'File Upload Failed',
         detail: error.message,
-        life: 3000,
+        life: 1000,
       });
     }
   };
@@ -173,7 +173,7 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
         severity: "error",
         summary: "No File",
         detail: "Please upload a valid image file.",
-        life: 3000,
+        life: 1000,
       });
       return;
     }
@@ -183,7 +183,7 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
         severity: "error",
         summary: "Payment Method Required",
         detail: "Please select a payment method.",
-        life: 3000,
+        life: 1000,
       });
       return;
     }
@@ -213,7 +213,7 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
         severity: "success",
         summary: "Transaction Successful",
         detail: "Transaction was successfully created.",
-        life: 3000,
+        life: 1000,
       });
   
       // Optionally reset form or close modal
@@ -226,7 +226,7 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
         severity: "error",
         summary: "Transaction Failed",
         detail: error.message,
-        life: 3000,
+        life: 1000,
       });
     }
   };

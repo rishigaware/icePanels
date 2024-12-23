@@ -73,7 +73,7 @@ const Transactions = () => {
         severity: 'success',
         summary: 'Accepted',
         detail: 'ID created successfully:',
-        life: 2000,
+        life: 1000,
       });
       const updatedTxn = await response.json();
       // Update the state to reflect the change
@@ -88,7 +88,7 @@ const Transactions = () => {
         severity: 'error',
         summary: 'Accepting Error',
         detail: err.message,
-        life: 2000,
+        life: 1000,
       });
     }
   };
@@ -105,10 +105,10 @@ const Transactions = () => {
       }
 
       toast.current.show({
-        severity: 'sucess',
+        severity: 'error',
         summary: 'Rejected',
         detail: "Successfully Rejected",
-        life: 2000,
+        life: 1000,
       });
       const updatedTxn = await response.json();
       // Update the state to reflect the change
@@ -122,7 +122,7 @@ const Transactions = () => {
         severity: 'error',
         summary: 'Rejecting Error',
         detail: "Error While Rejecting",
-        life: 2000,
+        life: 1000,
       });
       setError(err.message);
     }

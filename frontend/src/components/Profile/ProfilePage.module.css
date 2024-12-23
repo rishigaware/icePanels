@@ -28,7 +28,7 @@
 }
 /* Card Styling */
 .card {
-  background: linear-gradient(to right, #9bc6eb, #3a8fbf);
+  background: linear-gradient(to right, #c1e1fd, #62a4fb);
   border-radius: 12px;
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for cards */
   padding: 20px;
@@ -52,7 +52,7 @@
 .card h2 {
   font-size: 1.5rem;
   margin-bottom: 15px;
-  color: #0330a2;
+  color: #133488;
   text-align: center;
 }
 
@@ -68,7 +68,7 @@
 .card input {
   color: #484b50;
   padding: 0;
-  background: linear-gradient(to right, #9bc6eb, #3a8fbf);
+  background: linear-gradient(to right, #c1e1fd, #62a4fb);
   border: 1px solid #ccc;
   border-radius: 5px;
   max-width: 300px; /* Set a maximum width for larger screens */
@@ -86,7 +86,7 @@
 
 
 .editInput {
-  background-color: #434343; /* Light gray background for inputs in edit mode */
+  background: linear-gradient(to right, #c1e1fd, #62a4fb);
   color: #2575fc;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -97,14 +97,14 @@
 
 .editButton{
   background-color: #4075de; /* Red background */
-    color: rgb(121, 242, 255);
+    color: rgb(186, 248, 255);
     border: none;
     cursor: pointer;
     border-radius: 4px;
 }
 .saveButton {
-  background-color: #199fff; /* Red background */
-  color: rgb(18, 74, 164);
+  background-color: #4193ff; /* Red background */
+  color: rgb(221, 235, 255);
   border: none;
   cursor: pointer;
   border-radius: 4px;
@@ -112,7 +112,7 @@
 
 .editButton:hover,
 .saveButton:hover {
-  background-color: #00a6f2; /* Lighter blue color for the background */
+  background-color: #3888ff; /* Lighter blue color for the background */
 }
 
 .buttonContainer {
@@ -148,26 +148,19 @@
   margin: 20px auto; /* Center horizontally with auto margins */
   padding: 20px; /* Add padding inside the container */
   text-align: center; /* Center all text */
-  background: linear-gradient(to right, #9bc6eb, #3a8fbf);
+  background: linear-gradient(to right, #c1e1fd, #62a4fb);
   border-radius: 8px; /* Rounded corners */
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for cards */
   position: relative;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease; /* Smooth hover effect */
-}
 
-.balanceContainer:hover {
-  transform: translateY(-10px) scale(1.05); /* Slight lift and scale effect */
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); /* More prominent shadow on hover */
-  filter: brightness(1.1); /* Slightly brighten the background on hover */
 }
-
 
 .logoutButton {
   position: absolute;
   bottom: 10px;
   right: 10px;
-  background: linear-gradient(to right, #9bc6eb, #3a8fbf);
-  color: rgb(222, 249, 255);
+  background: linear-gradient(to right, #c1e1fd, #62a4fb);
+  color: rgb(5, 100, 122);
   border: none;
   padding: 8px 12px;
   border-radius: 4px;
@@ -189,6 +182,6 @@
 
 .wallet {
   font-size: 1rem; /* Normal size for balance text */
-  color: #1f4092;
+  color: #1a4bc7;
 }
 

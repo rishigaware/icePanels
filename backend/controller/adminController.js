@@ -231,7 +231,7 @@ exports.acceptTransaction = async (req, res) => {
   
       // Get the data of the document
       const transaction = txnDoc.data();
-      console.log(transaction);
+      // console.log(transaction);
   
       // Update the status of the transaction to 'Completed'
       await txnDoc.ref.update({ status: 'Completed' });
@@ -262,7 +262,7 @@ exports.rejectTransaction = async (req, res) => {
   
       // Get the data of the document
       const transaction = txnDoc.data();
-      console.log(transaction);
+      // console.log(transaction);
   
       // Update the status of the transaction to 'Failed'
       await txnDoc.ref.update({ status: 'Failed' });
@@ -347,7 +347,7 @@ exports.getAccountDetails = async (req, res) => {
     const userId = "1";
   
     try {
-      console.log(userId, accountNumber, accountHolderName, ifscCode, bankName, upiId);
+      // console.log(userId, accountNumber, accountHolderName, ifscCode, bankName, upiId);
   
       // Reference to the adminAccountDetails collection
       const userAccountsRef = db.collection("adminAccountDetails");
@@ -519,7 +519,6 @@ exports.addWebsite = async (req, res) => {
       category,
       logo, // Save the full path of the logo in the database
     };
-
     // Save the new website to Firestore using the website ID as the document ID
     const websiteRef = db.collection('websites').doc(websiteId); // Use the unique ID as the document ID
     await websiteRef.set(newWebsite);
@@ -534,6 +533,58 @@ exports.addWebsite = async (req, res) => {
     res.status(500).json({ message: 'Server error. Please try again later.' });
   }
 };
+
+// updateProfile
+exports.updateProfileController = async (req, res) => {
+  const { userId, name, phoneNumber, email, password } = req.body;
+// console.log("inside admin update profile")
+  // Validate incoming data
+  if (!userId) {
+    return res.status(400).json({ message: 'User ID is required' });
+  }
+
+  try {
+    // Get a reference to the 'admin' collection and ensure userId is in string format
+    const adminRef = db.collection('admin').doc(userId.toString());
+
+    // Fetch the admin document
+    const adminDoc = await adminRef.get();
+
+    // Check if the document exists
+    if (!adminDoc.exists) {
+      return res.status(404).json({ message: 'Admin not found' });
+    }
+
+    // Prepare the update data
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (phoneNumber) updateData.phoneNumber = phoneNumber;
+    if (email) updateData.email = email;
+    if (password) updateData.password = password;
+
+    // Update the admin document with the provided fields
+    await adminRef.update(updateData);
+
+    // Fetch the updated admin document
+    const updatedAdminDoc = await adminRef.get();
+
+    // Return the updated admin data (excluding password if not necessary)
+    res.status(200).json({
+      message: 'Profile updated successfully',
+      updatedAdmin: {
+        userId,
+        name: updatedAdminDoc.data().name,
+        phoneNumber: updatedAdminDoc.data().phoneNumber,
+        email: updatedAdminDoc.data().email,
+        // Avoid sending password unless absolutely necessary
+      },
+    });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ message: 'Server error. Please try again later.' });
+  }
+};
+
 
 // Controller for retrieving all websites
 exports.getAllWebsites = async (req, res) => {

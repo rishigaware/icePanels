@@ -95,7 +95,7 @@ const handleAccept = async (item) => {
       severity: 'success',
       summary: 'ID Accepted',
       detail: 'ID Accepted Successfully',
-      life: 2000,
+      life: 1000,
     });
     setNeedRefetch(true); // Trigger refetch to get updated data
   } catch (err) {
@@ -104,7 +104,7 @@ const handleAccept = async (item) => {
       severity: 'error',
       summary: 'Error accepting',
       detail: 'Error accepting ID',
-      life: 2000,
+      life: 1000,
     });
   }
 };
@@ -133,7 +133,7 @@ const handleReject = async (item) => {
       severity: 'error',
       summary: 'ID Rejected',
       detail: 'ID Rejected Successfully',
-      life: 2000,
+      life: 1000,
     });
     setNeedRefetch(true); // Trigger refetch to get updated data
   } catch (err) {
@@ -142,7 +142,7 @@ const handleReject = async (item) => {
       severity: 'error',
       summary: 'Rejecting erro',
       detail: 'Error rejecting ID',
-      life: 2000,
+      life: 1000,
     });
 
   }
@@ -189,7 +189,7 @@ const handleReject = async (item) => {
           severity: 'error',
           summary: 'Failed Change',
           detail: 'Failed to change password',
-          life: 2000,
+          life: 1000,
         });
         throw new Error("Failed to change password");
       }
@@ -198,7 +198,7 @@ const handleReject = async (item) => {
         severity: 'success',
         summary: 'Password changed',
         detail: 'Password changed successfully',
-        life: 2000,
+        life: 1000,
       });
       const data = await response.json();
 

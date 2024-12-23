@@ -77,6 +77,7 @@ const ProfilePage = () => {
         setIsModalOpen(true); // Open modal if no user exists
         return
       }
+      console.log(user)
 
     // Send GET request with user.id as a query parameter
     fetch(`${url}/api/user/get-accountdetails?userId=${user.id}`)

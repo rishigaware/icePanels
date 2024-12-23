@@ -22,6 +22,7 @@ router.get('/get-websites', adminController.getAllWebsites);
 
 // POST route for adding a website
 router.post("/add-website", uploadLogo, adminController.addWebsite);
+router.post("/update-profile", adminController.updateProfileController);
 
 router.get('/get/top-carousel', adminController.getAllTopCorousel);
 router.get('/get/middle-carousel', adminController.getMiddleTopCorousel);

@@ -61,7 +61,7 @@ const Users = () => {
             severity: 'success',
             summary: 'Balance Updated',
             detail: 'User balance updated successfully',
-            life: 2000,
+            life: 1000,
           });
           setSelectedUser((prev) => ({ ...prev, balance: updatedUser.balance })); // Update selectedUser's balance
           setTempBalance(""); // Clear the temp balance input
@@ -72,7 +72,7 @@ const Users = () => {
             severity: 'error',
             summary: 'Update Failed',
             detail: 'Error while updating balance',
-            life: 2000,
+            life: 1000,
           });
         } finally {
           setLoading(false); // Stop loading after the update operation
@@ -106,7 +106,7 @@ const Users = () => {
             severity: 'success',
             summary: 'User Deleted',
             detail: 'User Deleted successfully:',
-            life: 2000,
+            life: 1000,
           });
       
           // If deletion is successful, update the local state to remove the user
@@ -116,7 +116,7 @@ const Users = () => {
                 severity: 'error',
                 summary: 'User Not Deleted',
                 detail: 'Error while Deleting User:',
-                life: 2000,
+                life: 1000,
               });
           console.error("Error deleting user:", error);
           // Optionally, you can show an error message to the user

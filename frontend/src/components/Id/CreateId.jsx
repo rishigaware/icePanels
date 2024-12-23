@@ -86,7 +86,7 @@ const CreateId = () => {
           severity: 'success',
           summary: 'File Selected',
           detail: 'File uploaded successfully',
-          life: 2000,
+          life: 1000,
         });
       } else {
         throw new Error('No file selected.');
@@ -132,7 +132,7 @@ const CreateId = () => {
           severity: 'success',
           summary: 'Website Added',
           detail: 'Website Added successfully',
-          life: 2000,
+          life: 1000,
         });
         setShowAddModal(false);
         setNewWebsite({ id: "", website: "", url: "", category: "", logo: "" });
@@ -226,7 +226,7 @@ const CreateId = () => {
           severity: 'success',
           summary: 'ID Created',
           detail: 'ID created successfully:',
-          life: 2000,
+          life: 1000,
         });
         setShowModal(false);
       } else {
