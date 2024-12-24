@@ -14,15 +14,33 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Middleware to parse JSON
 app.use(express.json());
 
+// // CORS configuration
+// const allowedOrigins = process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : [];
+
+// app.use(
+//   cors({
+//     origin: allowedOrigins,  // Allow all origins if '*'
+//     // origin: "*",  // Allow all origins if '*'
+//     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],  // Add 'PATCH' here
+//     credentials: true,  // Allow credentials (cookies, authorization headers, etc.)
+//   })
+// );
+
 // CORS configuration
 const allowedOrigins = process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : [];
 
 app.use(
   cors({
-    // origin: allowedOrigins,  // Allow all origins if '*'
-    origin: "*",  // Allow all origins if '*'
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],  // Add 'PATCH' here
-    credentials: true,  // Allow credentials (cookies, authorization headers, etc.)
+    origin: (origin, callback) => {
+      // If the origin is not provided (e.g., for server-to-server requests), allow it
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);  // Allow the origin
+      } else {
+        callback(new Error('Not allowed by CORS'));  // Reject the origin
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    credentials: true,
   })
 );
 
