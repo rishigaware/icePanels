@@ -19,7 +19,8 @@ const allowedOrigins = process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split
 
 app.use(
   cors({
-    origin: allowedOrigins,  // Allow all origins if '*'
+    // origin: allowedOrigins,  // Allow all origins if '*'
+    origin: "*",  // Allow all origins if '*'
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],  // Add 'PATCH' here
     credentials: true,  // Allow credentials (cookies, authorization headers, etc.)
   })
