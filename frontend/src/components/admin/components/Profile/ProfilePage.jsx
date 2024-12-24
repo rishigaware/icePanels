@@ -219,7 +219,7 @@ const ProfilePage = () => {
         
       <div className={styles.balanceContainer}>
           <div className={styles.amount}>
-            <strong>₹ 500,000,000,000</strong>  {/* Replace with actual deposit amount */}
+            <strong>₹ 1,00,000</strong>  {/* Replace with actual deposit amount */}
           </div>
           <p className={styles.wallet}>
             <strong>Wallet Balance</strong>

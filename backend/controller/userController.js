@@ -54,53 +54,53 @@ exports.getAllUsers = async (req, res) => {
     }
 };
 
-
 // Add a new user (Signup)
 exports.addUser = async (req, res) => {
-    const { name, phoneNumber, email, password, username } = req.body;
+  const { name, phoneNumber, email, password, username } = req.body;
 
-    // Basic validation
-    if (!name || !phoneNumber || !email || !password || !username) {
-        return res.status(400).json({ message: 'All fields are required.' });
+  // Basic validation
+  if (!name || !phoneNumber || !email || !password || !username) {
+    return res.status(400).json({ message: 'All fields are required.' });
+  }
+
+  try {
+    // Check if the username is already taken
+    const usernameSnapshot = await db
+      .collection('user')
+      .where('username', '==', username)
+      .get();
+
+    if (!usernameSnapshot.empty) {
+      return res.status(400).json({ message: 'Username is already taken.' });
     }
 
-    try {
-        // Check if the username is already taken
-        const usernameSnapshot = await db
-            .collection('user')
-            .where('username', '==', username)
-            .get();
+    // Generate a unique ID using Firestore's auto-generated document ID
+    const userRef = db.collection('user').doc(); // Auto-generate a string ID
+    const newId = userRef.id;
 
-        if (!usernameSnapshot.empty) {
-            return res.status(400).json({ message: 'Username is already taken.' });
-        }
+    // Create the user object
+    const newUser = {
+      id: newId, // Use the auto-generated string ID
+      name,
+      phoneNumber,
+      email: email.toLowerCase(), // Convert email to lowercase
+      password, // NOTE: Hash the password before saving in production
+      username,
+      balance: 0, // Default balance
+      role: 'user', // Default role
+    };
 
-        // Generate a new ID (auto-increment simulation)
-        const snapshot = await db.collection('user').get();
-        const newId = snapshot.size + 1; // Use the total count as the new ID
+    // Add the user to Firestore
+    await userRef.set(newUser);
 
-        // Create the user object
-        const newUser = {
-            id: newId,
-            name,
-            phoneNumber,
-            email,
-            password, // NOTE: Hash the password before saving in production
-            username,
-            balance: 0, // Add the balance field with a default value of 0
-            role: 'user', // Default role is 'user'
-        };
-
-        // Add the user to Firestore
-        await db.collection('user').doc(newId.toString()).set(newUser);
-
-        // Respond with success
-        res.status(201).json({ message: 'User signed up successfully', user: newUser });
-    } catch (error) {
-        console.error('Error details:', error); // Log the full error details
-        res.status(500).json({ message: 'Error adding user', error: error.message });
-    }
+    // Respond with success
+    res.status(201).json({ message: 'User signed up successfully', user: newUser });
+  } catch (error) {
+    console.error('Error details:', error); // Log the full error details
+    res.status(500).json({ message: 'Error adding user', error: error.message });
+  }
 };
+
 
 // Get Account Details
 exports.getAccountDetails = async (req, res) => {
