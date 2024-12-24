@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import styles from "./ProfilePage.module.css"; // Using CSS Modules for styling
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
@@ -6,14 +6,14 @@ import TopNavbar from '../Navbar/TopNavbar';
 import { useUser } from "../../../../context/UserContext";
 import { useNavigate } from 'react-router-dom';
 import LoginPopup from '../Login/LoginPopup';
-
+import { Toast } from "primereact/toast";
 
 
 const ProfilePage = () => {
   const { user, setUser } = useUser();  // Get user and setUser from context
   const navigate = useNavigate(); // For navigation
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal visibility
-
+  const toast = useRef(null); // Add a reference for Toast
 
   // console.log(user.id)
   const [profileInfo, setProfileInfo] = useState({
@@ -142,6 +142,7 @@ const ProfilePage = () => {
       console.error('Error during the request:', error);
     }
   };
+
   const handleProfileSaveClick = async () => {
     const userId = user.id;  // Keep userId as is
     // console.log(userId);
@@ -171,12 +172,17 @@ const ProfilePage = () => {
         // Successfully updated the profile
         const data = await response.json();
         // console.log('Profile Updated:');
+        if (toast.current) {
         toast.current.show({
           severity: 'success',
           summary: 'Profile Updated',
           detail: 'Profile Updated Successfully',
           life: 1000,
         });
+      } else {
+        console.error('Toast ref is null');
+      }
+
   
         // Update the user context with the updated information, keeping the userId intact
         setUser((prevUser) => ({
@@ -207,6 +213,7 @@ const ProfilePage = () => {
   return (
     <div className={styles.profilePage}>
       <TopNavbar />
+      <Toast ref={toast} />
 
       <div className={styles.container}>
         

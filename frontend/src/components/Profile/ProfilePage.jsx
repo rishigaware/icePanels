@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./ProfilePage.module.css"; // Using CSS Modules for styling
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
@@ -6,17 +6,14 @@ import TopNavbar from '../Navbar/TopNavbar';
 import { useUser } from "../../context/UserContext";
 import { useNavigate } from 'react-router-dom';
 import LoginPopup from '../Login/LoginPopup';
-
-
+import { Toast } from "primereact/toast";
 
 const ProfilePage = () => {
   const { user, setUser, url } = useUser();  // Get user and setUser from context
   const navigate = useNavigate(); // For navigation
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal visibility
   const [balance, setBalance] = useState(0); // State to store wallet balance
-
-
-
+  const toast = useRef(null); // Add a reference for Toast
 
   // Function to fetch balance
   const fetchBalance = async (userId) => {
@@ -77,7 +74,7 @@ const ProfilePage = () => {
         setIsModalOpen(true); // Open modal if no user exists
         return
       }
-      console.log(user)
+      // console.log(user)
 
     // Send GET request with user.id as a query parameter
     fetch(`${url}/api/user/get-accountdetails?userId=${user.id}`)

@@ -150,7 +150,7 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
       }
   
       const data = await response.json();
-      console.log("Transaction created:", data);
+      console.log("Transaction created:");
   
       // Show success toast
       toast.current.show({

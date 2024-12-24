@@ -24,7 +24,7 @@ const Login = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Login successful:', data);
+        console.log('Login successful:');
 
         // Check if user data exists in the response
         if (data && data.user) {

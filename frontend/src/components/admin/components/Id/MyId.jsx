@@ -150,7 +150,7 @@ const handleReject = async (item) => {
 
   const handleIdClick = (item) => {
     setSelectedId(item);
-    console.log(item);
+    // console.log(item);
     setChangePasswordPopup(true)
   };
 
