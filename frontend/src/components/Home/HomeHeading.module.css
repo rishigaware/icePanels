@@ -1,5 +1,6 @@
 .navbar {
     height: 5%; /* Adjusts the height of the navbar */
+    overflow: hidden;
     width: 100%; /* Stretches across the full width of the viewport */
     background-color: #3267d2; /* Red background */
     position: fixed; /* Fixes the navbar relative to the viewport */
@@ -185,17 +186,16 @@
   }
   
   .buttonlogin {
+    right: 0;
     background-color: transparent; /* Remove background */
     color: #1e3d9c; /* Text color */
     border: 2px solid #3a6bff; /* Border color */
     padding: 6px 10px; /* Adjust height & width */
     font-size: 12px; /* Text size */
     border-radius: 4px; /* Optional: rounded corners */
-    cursor: pointer;
     margin-top: 4px;
     margin-right: 5px;
-
-    right: 0;
+    cursor: pointer;
 }
 
 .buttonlogout {

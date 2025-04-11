@@ -9,7 +9,8 @@ import { FaQuestion } from "react-icons/fa";
 
 import { FaPlus } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
-import logo from '../../assets/logo.png'
+// import logo from '../../assets/logo.png'
+import newlogo from '../../assets/newlogo.png'
 import LoginPopup from '../Login/LoginPopup';
 
 import { useUser } from "../../../../context/UserContext";
@@ -37,9 +38,15 @@ const HomeHeading = () => {
     <>
             <div className={styles.navbar}>
             <img 
-                src={logo} 
+                src={newlogo} 
                 alt="Logo" 
-                style={{ float: 'left', width: '42px' }} // Adjust size as needed
+                style={{
+                    float: 'left',
+                    height: '85%',
+                    marginTop: '2px', // Adjust as needed
+                    marginLeft:'4px',
+                    objectFit: 'contain' // Ensures the image scales well inside the container
+                  }}
             />                
                 <div style={{ float: 'right' }}>
                     {user ? (
@@ -69,9 +76,15 @@ const HomeHeading = () => {
                 <div className={styles.second}>
                     <div className={styles.logo}>
                     <img 
-                        src={logo} 
+                        src={newlogo} 
                         alt="Logo" 
-                        style={{ float: 'left', width: '80px' }} 
+                        style={{
+                            float: 'left',
+                            height: '85%',
+                            marginTop: '2px', // Adjust as needed
+                            marginLeft:'4px',
+                            objectFit: 'contain' // Ensures the image scales well inside the container
+                          }}
                     /> 
                 </div>
 

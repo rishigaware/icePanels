@@ -1,6 +1,7 @@
 /* Navbar Container */
 .navbar {
   width: 100%;
+  overflow: hidden;
   position: fixed; /* Fix navbar at the bottom */
   bottom: 0; /* Position it at the bottom */
   left: 0;

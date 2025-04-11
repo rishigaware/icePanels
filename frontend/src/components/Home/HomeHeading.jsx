@@ -5,7 +5,8 @@ import { PiHandDepositDuotone } from "react-icons/pi";
 import { BiMoneyWithdraw } from "react-icons/bi";
 import { FaBalanceScale } from "react-icons/fa"; // Example balance icon
 import { FaPlus, FaArrowRight } from "react-icons/fa";
-import logo from '../../assets/logo.png';
+// import logo from '../../assets/logo.png';
+import newlogo from '../../assets/newlogo.png';
 import LoginPopup from '../Login/LoginPopup';
 import { useUser } from "../../context/UserContext";
 
@@ -63,11 +64,17 @@ const HomeHeading = () => {
   return (
     <>
       <div className={styles.navbar}>
-        <img
-          src={logo}
-          alt="Logo"
-          style={{ float: 'left', width: '42px' }} // Adjust size as needed
-        />
+      <img
+        src={newlogo}
+        alt="Logo"
+        style={{
+          float: 'left',
+          height: '85%',
+          marginTop: '2px', // Adjust as needed
+          marginLeft:'4px',
+          objectFit: 'contain' // Ensures the image scales well inside the container
+        }}
+      />
         <div style={{ float: 'right' }}>
           {user ? (
             <button
@@ -97,10 +104,15 @@ const HomeHeading = () => {
           <div className={styles.second}>
             <div className={styles.logo}>
               <img
-                src={logo}
+                src={newlogo}
                 alt="Logo"
-                style={{ float: 'left', width: '80px' }}
-              />
+                style={{
+                  float: 'left',
+                  height: '85%',
+                  marginTop: '2px', // Adjust as needed
+                  marginLeft:'4px',
+                  objectFit: 'contain' // Ensures the image scales well inside the container
+                }}              />
             </div>
 
             <div className={styles.balanceContainer}>

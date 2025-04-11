@@ -87,6 +87,7 @@
 
  .navbar {
   width: 100vw;
+  overflow: hidden;
   position: fixed;
   top: 0; 
   left: 0;
@@ -106,7 +107,7 @@
 }
 
 .logoImage {
-  height: 40px;
+  height: 400px;
   margin-right: 10px;
 }
 

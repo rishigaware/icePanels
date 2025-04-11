@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./TopNavbar.module.css";
 import DepositPopup from "./DepositPopup"; // Import the DepositPopup component
-import logo from '../../../../assets/logo.png'
+// import logo from '../../../../assets/logo.png'
+import newlogo from '../../../../assets/newlogo.png'
 
 export default function TopNavbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -38,10 +39,15 @@ export default function TopNavbar() {
       {/* Logo Section */}
       <div className={styles.logo}>
         <img
-          src={logo}
+          src={newlogo}
           alt="Logo"
-          className={styles.logoImage}
-        />
+          style={{
+            float: 'left',
+            height: '85%',
+            marginTop: '2px', // Adjust as needed
+            marginLeft:'4px',
+            objectFit: 'contain' // Ensures the image scales well inside the container
+          }}        />
       </div>
 
       {/* Buttons Section */}
