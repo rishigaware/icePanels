@@ -29,21 +29,39 @@ app.use(express.json());
 // CORS configuration
 const allowedOrigins = process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : [];
 
+// app.use(
+//   cors({
+//     origin: (origin, callback) => {
+//       // If the origin is not provided (e.g., for server-to-server requests), allow it
+//       if (!origin || allowedOrigins.includes(origin)) {
+//         callback(null, true);  // Allow the origin
+//       } else {
+//         callback(new Error('Not allowed by CORS'));  // Reject the origin
+//       }
+//     },
+//     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+//     credentials: true,
+//   })
+// );
+
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      // If the origin is not provided (e.g., for server-to-server requests), allow it
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);  // Allow the origin
+      console.log('🔍 CORS request from:', origin);  // Add this line for debugging
+
+      if (!origin || allowedOrigins.includes(origin.trim())) {
+        console.log('✅ CORS allowed:', origin);
+        callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));  // Reject the origin
+        console.error('--- CORS blocked:', origin);
+        callback(new Error('Not allowed by CORS'));
       }
     },
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,
   })
 );
-
 // Registering routes
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
