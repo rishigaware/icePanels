@@ -48,9 +48,16 @@ const admin = require('firebase-admin');
 require('dotenv').config(); // Load environment variables
 const path = require('path'); // Import path module
 
-const serviceAccountPath = path.resolve(__dirname, process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH);
+// const serviceAccountPath = path.resolve(__dirname, process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH);
+// const serviceAccount = require(serviceAccountPath); // Load service account from env
 
-const serviceAccount = require(serviceAccountPath); // Load service account from env
+
+// Construct the absolute path to your service account key
+const serviceAccountPath = path.resolve(__dirname, 'service-account-key.json');   //new added
+// Load the service account key
+const serviceAccount = require(serviceAccountPath);   //new added
+
+
 const databaseURL = process.env.FIREBASE_DATABASE_URL; // Use database URL from env
 // console.log(process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH)
 let db;
