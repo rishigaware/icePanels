@@ -103,16 +103,18 @@ const HomeHeading = () => {
 
           <div className={styles.second}>
             <div className={styles.logo}>
-              <img
-                src={newlogo}
-                alt="Logo"
-                style={{
-                  float: 'left',
-                  height: '85%',
-                  marginTop: '2px', // Adjust as needed
-                  marginLeft:'4px',
-                  objectFit: 'contain' // Ensures the image scales well inside the container
-                }}              />
+            <img
+              src={newlogo}
+              alt="Logo"
+              style={{
+                height: '60px',
+                marginTop: '2px',
+                marginLeft: '4px',
+                objectFit: 'contain',
+                zIndex: 1000,
+                position: 'relative'
+              }}
+            />           
             </div>
 
             <div className={styles.balanceContainer}>

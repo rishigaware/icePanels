@@ -74,16 +74,11 @@ export default function TopNavbar() {
     <div className={styles.navbar}>
       {/* Logo Section */}
       <div className={styles.logo}>
-        <img
-          src={newlogo}
-          alt="Logo"
-          style={{
-            float: 'left',
-            height: '85%',
-            marginTop: '2px', // Adjust as needed
-            marginLeft:'4px',
-            objectFit: 'contain' // Ensures the image scales well inside the container
-          }}        />
+          <img
+            src={newlogo}
+            alt="Logo"
+            className={styles.logoImage}
+            />
       </div>
 
       {/* Buttons Section */}

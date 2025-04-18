@@ -12,7 +12,7 @@
   }
   
   .top {
-    height: 30vh; /* Occupies 30% of the viewport height */
+    height: 20vh; /* Occupies 30% of the viewport height */
     width: 100vw; /* Occupies full viewport width */
     background-color: #3267d2; /* Red background */
     display: flex;
@@ -63,7 +63,7 @@
     margin-top: auto; /* Push the icon below the h3 */
   }
   
-  .second {
+  /* .second {
     height: 150px;
     width: 150px;
     border-radius: 10px;
@@ -72,7 +72,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
+  } */
   
   .second {
     height: 150px;
@@ -83,14 +83,24 @@
     display: flex;
     flex-direction: column; /* Stack content vertically */
     align-items: center;
-    justify-content: space-around; /* Space items evenly */
+    justify-content: center; /* Center items */
     text-align: center;
     padding: 10px;
+    position: relative;
+    z-index: 999;
+    overflow: visible; /* Make sure content can overflow */
   }
   
-  /* .logo {
-    font-size: 60px;
-  } */
+  .logo {
+    position: relative;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+  }
+
+  
   
   .balance {
     color: #8ed9ff;
@@ -140,14 +150,14 @@
   
   .createId {
     width: 97vw; /* Almost full viewport width */
-    height: 35px; /* Adjust the height as needed */
+    height: 25px; /* Adjust the height as needed */
     background-color: #3666c4; /* Red background */
     color: white; /* White text */
     display: flex;
     align-items: center;
     justify-content: space-between; /* Space between left and right elements */
     padding: 0 10px; /* Adds horizontal padding */
-    top: 36vh; /* Places it directly below the .top section (which is 30vh) */
+    top: 27vh; /* Places it directly below the .top section (which is 30vh) */
     border-radius: 15px; /* Rounded corners */
     position: fixed; /* Fixes it relative to the viewport */
     left: 1.5vw; /* Centers horizontally with a small margin */
@@ -261,16 +271,16 @@
 /* Responsive Styles for Smaller Screens */
 @media screen and (max-width: 768px) {
   .navbar {
-    height: 6%; /* Slightly larger navbar for smaller screens */
+    height: 5%; /* Slightly larger navbar for smaller screens */
   }
 
   .top {
-    height: 25vh; /* Adjust top section height */
+    height: 20vh; /* Adjust top section height */
   }
 
   .createId {
-    width: 90vw; /* Adjust width to 90% of the screen */
-    height: 30px; /* Slightly smaller height for smaller screens */
+    width: 97vw; /* Adjust width to 90% of the screen */
+    height: 25px; /* Slightly smaller height for smaller screens */
   }
 
   .buttonlogin,
@@ -296,7 +306,7 @@
 /* Additional Media Query for Extra Small Screens */
 @media screen and (max-width: 480px) {
   .navbar {
-    height: 7%; /* Increase navbar height slightly for very small screens */
+    height: 5%; /* Increase navbar height slightly for very small screens */
   }
 
   .top {
@@ -304,12 +314,13 @@
   }
 
   .createId {
-    width: 85vw; /* Reduce width to fit better on smaller screens */
+    width: 97vw; /* Reduce width to fit better on smaller screens */
     height: 28px; /* Slightly smaller height */
   }
 
   .buttonlogin,
   .buttonlogout {
+    margin-bottom: 10px;
     padding: 4px 6px; /* Even smaller padding */
     font-size: 9px; /* Further reduce font size */
   }
