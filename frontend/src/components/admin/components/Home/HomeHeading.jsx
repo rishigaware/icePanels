@@ -107,7 +107,8 @@ const HomeHeading = () => {
             <div className={styles.createId}>
             <div className={styles.leftSide}>
                 <FaPlus size={20} className={styles.createIdIcon} />
-                <span className={styles.createIdText}>Create ID</span>
+                <span className={styles.createIdText}>                Self Admin Panel's
+                </span>
             </div>
             <FaArrowRight size={20} className={`${styles.createIdArrow} ${styles.arrow}`} />
             </div>
