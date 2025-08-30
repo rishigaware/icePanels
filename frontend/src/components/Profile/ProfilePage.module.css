@@ -1,187 +1,1026 @@
 
+/* Profile Page Specific Styles - High Specificity with Consistent Colors */
 .profilePage {
-  width: 100vw;           /* Full width of the viewport */
-  margin: 10vh 0 10vh 0;
-  padding: 15px 0 15px 0;
-  display: flex;          /* Use Flexbox for layout */
-  justify-content: center;/* Center horizontally */
-  align-items: center;    /* Center vertically */
-  flex-direction: column; /* Stack the carousels vertically */
-  overflow-y: auto;       /* Allow scrolling vertically */
-  /* background: #000; */
-}
-/* Add the heading style just below the TopNavbar */
-.heading {
-  color: white; /* Set the text color to white */
-  top:0;
-  font-size: 24px; /* Optional: Adjust the font size */
-  font-weight: bold; /* Optional: Make the font bold */
+  min-height: 100vh !important;
+  background: linear-gradient(135deg, #f9f9f9 0%, #e8e8e8 100%) !important;
+  padding-top: 80px !important; /* Account for fixed top navbar */
+  padding-bottom: 100px !important; /* Account for fixed bottom navbar */
+  width: 100% !important;
+  margin: 0 !important;
+  display: block !important;
+  justify-content: unset !important;
+  align-items: unset !important;
+  flex-direction: unset !important;
+  overflow-y: visible !important;
+  box-sizing: border-box !important;
 }
 
-/* Container for Cards */
 .container {
-  display: flex;
-  gap: 20px; /* Spacing between cards */
-  justify-content: center; /* Horizontally center cards */
-  align-items: center; /* Vertically center cards */
-  width: 100%; /* Full width of the screen */
-}
-/* Card Styling */
-.card {
-  background: linear-gradient(to right, #c1e1fd, #62a4fb);
-  border-radius: 12px;
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for cards */
-  padding: 20px;
-  width: 80vw; /* Each card takes 80% of the viewport width */
-  height: auto; /* Dynamic height based on content */
-  display: flex; /* Enable flexbox */
-  flex-direction: column; /* Stack content vertically */
-  justify-content: center; /* Vertically center content */
-  align-items: center; /* Horizontally center content */
-  transition: transform 0.3s, box-shadow 0.3s; /* Smooth hover effect */
-  position: relative;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  padding: 20px 40px !important;
+  display: block !important;
+  gap: unset !important;
+  justify-content: unset !important;
+  align-items: unset !important;
+  width: 100vw;
+  box-sizing: border-box !important;
 }
 
-/* Card Hover Effect */
-.card:hover {
-  transform: translateY(-5px); /* Slight lift on hover */
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+/* Enhanced Wallet Balance Card */
+.balanceCard {
+  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%) !important;
+  border-radius: 20px !important;
+  padding: 30px !important;
+  margin-bottom: 30px !important;
+  box-shadow: 0 20px 40px rgba(50, 103, 210, 0.2) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  position: relative !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  height: auto !important;
+  flex-direction: row !important;
+  box-sizing: border-box !important;
 }
 
-/* Card Title */
-.card h2 {
-  font-size: 1.5rem;
-  margin-bottom: 15px;
-  color: #133488;
-  text-align: center;
+.balanceCard::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
+  border-radius: 20px !important;
 }
 
-/* Card Text */
-.card p {
-  font-size: 1rem;
-  color: #162b62;
-  margin: 10px 0;
-  line-height: 0.5;
+.balanceIcon {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 50% !important;
+  padding: 15px !important;
+  backdrop-filter: blur(10px) !important;
+  z-index: 1 !important;
+  position: relative !important;
+  flex-shrink: 0 !important;
 }
 
-/* Input Styling */
-.card input {
-  color: #484b50;
-  padding: 0;
-  background: linear-gradient(to right, #c1e1fd, #62a4fb);
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  max-width: 300px; /* Set a maximum width for larger screens */
-  font-size: 14px;
-}
-.card p input {
-  margin-left: 10px; /* Add space between <strong> and <input> */
+.balanceContent {
+  flex: 1 !important;
+  margin-left: 20px !important;
+  z-index: 1 !important;
+  position: relative !important;
 }
 
-.card input:focus {
-  outline: none;
-  border-color: #2575fc;
-  background-color: #e6f7ff; /* Light blue color when focused */
+.balanceAmount {
+  display: flex !important;
+  align-items: baseline !important;
+  margin-bottom: 5px !important;
 }
 
-
-.editInput {
-  background: linear-gradient(to right, #c1e1fd, #62a4fb);
-  color: #2575fc;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 45%;
-  height: 20%;
-  margin: -5px 0px;
+.currency {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  color: #ffffff !important;
+  margin-right: 5px !important;
 }
 
-.editButton{
-  background-color: #4075de; /* Red background */
-    color: rgb(186, 248, 255);
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
-}
-.saveButton {
-  background-color: #4193ff; /* Red background */
-  color: rgb(221, 235, 255);
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
+.amount {
+  font-size: 36px !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  margin: 0 !important;
+  line-height: 1 !important;
 }
 
-.editButton:hover,
-.saveButton:hover {
-  background-color: #3888ff; /* Lighter blue color for the background */
-}
-
-.buttonContainer {
-  margin-top: 8px;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column; /* Stack cards vertically */
-    gap: 15px; /* Adjust spacing for smaller screens */
-  }
-
-  .card {
-    width: 90%; /* Cards take up most of the screen width on smaller screens */
-  }
-}
-
-@media (max-width: 480px) {
-  .card h2 {
-    font-size: 1.3rem; /* Slightly smaller heading */
-  }
-
-  .card p {
-    font-size: 0.9rem; /* Slightly smaller text */
-  }
-}
-
-
-
-.balanceContainer {
-  width: 80%; /* Set width to 80% */
-  margin: 20px auto; /* Center horizontally with auto margins */
-  padding: 20px; /* Add padding inside the container */
-  text-align: center; /* Center all text */
-  background: linear-gradient(to right, #c1e1fd, #62a4fb);
-  border-radius: 8px; /* Rounded corners */
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for cards */
-  position: relative;
-
+.balanceLabel {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  margin: 0 !important;
 }
 
 .logoutButton {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  background: linear-gradient(to right, #c1e1fd, #62a4fb);
-  color: rgb(5, 100, 122);
-  border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px; /* Adjust font size */
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  color: #ffffff !important;
+  padding: 12px 20px !important;
+  border-radius: 25px !important;
+  cursor: pointer !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  transition: all 0.3s ease !important;
+  backdrop-filter: blur(10px) !important;
+  z-index: 1 !important;
+  position: relative !important;
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
 }
 
 .logoutButton:hover {
-  background: linear-gradient(to right, #9bc6eb, #3a8fbf);
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
 }
 
-
-.amount {
-  font-size: 2rem; /* Twice the size of normal text */
-  font-weight: bold; /* Make the text bold */
-  color: #03438b; /* Darker text color */
-  margin-bottom: 10px; /* Space below the amount */
+/* Enhanced Card Design */
+.card {
+  background: #ffffff !important;
+  border-radius: 20px !important;
+  padding: 0 !important;
+  margin-bottom: 25px !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
+  overflow: hidden !important;
+  transition: all 0.3s ease !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  box-sizing: border-box !important;
 }
 
-.wallet {
-  font-size: 1rem; /* Normal size for balance text */
-  color: #1a4bc7;
+.card:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important;
 }
+
+.cardHeader {
+  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%) !important;
+  padding: 25px 30px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 20px !important;
+}
+
+.cardIcon {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 15px !important;
+  padding: 15px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2) !important;
+  flex-shrink: 0 !important;
+}
+
+.cardTitle {
+  margin: 0 !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+  line-height: 1.2 !important;
+}
+
+.cardContent {
+  padding: 30px !important;
+}
+
+.infoRow {
+  display: flex !important;
+  flex-direction: column !important;
+  margin-bottom: 25px !important;
+  gap: 8px !important;
+}
+
+.infoRow:last-child {
+  margin-bottom: 0 !important;
+}
+
+.infoLabel {
+  font-weight: 600 !important;
+  color: #3267d2 !important;
+  font-size: 12px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  margin: 0 !important;
+}
+
+.infoValue {
+  min-height: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.infoText {
+  font-size: 14px !important;
+  color: #1a1a1a !important;
+  font-weight: 500 !important;
+  margin: 0 !important;
+  padding: 10px 0 !important;
+  line-height: 1.5 !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+.editInput {
+  width: 100% !important;
+  padding: 12px 16px !important;
+  border: 2px solid #e9ecef !important;
+  border-radius: 10px !important;
+  font-size: 14px !important;
+  color: #1a1a1a !important;
+  background: #f8f9fa !important;
+  transition: all 0.3s ease !important;
+  font-family: inherit !important;
+  box-sizing: border-box !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+.editInput:focus {
+  outline: none !important;
+  border-color: #3267d2 !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(50, 103, 210, 0.1) !important;
+}
+
+.editInput::placeholder {
+  color: #adb5bd !important;
+}
+
+.cardActions {
+  padding: 25px 30px !important;
+  background: #f8f9fa !important;
+  border-top: 1px solid #e9ecef !important;
+  display: flex !important;
+  gap: 15px !important;
+  justify-content: flex-end !important;
+  margin-top: 0 !important;
+}
+
+.editButton {
+  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 12px 24px !important;
+  border-radius: 25px !important;
+  cursor: pointer !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(50, 103, 210, 0.3) !important;
+  white-space: nowrap !important;
+}
+
+.editButton:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(50, 103, 210, 0.4) !important;
+}
+
+.saveButton {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 12px 24px !important;
+  border-radius: 25px !important;
+  cursor: pointer !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3) !important;
+  white-space: nowrap !important;
+}
+
+.saveButton:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4) !important;
+}
+
+.cancelButton {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 12px 24px !important;
+  border-radius: 25px !important;
+  cursor: pointer !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3) !important;
+  white-space: nowrap !important;
+}
+
+.cancelButton:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4) !important;
+}
+
+/* Override any conflicting styles */
+.profilePage .card h2 {
+  font-size: 24px !important;
+  margin-bottom: 0 !important;
+  color: #2c3e50 !important;
+  text-align: left !important;
+}
+
+.profilePage .card p {
+  font-size: 16px !important;
+  color: #2c3e50 !important;
+  margin: 0 !important;
+  line-height: 1.5 !important;
+}
+
+.profilePage .card input {
+  color: #2c3e50 !important;
+  padding: 12px 16px !important;
+  background: #f8f9fa !important;
+  border: 2px solid #e9ecef !important;
+  border-radius: 10px !important;
+  max-width: none !important;
+  width: 100% !important;
+  font-size: 16px !important;
+}
+
+.profilePage .card input:focus {
+  outline: none !important;
+  border-color: #667eea !important;
+  background: #ffffff !important;
+}
+
+.profilePage .editInput {
+  background: #f8f9fa !important;
+  color: #2c3e50 !important;
+  border: 2px solid #e9ecef !important;
+  border-radius: 10px !important;
+  width: 100% !important;
+  height: auto !important;
+  margin: 0 !important;
+}
+
+.profilePage .editButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 12px 24px !important;
+  border-radius: 25px !important;
+  font-size: 14px !important;
+}
+
+.profilePage .saveButton {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 12px 24px !important;
+  border-radius: 25px !important;
+  font-size: 14px !important;
+}
+
+.profilePage .buttonContainer {
+  margin-top: 0 !important;
+}
+
+/* ===== COMPREHENSIVE RESPONSIVE DESIGN ===== */
+
+/* Ultra Large Desktop Screens (1600px and above) */
+@media (min-width: 1600px) {
+  .container {
+    max-width: 100% !important;
+    padding: 30px 60px !important;
+  }
+  
+  .balanceCard {
+    padding: 40px !important;
+    margin-bottom: 40px !important;
+  }
+  
+  .amount {
+    font-size: 42px !important;
+  }
+  
+  .currency {
+    font-size: 24px !important;
+  }
+  
+  .balanceLabel {
+    font-size: 16px !important;
+  }
+  
+  .cardHeader {
+    padding: 30px 40px !important;
+  }
+  
+  .cardContent {
+    padding: 40px !important;
+  }
+  
+  .cardActions {
+    padding: 30px 40px !important;
+  }
+  
+  .editButton,
+  .saveButton,
+  .cancelButton {
+    padding: 14px 28px !important;
+    font-size: 16px !important;
+  }
+  
+  .cardTitle {
+    font-size: 22px !important;
+  }
+  
+  .infoLabel {
+    font-size: 13px !important;
+  }
+  
+  .infoText {
+    font-size: 15px !important;
+  }
+  
+  .editInput {
+    padding: 14px 18px !important;
+    font-size: 15px !important;
+  }
+}
+
+/* Extra Large Desktop Screens (1400px to 1599px) */
+@media (min-width: 1400px) and (max-width: 1599px) {
+  .container {
+    max-width: 100% !important;
+    padding: 25px 50px !important;
+  }
+  
+  .balanceCard {
+    padding: 35px !important;
+    margin-bottom: 35px !important;
+  }
+  
+  .amount {
+    font-size: 38px !important;
+  }
+  
+  .currency {
+    font-size: 22px !important;
+  }
+  
+  .balanceLabel {
+    font-size: 15px !important;
+  }
+  
+  .cardHeader {
+    padding: 28px 35px !important;
+  }
+  
+  .cardContent {
+    padding: 35px !important;
+  }
+  
+  .cardActions {
+    padding: 28px 35px !important;
+  }
+  
+  .editButton,
+  .saveButton,
+  .cancelButton {
+    padding: 14px 26px !important;
+    font-size: 15px !important;
+  }
+  
+  .cardTitle {
+    font-size: 21px !important;
+  }
+  
+  .infoLabel {
+    font-size: 12px !important;
+  }
+  
+  .infoText {
+    font-size: 14px !important;
+  }
+  
+  .editInput {
+    padding: 12px 16px !important;
+    font-size: 14px !important;
+  }
+}
+
+/* Large Desktop Screens (1200px to 1399px) */
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .container {
+    max-width: 100% !important;
+    padding: 20px 40px !important;
+  }
+  
+  .balanceCard {
+    padding: 30px !important;
+    margin-bottom: 30px !important;
+  }
+  
+  .amount {
+    font-size: 34px !important;
+  }
+  
+  .currency {
+    font-size: 20px !important;
+  }
+  
+  .cardHeader {
+    padding: 25px 30px !important;
+  }
+  
+  .cardContent {
+    padding: 30px !important;
+  }
+  
+  .cardActions {
+    padding: 25px 30px !important;
+  }
+  
+  .editButton,
+  .saveButton,
+  .cancelButton {
+    padding: 12px 24px !important;
+    font-size: 14px !important;
+  }
+}
+
+/* Medium Desktop Screens (992px to 1199px) */
+@media (max-width: 1199px) and (min-width: 992px) {
+  .profilePage {
+    padding-top: 80px !important;
+    padding-bottom: 100px !important;
+  }
+  
+  .container {
+    max-width: 100% !important;
+    padding: 20px 30px !important;
+  }
+  
+  .balanceCard {
+    padding: 30px !important;
+  }
+  
+  .amount {
+    font-size: 32px !important;
+  }
+  
+  .cardHeader {
+    padding: 25px 30px !important;
+  }
+  
+  .cardContent {
+    padding: 30px !important;
+  }
+  
+  .cardActions {
+    padding: 25px 30px !important;
+  }
+}
+
+/* Small Desktop and Large Tablet (768px to 991px) */
+@media (max-width: 991px) and (min-width: 768px) {
+  .profilePage {
+    padding-top: 80px !important;
+    padding-bottom: 100px !important;
+  }
+  
+  .container {
+    max-width: 100% !important;
+    padding: 20px 25px !important;
+  }
+  
+  .balanceCard {
+    padding: 25px !important;
+    flex-direction: row !important;
+    text-align: left !important;
+    gap: 20px !important;
+  }
+  
+  .balanceContent {
+    margin-left: 20px !important;
+  }
+  
+  .amount {
+    font-size: 30px !important;
+  }
+  
+  .cardHeader {
+    padding: 22px 25px !important;
+    flex-direction: row !important;
+    text-align: left !important;
+    gap: 20px !important;
+  }
+  
+  .cardContent {
+    padding: 25px !important;
+  }
+  
+  .cardActions {
+    padding: 22px 25px !important;
+    flex-direction: row !important;
+    gap: 15px !important;
+  }
+  
+  .editButton,
+  .saveButton,
+  .cancelButton {
+    width: auto !important;
+    justify-content: center !important;
+  }
+}
+
+/* Medium Tablet (600px to 767px) */
+@media (max-width: 767px) and (min-width: 600px) {
+  .profilePage {
+    padding-top: 70px !important;
+    padding-bottom: 90px !important;
+  }
+  
+  .container {
+    padding: 18px 20px !important;
+  }
+  
+  .balanceCard {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 20px !important;
+    padding: 25px !important;
+  }
+  
+  .balanceContent {
+    margin-left: 0 !important;
+  }
+  
+  .amount {
+    font-size: 28px !important;
+  }
+  
+  .currency {
+    font-size: 18px !important;
+  }
+  
+  .cardHeader {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 15px !important;
+    padding: 20px !important;
+  }
+  
+  .cardContent {
+    padding: 22px !important;
+  }
+  
+  .cardActions {
+    flex-direction: column !important;
+    padding: 20px !important;
+    gap: 12px !important;
+  }
+  
+  .editButton,
+  .saveButton,
+  .cancelButton {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 12px 18px !important;
+  }
+  
+  .logoutButton {
+    padding: 12px 16px !important;
+    font-size: 13px !important;
+  }
+}
+
+/* Small Tablet (480px to 599px) */
+@media (max-width: 599px) and (min-width: 480px) {
+  .profilePage {
+    padding-top: 70px !important;
+    padding-bottom: 90px !important;
+  }
+  
+  .container {
+    padding: 15px 18px !important;
+  }
+  
+  .balanceCard {
+    padding: 22px !important;
+    gap: 18px !important;
+  }
+  
+  .amount {
+    font-size: 26px !important;
+  }
+  
+  .currency {
+    font-size: 16px !important;
+  }
+  
+  .balanceLabel {
+    font-size: 13px !important;
+  }
+  
+  .cardHeader {
+    padding: 18px !important;
+    gap: 12px !important;
+  }
+  
+  .cardIcon {
+    padding: 12px !important;
+  }
+  
+  .cardTitle {
+    font-size: 19px !important;
+  }
+  
+  .cardContent {
+    padding: 18px !important;
+  }
+  
+  .infoRow {
+    margin-bottom: 18px !important;
+    gap: 6px !important;
+  }
+  
+  .infoLabel {
+    font-size: 11px !important;
+  }
+  
+  .infoText {
+    font-size: 13px !important;
+    padding: 8px 0 !important;
+  }
+  
+  .editInput {
+    padding: 10px 14px !important;
+    font-size: 13px !important;
+  }
+  
+  .cardActions {
+    padding: 18px !important;
+    gap: 10px !important;
+  }
+  
+  .editButton,
+  .saveButton,
+  .cancelButton {
+    padding: 10px 16px !important;
+    font-size: 12px !important;
+    gap: 6px !important;
+  }
+  
+  .logoutButton {
+    padding: 10px 14px !important;
+    font-size: 11px !important;
+    gap: 6px !important;
+  }
+}
+
+/* Mobile Phones (320px to 479px) */
+@media (max-width: 479px) {
+  .profilePage {
+    padding-top: 70px !important;
+    padding-bottom: 90px !important;
+  }
+  
+  .container {
+    padding: 12px 15px !important;
+  }
+  
+  .balanceCard {
+    padding: 20px !important;
+    gap: 15px !important;
+    margin-bottom: 20px !important;
+  }
+  
+  .balanceIcon {
+    padding: 10px !important;
+  }
+  
+  .amount {
+    font-size: 24px !important;
+  }
+  
+  .currency {
+    font-size: 14px !important;
+  }
+  
+  .balanceLabel {
+    font-size: 12px !important;
+  }
+  
+  .card {
+    margin-bottom: 20px !important;
+    border-radius: 15px !important;
+  }
+  
+  .cardHeader {
+    padding: 16px !important;
+    gap: 10px !important;
+  }
+  
+  .cardIcon {
+    padding: 10px !important;
+  }
+  
+  .cardTitle {
+    font-size: 18px !important;
+  }
+  
+  .cardContent {
+    padding: 16px !important;
+  }
+  
+  .infoRow {
+    margin-bottom: 16px !important;
+    gap: 5px !important;
+  }
+  
+  .infoLabel {
+    font-size: 10px !important;
+    letter-spacing: 0.3px !important;
+  }
+  
+  .infoText {
+    font-size: 12px !important;
+    padding: 6px 0 !important;
+  }
+  
+  .editInput {
+    padding: 8px 12px !important;
+    font-size: 12px !important;
+    border-radius: 8px !important;
+  }
+  
+  .cardActions {
+    padding: 16px !important;
+    gap: 8px !important;
+  }
+  
+  .editButton,
+  .saveButton,
+  .cancelButton {
+    padding: 8px 14px !important;
+    font-size: 11px !important;
+    gap: 5px !important;
+    border-radius: 20px !important;
+  }
+  
+  .logoutButton {
+    padding: 8px 12px !important;
+    font-size: 10px !important;
+    gap: 5px !important;
+    border-radius: 20px !important;
+  }
+}
+
+/* Extra Small Mobile (below 320px) */
+@media (max-width: 319px) {
+  .profilePage {
+    padding-top: 70px !important;
+    padding-bottom: 90px !important;
+  }
+  
+  .container {
+    padding: 10px 12px !important;
+  }
+  
+  .balanceCard {
+    padding: 15px !important;
+    gap: 12px !important;
+  }
+  
+  .amount {
+    font-size: 22px !important;
+  }
+  
+  .currency {
+    font-size: 12px !important;
+  }
+  
+  .balanceLabel {
+    font-size: 11px !important;
+  }
+  
+  .cardHeader {
+    padding: 14px !important;
+    gap: 8px !important;
+  }
+  
+  .cardTitle {
+    font-size: 16px !important;
+  }
+  
+  .cardContent {
+    padding: 14px !important;
+  }
+  
+  .infoRow {
+    margin-bottom: 14px !important;
+  }
+  
+  .infoLabel {
+    font-size: 9px !important;
+  }
+  
+  .infoText {
+    font-size: 11px !important;
+  }
+  
+  .editInput {
+    padding: 6px 10px !important;
+    font-size: 11px !important;
+  }
+  
+  .cardActions {
+    padding: 14px !important;
+    gap: 6px !important;
+  }
+  
+  .editButton,
+  .saveButton,
+  .cancelButton {
+    padding: 6px 10px !important;
+    font-size: 10px !important;
+  }
+  
+  .logoutButton {
+    padding: 6px 8px !important;
+    font-size: 9px !important;
+  }
+}
+
+/* Landscape Mobile Orientation */
+@media (max-height: 500px) and (orientation: landscape) {
+  .profilePage {
+    padding-top: 60px !important;
+    padding-bottom: 80px !important;
+  }
+  
+  .balanceCard {
+    padding: 20px 30px !important;
+    margin-bottom: 20px !important;
+  }
+  
+  .card {
+    margin-bottom: 20px !important;
+  }
+  
+  .cardHeader {
+    padding: 20px 30px !important;
+  }
+  
+  .cardContent {
+    padding: 20px 30px !important;
+  }
+  
+  .cardActions {
+    padding: 20px 30px !important;
+  }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .card {
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08) !important;
+  }
+  
+  .balanceCard {
+    box-shadow: 0 10px 20px rgba(50, 103, 210, 0.08) !important;
+  }
+  
+  .editButton,
+  .saveButton,
+  .cancelButton,
+  .logoutButton {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .profilePage {
+    background: #ffffff !important;
+    padding: 0 !important;
+  }
+  
+  .balanceCard,
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+    break-inside: avoid !important;
+  }
+  
+  .logoutButton,
+  .editButton,
+  .saveButton,
+  .cancelButton {
+    display: none !important;
+  }
+}
+
 

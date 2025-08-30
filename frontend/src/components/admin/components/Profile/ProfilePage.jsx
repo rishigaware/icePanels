@@ -1,7 +1,12 @@
-import React, { useState, useEffect,useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./ProfilePage.module.css"; // Using CSS Modules for styling
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
+import LogoutIcon from '@mui/icons-material/Logout';
+import WalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import TopNavbar from '../Navbar/TopNavbar';
 import { useUser } from "../../../../context/UserContext";
 import { useNavigate } from 'react-router-dom';
@@ -217,74 +222,108 @@ const ProfilePage = () => {
 
       <div className={styles.container}>
         
-      <div className={styles.balanceContainer}>
-          <div className={styles.amount}>
-            <strong>₹ 1,00,000</strong>  {/* Replace with actual deposit amount */}
+        {/* Enhanced Wallet Balance Card */}
+        <div className={styles.balanceCard}>
+          <div className={styles.balanceIcon}>
+            <WalletIcon sx={{ fontSize: 40, color: '#ffffff' }} />
           </div>
-          <p className={styles.wallet}>
-            <strong>Wallet Balance</strong>
-          </p>
+          <div className={styles.balanceContent}>
+            <div className={styles.balanceAmount}>
+              <span className={styles.currency}>₹</span>
+              <span className={styles.amount}>1,00,000</span>
+            </div>
+            <p className={styles.balanceLabel}>Wallet Balance</p>
+          </div>
           <button className={styles.logoutButton} onClick={handleLogout}>
-            <strong>Logout</strong>
+            <LogoutIcon sx={{ fontSize: 20 }} />
+            <span>Logout</span>
           </button>
         </div>
 
     
-        {/* Profile Information Card */}
+        {/* Enhanced Profile Information Card */}
         <div className={styles.card}>
-          <p>
-            <AccountCircleIcon
-              style={{ marginRight: '5px', fontSize: '2.5rem', color: '#1f5fff' }}
-            />
-          </p>
-          <h2><strong>Profile Information</strong></h2>
-          <p>
-            <strong>Name :&nbsp;</strong>
-            {isProfileEditing ? (
-              <input
-                type="text"
-                value={profileInfo.name}
-                onChange={(e) => handleProfileChange('name', e.target.value)}
-                className={styles.editInput}
-              />
-            ) : (
-              profileInfo.name
+          <div className={styles.cardHeader}>
+            <div className={styles.cardIcon}>
+              <AccountCircleIcon sx={{ fontSize: 40, color: '#1f5fff' }} />
+            </div>
+            <h2 className={styles.cardTitle}>Profile Information</h2>
+          </div>
+          
+          <div className={styles.cardContent}>
+            <div className={styles.infoRow}>
+              <label className={styles.infoLabel}>Name</label>
+              <div className={styles.infoValue}>
+                {isProfileEditing ? (
+                  <input
+                    type="text"
+                    value={profileInfo.name}
+                    onChange={(e) => handleProfileChange('name', e.target.value)}
+                    className={styles.editInput}
+                    placeholder="Enter your name"
+                  />
+                ) : (
+                  <span className={styles.infoText}>{profileInfo.name}</span>
+                )}
+              </div>
+            </div>
+
+            <div className={styles.infoRow}>
+              <label className={styles.infoLabel}>Phone Number</label>
+              <div className={styles.infoValue}>
+                {isProfileEditing ? (
+                  <input
+                    type="text"
+                    value={profileInfo.phone}
+                    onChange={(e) => handleProfileChange('phone', e.target.value)}
+                    className={styles.editInput}
+                    placeholder="Enter your phone number"
+                  />
+                ) : (
+                  <span className={styles.infoText}>{profileInfo.phone}</span>
+                )}
+              </div>
+            </div>
+
+            <div className={styles.infoRow}>
+              <label className={styles.infoLabel}>Email</label>
+              <div className={styles.infoValue}>
+                <span className={styles.infoText}>{profileInfo.email}</span>
+              </div>
+            </div>
+
+            {isProfileEditing && (
+              <div className={styles.infoRow}>
+                <label className={styles.infoLabel}>New Password</label>
+                <div className={styles.infoValue}>
+                  <input
+                    type="password"
+                    value={profileInfo.password}
+                    onChange={(e) => handleProfileChange('password', e.target.value)}
+                    className={styles.editInput}
+                    placeholder="Enter new password"
+                  />
+                </div>
+              </div>
             )}
-          </p>
-          <p>
-            <strong>Phone Number :&nbsp;</strong>
+          </div>
+
+          <div className={styles.cardActions}>
             {isProfileEditing ? (
-              <input
-                type="text"
-                value={profileInfo.phone}
-                onChange={(e) => handleProfileChange('phone', e.target.value)}
-                className={styles.editInput}
-              />
-            ) : (
-              profileInfo.phone
-            )}
-          </p>
-          <p>
-            <strong>Email :&nbsp;</strong>
-            {profileInfo.email}
-          </p>
-          {isProfileEditing && (
-            <p>
-              <strong>Change Password :&nbsp;</strong>
-              <input
-                type="password"
-                value={profileInfo.password}
-                onChange={(e) => handleProfileChange('password', e.target.value)}
-                className={styles.editInput}
-              />
-            </p>
-          )}
-          <div className={styles.buttonContainer}>
-            {isProfileEditing ? (
-              <button className={styles.saveButton} onClick={handleProfileSaveClick}>Update</button>
+              <>
+                <button className={styles.saveButton} onClick={handleProfileSaveClick}>
+                  <SaveIcon sx={{ fontSize: 18 }} />
+                  <span>Update</span>
+                </button>
+                <button className={styles.cancelButton} onClick={handleProfileCancel}>
+                  <CancelIcon sx={{ fontSize: 18 }} />
+                  <span>Cancel</span>
+                </button>
+              </>
             ) : (
               <button className={styles.editButton} onClick={handleProfileEditClick}>
-                Edit
+                <EditIcon sx={{ fontSize: 18 }} />
+                <span>Edit</span>
               </button>
             )}
           </div>
@@ -292,86 +331,118 @@ const ProfilePage = () => {
 
         
 
-        {/* Payment Details Card */}
+        {/* Enhanced Payment Details Card */}
         <div className={styles.card}>
-          <p>
-            <AccountBalanceIcon style={{ fontSize: '3rem', color: '#1f5fff' }} />
-          </p>
-          <h2><strong>Payment Details</strong></h2>
-          <p>
-            <strong>Account Number :&nbsp;</strong>
+          <div className={styles.cardHeader}>
+            <div className={styles.cardIcon}>
+              <AccountBalanceIcon sx={{ fontSize: 40, color: '#1f5fff' }} />
+            </div>
+            <h2 className={styles.cardTitle}>Payment Details</h2>
+          </div>
+          
+          <div className={styles.cardContent}>
+            <div className={styles.infoRow}>
+              <label className={styles.infoLabel}>Account Number</label>
+              <div className={styles.infoValue}>
+                {isPaymentEditing ? (
+                  <input
+                    type="text"
+                    value={paymentInfo.accountNumber}
+                    onChange={(e) => handlePaymentChange('accountNumber', e.target.value)}
+                    className={styles.editInput}
+                    placeholder="Enter account number"
+                  />
+                ) : (
+                  <span className={styles.infoText}>{paymentInfo.accountNumber}</span>
+                )}
+              </div>
+            </div>
+
+            <div className={styles.infoRow}>
+              <label className={styles.infoLabel}>Account Holder Name</label>
+              <div className={styles.infoValue}>
+                {isPaymentEditing ? (
+                  <input
+                    type="text"
+                    value={paymentInfo.accountHolderName}
+                    onChange={(e) => handlePaymentChange('accountHolderName', e.target.value)}
+                    className={styles.editInput}
+                    placeholder="Enter account holder name"
+                  />
+                ) : (
+                  <span className={styles.infoText}>{paymentInfo.accountHolderName}</span>
+                )}
+              </div>
+            </div>
+
+            <div className={styles.infoRow}>
+              <label className={styles.infoLabel}>IFSC Code</label>
+              <div className={styles.infoValue}>
+                {isPaymentEditing ? (
+                  <input
+                    type="text"
+                    value={paymentInfo.ifscCode}
+                    onChange={(e) => handlePaymentChange('ifscCode', e.target.value)}
+                    className={styles.editInput}
+                    placeholder="Enter IFSC code"
+                  />
+                ) : (
+                  <span className={styles.infoText}>{paymentInfo.ifscCode}</span>
+                )}
+              </div>
+            </div>
+
+            <div className={styles.infoRow}>
+              <label className={styles.infoLabel}>Bank Name</label>
+              <div className={styles.infoValue}>
+                {isPaymentEditing ? (
+                  <input
+                    type="text"
+                    value={paymentInfo.bankName}
+                    onChange={(e) => handlePaymentChange('bankName', e.target.value)}
+                    className={styles.editInput}
+                    placeholder="Enter bank name"
+                  />
+                ) : (
+                  <span className={styles.infoText}>{paymentInfo.bankName}</span>
+                )}
+              </div>
+            </div>
+
+            <div className={styles.infoRow}>
+              <label className={styles.infoLabel}>UPI ID</label>
+              <div className={styles.infoValue}>
+                {isPaymentEditing ? (
+                  <input
+                    type="text"
+                    value={paymentInfo.upiId}
+                    onChange={(e) => handlePaymentChange('upiId', e.target.value)}
+                    className={styles.editInput}
+                    placeholder="Enter UPI ID"
+                  />
+                ) : (
+                  <span className={styles.infoText}>{paymentInfo.upiId || 'Not provided'}</span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.cardActions}>
             {isPaymentEditing ? (
-              <input
-                type="text"
-                value={paymentInfo.accountNumber}
-                onChange={(e) => handlePaymentChange('accountNumber', e.target.value)}
-                className={styles.editInput}
-              />
-            ) : (
-              paymentInfo.accountNumber
-            )}
-          </p>
-          <p>
-            <strong>Account Holder Name :&nbsp;</strong>
-            {isPaymentEditing ? (
-              <input
-                type="text"
-                value={paymentInfo.accountHolderName}
-                onChange={(e) => handlePaymentChange('accountHolderName', e.target.value)}
-                className={styles.editInput}
-                style={{ width: '30%' }}
-              />
-            ) : (
-              paymentInfo.accountHolderName
-            )}
-          </p>
-          <p>
-            <strong>IFSC Code :&nbsp;</strong>
-            {isPaymentEditing ? (
-              <input
-                type="text"
-                value={paymentInfo.ifscCode}
-                onChange={(e) => handlePaymentChange('ifscCode', e.target.value)}
-                className={styles.editInput}
-              />
-            ) : (
-              paymentInfo.ifscCode
-            )}
-          </p>
-          <p>
-            <strong>Bank Name :&nbsp;</strong>
-            {isPaymentEditing ? (
-              <input
-                type="text"
-                value={paymentInfo.bankName}
-                onChange={(e) => handlePaymentChange('bankName', e.target.value)}
-                className={styles.editInput}
-              />
-            ) : (
-              paymentInfo.bankName
-            )}
-          </p>
-          <p>
-            <strong>UPI ID :&nbsp;</strong>
-            {isPaymentEditing ? (
-              <input
-                type="text"
-                value={paymentInfo.upiId}
-                onChange={(e) => handlePaymentChange('upiId', e.target.value)}
-                className={styles.editInput}
-              />
-            ) : (
-              paymentInfo.upiId || 'Not provided'
-            )}
-          </p>
-          <div className={styles.buttonContainer}>
-            {isPaymentEditing ? (
-              <button className={styles.saveButton} onClick={handlePaymentSaveClick}>
-                Update
-              </button>
+              <>
+                <button className={styles.saveButton} onClick={handlePaymentSaveClick}>
+                  <SaveIcon sx={{ fontSize: 18 }} />
+                  <span>Save Changes</span>
+                </button>
+                <button className={styles.cancelButton} onClick={handlePaymentCancel}>
+                  <CancelIcon sx={{ fontSize: 18 }} />
+                  <span>Cancel</span>
+                </button>
+              </>
             ) : (
               <button className={styles.editButton} onClick={handlePaymentEditClick}>
-                Edit
+                <EditIcon sx={{ fontSize: 18 }} />
+                <span>Edit Payment Details</span>
               </button>
             )}
           </div>
