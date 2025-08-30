@@ -1,110 +1,31 @@
-/* Navbar Container
+/* Admin Top Navbar - Mobile Responsive Transparent */
 .navbar {
   width: 100%;
   position: fixed;
-  top: 0; 
-  background-color: rgb(237, 237, 237);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  z-index: 1000; 
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 20px;
-  align-items: center;
-  height: 60px; 
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-}
-
-.logoImage {
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-}
-
-.logoText {
-  font-size: 1.5rem;
-  color: white;
-}
-
-.navLinks {
-  display: flex;
-  gap: 10px;
-}
-
-.navButton {
-  padding: 8px 16px;
-  border: none;
-  background-color: #0e9bff;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.navButton:hover {
-  background-color: #007bb5;
-}
-
-.walletBalance {
-  font-size: 1rem;
-  color: white;
-  margin-right: 10px;
-}
-
-@media (max-width: 768px) {
-  .navbar {
-    padding: 8px 15px;
-  }
-  .logoText {
-    font-size: 1.3rem;
-  }
-  .navButton {
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .navbar {
-    padding: 6px 10px;
-  }
-  .logoText {
-    font-size: 1.1rem;
-  }
-  .navButton {
-    font-size: 0.8rem;
-  }
-}
-
-.body-content {
-  padding-top: 60px; 
-  overflow-y: scroll;
-  height: 100vh;
-}
-
- */
-
- .navbar {
-  width: 100vw;
-  overflow: hidden;
-  position: fixed;
-  top: 0; 
+  top: 0;
   left: 0;
-  background-color: #3b70d9; /* Red background */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  z-index: 1000; 
+  background: rgba(26, 26, 26, 0.7);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
   display: flex;
   justify-content: space-between;
-  padding: 10px 20px;
   align-items: center;
-  height: 60px; 
+  padding: 12px 24px;
+  height: 70px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Logo Section */
 .logo {
   display: flex;
   align-items: center;
-  height: 35px; /* same as navbar height */
+  height: 45px;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
 }
 
 .logoImage {
@@ -112,78 +33,209 @@
   height: auto;
   width: auto;
   object-fit: contain;
-  margin-right: 10px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
 }
 
-.logoText {
-  font-size: 18px;
-  font-weight: bold;
-}
-
+/* Navigation Links Section */
 .navLinks {
   display: flex;
   align-items: center;
+  gap: 20px;
 }
 
-.navButton {
-  background-color: #0081f2;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  margin: 0 5px;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.navButton:hover {
-  background-color: #62aeff;
-}
-
-
-
-
-
-
-
-.navButton {
-  margin-left: 10px;
-  right: 0;
-  background-color: transparent; /* Remove background */
-  color: #00397b; /* Text color */
-  border: 2px solid #0341fd; /* Border color */
-  padding: 6px 10px; /* Adjust height & width */
-  font-size: 12px; /* Text size */
-  border-radius: 4px; /* Optional: rounded corners */
-  margin-top: 4px;
-  right: 0;
-  cursor: pointer;
-}
-.navButton:hover {
-  margin-top: 4px;
-  margin-right: 5px;
-  
-  background-color: #3e82ff; /* Background color on hover */
-  color: rgb(217, 244, 255); /* Text color on hover */
-  border: 2px solid #ffffff; /* Border color */
-}
-
-
+/* Wallet Container */
 .walletContainer {
-  display: flex;           /* Use flexbox for layout */
-  flex-direction: column;  /* Stack items vertically */
-  align-items: center;     /* Optional: Center items horizontally */
-  text-align: center;      /* Optional: Center text */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+.walletContainer:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
 }
 
 .walletBalance {
-  font-size: 10px;         /* Adjust font size as needed */
-  margin-bottom: 5px;      /* Optional: Add space between the "Wallet" and the balance */
-  margin-top: 4px;
-  color: #9fd2ff;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .balanceAmount {
-  margin-top: -2px;
-  font-size: 12px;         /* Adjust font size for the balance */
-  color: aqua;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Navigation Button */
+.navButton {
+  background: rgba(50, 103, 210, 0.8);
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 3px 12px rgba(50, 103, 210, 0.25);
+  min-width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navButton:hover {
+  background: rgba(50, 103, 210, 0.95);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(50, 103, 210, 0.35);
+}
+
+.navButton:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 12px rgba(50, 103, 210, 0.25);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px 20px;
+    height: 65px;
+    background: rgba(26, 26, 26, 0.6);
+  }
+  
+  .logo {
+    height: 40px;
+  }
+  
+  .navLinks {
+    gap: 15px;
+  }
+  
+  .walletContainer {
+    padding: 6px 12px;
+  }
+  
+  .walletBalance {
+    font-size: 10px;
+  }
+  
+  .balanceAmount {
+    font-size: 13px;
+  }
+  
+  .navButton {
+    padding: 8px 16px;
+    font-size: 12px;
+    min-width: 90px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 8px 16px;
+    height: 60px;
+    background: rgba(26, 26, 26, 0.5);
+  }
+  
+  .logo {
+    height: 35px;
+  }
+  
+  .navLinks {
+    gap: 12px;
+  }
+  
+  .walletContainer {
+    padding: 5px 10px;
+  }
+  
+  .walletBalance {
+    font-size: 9px;
+    margin-bottom: 3px;
+  }
+  
+  .balanceAmount {
+    font-size: 12px;
+  }
+  
+  .navButton {
+    padding: 7px 14px;
+    font-size: 11px;
+    min-width: 80px;
+  }
+}
+
+@media (max-width: 360px) {
+  .navbar {
+    padding: 6px 12px;
+    height: 55px;
+    background: rgba(26, 26, 26, 0.4);
+  }
+  
+  .logo {
+    height: 30px;
+  }
+  
+  .navLinks {
+    gap: 8px;
+  }
+  
+  .walletContainer {
+    padding: 4px 8px;
+  }
+  
+  .walletBalance {
+    font-size: 8px;
+  }
+  
+  .balanceAmount {
+    font-size: 11px;
+  }
+  
+  .navButton {
+    padding: 6px 12px;
+    font-size: 10px;
+    min-width: 70px;
+  }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .navbar {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .walletContainer {
+    border-width: 0.5px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .navbar {
+    position: static;
+    background: #ffffff;
+    box-shadow: none;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .navButton {
+    display: none;
+  }
 }

@@ -1,16 +1,15 @@
-/* Navbar Container */
+/* Admin Bottom Navbar - Completely Transparent for Mobile */
 .navbar {
   width: 100%;
   overflow: hidden;
-  position: fixed; /* Fix navbar at the bottom */
-  bottom: 0; /* Position it at the bottom */
+  position: fixed;
+  bottom: 0;
   left: 0;
-  background-color: black; /* Default background color */
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2); /* Optional: Add a shadow for better visibility */
-  z-index: 1000; /* Ensure the navbar stays on top of content */
+  background: transparent;
+  z-index: 1000;
   display: flex;
-  justify-content: center; /* Center the content horizontally */
-  padding: 10px 0; /* Add vertical padding */
+  justify-content: center;
+  padding: 12px 0;
 }
 
 /* Icon styling */
@@ -20,31 +19,128 @@
 
 /* Global Styles for Material-UI components */
 :global(.MuiBottomNavigationAction-root) {
-  color: rgb(255, 255, 255); /* Change icon color to white */
+  color: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+  min-width: 60px;
+  padding: 8px 4px;
+  background: transparent;
+  border-radius: 0;
+  margin: 0;
+  backdrop-filter: none;
+  border: none;
+}
+
+:global(.MuiBottomNavigationAction-root:hover) {
+  color: #3267d2;
+  transform: translateY(-2px);
+  background: transparent;
+  box-shadow: none;
 }
 
 :global(.Mui-selected) {
-  color: #0e9bff; /* Highlight the selected icon with a different color */
+  color: #3267d2 !important;
+  font-weight: 600;
+  background: transparent;
+  border-color: transparent;
+}
+
+:global(.MuiBottomNavigationAction-label) {
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 4px;
+  transition: all 0.3s ease;
+  background: transparent;
+}
+
+:global(.Mui-selected .MuiBottomNavigationAction-label) {
+  font-weight: 600;
+  color: #3267d2;
+  background: transparent;
+}
+
+:global(.MuiBottomNavigationAction-iconOnly) {
+  margin-bottom: 4px;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .navbar {
-    padding: 8px 0; /* Adjust padding for smaller screens */
+    padding: 10px 0;
   }
-
+  
+  :global(.MuiBottomNavigationAction-root) {
+    min-width: 55px;
+    padding: 6px 3px;
+    margin: 0;
+  }
+  
+  :global(.MuiBottomNavigationAction-label) {
+    font-size: 0.7rem;
+  }
 }
 
 @media (max-width: 480px) {
   .navbar {
-    padding: 6px 0; /* Further reduce padding on very small screens */
+    padding: 8px 0;
   }
+  
+  :global(.MuiBottomNavigationAction-root) {
+    min-width: 50px;
+    padding: 5px 2px;
+    margin: 0;
+  }
+  
+  :global(.MuiBottomNavigationAction-label) {
+    font-size: 0.65rem;
+    margin-top: 3px;
+  }
+}
 
+@media (max-width: 360px) {
+  .navbar {
+    padding: 6px 0;
+  }
+  
+  :global(.MuiBottomNavigationAction-root) {
+    min-width: 45px;
+    padding: 4px 1px;
+    margin: 0;
+  }
+  
+  :global(.MuiBottomNavigationAction-label) {
+    font-size: 0.6rem;
+    margin-top: 2px;
+  }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  :global(.MuiBottomNavigationAction-root) {
+    border-width: 0;
+  }
+}
+
+/* Landscape Mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .navbar {
+    padding: 8px 0;
+  }
+  
+  :global(.MuiBottomNavigationAction-label) {
+    font-size: 0.65rem;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .navbar {
+    display: none;
+  }
 }
 
 /* Body content styling (to allow scrolling) */
 .body-content {
-  padding-bottom: 60px; /* Ensure content is not hidden behind the navbar */
-  overflow-y: scroll; /* Enable scrolling for the body content */
-  height: 100vh; /* Full viewport height */
+  padding-bottom: 80px;
+  overflow-y: scroll;
+  height: 100vh;
 }

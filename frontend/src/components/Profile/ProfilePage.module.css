@@ -27,6 +27,17 @@
   box-sizing: border-box !important;
 }
 
+/* Header Section */
+.heading {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #3267d2;
+  margin: 0 0 1.25rem 0;
+  padding: 0.5rem;
+  text-shadow: 0 2px 4px rgba(50, 103, 210, 0.1);
+}
+
 /* Enhanced Wallet Balance Card */
 .balanceCard {
   background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%) !important;
@@ -783,8 +794,13 @@
 /* Mobile Phones (320px to 479px) */
 @media (max-width: 479px) {
   .profilePage {
-    padding-top: 70px !important;
-    padding-bottom: 90px !important;
+    padding-top: 70px;
+    padding-bottom: 90px;
+  }
+  
+  .heading {
+    font-size: 1.3rem;
+    margin: 0 0 1rem 0;
   }
   
   .container {
@@ -795,6 +811,8 @@
     padding: 20px !important;
     gap: 15px !important;
     margin-bottom: 20px !important;
+    flex-direction: column !important;
+    text-align: center !important;
   }
   
   .balanceIcon {
@@ -811,6 +829,16 @@
   
   .balanceLabel {
     font-size: 12px !important;
+  }
+
+  .logoutButton {
+    padding: 10px 16px !important;
+    font-size: 12px !important;
+    gap: 6px !important;
+    border-radius: 20px !important;
+    width: auto !important;
+    min-width: 120px !important;
+    justify-content: center !important;
   }
 
   .card {
@@ -868,21 +896,19 @@
     font-size: 11px !important;
     gap: 5px !important;
     border-radius: 20px !important;
-}
-
-.logoutButton {
-    padding: 8px 12px !important;
-    font-size: 10px !important;
-    gap: 5px !important;
-    border-radius: 20px !important;
   }
 }
 
 /* Extra Small Mobile (below 320px) */
 @media (max-width: 319px) {
   .profilePage {
-    padding-top: 70px !important;
-    padding-bottom: 90px !important;
+    padding-top: 70px;
+    padding-bottom: 90px;
+  }
+  
+  .heading {
+    font-size: 1.2rem;
+    margin: 0 0 0.75rem 0;
   }
   
   .container {
@@ -892,9 +918,11 @@
   .balanceCard {
     padding: 15px !important;
     gap: 12px !important;
+    flex-direction: column !important;
+    text-align: center !important;
   }
 
-.amount {
+  .amount {
     font-size: 22px !important;
   }
   
@@ -904,6 +932,16 @@
   
   .balanceLabel {
     font-size: 11px !important;
+}
+
+.logoutButton {
+    padding: 8px 12px !important;
+    font-size: 11px !important;
+    gap: 4px !important;
+    border-radius: 18px !important;
+    width: auto !important;
+    min-width: 100px !important;
+    justify-content: center !important;
   }
   
   .cardHeader {
@@ -946,11 +984,6 @@
   .cancelButton {
     padding: 6px 10px !important;
     font-size: 10px !important;
-  }
-  
-  .logoutButton {
-    padding: 6px 8px !important;
-    font-size: 9px !important;
   }
 }
 

@@ -14,6 +14,8 @@ const Transactions = () => {
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null); // Track selected image for modal
+  const [currentPage, setCurrentPage] = useState(1);
+  const [transactionsPerPage] = useState(10);
 
   const navigate = useNavigate();
   const { user, url } = useUser();
@@ -50,6 +52,7 @@ const Transactions = () => {
       );
 
       setTransactions(sortedTransactions);
+      setCurrentPage(1); // Reset to first page when fetching new data
     } catch (err) {
       setTransactions([]);
       setError(err.message);
@@ -139,6 +142,70 @@ const Transactions = () => {
     fetchTransactions();
   }, [user]);
 
+  // Pagination logic
+  const indexOfLastTransaction = currentPage * transactionsPerPage;
+  const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
+  const currentTransactions = transactions.slice(indexOfFirstTransaction, indexOfLastTransaction);
+  const totalPages = Math.ceil(transactions.length / transactionsPerPage);
+
+  // Change page
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Go to next page
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // Go to previous page
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    const maxVisiblePages = 5;
+    
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          pageNumbers.push(i);
+        }
+        pageNumbers.push('...');
+        pageNumbers.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pageNumbers.push(1);
+        pageNumbers.push('...');
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          pageNumbers.push(i);
+        }
+      } else {
+        pageNumbers.push(1);
+        pageNumbers.push('...');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pageNumbers.push(i);
+        }
+        pageNumbers.push('...');
+        pageNumbers.push(totalPages);
+      }
+    }
+    
+    return pageNumbers;
+  };
+
   // Handle image click to open modal
   const handleImageClick = (imagePath) => {
     setSelectedImage(`${url}/${imagePath}`);
@@ -176,9 +243,18 @@ const Transactions = () => {
     <div className={styles.transactionHistory}>
       <TopNavbar />
       <h3 className={styles.heading}><strong>Transaction History</strong></h3>
+      
+      {/* Transactions Count */}
+      <div className={styles.transactionsCount}>
+        {transactions.length === 0 ? 'No transactions found' : `${transactions.length} transaction${transactions.length === 1 ? '' : 's'} found`}
+        {transactions.length > transactionsPerPage && (
+          <span> • Showing {indexOfFirstTransaction + 1}-{Math.min(indexOfLastTransaction, transactions.length)} of {transactions.length}</span>
+        )}
+      </div>
+      
       <div className={styles.transactions}>
-        {transactions.length > 0 ? (
-          transactions.map((txn) => (
+        {currentTransactions.length > 0 ? (
+          currentTransactions.map((txn) => (
             <div className={styles.transactionItem} key={txn.id}>
               <div className={styles.column}><strong>User Id:</strong> {txn.createdBy}</div>
               <div className={styles.column}>
@@ -191,7 +267,25 @@ const Transactions = () => {
                 <strong>Status:</strong> {txn.status}
               </div>
               <div className={`${styles.column} ${styles.amountField}`}>
-                <strong>Amount:</strong> ₹{txn.amount}
+                <div className={styles.amountValue}>
+                  <strong>Amount:</strong> ₹{txn.amount}
+                </div>
+                
+                {/* Action Buttons - Accept and Reject */}
+                <div className={styles.actions}>
+                  <button
+                    className={styles.acceptButton}
+                    onClick={() => acceptTransaction(txn.id)}
+                  >
+                    <FaCheck /> Accept
+                  </button>
+                  <button
+                    className={styles.deleteButton}
+                    onClick={() => rejectTransaction(txn.id)}
+                  >
+                    <FaTrash /> Reject
+                  </button>
+                </div>
               </div>
               <div className={styles.column}>
                 {txn.imagePath && (
@@ -206,28 +300,55 @@ const Transactions = () => {
                   />
                 )}
               </div>
-
-              {/* Action Buttons - Accept and Reject */}
-              <div className={styles.actions}>
-                <button
-                  className={styles.acceptButton}
-                  onClick={() => acceptTransaction(txn.id)}
-                >
-                  <FaCheck /> Accept
-                </button>
-                <button
-                  className={styles.deleteButton}
-                  onClick={() => rejectTransaction(txn.id)}
-                >
-                  <FaTrash /> Reject
-                </button>
-              </div>
             </div>
           ))
         ) : (
           <p className={styles.noTransactions}>No transactions yet.</p>
         )}
       </div>
+
+      {/* Pagination */}
+      {transactions.length > transactionsPerPage && (
+        <div className={styles.paginationContainer}>
+          {/* Previous Button */}
+          <button
+            className={styles.paginationButton}
+            onClick={prevPage}
+            disabled={currentPage === 1}
+          >
+            ←
+          </button>
+
+          {/* Page Numbers */}
+          {getPageNumbers().map((number, index) => (
+            <button
+              key={index}
+              className={`${styles.paginationButton} ${
+                number === currentPage ? styles.active : ''
+              }`}
+              onClick={() => typeof number === 'number' && paginate(number)}
+              disabled={number === '...'}
+            >
+              {number}
+            </button>
+          ))}
+
+          {/* Next Button */}
+          <button
+            className={styles.paginationButton}
+            onClick={nextPage}
+            disabled={currentPage === totalPages}
+          >
+            →
+          </button>
+
+          {/* Page Info */}
+          <div className={styles.paginationInfo}>
+            Page {currentPage} of {totalPages}
+          </div>
+        </div>
+      )}
+      
       {/* Image Modal */}
       { selectedImage && (
         <div className={styles.modal} onClick={closeModal}>

@@ -247,6 +247,11 @@ const ProfilePage = () => {
 
       <div className={styles.container}>
         
+        {/* Page Heading */}
+        <h2 className={styles.heading}>
+          <strong>Profile Management</strong>
+        </h2>
+        
         {/* Enhanced Wallet Balance Card */}
         <div className={styles.balanceCard}>
           <div className={styles.balanceIcon}>
