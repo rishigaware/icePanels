@@ -16,7 +16,7 @@
 }
 
 .container {
-  max-width: 100% !important;
+  max-width: 1200px !important;
   margin: 0 auto !important;
   padding: 20px 40px !important;
   display: block !important;
@@ -42,8 +42,8 @@
 .balanceCard {
   background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%) !important;
   border-radius: 20px !important;
-  padding: 30px !important;
-  margin-bottom: 30px !important;
+  padding: 25px !important;
+  margin-bottom: 25px !important;
   box-shadow: 0 20px 40px rgba(50, 103, 210, 0.2) !important;
   display: flex !important;
   align-items: center !important;
@@ -70,7 +70,7 @@
 .balanceIcon {
   background: rgba(255, 255, 255, 0.2) !important;
   border-radius: 50% !important;
-  padding: 15px !important;
+  padding: 12px !important;
   backdrop-filter: blur(10px) !important;
   z-index: 1 !important;
   position: relative !important;
@@ -91,14 +91,14 @@
 }
 
 .currency {
-  font-size: 20px !important;
+  font-size: 18px !important;
   font-weight: 600 !important;
   color: #ffffff !important;
   margin-right: 5px !important;
 }
 
 .amount {
-  font-size: 36px !important;
+  font-size: 32px !important;
   font-weight: 700 !important;
   color: #ffffff !important;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
@@ -108,7 +108,7 @@
 
 .balanceLabel {
   color: rgba(255, 255, 255, 0.9) !important;
-  font-size: 14px !important;
+  font-size: 13px !important;
   font-weight: 500 !important;
   margin: 0 !important;
 }
@@ -117,11 +117,11 @@
   background: rgba(255, 255, 255, 0.2) !important;
   border: 2px solid rgba(255, 255, 255, 0.3) !important;
   color: #ffffff !important;
-  padding: 12px 20px !important;
+  padding: 10px 18px !important;
   border-radius: 25px !important;
   cursor: pointer !important;
   font-weight: 600 !important;
-  font-size: 14px !important;
+  font-size: 13px !important;
   display: flex !important;
   align-items: center !important;
   gap: 8px !important;
@@ -143,9 +143,9 @@
 /* Enhanced Card Design */
 .card {
   background: #ffffff !important;
-  border-radius: 20px !important;
+  border-radius: 18px !important;
   padding: 0 !important;
-  margin-bottom: 25px !important;
+  margin-bottom: 20px !important;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
   overflow: hidden !important;
   transition: all 0.3s ease !important;
@@ -157,33 +157,33 @@
 }
 
 .card:hover {
-  transform: translateY(-5px) !important;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
 }
 
 .cardHeader {
   background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%) !important;
-  padding: 25px 30px !important;
+  padding: 20px 25px !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
   display: flex !important;
   align-items: center !important;
-  gap: 20px !important;
+  gap: 18px !important;
 }
 
 .cardIcon {
   background: rgba(255, 255, 255, 0.2) !important;
-  border-radius: 15px !important;
-  padding: 15px !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 6px 15px rgba(255, 255, 255, 0.2) !important;
   flex-shrink: 0 !important;
 }
 
 .cardTitle {
   margin: 0 !important;
-  font-size: 20px !important;
+  font-size: 18px !important;
   font-weight: 700 !important;
   color: #ffffff !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
@@ -191,14 +191,14 @@
 }
 
 .cardContent {
-  padding: 30px !important;
+  padding: 25px !important;
 }
 
 .infoRow {
   display: flex !important;
   flex-direction: column !important;
-  margin-bottom: 25px !important;
-  gap: 8px !important;
+  margin-bottom: 20px !important;
+  gap: 6px !important;
 }
 
 .infoRow:last-child {
@@ -208,35 +208,35 @@
 .infoLabel {
   font-weight: 600 !important;
   color: #3267d2 !important;
-  font-size: 12px !important;
+  font-size: 11px !important;
   text-transform: uppercase !important;
   letter-spacing: 0.5px !important;
   margin: 0 !important;
 }
 
 .infoValue {
-  min-height: 40px !important;
+  min-height: 35px !important;
   display: flex !important;
   align-items: center !important;
 }
 
 .infoText {
-  font-size: 14px !important;
+  font-size: 13px !important;
   color: #1a1a1a !important;
   font-weight: 500 !important;
   margin: 0 !important;
-  padding: 10px 0 !important;
-  line-height: 1.5 !important;
+  padding: 8px 0 !important;
+  line-height: 1.4 !important;
   word-wrap: break-word !important;
   overflow-wrap: break-word !important;
 }
 
 .editInput {
   width: 100% !important;
-  padding: 12px 16px !important;
+  padding: 10px 14px !important;
   border: 2px solid #e9ecef !important;
-  border-radius: 10px !important;
-  font-size: 14px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
   color: #1a1a1a !important;
   background: #f8f9fa !important;
   transition: all 0.3s ease !important;
@@ -258,11 +258,11 @@
 }
 
 .cardActions {
-  padding: 25px 30px !important;
+  padding: 20px 25px !important;
   background: #f8f9fa !important;
   border-top: 1px solid #e9ecef !important;
   display: flex !important;
-  gap: 15px !important;
+  gap: 12px !important;
   justify-content: flex-end !important;
   margin-top: 0 !important;
 }
@@ -271,66 +271,66 @@
   background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%) !important;
   color: #ffffff !important;
   border: none !important;
-  padding: 12px 24px !important;
-  border-radius: 25px !important;
+  padding: 10px 20px !important;
+  border-radius: 20px !important;
   cursor: pointer !important;
   font-weight: 600 !important;
-  font-size: 14px !important;
+  font-size: 13px !important;
   display: flex !important;
   align-items: center !important;
-  gap: 8px !important;
+  gap: 6px !important;
   transition: all 0.3s ease !important;
-  box-shadow: 0 4px 15px rgba(50, 103, 210, 0.3) !important;
+  box-shadow: 0 3px 12px rgba(50, 103, 210, 0.3) !important;
   white-space: nowrap !important;
 }
 
 .editButton:hover {
   transform: translateY(-2px) !important;
-  box-shadow: 0 8px 25px rgba(50, 103, 210, 0.4) !important;
+  box-shadow: 0 6px 20px rgba(50, 103, 210, 0.4) !important;
 }
 
 .saveButton {
   background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
   color: #ffffff !important;
   border: none !important;
-  padding: 12px 24px !important;
-  border-radius: 25px !important;
+  padding: 10px 20px !important;
+  border-radius: 20px !important;
   cursor: pointer !important;
   font-weight: 600 !important;
-  font-size: 14px !important;
+  font-size: 13px !important;
   display: flex !important;
   align-items: center !important;
-  gap: 8px !important;
+  gap: 6px !important;
   transition: all 0.3s ease !important;
-  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3) !important;
+  box-shadow: 0 3px 12px rgba(40, 167, 69, 0.3) !important;
   white-space: nowrap !important;
 }
 
 .saveButton:hover {
   transform: translateY(-2px) !important;
-  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4) !important;
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4) !important;
 }
 
 .cancelButton {
   background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
   color: #ffffff !important;
   border: none !important;
-  padding: 12px 24px !important;
-  border-radius: 25px !important;
+  padding: 10px 20px !important;
+  border-radius: 20px !important;
   cursor: pointer !important;
   font-weight: 600 !important;
-  font-size: 14px !important;
+  font-size: 13px !important;
   display: flex !important;
   align-items: center !important;
-  gap: 8px !important;
+  gap: 6px !important;
   transition: all 0.3s ease !important;
-  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3) !important;
+  box-shadow: 0 3px 12px rgba(108, 117, 125, 0.3) !important;
   white-space: nowrap !important;
 }
 
 .cancelButton:hover {
   transform: translateY(-2px) !important;
-  box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4) !important;
+  box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4) !important;
 }
 
 /* ===== COMPREHENSIVE RESPONSIVE DESIGN ===== */
@@ -338,130 +338,8 @@
 /* Ultra Large Desktop Screens (1600px and above) */
 @media (min-width: 1600px) {
   .container {
-    max-width: 100% !important;
-    padding: 30px 60px !important;
-  }
-  
-  .balanceCard {
-    padding: 40px !important;
-    margin-bottom: 40px !important;
-  }
-  
-  .amount {
-    font-size: 42px !important;
-  }
-  
-  .currency {
-    font-size: 24px !important;
-  }
-  
-  .balanceLabel {
-    font-size: 16px !important;
-  }
-  
-  .cardHeader {
-    padding: 30px 40px !important;
-  }
-  
-  .cardContent {
-    padding: 40px !important;
-  }
-  
-  .cardActions {
-    padding: 30px 40px !important;
-  }
-  
-  .editButton,
-  .saveButton,
-  .cancelButton {
-    padding: 14px 28px !important;
-    font-size: 16px !important;
-  }
-  
-  .cardTitle {
-    font-size: 22px !important;
-  }
-  
-  .infoLabel {
-    font-size: 13px !important;
-  }
-  
-  .infoText {
-    font-size: 15px !important;
-  }
-  
-  .editInput {
-    padding: 14px 18px !important;
-    font-size: 15px !important;
-  }
-}
-
-/* Extra Large Desktop Screens (1400px to 1599px) */
-@media (min-width: 1400px) and (max-width: 1599px) {
-  .container {
-    max-width: 100% !important;
+    max-width: 1400px !important;
     padding: 25px 50px !important;
-  }
-  
-  .balanceCard {
-    padding: 35px !important;
-    margin-bottom: 35px !important;
-  }
-  
-  .amount {
-    font-size: 38px !important;
-  }
-  
-  .currency {
-    font-size: 22px !important;
-  }
-  
-  .balanceLabel {
-    font-size: 15px !important;
-  }
-  
-  .cardHeader {
-    padding: 28px 35px !important;
-  }
-  
-  .cardContent {
-    padding: 35px !important;
-  }
-  
-  .cardActions {
-    padding: 28px 35px !important;
-  }
-  
-  .editButton,
-  .saveButton,
-  .cancelButton {
-    padding: 14px 26px !important;
-    font-size: 15px !important;
-  }
-  
-  .cardTitle {
-    font-size: 21px !important;
-  }
-  
-  .infoLabel {
-    font-size: 12px !important;
-  }
-  
-  .infoText {
-    font-size: 14px !important;
-  }
-  
-  .editInput {
-    padding: 12px 16px !important;
-    font-size: 14px !important;
-  }
-}
-
-/* Large Desktop Screens (1200px to 1399px) */
-@media (min-width: 1200px) and (max-width: 1399px) {
-  .container {
-    max-width: 100% !important;
-    padding: 20px 40px !important;
   }
   
   .balanceCard {
@@ -470,11 +348,15 @@
   }
   
   .amount {
-    font-size: 34px !important;
+    font-size: 36px !important;
   }
   
   .currency {
     font-size: 20px !important;
+  }
+  
+  .balanceLabel {
+    font-size: 14px !important;
   }
   
   .cardHeader {
@@ -495,6 +377,124 @@
     padding: 12px 24px !important;
     font-size: 14px !important;
   }
+  
+  .cardTitle {
+    font-size: 20px !important;
+  }
+  
+  .infoLabel {
+    font-size: 12px !important;
+  }
+  
+  .infoText {
+    font-size: 14px !important;
+  }
+  
+  .editInput {
+    padding: 12px 16px !important;
+    font-size: 14px !important;
+  }
+}
+
+/* Extra Large Desktop Screens (1400px to 1599px) */
+@media (min-width: 1400px) and (max-width: 1599px) {
+  .container {
+    max-width: 1200px !important;
+    padding: 20px 40px !important;
+  }
+  
+  .balanceCard {
+    padding: 25px !important;
+    margin-bottom: 25px !important;
+  }
+  
+  .amount {
+    font-size: 32px !important;
+  }
+  
+  .currency {
+    font-size: 18px !important;
+  }
+  
+  .balanceLabel {
+    font-size: 13px !important;
+  }
+  
+  .cardHeader {
+    padding: 20px 25px !important;
+  }
+  
+  .cardContent {
+    padding: 25px !important;
+  }
+  
+  .cardActions {
+    padding: 20px 25px !important;
+  }
+  
+  .editButton,
+  .saveButton,
+  .cancelButton {
+    padding: 10px 20px !important;
+    font-size: 13px !important;
+  }
+  
+  .cardTitle {
+    font-size: 18px !important;
+  }
+  
+  .infoLabel {
+    font-size: 11px !important;
+  }
+  
+  .infoText {
+    font-size: 13px !important;
+  }
+  
+  .editInput {
+    padding: 10px 14px !important;
+    font-size: 13px !important;
+  }
+}
+
+/* Large Desktop Screens (1200px to 1399px) */
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .container {
+    max-width: 1000px !important;
+    padding: 20px 35px !important;
+  }
+  
+  .balanceCard {
+    padding: 25px !important;
+    margin-bottom: 25px !important;
+  }
+  
+  .amount {
+    font-size: 30px !important;
+  }
+  
+  .currency {
+    font-size: 16px !important;
+  }
+  
+  .cardHeader {
+    padding: 20px 25px !important;
+  }
+  
+  .cardContent {
+    padding: 25px !important;
+  }
+  
+  .cardActions {
+    padding: 20px 25px !important;
+  }
+  
+  .editButton,
+  .saveButton,
+  .cancelButton {
+    padding: 10px 20px !important;
+    font-size: 13px !important;
+  }
 }
 
 /* Medium Desktop Screens (992px to 1199px) */
@@ -505,28 +505,28 @@
   }
   
   .container {
-    max-width: 100% !important;
+    max-width: 900px !important;
     padding: 20px 30px !important;
   }
   
   .balanceCard {
-    padding: 30px !important;
+    padding: 25px !important;
   }
   
   .amount {
-    font-size: 32px !important;
+    font-size: 28px !important;
   }
   
   .cardHeader {
-    padding: 25px 30px !important;
+    padding: 20px 25px !important;
   }
   
   .cardContent {
-    padding: 30px !important;
+    padding: 25px !important;
   }
   
   .cardActions {
-    padding: 25px 30px !important;
+    padding: 20px 25px !important;
   }
 }
 
@@ -554,14 +554,14 @@
   }
   
   .amount {
-    font-size: 30px !important;
+    font-size: 26px !important;
   }
   
   .cardHeader {
-    padding: 22px 25px !important;
+    padding: 20px 25px !important;
     flex-direction: row !important;
     text-align: left !important;
-    gap: 20px !important;
+    gap: 18px !important;
   }
   
   .cardContent {
@@ -569,9 +569,9 @@
   }
   
   .cardActions {
-    padding: 22px 25px !important;
+    padding: 20px 25px !important;
     flex-direction: row !important;
-    gap: 15px !important;
+    gap: 12px !important;
   }
   
   .editButton,
@@ -596,8 +596,8 @@
   .balanceCard {
     flex-direction: column !important;
     text-align: center !important;
-    gap: 20px !important;
-    padding: 25px !important;
+    gap: 18px !important;
+    padding: 22px !important;
   }
   
   .balanceContent {
@@ -605,28 +605,28 @@
   }
   
   .amount {
-    font-size: 28px !important;
+    font-size: 26px !important;
   }
   
   .currency {
-    font-size: 18px !important;
+    font-size: 16px !important;
   }
   
   .cardHeader {
     flex-direction: column !important;
     text-align: center !important;
-    gap: 15px !important;
-    padding: 20px !important;
+    gap: 12px !important;
+    padding: 18px !important;
   }
   
   .cardContent {
-    padding: 22px !important;
+    padding: 20px !important;
   }
   
   .cardActions {
     flex-direction: column !important;
-    padding: 20px !important;
-    gap: 12px !important;
+    padding: 18px !important;
+    gap: 10px !important;
   }
   
   .editButton,
@@ -634,12 +634,12 @@
   .cancelButton {
     width: 100% !important;
     justify-content: center !important;
-    padding: 12px 18px !important;
+    padding: 10px 16px !important;
   }
   
   .logoutButton {
-    padding: 12px 16px !important;
-    font-size: 13px !important;
+    padding: 10px 16px !important;
+    font-size: 12px !important;
   }
 }
 
@@ -655,75 +655,75 @@
   }
   
   .balanceCard {
-    padding: 22px !important;
-    gap: 18px !important;
+    padding: 20px !important;
+    gap: 15px !important;
   }
   
   .amount {
-    font-size: 26px !important;
+    font-size: 24px !important;
   }
   
   .currency {
-    font-size: 16px !important;
+    font-size: 14px !important;
   }
   
   .balanceLabel {
-    font-size: 13px !important;
+    font-size: 12px !important;
   }
   
   .cardHeader {
-    padding: 18px !important;
-    gap: 12px !important;
+    padding: 16px !important;
+    gap: 10px !important;
   }
   
   .cardIcon {
-    padding: 12px !important;
+    padding: 10px !important;
   }
   
   .cardTitle {
-    font-size: 19px !important;
+    font-size: 17px !important;
   }
   
   .cardContent {
-    padding: 18px !important;
+    padding: 16px !important;
   }
   
   .infoRow {
-    margin-bottom: 18px !important;
-    gap: 6px !important;
+    margin-bottom: 15px !important;
+    gap: 5px !important;
   }
   
   .infoLabel {
-    font-size: 11px !important;
+    font-size: 10px !important;
   }
   
   .infoText {
-    font-size: 13px !important;
-    padding: 8px 0 !important;
+    font-size: 12px !important;
+    padding: 6px 0 !important;
   }
   
   .editInput {
-    padding: 10px 14px !important;
-    font-size: 13px !important;
+    padding: 8px 12px !important;
+    font-size: 12px !important;
   }
   
   .cardActions {
-    padding: 18px !important;
-    gap: 10px !important;
+    padding: 16px !important;
+    gap: 8px !important;
   }
   
   .editButton,
   .saveButton,
   .cancelButton {
-    padding: 10px 16px !important;
-    font-size: 12px !important;
-    gap: 6px !important;
+    padding: 8px 14px !important;
+    font-size: 11px !important;
+    gap: 5px !important;
   }
   
   .logoutButton {
-    padding: 10px 14px !important;
-    font-size: 11px !important;
-    gap: 6px !important;
+    padding: 8px 12px !important;
+    font-size: 10px !important;
+    gap: 5px !important;
   }
 }
 
@@ -744,94 +744,94 @@
   }
   
   .balanceCard {
-    padding: 20px !important;
-    gap: 15px !important;
-    margin-bottom: 20px !important;
+    padding: 18px !important;
+    gap: 12px !important;
+    margin-bottom: 18px !important;
     flex-direction: column !important;
     text-align: center !important;
   }
   
   .balanceIcon {
-    padding: 10px !important;
+    padding: 8px !important;
   }
   
   .amount {
-    font-size: 24px !important;
+    font-size: 22px !important;
   }
   
   .currency {
-    font-size: 14px !important;
+    font-size: 12px !important;
   }
   
   .balanceLabel {
-    font-size: 12px !important;
+    font-size: 11px !important;
   }
 
   .logoutButton {
-    padding: 10px 16px !important;
-    font-size: 12px !important;
-    gap: 6px !important;
-    border-radius: 20px !important;
+    padding: 8px 14px !important;
+    font-size: 11px !important;
+    gap: 5px !important;
+    border-radius: 18px !important;
     width: auto !important;
-    min-width: 120px !important;
+    min-width: 100px !important;
     justify-content: center !important;
   }
 
   .card {
-    margin-bottom: 20px !important;
+    margin-bottom: 18px !important;
     border-radius: 15px !important;
   }
   
   .cardHeader {
-    padding: 16px !important;
-    gap: 10px !important;
+    padding: 14px !important;
+    gap: 8px !important;
   }
   
   .cardIcon {
-    padding: 10px !important;
+    padding: 8px !important;
   }
   
   .cardTitle {
-    font-size: 18px !important;
+    font-size: 16px !important;
   }
   
   .cardContent {
-    padding: 16px !important;
+    padding: 14px !important;
   }
   
   .infoRow {
-    margin-bottom: 16px !important;
-    gap: 5px !important;
+    margin-bottom: 12px !important;
+    gap: 4px !important;
   }
   
   .infoLabel {
-    font-size: 10px !important;
+    font-size: 9px !important;
     letter-spacing: 0.3px !important;
   }
   
   .infoText {
-    font-size: 12px !important;
-    padding: 6px 0 !important;
+    font-size: 11px !important;
+    padding: 5px 0 !important;
   }
   
   .editInput {
-    padding: 8px 12px !important;
-    font-size: 12px !important;
-    border-radius: 8px !important;
+    padding: 6px 10px !important;
+    font-size: 11px !important;
+    border-radius: 6px !important;
   }
   
   .cardActions {
-    padding: 16px !important;
-    gap: 8px !important;
+    padding: 14px !important;
+    gap: 6px !important;
   }
   
   .editButton,
   .saveButton,
   .cancelButton {
-    padding: 8px 14px !important;
-    font-size: 11px !important;
-    gap: 5px !important;
-    border-radius: 20px !important;
+    padding: 6px 12px !important;
+    font-size: 10px !important;
+    gap: 4px !important;
+    border-radius: 18px !important;
   }
 }
 
@@ -853,73 +853,73 @@
   
   .balanceCard {
     padding: 15px !important;
-    gap: 12px !important;
+    gap: 10px !important;
     flex-direction: column !important;
     text-align: center !important;
   }
 
   .amount {
-    font-size: 22px !important;
+    font-size: 20px !important;
   }
   
   .currency {
-    font-size: 12px !important;
+    font-size: 10px !important;
   }
   
   .balanceLabel {
-    font-size: 11px !important;
+    font-size: 10px !important;
 }
 
 .logoutButton {
-    padding: 8px 12px !important;
-    font-size: 11px !important;
-    gap: 4px !important;
-    border-radius: 18px !important;
+    padding: 6px 10px !important;
+    font-size: 10px !important;
+    gap: 3px !important;
+    border-radius: 16px !important;
     width: auto !important;
-    min-width: 100px !important;
+    min-width: 80px !important;
     justify-content: center !important;
   }
   
   .cardHeader {
-    padding: 14px !important;
-    gap: 8px !important;
+    padding: 12px !important;
+    gap: 6px !important;
   }
   
   .cardTitle {
-    font-size: 16px !important;
+    font-size: 14px !important;
   }
   
   .cardContent {
-    padding: 14px !important;
+    padding: 12px !important;
   }
   
   .infoRow {
-    margin-bottom: 14px !important;
+    margin-bottom: 10px !important;
   }
   
   .infoLabel {
-    font-size: 9px !important;
+    font-size: 8px !important;
   }
   
   .infoText {
-    font-size: 11px !important;
+    font-size: 10px !important;
   }
   
   .editInput {
-    padding: 6px 10px !important;
-    font-size: 11px !important;
+    padding: 5px 8px !important;
+    font-size: 10px !important;
   }
   
   .cardActions {
-    padding: 14px !important;
-    gap: 6px !important;
+    padding: 12px !important;
+    gap: 5px !important;
   }
   
   .editButton,
   .saveButton,
   .cancelButton {
-    padding: 6px 10px !important;
-    font-size: 10px !important;
+    padding: 5px 8px !important;
+    font-size: 9px !important;
   }
 }
 
@@ -931,42 +931,42 @@
   }
   
   .balanceCard {
-    padding: 20px 30px !important;
-    margin-bottom: 20px !important;
+    padding: 18px 25px !important;
+    margin-bottom: 18px !important;
   }
   
   .card {
-    margin-bottom: 20px !important;
+    margin-bottom: 18px !important;
   }
   
   .cardHeader {
-    padding: 20px 30px !important;
+    padding: 18px 25px !important;
   }
   
   .cardContent {
-    padding: 20px 30px !important;
+    padding: 18px 25px !important;
   }
   
   .cardActions {
-    padding: 20px 30px !important;
+    padding: 18px 25px !important;
   }
 }
 
 /* High DPI Displays */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   .card {
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08) !important;
   }
   
   .balanceCard {
-    box-shadow: 0 10px 20px rgba(50, 103, 210, 0.08) !important;
+    box-shadow: 0 8px 18px rgba(50, 103, 210, 0.08) !important;
   }
   
   .editButton,
   .saveButton,
   .cancelButton,
   .logoutButton {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
   }
 }
 

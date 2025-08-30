@@ -4,9 +4,9 @@
   position: fixed;
   top: 0;
   left: 0;
-  background: rgba(26, 26, 26, 0.7);
+  background: rgba(50, 103, 210, 0.8);
   backdrop-filter: blur(10px);
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 15px rgba(50, 103, 210, 0.2);
   z-index: 1000;
   display: flex;
   justify-content: space-between;
@@ -116,7 +116,7 @@
   .navbar {
     padding: 10px 20px;
     height: 65px;
-    background: rgba(26, 26, 26, 0.6);
+    background: rgba(50, 103, 210, 0.7);
   }
   
   .logo {
@@ -150,7 +150,7 @@
   .navbar {
     padding: 8px 16px;
     height: 60px;
-    background: rgba(26, 26, 26, 0.5);
+    background: rgba(50, 103, 210, 0.6);
   }
   
   .logo {
@@ -185,7 +185,7 @@
   .navbar {
     padding: 6px 12px;
     height: 55px;
-    background: rgba(26, 26, 26, 0.4);
+    background: rgba(50, 103, 210, 0.5);
   }
   
   .logo {
