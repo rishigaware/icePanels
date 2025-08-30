@@ -1,244 +1,650 @@
-/* Main container should scroll between the fixed navbars */
+/* Responsive Users Page Styles */
 .container {
-    width: 100vw;
-    height: calc(100vh - 140px); /* Adjust the height for top and bottom navbar */
-    padding: 20px;
-    margin-top: 60px; /* Adjust for top navbar height */
-    margin-bottom: 60px; /* Adjust for bottom navbar height */
-    background-color: #fafafa;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-  }
-  
-  /* Heading Style - Fix it at the top */
-  .heading {
-    padding: 5px 10px 10px 10px;
-    font-size: 20px;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #518bff;
-    position: sticky; /* Stick the heading at the top */
-    top: 0;
-    background-color: #fafafa; /* Ensure the background is consistent */
-    box-shadow: 0 10px 13px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f9f9f9 0%, #e8e8e8 100%);
+  padding-top: 80px;
+  padding-bottom: 100px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
 
-    z-index: 10; /* Ensure the heading stays above other content */
-  }
-  /* User list style - Make it scrollable */
+/* Header Section */
+.heading {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #3267d2;
+  margin: 0 0 2rem 0;
+  padding: 1rem;
+  text-shadow: 0 2px 4px rgba(50, 103, 210, 0.1);
+}
+
+/* Search Container */
+.searchContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+}
+
+.searchInput {
+  width: 100%;
+  max-width: 600px;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  color: #1a1a1a;
+  background: #ffffff;
+  border: 2px solid #e9ecef;
+  border-radius: 25px;
+  outline: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.searchInput:focus {
+  border-color: #3267d2;
+  box-shadow: 0 0 0 3px rgba(50, 103, 210, 0.1);
+  transform: translateY(-2px);
+}
+
+.searchInput::placeholder {
+  color: #adb5bd;
+  font-style: italic;
+}
+
+/* Users Count */
+.usersCount {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #6c757d;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Users List Container */
 .userList {
-    padding: 20px 5%;  /* Adjusted padding for better control */
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    justify-content: flex-start; /* Align the items to the start */
-    align-items: center;
-    overflow-y: auto; /* Make the user list scrollable */
-    max-height: calc(100vh - 140px); /* Adjust height for user list with header and footer space */
-    width: 100%;
-  }
-  
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  padding: 0 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
 
-/* Hide scrollbar completely */
-/* .userList::-webkit-scrollbar {
-    width: 0;
-    height: 0;
+/* User Card */
+.userCard {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.userCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
+}
+
+.userCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(50, 103, 210, 0.2);
+}
+
+.userCardContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+/* Initials Avatar */
+.initialsAvatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  box-shadow: 0 8px 20px rgba(50, 103, 210, 0.3);
+  flex-shrink: 0;
+  letter-spacing: 1px;
+}
+
+/* User Details */
+.userDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.userDetails p {
+  margin: 0;
+  color: #1a1a1a;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userDetails strong {
+  color: #3267d2;
+  font-weight: 600;
+}
+
+/* Delete Icon */
+.deleteIcon {
+  color: #dc3545 !important;
+  cursor: pointer !important;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  background: rgba(220, 53, 69, 0.1);
+}
+
+.deleteIcon:hover {
+  background: rgba(220, 53, 69, 0.2);
+  transform: scale(1.1);
+}
+
+/* Pagination Container */
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  padding: 0 1rem;
+  gap: 0.5rem;
+}
+
+.paginationButton {
+  padding: 0.75rem 1rem;
+  border: 2px solid #e9ecef;
+  background: #ffffff;
+  color: #3267d2;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 45px;
+  text-align: center;
+}
+
+.paginationButton:hover:not(:disabled) {
+  border-color: #3267d2;
+  background: #3267d2;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.paginationButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.paginationButton.active {
+  background: #3267d2;
+  color: #ffffff;
+  border-color: #3267d2;
+}
+
+.paginationInfo {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin: 0 1rem;
+  text-align: center;
+}
+
+/* Popup Styles */
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.popupContent {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Popup Header */
+.popupHeader h2 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.8rem;
+  color: #3267d2;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* Popup Body */
+.popupBody p {
+  margin: 0.75rem 0;
+  color: #1a1a1a;
+  font-size: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.popupBody strong {
+  color: #3267d2;
+  font-weight: 600;
+  min-width: 120px;
+  display: inline-block;
+}
+
+/* Close Button */
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #f8f9fa;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #6c757d;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.closeButton:hover {
+  background: #e9ecef;
+  color: #495057;
+  transform: scale(1.1);
+}
+
+/* Update Balance Section */
+.updateBalance {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 15px;
+  border: 2px solid #e9ecef;
+}
+
+.updateBalance label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #3267d2;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.balanceInput {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #1a1a1a;
+  background: #ffffff;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+}
+
+.balanceInput:focus {
+  outline: none;
+  border-color: #3267d2;
+  box-shadow: 0 0 0 3px rgba(50, 103, 210, 0.1);
+}
+
+.updateButton {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(50, 103, 210, 0.3);
+}
+
+.updateButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(50, 103, 210, 0.4);
+}
+
+.updateButton:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Loading State */
+.loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  margin: 2rem 1rem;
+}
+
+.loading p {
+  margin-top: 1rem;
+  color: #3267d2;
+  font-size: 1rem;
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6c757d;
+  grid-column: 1 / -1;
+}
+
+.emptyState h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #3267d2;
+}
+
+/* Responsive Design */
+@media (max-width: 1400px) {
+  .userList {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .userList {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
   }
   
-  .userList::-webkit-scrollbar-track {
-    background: transparent; 
+  .heading {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .userList {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding-top: 70px;
+    padding-bottom: 80px;
   }
   
-  .userList::-webkit-scrollbar-thumb {
-    background: transparent; 
-  } */
+  .heading {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
   
-  /* User card styles */
+  .searchContainer {
+    margin-bottom: 1.5rem;
+  }
+  
+  .searchInput {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.9rem;
+  }
+  
+  .userList {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0 0.75rem;
+  }
+  
   .userCard {
-    background-color: #ffffff;
-    width: 100vw; /* Set width to 100% of the viewport */
-    max-width: 100%; /* Ensure it doesn't exceed the viewport width */
-    height: 100px; /* Reduced height, adjust as needed */
-    padding: 20px; /* Increased padding */
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 10px 13px rgba(10, 0, 203, 0.1);
-    cursor: pointer;
-    transition: transform 0.2s ease;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: 1.25rem;
   }
   
-  .userCard:hover {
-    transform: scale(1.02);
-  }
-  
-  /* User card content */
   .userCardContent {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    gap: 15px; /* Increased gap */
+    gap: 0.75rem;
   }
   
-  /* User Details */
-  .userDetails {
-    flex: 1; /* Allow user details to expand */
-    display: flex;
-    flex-direction: column;
-    gap: 8px; /* Increased gap */
+  .initialsAvatar {
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
   }
   
   .userDetails p {
-    margin: 0;
-    color: #194788;
-    font-size: 10px; /* Increased from default size */
-  }
-  
-  /* Profile Icon */
-  .profileIcon {
-    font-size: 35px !important; /* Force increase in font size */
-    color: #007BFF !important;  /* Change color to blue */
-  }
-  
-  /* Delete Icon */
-  .deleteIcon {
-    font-size: 25px !important; /* Force increase in font size */
-    color: #fa3030 !important;   /* Change color to orange-red */
-    cursor: pointer !important;  /* Add pointer for interactivity */
-  }
-  
-  .deleteIcon:hover {
-    color: #FF0000 !important; /* Change color on hover */
-  }
-  
-  /* Popup styling */
-  .popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    font-size: 0.85rem;
   }
   
   .popupContent {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    width: 90vw;
-    max-width: 400px;
-
-    position: relative;
+    padding: 1.5rem;
+    margin: 0.5rem;
   }
   
-  /* Popup header styling */
   .popupHeader h2 {
-    margin: 0;
-    font-size: 20px;
-    color: #047ce5;
+    font-size: 1.5rem;
   }
   
-  /* Popup body styling */
-  .popupBody p {
-    margin: 10px 0;
-    color: #2f6abb;
-  }
-  
-  .popupBody strong {
-    color: #2b5998;
-  }
-  
-  /* Close button styling */
-  .closeButton {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    background: none;
-    border: none;
-    font-size: 30px;
-    cursor: pointer;
-    color: #0a5ca9;
-  }
-
   .updateBalance {
-    margin-top: 20px;
-    display: flex;
+    padding: 1rem;
+  }
+  
+  .paginationContainer {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  
+  .paginationButton {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.9rem;
+    min-width: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding-top: 60px;
+    padding-bottom: 70px;
+  }
+  
+  .heading {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .searchInput {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .userCard {
+    padding: 1rem;
+  }
+  
+  .userCardContent {
     flex-direction: column;
-    gap: 10px;
+    text-align: center;
+    gap: 0.75rem;
+  }
+  
+  .initialsAvatar {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .deleteIcon {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+  
+  .popupContent {
+    padding: 1rem;
+  }
+  
+  .popupHeader h2 {
+    font-size: 1.3rem;
+  }
+  
+  .popupBody p {
+    font-size: 0.9rem;
+  }
+  
+  .updateBalance {
+    padding: 0.75rem;
   }
   
   .balanceInput {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-    width: 100%;
-    color: #047ce5;
-    text-align: center; /* Center the text */
-
+    padding: 0.75rem;
+    font-size: 0.9rem;
   }
   
   .updateButton {
-    padding: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    text-align: center;
+    padding: 0.75rem;
+    font-size: 0.9rem;
   }
   
-  .updateButton:hover {
-    background-color: #0056b3;
+  .paginationContainer {
+    margin-top: 1.5rem;
   }
   
-  .loading {
-    position: absolute; /* Use absolute positioning */
-    top: 50%;            /* Position it vertically in the center */
-    left: 50%;           /* Position it horizontally in the center */
-    transform: translate(-50%, -50%); /* Adjust to center the element exactly */
-    display: flex;
-    justify-content: center; /* Center content horizontally */
-    align-items: center;     /* Center content vertically */
-    background-color: #f9f9f9; /* Optional: background to indicate loading state */
+  .paginationButton {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    min-width: 35px;
   }
   
-
-
-/* Styling for the search bar */
-.searchInput {
-  width: 100%; /* Full width of the container */
-  max-width: 500px; /* Optional: limit the width */
-  padding: 10px 15px; /* Add some inner spacing */
-  font-size: 16px; /* Text size */
-  color: #333; /* Text color */
-  background-color: #f9f9f9; /* Light background */
-  border: 1px solid #ccc; /* Border color */
-  border-radius: 5px; /* Rounded corners */
-  outline: none; /* Remove default outline */
-  transition: all 0.3s ease; /* Smooth transition for hover/focus */
-  margin-bottom: 20px;
+  .paginationInfo {
+    font-size: 0.8rem;
+    margin: 0 0.5rem;
+  }
 }
 
-/* Change border color and shadow on focus */
-.searchInput:focus {
-  border-color: #4592ef; /* Highlight border color */
-  box-shadow: 0 0 8px rgba(69, 146, 239, 0.4); /* Add subtle glow */
-  background-color: #fff; /* Brighten background */
+@media (max-width: 360px) {
+  .heading {
+    font-size: 1.3rem;
+  }
+  
+  .searchInput {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.8rem;
+  }
+  
+  .userCard {
+    padding: 0.875rem;
+  }
+  
+  .userDetails p {
+    font-size: 0.8rem;
+  }
+  
+  .popupContent {
+    padding: 0.875rem;
+  }
+  
+  .popupHeader h2 {
+    font-size: 1.2rem;
+  }
+  
+  .paginationButton {
+    padding: 0.5rem 0.625rem;
+    font-size: 0.75rem;
+    min-width: 32px;
+  }
 }
 
-/* Styling for placeholder text */
-.searchInput::placeholder {
-  color: #aaa; /* Lighter color for placeholder text */
-  font-style: italic; /* Optional: italicize */
-  font-size: 12px; /* Set the font size for the placeholder */
+/* Landscape Mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .container {
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
+  
+  .heading {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .popupContent {
+    max-height: 80vh;
+  }
+  
+  .paginationContainer {
+    margin-top: 1rem;
+  }
+}
 
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .userCard {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  .popupContent {
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Print Styles */
+@media print {
+  .container {
+    background: #ffffff;
+    padding: 0;
+  }
+  
+  .userCard {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    break-inside: avoid;
+  }
+  
+  .deleteIcon,
+  .closeButton,
+  .updateButton,
+  .paginationContainer {
+    display: none;
+  }
 }
