@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./MyId.module.css";
 import { useUser } from "../../../../context/UserContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
 import { Toast } from "primereact/toast";
 import { PulseLoader } from "react-spinners";
@@ -39,7 +39,7 @@ const MyId = () => {
         }
 
         const response = await fetch(
-          `https://betting-accounts-backend.onrender.com/api/admin/get-all-ids`
+          `${url}/api/admin/get-all-ids`    
         );
 
         if (!response.ok) {

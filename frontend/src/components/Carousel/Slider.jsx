@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useSwipeable } from "react-swipeable";
+import { useUser } from "../../context/UserContext";
 
 const Slider = () => {
+    const { url } = useUser();
     const [currentIndex, setCurrentIndex] = useState(0);
     const carouselRef = useRef(null);
 
@@ -80,7 +82,7 @@ const Slider = () => {
                             <div className="flex flex-col items-center justify-center">
                                 <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105 focus-within:ring-2 focus-within:ring-blue-500">
                                     <img
-                                        src={`http://localhost:3000${item.picture}`}
+                                        src={`${url}${item.picture}`}
                                         alt={item.name}
                                         className="w-full h-48 object-cover"
                                     />

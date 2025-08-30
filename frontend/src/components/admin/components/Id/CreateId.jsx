@@ -318,7 +318,8 @@ const CreateId = () => {
             <div className={styles.logo}>
               <img 
                 src={`${url}/${item.logo}`}
-                alt={`${item.website} logo`} />
+                alt={`${item.website} logo`}
+              />
             </div>
 
             {/* Website Details */}

@@ -187,9 +187,9 @@ export default function IdDepositPopup ({ onClose, walletBalance = 0, setWalletB
         {!isDetailedView ? (
           <div className={styles.initialView}>
             <img
-                src={selectedId.imgUrl} // Replace with the actual image path
+                src={`${url}/${selectedId.imgUrl}`} // Fix: Properly construct image URL
                 alt="Deposit Icon"           // Add a descriptive alt text
-                className={styles.depositImage} // Optional: Add a CSS class for styling
+                className={styles.depositImage}
             />
             <p className={styles.username}>{selectedId.username}</p> {/* Display the ID name dynamically */}
             <p className={styles.idName}>{selectedId.websiteName}</p> {/* Display the ID name dynamically */}

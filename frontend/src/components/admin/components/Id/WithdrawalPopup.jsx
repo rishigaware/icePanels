@@ -99,7 +99,7 @@ export default function WithdrawalPopup({
         {/* Image and User Info */}
         <div className={styles.initialView}>
           <img
-            src={selectedId.imgUrl}
+            src={`${url}/${selectedId.imgUrl}`}
             alt="User"
             className={styles.depositImage}
           />

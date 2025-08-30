@@ -812,7 +812,7 @@
   .balanceLabel {
     font-size: 12px !important;
   }
-  
+
   .card {
     margin-bottom: 20px !important;
     border-radius: 15px !important;
@@ -868,9 +868,9 @@
     font-size: 11px !important;
     gap: 5px !important;
     border-radius: 20px !important;
-  }
-  
-  .logoutButton {
+}
+
+.logoutButton {
     padding: 8px 12px !important;
     font-size: 10px !important;
     gap: 5px !important;
@@ -893,8 +893,8 @@
     padding: 15px !important;
     gap: 12px !important;
   }
-  
-  .amount {
+
+.amount {
     font-size: 22px !important;
   }
   
