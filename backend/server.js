@@ -67,8 +67,8 @@ app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
 
-// Handling dynamic port for Vercel or fallback to local port 3000
-const PORT = process.env.PORT || 3000;
+// Handling dynamic port for Vercel or fallback to local port 5000
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

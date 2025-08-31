@@ -1,4 +1,4 @@
-const { db } = require('../config/firebase');
+const { db } = require('../config/firebase-config');
 
 // loginController.js
 exports.loginController = async (req, res) => {

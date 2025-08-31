@@ -33,8 +33,12 @@ const ProfilePage = () => {
       if (response.ok) {
         const data = await response.json();
         setBalance(data.balance); // Update balance state
-        setUser.balance = data.balance;
-    } else {
+        // Update user context with new balance
+        setUser(prevUser => ({
+          ...prevUser,
+          balance: data.balance
+        }));
+      } else {
         console.error('Failed to fetch balance');
       }
     } catch (error) {
@@ -152,13 +156,30 @@ const ProfilePage = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Payment Details Updated:');
+        toast.current.show({
+          severity: 'success',
+          summary: 'Payment Details Updated',
+          detail: 'Payment Details Updated successfully',
+          life: 2000,
+        });
         setIsPaymentEditing(false);  // Disable editing after successful update
       } else {
         const errorData = await response.json();
+        toast.current.show({
+          severity: 'error',
+          summary: 'Update Failed',
+          detail: 'Failed to update payment details',
+          life: 2000,
+        });
         console.error('Error updating payment details:', errorData.message);
       }
     } catch (error) {
+      toast.current.show({
+        severity: 'error',
+        summary: 'Update Failed',
+        detail: 'Network error occurred',
+        life: 2000,
+      });
       console.error('Error during the request:', error);
     }
   };
@@ -190,7 +211,12 @@ const ProfilePage = () => {
       if (response.ok) {
         // Successfully updated the profile
         const data = await response.json();
-        console.log('Profile Updated:');
+        toast.current.show({
+          severity: 'success',
+          summary: 'Profile Updated',
+          detail: 'Profile Updated Successfully',
+          life: 2000,
+        });
   
         // Update the user context with the updated information, keeping the userId intact
         setUser((prevUser) => ({
@@ -210,10 +236,22 @@ const ProfilePage = () => {
       } else {
         // Handle errors from the server
         const errorData = await response.json();
+        toast.current.show({
+          severity: 'error',
+          summary: 'Update Failed',
+          detail: 'Failed to update profile',
+          life: 2000,
+        });
         console.error('Error updating profile:', errorData.message);
       }
     } catch (error) {
       // Handle any network or request errors
+      toast.current.show({
+        severity: 'error',
+        summary: 'Update Failed',
+        detail: 'Network error occurred',
+        life: 2000,
+      });
       console.error('Error during the request:', error);
     }
   };
@@ -332,6 +370,13 @@ const ProfilePage = () => {
                     className={styles.editInput}
                     placeholder="Enter new password"
                   />
+                  <p style={{ 
+                    fontSize: '11px', 
+                    color: '#6c757d', 
+                    marginTop: '5px', 
+                    fontStyle: 'italic' 
+                  }}>
+                  </p>
                 </div>
               </div>
             )}

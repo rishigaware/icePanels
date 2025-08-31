@@ -1,4 +1,4 @@
-const { db } = require('../config/firebase');
+const { db } = require('../config/firebase-config');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid'); // Correct import of uuidv4
 const fs = require('fs');
@@ -560,7 +560,7 @@ exports.updateProfileController = async (req, res) => {
     if (name) updateData.name = name;
     if (phoneNumber) updateData.phoneNumber = phoneNumber;
     if (email) updateData.email = email;
-    if (password) updateData.password = password;
+    if (password && password.trim() !== '') updateData.password = password;
 
     // Update the admin document with the provided fields
     await adminRef.update(updateData);
@@ -1099,5 +1099,35 @@ exports.deleteUser = async (req, res) => {
   } catch (error) {
     console.error('Error deleting user:', error);
     res.status(500).json({ message: 'Failed to delete user', error: error.message });
+  }
+};
+
+// Controller to change user password
+exports.changeUserPassword = async (req, res) => {
+  const { userId, newPassword } = req.body; // Get userId and newPassword from request body
+
+  try {
+    // Validate input
+    if (!userId || !newPassword) {
+      return res.status(400).json({ message: 'User ID and new password are required' });
+    }
+
+    // Reference to the user document in Firestore
+    const userRef = db.collection('user').doc(userId);
+
+    // Check if the user exists
+    const doc = await userRef.get();
+    if (!doc.exists) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update the user's password
+    await userRef.update({ password: newPassword });
+
+    // Respond with success message
+    res.status(200).json({ message: 'User password changed successfully' });
+  } catch (error) {
+    console.error('Error changing user password:', error);
+    res.status(500).json({ message: 'Failed to change user password', error: error.message });
   }
 };

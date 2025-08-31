@@ -12,8 +12,10 @@ const Users = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [tempBalance, setTempBalance] = useState("");
+    const [tempPassword, setTempPassword] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
     const [updatingBalance, setUpdatingBalance] = useState(false);
+    const [updatingPassword, setUpdatingPassword] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [usersPerPage] = useState(12);
     const toast = useRef(null);
@@ -99,6 +101,48 @@ const Users = () => {
         }
     };
 
+    const handleUpdatePassword = async () => {
+        if (!selectedUser || tempPassword === "") return;
+        
+        setUpdatingPassword(true);
+        try {
+            const response = await fetch(`${url}/api/admin/change-user-password`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    userId: selectedUser.id, 
+                    newPassword: tempPassword 
+                }),
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to update password');
+            }
+            
+            toast.current.show({
+                severity: 'success',
+                summary: 'Password Updated',
+                detail: 'User password updated successfully',
+                life: 2000,
+            });
+            
+            setTempPassword("");
+            handleClosePopup();
+        } catch (error) {
+            console.error('Error updating password:', error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Update Failed',
+                detail: 'Error while updating password',
+                life: 2000,
+            });
+        } finally {
+            setUpdatingPassword(false);
+        }
+    };
+
     const handleUserClick = (user) => {
         fetchUsers();
         const latestUser = users.find((u) => u.id === user.id);
@@ -109,6 +153,7 @@ const Users = () => {
     const handleClosePopup = () => {
         setSelectedUser(null);
         setTempBalance("");
+        setTempPassword("");
     };
 
     const handleDeleteUser = async (userId, userName) => {
@@ -151,7 +196,7 @@ const Users = () => {
     }, []);
 
     // Filter users based on search query
-    const filteredUsers = users.filter((user) =>
+    const filteredUsers = (users || []).filter((user) =>
         user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.phoneNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -429,6 +474,34 @@ const Users = () => {
                                         </>
                                     ) : (
                                         'Update Balance'
+                                    )}
+                                </button>
+                            </div>
+
+                            {/* Update Password Section */}
+                            <div className={styles.updatePassword}>
+                                <label>
+                                    <strong>Update Password:</strong>
+                                </label>
+                                <input
+                                    type="password"
+                                    value={tempPassword}
+                                    onChange={(e) => setTempPassword(e.target.value)}
+                                    className={styles.passwordInput}
+                                    placeholder="Enter new password"
+                                />
+                                <button 
+                                    onClick={handleUpdatePassword} 
+                                    className={styles.updateButton}
+                                    disabled={updatingPassword || tempPassword === ""}
+                                >
+                                    {updatingPassword ? (
+                                        <>
+                                            <PulseLoader color="#ffffff" size={8} />
+                                            <span style={{ marginLeft: '0.5rem' }}>Updating...</span>
+                                        </>
+                                    ) : (
+                                        'Update Password'
                                     )}
                                 </button>
                             </div>

@@ -13,6 +13,8 @@ import WithdrawalPopup from "./WithdrawalPopup";
 const MyId = () => {
   const toast = useRef(null); // Add a reference for Toast
   const { user, url } = useUser();
+  const safeUser = user || {};
+  const safeUrl = url || '';
   const [myIds, setMyIds] = useState([]);
   const [menuOpen, setMenuOpen] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -34,12 +36,12 @@ const MyId = () => {
   useEffect(() => {
     const fetchIds = async () => {
       try {
-        if (!user?.id) {
+        if (!safeUser?.id) {
           throw new Error("User ID is missing");
         }
 
         const response = await fetch(
-          `${url}/api/admin/get-all-ids`    
+          `${safeUrl}/api/admin/get-all-ids`    
         );
 
         if (!response.ok) {
@@ -66,17 +68,17 @@ const MyId = () => {
       }
     };
 
-    if (user?.id || needRefetch) {
+    if (safeUser?.id || needRefetch) {
       fetchIds();
       setNeedRefetch(false);
     }
-  }, [user?.id, needRefetch]);
+  }, [safeUser?.id, needRefetch]);
   
 // Accept API Call
 const handleAccept = async (item) => {
   try {
     const response = await fetch(
-      `${url}/api/admin/accept-id`,
+      `${safeUrl}/api/admin/accept-id`,
       {
         method: "POST",
         headers: {
@@ -113,7 +115,7 @@ const handleAccept = async (item) => {
 const handleReject = async (item) => {
   try {
     const response = await fetch(
-      `${url}/api/admin/reject-id`,
+      `${safeUrl}/api/admin/reject-id`,
       {
         method: "POST",
         headers: {
@@ -165,19 +167,19 @@ const handleReject = async (item) => {
 
   const handlePasswordChange = async () => {
     try {
-      if (!user?.id || !selectedId?.id) {
+      if (!safeUser?.id || !selectedId?.id) {
         throw new Error("User ID or selected ID is missing");
       }
 
       const response = await fetch(
-        `${url}/api/user/change-id-password`,
+        `${safeUrl}/api/user/change-id-password`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            userId: user.id,
+            userId: safeUser.id,
             selectedId: selectedId.id,
             newPassword: newPassword,
           }),
@@ -238,11 +240,11 @@ const handleReject = async (item) => {
     setNeedRefetch(true);
   };
 
-  const filteredIds = myIds.filter(
+  const filteredIds = (myIds || []).filter(
     (id) =>
-      id.websiteName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      id.websiteUrl.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      id.username.toLowerCase().includes(searchQuery.toLowerCase())
+      (id.websiteName && id.websiteName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (id.websiteUrl && id.websiteUrl.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (id.username && id.username.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   if (loading) {
@@ -278,26 +280,26 @@ const handleReject = async (item) => {
           <div key={item.id} className={styles.idCard}>
             <div className={styles.logo} onClick={() => handleIdClick(item)}>
               <img
-                src={`${url}/${item.imgUrl}`}
-                alt={`${item.websiteName} logo`}
+                src={`${safeUrl}/${item.imgUrl || ''}`}
+                alt={`${item.websiteName || 'Website'} logo`}
               />
             </div>
 
             <div className={styles.details}>
-              <p className={styles.websiteName}>{item.websiteName}</p>
+              <p className={styles.websiteName}>{item.websiteName || 'N/A'}</p>
               <span>
                 <a
-                  href={item.websiteUrl}
+                  href={item.websiteUrl || '#'}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.websiteLink}
                 >
-                  {item.websiteUrl}
+                  {item.websiteUrl || 'N/A'}
                 </a>
               </span>
               <p className={styles.userId}>
                 <strong>CreatedBy : </strong>
-                {item.createdBy}
+                {item.createdBy || 'N/A'}
               </p>
             </div>
 
@@ -351,20 +353,20 @@ const handleReject = async (item) => {
             </button>
             <div className={styles.popupHeader}>
               <img
-                src={`${url}/${selectedId.imgUrl}`}
-                alt={`${selectedId.websiteName} logo`}
+                src={`${safeUrl}/${selectedId.imgUrl || ''}`}
+                alt={`${selectedId.websiteName || 'Website'} logo`}
                 className={styles.popupLogo}
               />
-              <h2>{selectedId.websiteName}</h2>
-              <p>{selectedId.websiteUrl}</p>
+              <h2>{selectedId.websiteName || 'N/A'}</h2>
+              <p>{selectedId.websiteUrl || 'N/A'}</p>
             </div>
 
             <div className={styles.popupBody}>
               <p>
-                <strong>Username:</strong> {selectedId.username}
+                <strong>Username:</strong> {selectedId.username || 'N/A'}
               </p>
               <p>
-                <strong>Password:</strong> {selectedId.password}
+                <strong>Password:</strong> {selectedId.password || 'N/A'}
               </p>
               <p className={styles.popStatusText}>
               <strong>Status :&nbsp;</strong>

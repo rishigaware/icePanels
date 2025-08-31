@@ -355,6 +355,42 @@
   box-shadow: none;
 }
 
+/* Update Password Section */
+.updatePassword {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 15px;
+  border: 2px solid #e9ecef;
+}
+
+.updatePassword label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #3267d2;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.passwordInput {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #1a1a1a;
+  background: #ffffff;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+}
+
+.passwordInput:focus {
+  outline: none;
+  border-color: #3267d2;
+  box-shadow: 0 0 0 3px rgba(50, 103, 210, 0.1);
+}
+
 /* Loading State */
 .loading {
   display: flex;

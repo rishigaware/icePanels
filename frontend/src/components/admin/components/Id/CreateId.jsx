@@ -177,6 +177,11 @@ const CreateId = () => {
     setSelectedCategory(e.target.value);
   };
   const filteredWebsites = websites.filter((item) => {
+    // Check if item and required properties exist before accessing them
+    if (!item || !item.website || !item.url) {
+      return false;
+    }
+    
     // Matches search query for website name or URL
     const matchesSearchQuery =
       item.website.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -305,11 +310,14 @@ const CreateId = () => {
          </select>
        </div>
        {/* Loader when data is fetching */}
-      
-      {/* Websites List */}
-      {filteredWebsites.length === 0 ? (
+      {isLoading ? (
+        <div className={styles.loader}>
+          <PulseLoader color="#007bff" size={15} />
+          <p>Loading websites...</p>
+        </div>
+      ) : filteredWebsites.length === 0 ? (
         <p className={styles.noWebsites}>
-          No websites match your search and category.
+          {websites.length === 0 ? 'No websites available. Please add some websites first.' : 'No websites match your search and category.'}
         </p>
       ) : (
         filteredWebsites.map((item) => (
@@ -317,21 +325,24 @@ const CreateId = () => {
             {/* Website Logo */}
             <div className={styles.logo}>
               <img 
-                src={`${url}/${item.logo}`}
-                alt={`${item.website} logo`}
+                src={item.logo ? `${url}/${item.logo}` : '/placeholder-logo.png'}
+                alt={`${item.website || 'Website'} logo`}
+                onError={(e) => {
+                  e.target.src = '/placeholder-logo.png';
+                }}
               />
             </div>
 
             {/* Website Details */}
             <div className={styles.details}>
-              <p className={styles.websiteName}>{item.website}</p>
+              <p className={styles.websiteName}>{item.website || 'Unnamed Website'}</p>
               <a
-                href={item.url}
+                href={item.url || '#'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.websiteLink}
               >
-                {item.url}
+                {item.url || 'No URL available'}
               </a>
             </div>
 
@@ -358,15 +369,18 @@ const CreateId = () => {
 
 
        {/* Modal Popup for Creating ID */}
-       {showModal && selectedWebsite && (
+       {showModal && selectedWebsite && selectedWebsite.website && selectedWebsite.url && (
         <div className={styles.modal}>
           <div className={styles.modalContent}>
             {/* Modal Header */}
             <div className={styles.modalHeader}>
               <img
-                src={`${url}/${selectedWebsite.logo}`}
-                alt={`${selectedWebsite.website} logo`}
+                src={selectedWebsite.logo ? `${url}/${selectedWebsite.logo}` : '/placeholder-logo.png'}
+                alt={`${selectedWebsite.website || 'Website'} logo`}
                 className={styles.websiteLogo}
+                onError={(e) => {
+                  e.target.src = '/placeholder-logo.png';
+                }}
               />
               <h2>{selectedWebsite.website}</h2>
               <a

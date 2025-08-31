@@ -11,6 +11,8 @@ import WithdrawalPopup from "./WithdrawalPopup";
 
 const MyId = () => {
   const { user, url } = useUser();
+  const safeUser = user || {};
+  const safeUrl = url || '';
   const [myIds, setMyIds] = useState([]);
   const [menuOpen, setMenuOpen] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,12 +34,12 @@ const MyId = () => {
   useEffect(() => {
     const fetchIds = async () => {
       try {
-        if (!user?.id) {
+        if (!safeUser?.id) {
           throw new Error("User ID is missing");
         }
 
         const response = await fetch(
-          `${url}/api/user/get-all-ids?userId=${user?.username}`
+          `${safeUrl}/api/user/get-all-ids?userId=${safeUser?.username}`
         );
 
         if (!response.ok) {
@@ -63,11 +65,11 @@ const MyId = () => {
       }
     };
 
-    if (user?.id || needRefetch) {
+    if (safeUser?.id || needRefetch) {
       fetchIds();
       setNeedRefetch(false);
     }
-  }, [user?.id, needRefetch]);
+  }, [safeUser?.id, needRefetch]);
 
   const toggleMenu = (index) => {
     setMenuOpen(menuOpen === index ? null : index);
@@ -89,19 +91,19 @@ const MyId = () => {
 
   const handlePasswordChange = async () => {
     try {
-      if (!user?.id || !selectedId?.id) {
+      if (!safeUser?.id || !selectedId?.id) {
         throw new Error("User ID or selected ID is missing");
       }
 
       const response = await fetch(
-        `${url}/api/user/change-id-password`,
+        `${safeUrl}/api/user/change-id-password`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            userId: user.id,
+            userId: safeUser.id,
             selectedId: selectedId.id,
             newPassword: newPassword,
           }),
@@ -152,11 +154,11 @@ const MyId = () => {
     setNeedRefetch(true);
   };
 
-  const filteredIds = myIds.filter(
+  const filteredIds = (myIds || []).filter(
     (id) =>
-      id.websiteName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      id.websiteUrl.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      id.username.toLowerCase().includes(searchQuery.toLowerCase())
+      (id.websiteName && id.websiteName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (id.websiteUrl && id.websiteUrl.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (id.username && id.username.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   if (loading) {
@@ -192,26 +194,26 @@ const MyId = () => {
           <div key={item.id} className={styles.idCard}>
             <div className={styles.logo} onClick={() => handleIdClick(item)}>
               <img
-                src={`${url}/${item.imgUrl}`}
-                alt={`${item.websiteName} logo`}
+                src={`${safeUrl}/${item.imgUrl || ''}`}
+                alt={`${item.websiteName || 'Website'} logo`}
               />
             </div>
 
             <div className={styles.details}>
-              <p className={styles.websiteName}>{item.websiteName}</p>
+              <p className={styles.websiteName}>{item.websiteName || 'N/A'}</p>
               <span>
                 <a
-                  href={item.websiteUrl}
+                  href={item.websiteUrl || '#'}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.websiteLink}
                 >
-                  {item.websiteUrl}
+                  {item.websiteUrl || 'N/A'}
                 </a>
               </span>
               <p className={styles.userId}>
                 <strong>username : </strong>
-                {item.username}
+                {item.username || 'N/A'}
               </p>
             </div>
 

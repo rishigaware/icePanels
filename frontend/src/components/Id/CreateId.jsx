@@ -176,11 +176,11 @@ const CreateId = () => {
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
   };
-  const filteredWebsites = websites.filter((item) => {
+  const filteredWebsites = (websites || []).filter((item) => {
     // Matches search query for website name or URL
     const matchesSearchQuery =
-      item.website.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.url.toLowerCase().includes(searchQuery.toLowerCase());
+      (item.website && item.website.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (item.url && item.url.toLowerCase().includes(searchQuery.toLowerCase()));
   
     // Matches the selected category
     const matchesCategory =

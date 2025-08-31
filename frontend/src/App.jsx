@@ -33,7 +33,12 @@ const RoleBasedNavbar = () => {
 function App() {
   return (
     <UserProvider>
-      <Router>
+      <Router
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
         {/* Render the navbar for all users */}
         <RoleBasedNavbar />
 

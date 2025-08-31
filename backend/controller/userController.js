@@ -1,4 +1,4 @@
-const { db } = require('../config/firebase');
+const { db } = require('../config/firebase-config');
 const bcrypt = require('bcrypt');  // Add bcrypt import here
 // console.log("Firestore DB:", db);  // Log the db object
 const { uploadUserDeposite } = require('../config/multerConfig');
@@ -209,7 +209,7 @@ exports.getAccountDetails = async (req, res) => {
       if (name) updateData.name = name;
       if (phoneNumber) updateData.phoneNumber = phoneNumber;
       if (email) updateData.email = email;
-      if (password) updateData.password = password;
+      if (password && password.trim() !== '') updateData.password = password;
   
       // Update the user document with the provided fields
       await userRef.update(updateData);

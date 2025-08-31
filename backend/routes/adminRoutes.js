@@ -59,5 +59,8 @@ router.delete('/delete-one/bottom-card-carousel', adminController.deleteOneBotto
 // Route to delete a user by userId
 router.delete('/delete-user/:userId', adminController.deleteUser);
 
+// Route to change user password
+router.post('/change-user-password', adminController.changeUserPassword);
+
 
 module.exports = router;

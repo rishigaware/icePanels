@@ -208,11 +208,46 @@ const ProfilePage = () => {
         // Handle errors from the server
         const errorData = await response.json();
         console.error('Error updating profile:', errorData.message);
+        toast.current.show({
+          severity: 'error',
+          summary: 'Update Failed',
+          detail: 'Failed to update profile',
+          life: 2000,
+        });
       }
     } catch (error) {
       // Handle any network or request errors
       console.error('Error during the request:', error);
+      toast.current.show({
+        severity: 'error',
+        summary: 'Update Failed',
+        detail: 'Network error occurred',
+        life: 2000,
+      });
     }
+  };
+
+  // Handle cancel for profile editing
+  const handleProfileCancel = () => {
+    setProfileInfo({
+      name: user?.name || '',
+      phone: user?.phoneNumber || '',
+      email: user?.email || '',
+      password: user?.password || '',
+    });
+    setIsProfileEditing(false);
+  };
+
+  // Handle cancel for payment editing
+  const handlePaymentCancel = () => {
+    setPaymentInfo({
+      accountNumber: '1234567890',
+      accountHolderName: 'John Doe',
+      ifscCode: 'ABCD0123456',
+      bankName: 'XYZ Bank',
+      upiId: 'abc@upi'
+    });
+    setIsPaymentEditing(false);
   };
   
   return (
@@ -308,6 +343,13 @@ const ProfilePage = () => {
                     className={styles.editInput}
                     placeholder="Enter new password"
                   />
+                  <p style={{ 
+                    fontSize: '11px', 
+                    color: '#6c757d', 
+                    marginTop: '5px', 
+                    fontStyle: 'italic' 
+                  }}>
+                  </p>
                 </div>
               </div>
             )}
@@ -453,6 +495,9 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+
+
+      
       <LoginPopup isOpen={isModalOpen} isClose={closeModal} />
     </div>
   );
