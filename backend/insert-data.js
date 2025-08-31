@@ -63,3 +63,4 @@ switch (command) {
     console.log('  - id, adminAccountDetails');
     break;
 }
+

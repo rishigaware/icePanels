@@ -138,3 +138,4 @@ module.exports = { createAdmins, createSingleAdmin };
 if (require.main === module) {
   createAdmins();
 }
+

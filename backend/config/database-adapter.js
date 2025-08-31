@@ -111,3 +111,4 @@ class DatabaseAdapter {
 }
 
 module.exports = DatabaseAdapter;
+
