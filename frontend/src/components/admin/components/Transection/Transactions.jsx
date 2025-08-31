@@ -140,7 +140,7 @@ const Transactions = () => {
     }
 
     fetchTransactions();
-  }, [user]);
+  }, [user?.id]); // Only depend on user ID, not the entire user object
 
   // Pagination logic
   const indexOfLastTransaction = currentPage * transactionsPerPage;

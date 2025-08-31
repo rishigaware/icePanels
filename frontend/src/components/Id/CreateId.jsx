@@ -8,6 +8,7 @@ import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import { MdDeleteForever } from "react-icons/md";
+import { FaTrash } from "react-icons/fa";
 
 
 const CreateId = () => {
@@ -25,6 +26,7 @@ const CreateId = () => {
   });
 
   const [websites, setWebsites] = useState([]);
+  const [categories, setCategories] = useState([]); // Categories from websites
   const [menuOpen, setMenuOpen] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedWebsite, setSelectedWebsite] = useState(null);
@@ -58,9 +60,25 @@ const CreateId = () => {
     }
   };
 
+  // Function to fetch categories from websites
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`${url}/api/admin/get-all-categories`);
+      const data = await response.json();
+      if (response.ok) {
+        setCategories(data.categories || []);
+      } else {
+        console.error("Error fetching categories:", data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch categories:", error);
+    }
+  };
+
   // Fetch data when the component loads
   useEffect(() => {
     fetchWebsites();
+    fetchCategories();
   }, []);
 
   const toggleMenu = (index) => {
@@ -138,6 +156,7 @@ const CreateId = () => {
         setNewWebsite({ id: "", website: "", url: "", category: "", logo: "" });
         setFile(null);
         fetchWebsites(); // Re-fetch the data after adding a new website
+        fetchCategories(); // Also refresh categories
         // console.log("Website added successfully:");
       } else {
         
@@ -178,8 +197,9 @@ const CreateId = () => {
   };
   const filteredWebsites = (websites || []).filter((item) => {
     // Matches search query for website name or URL
+    const websiteName = item.name || item.website || '';
     const matchesSearchQuery =
-      (item.website && item.website.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      websiteName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (item.url && item.url.toLowerCase().includes(searchQuery.toLowerCase()));
   
     // Matches the selected category
@@ -254,6 +274,7 @@ const CreateId = () => {
       
       if (response.ok) {
         fetchWebsites();
+        fetchCategories(); // Also refresh categories
         toast.current.show({
           severity: 'error',
           summary: 'Website deleted',
@@ -294,66 +315,82 @@ const CreateId = () => {
         />
 
         {/* Category Dropdown */}
-         <select value={selectedCategory} onChange={handleCategoryChange} className={styles.categoryDropdown}>
-           <option value="All Categories">All Categories</option>
-           <option value="King">King</option>
-           <option value="Diamondexch99">Diamondexch99</option>
-           <option value="Diamondexch999">Diamondexch999</option>
-           <option value="World">World</option>
-           <option value="Radhe">Radhe</option>
-
-         </select>
+        <select 
+          value={selectedCategory} 
+          onChange={handleCategoryChange} 
+          className={styles.categoryDropdown}
+        >
+          <option value="All Categories">All Categories</option>
+          {categories.map((category, index) => (
+            <option key={index} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
        </div>
        {/* Loader when data is fetching */}
       
-      {/* Websites List */}
-      {filteredWebsites.length === 0 ? (
-        <p className={styles.noWebsites}>
-          No websites match your search and category.
-        </p>
-      ) : (
-        filteredWebsites.map((item) => (
-          <div key={item.id} className={styles.idCard}>
-            {/* Website Logo */}
-            <div className={styles.logo}>
-              <img 
-                src={`${url}/${item.logo}`}
-                alt={`${item.website} logo`} />
-            </div>
-
-            {/* Website Details */}
-            <div className={styles.details}>
-              <p className={styles.websiteName}>{item.website}</p>
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.websiteLink}
-              >
-                {item.url}
-              </a>
-            </div>
-
-            {/* Actions */}
-            <div className={styles.actions}>
-              <button
-                className={styles.createButton}
-                onClick={() => handleCreate(item.id)}
-              >
-                Create ID
-              </button>
-
-              {/* <div className={styles.deleteContainer}>
-                  <MdDeleteForever
-                    className={styles.deleteIcon}
+      {/* Website List */}
+        {filteredWebsites.length > 0 ? (
+          filteredWebsites.map((item, index) => (
+            <div key={item.id || index} className={styles.websiteCard}>
+              <div className={styles.websiteInfo}>
+                <img
+                  src={`${url}/${item.logo}`}
+                  alt={item.name || item.website || 'Website Logo'}
+                  className={styles.websiteLogo}
+                />
+                <div className={styles.websiteDetails}>
+                  <h3>{item.name || item.website || 'Unnamed Website'}</h3>
+                  <p>{item.url || 'No URL'}</p>
+                  <span className={styles.categoryTag}>
+                    {item.category || 'No Category'}
+                  </span>
+                  {item.coinRate && (
+                    <p className={styles.coinInfo}>
+                      <strong>Coin Rate:</strong> {item.coinRate}
+                    </p>
+                  )}
+                  {item.minimumCoins && (
+                    <p className={styles.coinInfo}>
+                      <strong>Min Coins:</strong> {item.minimumCoins}
+                    </p>
+                  )}
+                  {item.createdAt && (
+                    <p className={styles.dateInfo}>
+                      <strong>Added:</strong> {new Date(item.createdAt).toLocaleDateString()}
+                    </p>
+                  )}
+                  {item.isActive !== undefined && (
+                    <span className={`${styles.statusTag} ${item.isActive ? styles.activeStatus : styles.inactiveStatus}`}>
+                      {item.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                  )}
+                </div>
+                <div className={styles.websiteActions}>
+                  <button
+                    onClick={() => handleCreate(item.id)}
+                    className={styles.actionButton}
+                  >
+                    Create ID
+                  </button>
+                  <button
                     onClick={() => handleDelete(item)}
-                    />
-              </div> */}
-
+                    className={styles.deleteButton}
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
+              </div>
             </div>
+          ))
+        ) : (
+          <div className={styles.loading}>
+            {searchQuery || selectedCategory !== "All Categories" 
+              ? "No websites found matching your criteria." 
+              : "No websites available."}
           </div>
-        ))
-      )}
+        )}
 
 
        {/* Modal Popup for Creating ID */}

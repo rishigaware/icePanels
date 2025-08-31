@@ -22,6 +22,8 @@ router.get('/get-websites', adminController.getAllWebsites);
 
 // POST route for adding a website
 router.post("/add-website", uploadLogo, adminController.addWebsite);
+// PUT route for updating a website
+router.put("/update-website/:id", uploadLogo, adminController.updateWebsite);
 router.post("/update-profile", adminController.updateProfileController);
 
 router.get('/get/top-carousel', adminController.getAllTopCorousel);
@@ -62,5 +64,13 @@ router.delete('/delete-user/:userId', adminController.deleteUser);
 // Route to change user password
 router.post('/change-user-password', adminController.changeUserPassword);
 
+// Get unique categories from websites
+router.get('/get-website-categories', adminController.getWebsiteCategories);
+// Get all categories for dropdown (combines both sources)
+router.get('/get-all-categories', adminController.getAllCategoriesForDropdown);
+// Remove a category from all websites
+router.post('/remove-category', adminController.removeCategoryFromWebsites);
+// Add a new category
+router.post('/add-category', adminController.addCategory);
 
 module.exports = router;

@@ -498,7 +498,7 @@ exports.getAccountDetailsDeposit = async (req, res) => {
 exports.addWebsite = async (req, res) => {
   try {
     // Extract form data from the request body
-    const { website, url, category } = req.body;
+    const { website, url, category, coinRate, minimumCoins } = req.body;
     
     // Get the logo filename from the uploaded file
     const logo = req.file ? path.join('uploads/logo', req.file.filename) : ''; // Save the full path
@@ -518,6 +518,9 @@ exports.addWebsite = async (req, res) => {
       url,
       category,
       logo, // Save the full path of the logo in the database
+      coinRate: coinRate || '', // Store coin rate (optional)
+      minimumCoins: minimumCoins || '', // Store minimum coins (optional)
+      createdAt: new Date().toISOString(), // Add creation timestamp
     };
     // Save the new website to Firestore using the website ID as the document ID
     const websiteRef = db.collection('websites').doc(websiteId); // Use the unique ID as the document ID
@@ -585,6 +588,63 @@ exports.updateProfileController = async (req, res) => {
   }
 };
 
+
+// Controller for updating a website
+exports.updateWebsite = async (req, res) => {
+  try {
+    const websiteId = req.params.id;
+    const { website, url, category, coinRate, minimumCoins } = req.body;
+    
+    // Get the logo filename from the uploaded file (optional)
+    const logo = req.file ? path.join('uploads/logo', req.file.filename) : undefined;
+
+    // Validate required fields
+    if (!website || !url || !category) {
+      return res.status(400).json({ message: 'Website, URL, and Category are required.' });
+    }
+
+    // Reference to the website document
+    const websiteRef = db.collection('websites').doc(websiteId);
+    
+    // Check if website exists
+    const websiteDoc = await websiteRef.get();
+    if (!websiteDoc.exists) {
+      return res.status(404).json({ message: 'Website not found.' });
+    }
+
+    // Prepare update data
+    const updateData = {
+      website,
+      url,
+      category,
+      updatedAt: new Date().toISOString()
+    };
+
+    // Add optional fields if they exist
+    if (coinRate !== undefined) updateData.coinRate = coinRate;
+    if (minimumCoins !== undefined) updateData.minimumCoins = minimumCoins;
+    if (logo) updateData.logo = logo;
+
+    // Update the website
+    await websiteRef.update(updateData);
+
+    // Get the updated website
+    const updatedWebsiteDoc = await websiteRef.get();
+    const updatedWebsite = {
+      id: updatedWebsiteDoc.id,
+      ...updatedWebsiteDoc.data()
+    };
+
+    // Respond with success message and updated website data
+    res.status(200).json({
+      message: 'Website updated successfully.',
+      website: updatedWebsite,
+    });
+  } catch (error) {
+    console.error('Error updating website:', error);
+    res.status(500).json({ message: 'Server error. Please try again later.' });
+  }
+};
 
 // Controller for retrieving all websites
 exports.getAllWebsites = async (req, res) => {
@@ -1131,3 +1191,169 @@ exports.changeUserPassword = async (req, res) => {
     res.status(500).json({ message: 'Failed to change user password', error: error.message });
   }
 };
+
+// Get unique categories from existing websites
+exports.getWebsiteCategories = async (req, res) => {
+  try {
+    // Get categories from websites
+    const websitesSnapshot = await db.collection('websites').get();
+    const websiteCategories = new Set();
+    
+    websitesSnapshot.docs.forEach(doc => {
+      const website = doc.data();
+      if (website.category && website.category.trim()) {
+        websiteCategories.add(website.category.trim());
+      }
+    });
+
+    // Get categories from categories collection
+    const categoriesSnapshot = await db.collection('categories').get();
+    const dbCategories = [];
+    
+    categoriesSnapshot.docs.forEach(doc => {
+      const category = doc.data();
+      if (category.name && category.name.trim()) {
+        dbCategories.push(category);
+        websiteCategories.add(category.name.trim()); // Add to set for unique names
+      }
+    });
+
+    // Convert set to array and sort alphabetically
+    const allCategories = Array.from(websiteCategories).sort();
+
+    res.status(200).json({
+      message: "Categories retrieved successfully.",
+      categories: allCategories,
+      dbCategories: dbCategories // Include the full category objects for reference
+    });
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    res.status(500).json({ message: 'Server error. Please try again later.' });
+  }
+};
+
+// Get all categories for dropdown (combines both sources)
+exports.getAllCategoriesForDropdown = async (req, res) => {
+  try {
+    // Get categories from websites
+    const websitesSnapshot = await db.collection('websites').get();
+    const websiteCategories = new Set();
+    
+    websitesSnapshot.docs.forEach(doc => {
+      const website = doc.data();
+      if (website.category && website.category.trim()) {
+        websiteCategories.add(website.category.trim());
+      }
+    });
+
+    // Get categories from categories collection
+    const categoriesSnapshot = await db.collection('categories').get();
+    const dbCategories = [];
+    
+    categoriesSnapshot.docs.forEach(doc => {
+      const category = doc.data();
+      if (category.name && category.name.trim()) {
+        dbCategories.push(category);
+        websiteCategories.add(category.name.trim()); // Add to set for unique names
+      }
+    });
+
+    // Convert set to array and sort alphabetically
+    const allCategories = Array.from(websiteCategories).sort();
+
+    res.status(200).json({
+      message: "All categories retrieved successfully.",
+      categories: allCategories,
+      dbCategories: dbCategories
+    });
+  } catch (error) {
+    console.error('Error fetching all categories:', error);
+    res.status(500).json({ message: 'Server error. Please try again later.' });
+  }
+};
+
+// Remove a category from all websites (set to empty string)
+exports.removeCategoryFromWebsites = async (req, res) => {
+  try {
+    const { categoryName } = req.body;
+
+    if (!categoryName) {
+      return res.status(400).json({ message: 'Category name is required.' });
+    }
+
+    // Find all websites using this category
+    const websitesUsingCategory = await db
+      .collection('websites')
+      .where('category', '==', categoryName)
+      .get();
+
+    if (websitesUsingCategory.empty) {
+      return res.status(404).json({ message: 'No websites found with this category.' });
+    }
+
+    // Update all websites to remove the category
+    const batch = db.batch();
+    websitesUsingCategory.docs.forEach(doc => {
+      batch.update(doc.ref, { category: '' });
+    });
+    await batch.commit();
+
+    // Respond with success message
+    res.status(200).json({ 
+      message: `Category "${categoryName}" removed from ${websitesUsingCategory.size} website(s).`,
+      affectedWebsites: websitesUsingCategory.size
+    });
+  } catch (error) {
+    console.error('Error removing category:', error);
+    res.status(500).json({ message: 'Server error. Please try again later.' });
+  }
+};
+
+// Add a new category
+exports.addCategory = async (req, res) => {
+  try {
+    const { name } = req.body;
+
+    // Validate required fields
+    if (!name || !name.trim()) {
+      return res.status(400).json({ message: 'Category name is required.' });
+    }
+
+    const trimmedName = name.trim();
+
+    // Check if category already exists
+    const existingCategory = await db
+      .collection('categories')
+      .where('name', '==', trimmedName)
+      .get();
+
+    if (!existingCategory.empty) {
+      return res.status(400).json({ message: 'Category with this name already exists.' });
+    }
+
+    // Generate a unique ID for the category
+    const categoryId = uuidv4();
+
+    // Create a new category object
+    const newCategory = {
+      id: categoryId,
+      name: trimmedName,
+      createdAt: new Date(),
+    };
+
+    // Save the new category to Firestore
+    const categoryRef = db.collection('categories').doc(categoryId);
+    await categoryRef.set(newCategory);
+
+    // Respond with a success message and the saved category data
+    res.status(201).json({
+      message: 'Category added successfully.',
+      category: newCategory,
+    });
+  } catch (error) {
+    console.error('Error adding category:', error);
+    res.status(500).json({ message: 'Server error. Please try again later.' });
+  }
+};
+
+// Module exports are handled by individual exports above

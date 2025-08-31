@@ -24,9 +24,7 @@
   transition: transform 0.3s ease;
 }
 
-.logo:hover {
-  transform: scale(1.05);
-}
+/* Removed hover effect */
 
 .logoImage {
   max-height: 100%;
@@ -57,11 +55,7 @@
   transition: all 0.3s ease;
 }
 
-.walletContainer:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
-}
+/* Removed hover effect */
 
 .walletBalance {
   font-size: 11px;
@@ -99,12 +93,7 @@
   justify-content: center;
 }
 
-.navButton:hover {
-  background: rgba(255, 255, 255, 0.95);
-  border-color: rgba(255, 255, 255, 0.6);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.35);
-}
+/* Removed hover effect */
 
 .navButton:active {
   transform: translateY(0);

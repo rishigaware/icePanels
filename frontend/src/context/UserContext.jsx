@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 
 // Create the context
 const UserContext = createContext();
@@ -27,10 +27,18 @@ export const UserProvider = ({ children }) => {
       // If user is null, remove from localStorage
       localStorage.removeItem('user');
     }
-  }, [user]);
+  }, [user?.id, user?.name, user?.email, user?.phoneNumber]); // Only depend on specific user properties
+
+  // Memoize the context value to prevent unnecessary re-renders
+  const contextValue = useMemo(() => ({
+    user,
+    setUser,
+    url,
+    setUrl
+  }), [user?.id, user?.name, user?.email, user?.phoneNumber, url]);
 
   return (
-    <UserContext.Provider value={{ user, setUser, url, setUrl }}>
+    <UserContext.Provider value={contextValue}>
       {children}
     </UserContext.Provider>
   );

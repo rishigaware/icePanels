@@ -8,7 +8,7 @@ import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import { MdDeleteForever } from "react-icons/md";
-
+import { FaTrash } from "react-icons/fa";
 
 const CreateId = () => {
   const { user, url } = useUser();
@@ -22,9 +22,13 @@ const CreateId = () => {
     url: "",
     logo: "",
     category: "",
+    coinRate: "",
+    minimumCoins: ""
   });
 
   const [websites, setWebsites] = useState([]);
+  const [categories, setCategories] = useState([]); // Categories from websites
+  const [isCategoriesLoading, setIsCategoriesLoading] = useState(true); // Loading state for categories
   const [menuOpen, setMenuOpen] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedWebsite, setSelectedWebsite] = useState(null);
@@ -33,11 +37,26 @@ const CreateId = () => {
   const [isLoading, setIsLoading] = useState(false); 
   const [errorMessage, setErrorMessage] = useState("");
   const [showAddModal, setShowAddModal] = useState(false); // State for Add Website modal
-  const [file, setFile] = useState(null); // State to store the selected file
-
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingWebsite, setEditingWebsite] = useState(null);
+  const [editFile, setEditFile] = useState(null);
+  const [isEditLoading, setIsEditLoading] = useState(false);
+  const [editErrorMessage, setEditErrorMessage] = useState("");
+  const [file, setFile] = useState(null);
+  const [showCategoryModal, setShowCategoryModal] = useState(false); // State for Category management modal
+  
+  // Category management states
+  const [newCategory, setNewCategory] = useState({ name: "" });
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [isCategoryLoading, setIsCategoryLoading] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState(""); // Search bar state
   const [selectedCategory, setSelectedCategory] = useState("All Categories"); 
+  const [categorySearch, setCategorySearch] = useState(""); // Separate search for categories
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10); // Show 10 websites per page
 
   // Function to fetch websites data
   const fetchWebsites = async () => {
@@ -46,8 +65,7 @@ const CreateId = () => {
       const response = await fetch(`${url}/api/admin/get-websites`);
       const data = await response.json();
       if (response.ok) {
-        // console.log(data,"<<<")
-        setWebsites(data.websites); // Assuming the API returns an object with a "websites" key
+        setWebsites(data.websites);
       } else {
         console.error("Error fetching websites:", data);
       }
@@ -58,10 +76,258 @@ const CreateId = () => {
     }
   };
 
+  // Function to fetch categories from websites
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`${url}/api/admin/get-all-categories`);
+      const data = await response.json();
+      if (response.ok) {
+        setCategories(data.categories || []);
+      } else {
+        console.error("Error fetching categories:", data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch categories:", error);
+    }
+  };
+
+  // Function to fetch categories for dropdown (searchable)
+  const fetchCategoriesForDropdown = async () => {
+    try {
+      setIsCategoriesLoading(true);
+      const response = await fetch(`${url}/api/admin/get-all-categories`);
+      const data = await response.json();
+      if (response.ok) {
+        setCategories(data.categories || []);
+        // Ensure selectedCategory is still valid after loading
+        if (selectedCategory !== "All Categories" && data.categories && data.categories.includes(selectedCategory)) {
+          // Keep the current selection if it's still valid
+          console.log('Keeping current selection:', selectedCategory);
+        } else {
+          // Reset to "All Categories" if current selection is no longer valid
+          console.log('Resetting to All Categories');
+          setSelectedCategory("All Categories");
+        }
+      } else {
+        console.error("Error fetching categories:", data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch categories:", error);
+    } finally {
+      setIsCategoriesLoading(false);
+    }
+  };
+
   // Fetch data when the component loads
   useEffect(() => {
     fetchWebsites();
+    fetchCategoriesForDropdown();
   }, []);
+
+  // Debug selectedCategory changes
+  useEffect(() => {
+    console.log('selectedCategory changed to:', selectedCategory);
+  }, [selectedCategory]);
+
+  // Filter categories based on search query
+  const filteredCategories = (categories || []).filter(category => {
+    // If no category search, show all categories
+    if (!categorySearch || categorySearch.trim() === '') {
+      return category && typeof category === 'string';
+    }
+    // If there's a search, filter by it
+    return category && typeof category === 'string' && category.toLowerCase().includes(categorySearch.toLowerCase());
+  });
+
+  // Filter websites based on search query and selected category
+  const filteredWebsites = (websites || []).filter(website => {
+    if (!website || (!website.name && !website.website) || !website.url) {
+      return false;
+    }
+    
+    const websiteName = website.name || website.website || '';
+    const matchesSearch = websiteName.toLowerCase().includes((searchQuery || '').toLowerCase()) ||
+                         website.url.toLowerCase().includes((searchQuery || '').toLowerCase());
+    const matchesCategory = selectedCategory === "All Categories" || website.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredWebsites.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentWebsites = filteredWebsites.slice(startIndex, endIndex);
+
+  // Reset to first page when search or category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory]);
+
+  // Reset category search when category selection changes
+  useEffect(() => {
+    // Only reset category search if a new category is actually selected
+    if (selectedCategory !== "All Categories") {
+      setCategorySearch("");
+    }
+  }, [selectedCategory]);
+
+  // Pagination handlers
+  const goToPage = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    const maxVisiblePages = 5;
+    
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          pageNumbers.push(i);
+        }
+        pageNumbers.push('...');
+        pageNumbers.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pageNumbers.push(1);
+        pageNumbers.push('...');
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          pageNumbers.push(i);
+        }
+      } else {
+        pageNumbers.push(1);
+        pageNumbers.push('...');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pageNumbers.push(i);
+        }
+        pageNumbers.push('...');
+        pageNumbers.push(totalPages);
+      }
+    }
+    
+    return pageNumbers;
+  };
+
+  // Function to add a new category
+  const handleAddCategory = async () => {
+    if (!newCategory.name.trim()) {
+      toast.current.show({
+        severity: 'error',
+        summary: 'Validation Error',
+        detail: 'Category name is required',
+        life: 3000,
+      });
+      return;
+    }
+
+    try {
+      setIsCategoryLoading(true);
+      const response = await fetch(`${url}/api/admin/add-category`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newCategory),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        toast.current.show({
+          severity: 'success',
+          summary: 'Category Added',
+          detail: 'Category added successfully',
+          life: 2000,
+        });
+        setNewCategory({ name: "" });
+        setCategorySearch(""); // Reset category search
+        fetchCategoriesForDropdown(); // Refresh categories
+      } else {
+        toast.current.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: data.message || 'Failed to add category',
+          life: 3000,
+        });
+      }
+    } catch (error) {
+      console.error("Error adding category:", error);
+      toast.current.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to add category',
+        life: 3000,
+      });
+    } finally {
+      setIsCategoryLoading(false);
+    }
+  };
+
+  // Function to remove a category from all websites
+  const handleRemoveCategory = async (categoryName) => {
+    if (window.confirm(`Are you sure you want to remove the category "${categoryName}" from all websites? This will set their category to empty.`)) {
+      try {
+        const response = await fetch(`${url}/api/admin/remove-category`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ categoryName }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          toast.current.show({
+            severity: 'success',
+            summary: 'Category Removed',
+            detail: data.message,
+            life: 3000,
+          });
+          // Refresh both websites and categories
+          fetchWebsites();
+          fetchCategoriesForDropdown();
+          setCategorySearch(""); // Reset category search
+          // Reset selected category if it was removed
+          if (selectedCategory === categoryName) {
+            setSelectedCategory("All Categories");
+          }
+        } else {
+          toast.current.show({
+            severity: 'error',
+            summary: 'Error',
+            detail: data.message || 'Failed to remove category',
+            life: 3000,
+          });
+        }
+      } catch (error) {
+        console.error("Error removing category:", error);
+        toast.current.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to remove category',
+          life: 3000,
+        });
+      }
+    }
+  };
 
   const toggleMenu = (index) => {
     setMenuOpen(menuOpen === index ? null : index);
@@ -108,7 +374,7 @@ const CreateId = () => {
   
 
   const handleAddWebsite = async () => {
-    if (!newWebsite.website || !newWebsite.url || !newWebsite.category || !file) {
+    if (!newWebsite.website || !newWebsite.url || !newWebsite.category || !newWebsite.coinRate || !newWebsite.minimumCoins || !file) {
       setErrorMessage("All fields are required to add a website, including the logo.");
       return;
     }
@@ -119,6 +385,8 @@ const CreateId = () => {
       formData.append("website", newWebsite.website);
       formData.append("url", newWebsite.url);
       formData.append("category", newWebsite.category);
+      formData.append("coinRate", newWebsite.coinRate);
+      formData.append("minimumCoins", newWebsite.minimumCoins);
       formData.append("logo", file);
 
       const response = await fetch(`${url}/api/admin/add-website`, {
@@ -135,9 +403,10 @@ const CreateId = () => {
           life: 1000,
         });
         setShowAddModal(false);
-        setNewWebsite({ id: "", website: "", url: "", category: "", logo: "" });
+        setNewWebsite({ id: "", website: "", url: "", category: "", logo: "", coinRate: "", minimumCoins: "" });
         setFile(null);
         fetchWebsites(); // Re-fetch the data after adding a new website
+        fetchCategories(); // Also refresh categories
         // console.log("Website added successfully:");
       } else {
         
@@ -174,26 +443,11 @@ const CreateId = () => {
   };
 
   const handleCategoryChange = (e) => {
+    console.log('Category changed to:', e.target.value); // Debug log
     setSelectedCategory(e.target.value);
   };
-  const filteredWebsites = websites.filter((item) => {
-    // Check if item and required properties exist before accessing them
-    if (!item || !item.website || !item.url) {
-      return false;
-    }
-    
-    // Matches search query for website name or URL
-    const matchesSearchQuery =
-      item.website.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.url.toLowerCase().includes(searchQuery.toLowerCase());
   
-    // Matches the selected category
-    const matchesCategory =
-      selectedCategory === "All Categories" || item.category === selectedCategory;
-  
-    return matchesSearchQuery && matchesCategory;
-  });
-  
+
   const handleSubmit = async () => {
     if (!user) {
       setErrorMessage("User must be logged in to create an ID.");
@@ -259,6 +513,7 @@ const CreateId = () => {
       
       if (response.ok) {
         fetchWebsites();
+        fetchCategories(); // Also refresh categories
         toast.current.show({
           severity: 'error',
           summary: 'Website deleted',
@@ -274,6 +529,109 @@ const CreateId = () => {
     }
   };
   
+  // Function to handle website editing
+  const handleEditWebsite = async () => {
+    if (!editingWebsite.website || !editingWebsite.url || !editingWebsite.category || !editingWebsite.coinRate || !editingWebsite.minimumCoins) {
+      setEditErrorMessage("All fields are required to edit a website.");
+      return;
+    }
+
+    try {
+      setIsEditLoading(true);
+      const formData = new FormData();
+      formData.append("website", editingWebsite.website);
+      formData.append("url", editingWebsite.url);
+      formData.append("category", editingWebsite.category);
+      formData.append("coinRate", editingWebsite.coinRate);
+      formData.append("minimumCoins", editingWebsite.minimumCoins);
+      if (editFile) {
+        formData.append("logo", editFile);
+      }
+
+      const response = await fetch(`${url}/api/admin/update-website/${editingWebsite.id}`, {
+        method: "PUT",
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        toast.current.show({
+          severity: 'success',
+          summary: 'Website Updated',
+          detail: 'Website updated successfully',
+          life: 2000,
+        });
+        setShowEditModal(false);
+        setEditingWebsite(null);
+        setEditFile(null);
+        setEditErrorMessage("");
+        fetchWebsites(); // Re-fetch the data after updating
+        fetchCategories(); // Also refresh categories
+      } else {
+        setEditErrorMessage(data.message || "An error occurred while updating.");
+      }
+    } catch (error) {
+      console.error("Request failed:", error);
+      setEditErrorMessage("Request failed, please try again.");
+    } finally {
+      setIsEditLoading(false);
+    }
+  };
+
+  // Function to open edit modal
+  const openEditModal = (website) => {
+    setEditingWebsite({
+      id: website.id,
+      website: website.name || website.website || "",
+      url: website.url || "",
+      category: website.category || "",
+      coinRate: website.coinRate || "",
+      minimumCoins: website.minimumCoins || "",
+      logo: website.logo || ""
+    });
+    setEditFile(null);
+    setEditErrorMessage("");
+    setShowEditModal(true);
+  };
+
+  // Function to close edit modal
+  const closeEditModal = () => {
+    setShowEditModal(false);
+    setEditingWebsite(null);
+    setEditFile(null);
+    setEditErrorMessage("");
+  };
+
+  // Function to handle edit file selection
+  const onEditFileSelect = (e) => {
+    try {
+      if (e.files && e.files[0]) {
+        const selectedFile = e.files[0];
+        if (selectedFile.size > 1000000) {
+          throw new Error('File is too large. Max size is 1MB.');
+        }
+        if (!selectedFile.type.startsWith('image/')) {
+          throw new Error('Invalid file type. Only images are allowed.');
+        }
+        setEditFile(selectedFile);
+        toast.current.show({
+          severity: 'success',
+          summary: 'File Selected',
+          detail: 'New logo selected for update',
+          life: 1000,
+        });
+      } else {
+        throw new Error('No file selected.');
+      }
+    } catch (error) {
+      toast.current.show({
+        severity: 'error',
+        summary: 'File Upload Failed',
+        detail: error.message,
+        life: 3000,
+      });
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -283,140 +641,235 @@ const CreateId = () => {
         </div>
       )}
 
-          <button
+      <div className={styles.headerSection}>
+        <button
           className={styles.addWebsiteButton}
           onClick={() => setShowAddModal(true)}
-          >
+        >
           Add Website
-          </button>
+        </button>
+        
+        <button
+          className={styles.categoryManageButton}
+          onClick={() => setShowCategoryModal(true)}
+        >
+          Manage Categories
+        </button>
+      </div>
+
       <div className={styles.searchSortWrapper}>
-        <input
-          type="text"
-          placeholder="Search websites..."
-          value={searchQuery}
-          onChange={handleSearch}
-          className={styles.searchInput}
-        />
-
-        {/* Category Dropdown */}
-         <select value={selectedCategory} onChange={handleCategoryChange} className={styles.categoryDropdown}>
-           <option value="All Categories">All Categories</option>
-           <option value="King">King</option>
-           <option value="Diamondexch99">Diamondexch99</option>
-           <option value="Diamondexch999">Diamondexch999</option>
-           <option value="World">World</option>
-           <option value="Radhe">Radhe</option>
-
-         </select>
-       </div>
-       {/* Loader when data is fetching */}
-      {isLoading ? (
-        <div className={styles.loader}>
-          <PulseLoader color="#007bff" size={15} />
-          <p>Loading websites...</p>
-        </div>
-      ) : filteredWebsites.length === 0 ? (
-        <p className={styles.noWebsites}>
-          {websites.length === 0 ? 'No websites available. Please add some websites first.' : 'No websites match your search and category.'}
-        </p>
-      ) : (
-        filteredWebsites.map((item) => (
-          <div key={item.id} className={styles.idCard}>
-            {/* Website Logo */}
-            <div className={styles.logo}>
-              <img 
-                src={item.logo ? `${url}/${item.logo}` : '/placeholder-logo.png'}
-                alt={`${item.website || 'Website'} logo`}
-                onError={(e) => {
-                  e.target.src = '/placeholder-logo.png';
-                }}
-              />
-            </div>
-
-            {/* Website Details */}
-            <div className={styles.details}>
-              <p className={styles.websiteName}>{item.website || 'Unnamed Website'}</p>
-              <a
-                href={item.url || '#'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.websiteLink}
-              >
-                {item.url || 'No URL available'}
-              </a>
-            </div>
-
-            {/* Actions */}
-            <div className={styles.actions}>
-              <button
-                className={styles.createButton}
-                onClick={() => handleCreate(item.id)}
-              >
-                Create ID
-              </button>
-
-              <div className={styles.deleteContainer}>
-                  <MdDeleteForever
-                    className={styles.deleteIcon}
-                    onClick={() => handleDelete(item)}
-                    />
+        {/* Search and Filter Section */}
+        <div className={styles.searchSection}>
+          <input
+            type="text"
+            placeholder="Search websites..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className={styles.searchInput}
+            onFocus={handleFocus}
+          />
+          
+          {/* Category Filter */}
+          <div className={styles.filterSection}>
+            <label htmlFor="categoryFilter">All Categories:</label>
+            <input
+              type="text"
+              placeholder="Search categories..."
+              value={categorySearch}
+              onChange={(e) => setCategorySearch(e.target.value)}
+              className={styles.searchInput}
+              onFocus={handleFocus}
+            />
+            {isCategoriesLoading ? (
+              <div className={styles.categoryLoading}>
+                <PulseLoader color="#007bff" size={10} />
+                <span>Loading categories...</span>
               </div>
-
-            </div>
+            ) : (
+              <select
+                id="categoryFilter"
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+                className={styles.categorySelect}
+              >
+                {console.log('Current selectedCategory:', selectedCategory)} {/* Debug log */}
+                <option value="All Categories">All Categories</option>
+                {filteredCategories && filteredCategories.length > 0 ? (
+                  filteredCategories.map((category, index) => (
+                    <option key={index} value={category}>
+                      {category}
+                    </option>
+                  ))
+                ) : (
+                  // Fallback: show all categories if filtering fails
+                  (categories || []).map((category, index) => (
+                    <option key={index} value={category}>
+                      {category}
+                    </option>
+                  ))
+                )}
+              </select>
+            )}
           </div>
-        ))
-      )}
+        </div>
+      </div>
+       {/* Loader when data is fetching */}
+        {isLoading ? (
+          <div className={styles.loader}>
+            <PulseLoader color="#007bff" size={15} />
+            <p>Loading websites...</p>
+          </div>
+        ) : (
+          <>
+            {/* Websites Count */}
+            <div className={styles.websitesCount}>
+              {filteredWebsites.length === 0 ? 'No websites found' : `${filteredWebsites.length} website${filteredWebsites.length === 1 ? '' : 's'} found`}
+              {filteredWebsites.length > itemsPerPage && (
+                <span> • Showing {startIndex + 1}-{Math.min(endIndex, filteredWebsites.length)} of {filteredWebsites.length}</span>
+              )}
+            </div>
 
+            {/* Website List */}
+            {currentWebsites.length > 0 ? (
+              currentWebsites.map((website, index) => (
+                <div key={website.id || index} className={styles.websiteCard}>
+                  <div className={styles.websiteInfo}>
+                    <img
+                      src={`${url}/${website.logo}`}
+                      alt={website.name || website.website || 'Website Logo'}
+                      className={styles.websiteLogo}
+                    />
+                    <div className={styles.websiteDetails}>
+                      <h3>{website.name || website.website || 'Unnamed Website'}</h3>
+                      <p>{website.url || 'No URL'}</p>
+                      <span className={styles.categoryTag}>
+                        {website.category || 'No Category'}
+                      </span>
+                      {website.coinRate && (
+                        <p className={styles.coinInfo}>
+                          <strong>Coin Rate:</strong> {website.coinRate}
+                        </p>
+                      )}
+                      {website.minimumCoins && (
+                        <p className={styles.coinInfo}>
+                          <strong>Min Coins:</strong> {website.minimumCoins}
+                        </p>
+                      )}
+                      {website.createdAt && (
+                        <p className={styles.dateInfo}>
+                          <strong>Added:</strong> {new Date(website.createdAt).toLocaleDateString()}
+                        </p>
+                      )}
+                      {website.isActive !== undefined && (
+                        <span className={`${styles.statusTag} ${website.isActive ? styles.activeStatus : styles.inactiveStatus}`}>
+                          {website.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      )}
+                    </div>
+                    <div className={styles.websiteActions}>
+                      <button
+                        onClick={() => handleCreate(website.id)}
+                        className={styles.actionButton}
+                      >
+                        Create ID
+                      </button>
+                      <button
+                        onClick={() => openEditModal(website)}
+                        className={styles.editButton}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(website)}
+                        className={styles.deleteButton}
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className={styles.loading}>
+                {searchQuery || selectedCategory !== "All Categories" 
+                  ? "No websites found matching your criteria." 
+                  : "No websites available."}
+              </div>
+            )}
 
-       {/* Modal Popup for Creating ID */}
-       {showModal && selectedWebsite && selectedWebsite.website && selectedWebsite.url && (
+            {/* Pagination Controls */}
+            {filteredWebsites.length > itemsPerPage && (
+              <div className={styles.paginationContainer}>
+                <div className={styles.paginationInfo}>
+                  Showing {startIndex + 1} to {Math.min(endIndex, filteredWebsites.length)} of {filteredWebsites.length} websites
+                </div>
+                <div className={styles.paginationControls}>
+                  <button
+                    onClick={goToPreviousPage}
+                    disabled={currentPage === 1}
+                    className={styles.paginationButton}
+                  >
+                    Previous
+                  </button>
+                  
+                  {/* Page Numbers */}
+                  <div className={styles.pageNumbers}>
+                    {getPageNumbers().map((page, index) => (
+                      <React.Fragment key={index}>
+                        {page === '...' ? (
+                          <span className={styles.pageEllipsis}>...</span>
+                        ) : (
+                          <button
+                            key={page}
+                            onClick={() => goToPage(page)}
+                            className={`${styles.pageButton} ${
+                              page === currentPage ? styles.activePage : ''
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                  
+                  <button
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages}
+                    className={styles.paginationButton}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+      {/* Create ID Modal */}
+      {showModal && (
         <div className={styles.modal}>
           <div className={styles.modalContent}>
-            {/* Modal Header */}
-            <div className={styles.modalHeader}>
-              <img
-                src={selectedWebsite.logo ? `${url}/${selectedWebsite.logo}` : '/placeholder-logo.png'}
-                alt={`${selectedWebsite.website || 'Website'} logo`}
-                className={styles.websiteLogo}
-                onError={(e) => {
-                  e.target.src = '/placeholder-logo.png';
-                }}
-              />
-              <h2>{selectedWebsite.website}</h2>
-              <a
-                href={selectedWebsite.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.websiteLink}
-              >
-                {selectedWebsite.url}
-              </a>
-            </div>
-
-             {/* Modal Body */}
-             <div className={styles.modalBody}>
-               <input
+            <h2>Create ID for {selectedWebsite?.website}</h2>
+            <div className={styles.inputGroup}>
+              <label>Username:</label>
+              <input
                 type="text"
-                placeholder="Enter username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter username"
                 className={styles.inputField}
               />
+            </div>
+            <div className={styles.inputGroup}>
+              <label>Password:</label>
               <input
                 type="password"
-                placeholder="Enter password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password"
                 className={styles.inputField}
               />
-              <button
-                onClick={handleSubmit}
-                className={styles.submitButton}
-                disabled={isLoading}
-              >
-                {isLoading ? "Creating..." : "Create ID"}
-                
-              </button>
             </div>
 
             {errorMessage && <p className={styles.error}>{errorMessage}</p>}
@@ -429,82 +882,329 @@ const CreateId = () => {
          </div>
       )}
 
+    {/* Add Website Modal */}
     {showAddModal && (
-        <div className={styles.modal}>
-          <div className={styles.modalContent}>
+      <div className={styles.modal}>
+        <div className={styles.modalContent}>
+          <div className={styles.modalHeader}>
             <h2><strong>Add Website</strong></h2>
-            <h4>Website name</h4>
-            <input
-              type="text"
-              placeholder="Enter website name"
-              value={newWebsite.website}
-              onChange={(e) =>
-                setNewWebsite({ ...newWebsite, website: e.target.value })
-              }
-              className={styles.inputField}
-              onFocus={handleFocus}
-
-            />
-            <h4>Website URL</h4>
-            <input
-              type="text"
-              placeholder="Enter Website URL"
-              value={newWebsite.url}
-              onChange={(e) =>
-                setNewWebsite({ ...newWebsite, url: e.target.value })
-              }
-              className={styles.inputField}
-              onFocus={handleFocus}
-
-            />
-
-            <h4>Category</h4>
-            <input
-              type="text"
-              placeholder="Enter Category"
-              value={newWebsite.category}
-              onChange={(e) =>
-                setNewWebsite({ ...newWebsite, category: e.target.value })
-              }
-              className={styles.inputField}
-              onFocus={handleFocus}
-
-            />
-            <h4>Select Website Logo</h4>
-
-             <div className={styles.uploadSection}>
-              <FileUpload
-                mode="basic"
-                name="image" // Adjust this based on your backend's expected field name
-                url="/api/upload"
-                accept="image/*"
-                maxFileSize={1000000}
-                onSelect={onFileSelect}
-                onFocus={handleFocus}
-
-                />
-              </div>
-            
-            <button
-              onClick={handleAddWebsite}
-              className={styles.submitButton}
-              disabled={isLoading}
-            >
-              {isLoading ? "Adding..." : "Add"}
-            </button>
             <button
               onClick={() => setShowAddModal(false)}
               className={styles.closeButton}
             >
-              Close
+              ×
             </button>
+          </div>
+          
+          <div className={styles.formContainer}>
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label htmlFor="websiteName">Website Name</label>
+                <input
+                  id="websiteName"
+                  type="text"
+                  placeholder="Enter website name"
+                  value={newWebsite.website}
+                  onChange={(e) =>
+                    setNewWebsite({ ...newWebsite, website: e.target.value })
+                  }
+                  className={styles.inputField}
+                  onFocus={handleFocus}
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label htmlFor="websiteUrl">Website URL</label>
+                <input
+                  id="websiteUrl"
+                  type="text"
+                  placeholder="Enter Website URL"
+                  value={newWebsite.url}
+                  onChange={(e) =>
+                    setNewWebsite({ ...newWebsite, url: e.target.value })
+                  }
+                  className={styles.inputField}
+                  onFocus={handleFocus}
+                />
+              </div>
+            </div>
+            
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label htmlFor="category">Category</label>
+                <select
+                  id="category"
+                  value={newWebsite.category}
+                  onChange={(e) =>
+                    setNewWebsite({ ...newWebsite, category: e.target.value })
+                  }
+                  className={styles.selectField}
+                  onFocus={handleFocus}
+                >
+                  <option value="">Select Category</option>
+                  {categories.map((category, index) => (
+                    <option key={index} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label htmlFor="coinRate">Coin Rate</label>
+                <input
+                  id="coinRate"
+                  type="number"
+                  placeholder="Enter Coin Rate"
+                  value={newWebsite.coinRate}
+                  onChange={(e) =>
+                    setNewWebsite({ ...newWebsite, coinRate: e.target.value })
+                  }
+                  className={styles.inputField}
+                  onFocus={handleFocus}
+                />
+              </div>
+            </div>
+            
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label htmlFor="minimumCoins">Minimum Coins</label>
+                <input
+                  id="minimumCoins"
+                  type="number"
+                  placeholder="Enter Minimum Coins"
+                  value={newWebsite.minimumCoins}
+                  className={styles.inputField}
+                  onChange={(e) =>
+                    setNewWebsite({ ...newWebsite, minimumCoins: e.target.value })
+                  }
+                  onFocus={handleFocus}
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label htmlFor="websiteLogo">Website Logo</label>
+                <div className={styles.fileUploadContainer}>
+                  <FileUpload
+                    mode="basic"
+                    name="image"
+                    url="/api/upload"
+                    accept="image/*"
+                    maxFileSize={1000000}
+                    onSelect={onFileSelect}
+                    onFocus={handleFocus}
+                    className={styles.fileUpload}
+                  />
+                </div>
+              </div>
+            </div>
+            
             {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+            
+            <div className={styles.formActions}>
+              <button
+                onClick={handleAddWebsite}
+                disabled={isLoading}
+                className={styles.submitButton}
+              >
+                {isLoading ? "Adding..." : "Add Website"}
+              </button>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className={styles.cancelButton}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+      {/* Edit Website Modal */}
+      {showEditModal && editingWebsite && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <div className={styles.modalHeader}>
+              <h2><strong>Edit Website</strong></h2>
+              <button onClick={closeEditModal} className={styles.closeButton}>×</button>
+            </div>
+            <div className={styles.formContainer}>
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label htmlFor="editWebsite">Website Name</label>
+                  <input
+                    id="editWebsite"
+                    type="text"
+                    placeholder="Enter website name"
+                    value={editingWebsite.website}
+                    onChange={(e) => setEditingWebsite({ ...editingWebsite, website: e.target.value })}
+                    className={styles.inputField}
+                    onFocus={() => setEditErrorMessage("")}
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label htmlFor="editUrl">Website URL</label>
+                  <input
+                    id="editUrl"
+                    type="text"
+                    placeholder="Enter Website URL"
+                    value={editingWebsite.url}
+                    onChange={(e) => setEditingWebsite({ ...editingWebsite, url: e.target.value })}
+                    className={styles.inputField}
+                    onFocus={() => setEditErrorMessage("")}
+                  />
+                </div>
+              </div>
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label htmlFor="editCategory">Category</label>
+                  <select
+                    id="editCategory"
+                    value={editingWebsite.category}
+                    onChange={(e) => setEditingWebsite({ ...editingWebsite, category: e.target.value })}
+                    className={styles.selectField}
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map((category, index) => (
+                      <option key={index} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className={styles.formGroup}>
+                  <label htmlFor="editCoinRate">Coin Rate</label>
+                  <input
+                    id="editCoinRate"
+                    type="number"
+                    placeholder="Enter Coin Rate"
+                    value={editingWebsite.coinRate}
+                    onChange={(e) => setEditingWebsite({ ...editingWebsite, coinRate: e.target.value })}
+                    className={styles.inputField}
+                    onFocus={() => setEditErrorMessage("")}
+                  />
+                </div>
+              </div>
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label htmlFor="editMinimumCoins">Minimum Coins</label>
+                  <input
+                    id="editMinimumCoins"
+                    type="number"
+                    placeholder="Enter Minimum Coins"
+                    value={editingWebsite.minimumCoins}
+                    onChange={(e) => setEditingWebsite({ ...editingWebsite, minimumCoins: e.target.value })}
+                    className={styles.inputField}
+                    onFocus={() => setEditErrorMessage("")}
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label htmlFor="editLogo">Update Logo (Optional)</label>
+                  <div className={styles.fileUploadContainer}>
+                    <FileUpload
+                      mode="basic"
+                      name="editLogo"
+                      url="/api/upload"
+                      accept="image/*"
+                      maxFileSize={1000000}
+                      onSelect={onEditFileSelect}
+                      className={styles.fileUpload}
+                    />
+                    {editingWebsite.logo && (
+                      <p className={styles.currentLogo}>
+                        Current: {editingWebsite.logo.split('/').pop()}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+              {editErrorMessage && <p className={styles.error}>{editErrorMessage}</p>}
+              <div className={styles.formActions}>
+                <button
+                  onClick={handleEditWebsite}
+                  disabled={isEditLoading}
+                  className={styles.submitButton}
+                >
+                  {isEditLoading ? "Updating..." : "Update Website"}
+                </button>
+                <button onClick={closeEditModal} className={styles.cancelButton}>
+                  Cancel
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
-      <Toast ref={toast} />
 
-      
+      {/* Category Management Modal */}
+      {showCategoryModal && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <div className={styles.modalHeader}>
+              <h2><strong>Manage Categories</strong></h2>
+              <button
+                onClick={() => setShowCategoryModal(false)}
+                className={styles.closeButton}
+              >
+                ×
+              </button>
+            </div>
+            
+            {/* Existing Categories Section */}
+            <div className={styles.categorySection}>
+              <h3>Existing Categories</h3>
+              {categories.length === 0 ? (
+                <p>No categories found. Add websites with categories to see them here.</p>
+              ) : (
+                <div className={styles.categoriesList}>
+                  {categories.map((category) => (
+                    <div key={category} className={styles.categoryItem}>
+                      <div className={styles.categoryInfo}>
+                        <strong>{category}</strong>
+                      </div>
+                      <button
+                        onClick={() => handleRemoveCategory(category)}
+                        className={styles.removeButton}
+                        title="Remove Category from all websites"
+                      >
+                        <FaTrash /> Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Add New Category Section */}
+            <div className={styles.addCategorySection}>
+              <h3>Add New Category</h3>
+              <input
+                type="text"
+                placeholder="Enter category name"
+                value={newCategory.name}
+                onChange={(e) => setNewCategory({ name: e.target.value })}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleAddCategory();
+                  }
+                }}
+                className={styles.inputField}
+                onFocus={handleFocus}
+              />
+              <button
+                onClick={handleAddCategory}
+                className={styles.addCategoryButton}
+                disabled={isCategoryLoading}
+              >
+                {isCategoryLoading ? "Adding..." : "Add Category"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <Toast ref={toast} />
     </div>
   );
 };

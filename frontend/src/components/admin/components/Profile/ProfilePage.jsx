@@ -72,7 +72,7 @@ const ProfilePage = () => {
       .catch(error => {
         console.error('Error during the request:', error);
       });
-  }, [user, navigate]);  // Effect runs when the 'user' object changes or navigate changes
+  }, [user?.id]);  // Effect runs only when user ID changes
 
   // Handle edit button click for Profile
   const handleProfileEditClick = () => {
