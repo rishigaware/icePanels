@@ -4,43 +4,18 @@ import styles from "./IdDepositPopup.module.css";
 import { useUser } from "../../context/UserContext";
 
 export default function IdDepositPopup({ onClose, walletBalance = 0, setWalletBalance, selectedId }) {
-  const { user, setUser, url } = useUser();
+  const { user, setUser, url, refreshUserBalance } = useUser();
   const toast = useRef(null);
-  const [balance, setBalance] = useState(user.balance); // State to store wallet balance
 
   const [depositAmount, setDepositAmount] = useState("");
   const [errorMessage, setErrorMessage] = useState(""); // State for error message
 
-
-
-  // Function to fetch balance
-  const fetchBalance = async (userId) => {
-    try {
-      const response = await fetch(`${url}/api/user/get-balance/${userId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setBalance(data.balance); // Update balance state
-        setUser.balance = data.balance;
-    } else {
-        console.error('Failed to fetch balance');
-      }
-    } catch (error) {
-      console.error('Error fetching balance:', error);
-    }
-  };
-
   // Fetch balance on component mount and whenever the user changes
   useEffect(() => {
-    if (user) {
-      fetchBalance(user.id);
+    if (user?.id) {
+      refreshUserBalance();
     }
-  }, [user]); // Refetch balance whenever the user changes
+  }, [user?.id, refreshUserBalance]); // Refetch balance whenever the user changes
 
 
 
@@ -49,7 +24,7 @@ export default function IdDepositPopup({ onClose, walletBalance = 0, setWalletBa
     const deposit = parseFloat(depositAmount || 0);
 
     // Check if deposit is greater than wallet balance
-    if (deposit > balance) {
+    if (deposit > (user?.balance || 0)) {
       setErrorMessage("Insufficient funds. Deposit first.");
       return;
     }
@@ -102,21 +77,17 @@ export default function IdDepositPopup({ onClose, walletBalance = 0, setWalletBa
       }
   
       const data = await response.json();
-      // console.log("Deposit created:", data);
+            // console.log("Deposit created:", data);
       toast.current.show({
         severity: 'success',
         summary: 'Deposit Requested',
         detail: 'Deposit Requested successfully',
         life: 1000,
       });
-      // Show success toast
-      // toast.current.show({
-      //   severity: "success",
-      //   summary: "Transaction Successful",
-      //   detail: "Transaction was successfully created.",
-      //   life: 3000,
-      // });
-  
+
+      // Refresh user balance after successful deposit
+      await refreshUserBalance();
+
       onClose(); // Optionally close the modal
     } catch (error) {
       console.error("Error creating transaction:", error);
@@ -158,7 +129,7 @@ export default function IdDepositPopup({ onClose, walletBalance = 0, setWalletBa
             </div>
 
             <p className={styles.wallet}>
-              <strong>Wallet Balance : ₹ {balance}</strong>
+              <strong>Wallet Balance : ₹ {user?.balance || 0}</strong>
             </p>
           </div>
 

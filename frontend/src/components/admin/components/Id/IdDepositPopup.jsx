@@ -9,7 +9,7 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
 export default function IdDepositPopup ({ onClose, walletBalance = 0, setWalletBalance , selectedId }) {
-    const { user, url } = useUser();
+    const { user, url, refreshUserBalance } = useUser();
 
   const [isDetailedView, setIsDetailedView] = useState(false); // Toggle between views
   const [activeTab, setActiveTab] = useState("depositFunds"); // Toggle between tabs
@@ -19,6 +19,13 @@ export default function IdDepositPopup ({ onClose, walletBalance = 0, setWalletB
   const [file, setFile] = useState(null);
 
   const toast = useRef(null); // Add a reference for Toast
+
+  // Fetch balance on component mount and whenever the user changes
+  useEffect(() => {
+    if (user?.id) {
+      refreshUserBalance();
+    }
+  }, [user?.id, refreshUserBalance]);
 
   // Handle tab change
   const handleTabChange = (tab) => {
@@ -147,14 +154,17 @@ export default function IdDepositPopup ({ onClose, walletBalance = 0, setWalletB
       const data = await response.json();
       console.log("Deposite created:");
   
-      // Show success toast
+            // Show success toast
       toast.current.show({
         severity: "success",
         summary: "Transaction Successful",
         detail: "Transaction was successfully created.",
         life: 3000,
       });
-  
+
+      // Refresh user balance after successful deposit
+      await refreshUserBalance();
+
       // Optionally reset form or close modal
       onClose();
     } catch (error) {
@@ -205,7 +215,7 @@ export default function IdDepositPopup ({ onClose, walletBalance = 0, setWalletB
 
               {/* Wallet Balance */}
               <p className={styles.wallet}>
-                <strong>Wallet Balance : ₹ {walletBalance}</strong>
+                <strong>Wallet Balance : ₹ {user?.balance || 0}</strong>
               </p>
             </div>
 

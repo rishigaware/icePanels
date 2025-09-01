@@ -12,7 +12,11 @@ router.post('/update-profile', userController.updateProfileController);   // Add
 router.post('/create-transaction',upload.single('image'), userController.createTransaction);
 router.post('/create-transaction-id', userController.createTransactionById);
 router.post('/create-withdrawal-transaction', upload.none(), userController.createWithdrawalTransactionBy);
+router.post('/create-new-deposit-transaction', userController.createNewDepositTransaction);
 router.post('/create-id', userController.createId); // Add a new website record
+router.post('/close-id', userController.closeId); // Close an ID
+router.get('/id-transactions', userController.getIdTransactions); // Get transactions for specific ID
+router.post('/request-password-change', userController.requestPasswordChange); // Request password change
 
 router.post('/get-user', userController.getUserByUsername); // Add a new website record
 router.post('/change-id-password', userController.changeIdPassword); // Add a new website record
@@ -24,6 +28,9 @@ router.get('/deposit-transaction', userController.getDepositTransactions);
 router.get('/get-all-ids', userController.getAllIds); // Add a new website record
 // Route to get user balance
 router.get('/get-balance/:userId', userController.getBalanceController);
+router.get('/get-id-balance/:id', userController.getIdBalanceController);
+router.post('/migrate-ids-coin-rates', userController.migrateIdsWithCoinRates);
+router.post('/add-coin-rates-to-websites', userController.addCoinRatesToWebsites);
 router.get('/hello', userController.getHelloController);
 
 

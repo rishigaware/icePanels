@@ -9,6 +9,7 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import { MdDeleteForever } from "react-icons/md";
 import { FaTrash } from "react-icons/fa";
+import DepositPopup from "../Navbar/DepositPopup";
 
 
 const CreateId = () => {
@@ -23,6 +24,8 @@ const CreateId = () => {
     url: "",
     logo: "",
     category: "",
+    coinRate: "",
+    minimumCoins: "",
   });
 
   const [websites, setWebsites] = useState([]);
@@ -39,7 +42,14 @@ const CreateId = () => {
 
 
   const [searchQuery, setSearchQuery] = useState(""); // Search bar state
-  const [selectedCategory, setSelectedCategory] = useState("All Categories"); 
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10); // Show 10 websites per page
+
+  // Deposit popup state
+  const [showDepositPopup, setShowDepositPopup] = useState(false); 
 
   // Function to fetch websites data
   const fetchWebsites = async () => {
@@ -126,8 +136,8 @@ const CreateId = () => {
   
 
   const handleAddWebsite = async () => {
-    if (!newWebsite.website || !newWebsite.url || !newWebsite.category || !file) {
-      setErrorMessage("All fields are required to add a website, including the logo.");
+    if (!newWebsite.website || !newWebsite.url || !newWebsite.category || !newWebsite.coinRate || !newWebsite.minimumCoins || !file) {
+      setErrorMessage("All fields are required to add a website, including the logo, coin rate, and minimum coins.");
       return;
     }
 
@@ -137,6 +147,8 @@ const CreateId = () => {
       formData.append("website", newWebsite.website);
       formData.append("url", newWebsite.url);
       formData.append("category", newWebsite.category);
+      formData.append("coinRate", newWebsite.coinRate);
+      formData.append("minimumCoins", newWebsite.minimumCoins);
       formData.append("logo", file);
 
       const response = await fetch(`${url}/api/admin/add-website`, {
@@ -153,7 +165,7 @@ const CreateId = () => {
           life: 1000,
         });
         setShowAddModal(false);
-        setNewWebsite({ id: "", website: "", url: "", category: "", logo: "" });
+        setNewWebsite({ id: "", website: "", url: "", category: "", logo: "", coinRate: "", minimumCoins: "" });
         setFile(null);
         fetchWebsites(); // Re-fetch the data after adding a new website
         fetchCategories(); // Also refresh categories
@@ -173,6 +185,18 @@ const CreateId = () => {
 
   
   const handleCreate = (id) => {
+    // Check wallet balance before allowing ID creation
+    if (user?.balance < 100) {
+      toast.current.show({
+        severity: 'warn',
+        summary: 'Insufficient Balance',
+        detail: 'You need at least ₹100 in your wallet to create an ID. Please deposit money first.',
+        life: 4000,
+      });
+      setShowDepositPopup(true);
+      return;
+    }
+
     // Find the website by its unique ID, instead of using the index
     const website = websites.find(item => item.id === id); 
     // console.log(website)
@@ -184,7 +208,6 @@ const CreateId = () => {
   const handleCloseModal = () => {
     setShowModal(false);
     setUsername(""); // Reset username
-    setPassword(""); // Reset password
     setErrorMessage(""); // Reset error message
   };
 
@@ -208,10 +231,70 @@ const CreateId = () => {
   
     return matchesSearchQuery && matchesCategory;
   });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredWebsites.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentWebsites = filteredWebsites.slice(startIndex, endIndex);
+
+  // Reset to first page when search query or category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory]);
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    const maxVisiblePages = 5;
+    
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          pageNumbers.push(i);
+        }
+        pageNumbers.push('...');
+        pageNumbers.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pageNumbers.push(1);
+        pageNumbers.push('...');
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          pageNumbers.push(i);
+        }
+      } else {
+        pageNumbers.push(1);
+        pageNumbers.push('...');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pageNumbers.push(i);
+        }
+        pageNumbers.push('...');
+        pageNumbers.push(totalPages);
+      }
+    }
+    
+    return pageNumbers;
+  };
   
   const handleSubmit = async () => {
     if (!user) {
       setErrorMessage("User must be logged in to create an ID.");
+      return;
+    }
+
+    // Double-check wallet balance before submitting
+    if (user?.balance < 100) {
+      setErrorMessage("You need at least ₹100 in your wallet to create an ID. Please deposit money first.");
+      toast.current.show({
+        severity: 'warn',
+        summary: 'Insufficient Balance',
+        detail: 'You need at least ₹100 in your wallet to create an ID. Please deposit money first.',
+        life: 4000,
+      });
+      setShowDepositPopup(true);
       return;
     }
   
@@ -233,7 +316,6 @@ const CreateId = () => {
           websiteName,
           websiteUrl,
           username,
-          password,
           imgUrl,
           createdBy: user.username,
         }),
@@ -330,9 +412,17 @@ const CreateId = () => {
        </div>
        {/* Loader when data is fetching */}
       
+      {/* Websites Count */}
+      <div className={styles.websitesCount}>
+        {filteredWebsites.length === 0 ? 'No websites found' : `${filteredWebsites.length} website${filteredWebsites.length === 1 ? '' : 's'} found`}
+        {filteredWebsites.length > itemsPerPage && (
+          <span> • Showing {startIndex + 1}-{Math.min(endIndex, filteredWebsites.length)} of {filteredWebsites.length}</span>
+        )}
+      </div>
+      
       {/* Website List */}
-        {filteredWebsites.length > 0 ? (
-          filteredWebsites.map((item, index) => (
+        {currentWebsites.length > 0 ? (
+          currentWebsites.map((item, index) => (
             <div key={item.id || index} className={styles.websiteCard}>
               <div className={styles.websiteInfo}>
                 <img
@@ -374,12 +464,12 @@ const CreateId = () => {
                   >
                     Create ID
                   </button>
-                  <button
+                  {/* <button
                     onClick={() => handleDelete(item)}
                     className={styles.deleteButton}
                   >
                     <FaTrash />
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>
@@ -392,11 +482,57 @@ const CreateId = () => {
           </div>
         )}
 
+      {/* Pagination Controls */}
+      {filteredWebsites.length > itemsPerPage && (
+        <div className={styles.paginationContainer}>
+          {/* Previous Button */}
+          <button
+            className={styles.paginationButton}
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            ←
+          </button>
+
+          {/* Page Numbers */}
+          {getPageNumbers().map((number, index) => (
+            <button
+              key={index}
+              className={`${styles.paginationButton} ${
+                number === currentPage ? styles.active : ''
+              }`}
+              onClick={() => typeof number === 'number' && setCurrentPage(number)}
+              disabled={number === '...'}
+            >
+              {number}
+            </button>
+          ))}
+
+          {/* Next Button */}
+          <button
+            className={styles.paginationButton}
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            →
+          </button>
+
+          {/* Page Info */}
+          <div className={styles.paginationInfo}>
+            Page {currentPage} of {totalPages}
+          </div>
+        </div>
+      )}
 
        {/* Modal Popup for Creating ID */}
        {showModal && selectedWebsite && (
         <div className={styles.modal}>
           <div className={styles.modalContent}>
+            {/* Close Button */}
+            <button onClick={handleCloseModal} className={styles.closeButton}>
+              ×
+            </button>
+            
             {/* Modal Header */}
             <div className={styles.modalHeader}>
               <img
@@ -415,38 +551,68 @@ const CreateId = () => {
               </a>
             </div>
 
+            {/* Website Details */}
+            <div className={styles.websiteDetails}>
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Category:</span>
+                <span className={styles.detailValue}>{selectedWebsite.category || 'N/A'}</span>
+              </div>
+              {selectedWebsite.coinRate && (
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>Coin Rate:</span>
+                  <span className={styles.detailValue}>{selectedWebsite.coinRate}</span>
+                </div>
+              )}
+              {selectedWebsite.minimumCoins && (
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>Minimum Coins:</span>
+                  <span className={styles.detailValue}>{selectedWebsite.minimumCoins}</span>
+                </div>
+              )}
+              {selectedWebsite.createdAt && (
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>Added:</span>
+                  <span className={styles.detailValue}>{new Date(selectedWebsite.createdAt).toLocaleDateString()}</span>
+                </div>
+              )}
+              {selectedWebsite.isActive !== undefined && (
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>Status:</span>
+                  <span className={`${styles.detailValue} ${selectedWebsite.isActive ? styles.activeStatus : styles.inactiveStatus}`}>
+                    {selectedWebsite.isActive ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+              )}
+            </div>
+
              {/* Modal Body */}
              <div className={styles.modalBody}>
-               <input
-                type="text"
-                placeholder="Enter username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className={styles.inputField}
-              />
-              <input
-                type="password"
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className={styles.inputField}
-              />
-              <button
-                onClick={handleSubmit}
-                className={styles.submitButton}
-                disabled={isLoading}
-              >
-                {isLoading ? "Creating..." : "Create ID"}
-                
-              </button>
+               <div className={styles.inputGroup}>
+                 <label className={styles.inputLabel}>Username</label>
+                 <input
+                  type="text"
+                  placeholder="Enter username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className={styles.inputField}
+                />
+               </div>
+               
+               <div className={styles.modalActions}>
+                 <button
+                   onClick={handleSubmit}
+                   className={styles.submitButton}
+                   disabled={isLoading || !username.trim()}
+                 >
+                   {isLoading ? "Creating..." : "Create"}
+                 </button>
+                 <button onClick={handleCloseModal} className={styles.cancelButton}>
+                   Cancel
+                 </button>
+               </div>
             </div>
 
             {errorMessage && <p className={styles.error}>{errorMessage}</p>}
-
-             {/* Close Button */}
-             <button onClick={handleCloseModal} className={styles.closeButton}>
-               Close
-             </button>
            </div>
          </div>
       )}
@@ -524,6 +690,14 @@ const CreateId = () => {
           </div>
         </div>
       )} */}
+      {/* Deposit Popup */}
+      {showDepositPopup && (
+        <DepositPopup
+          onClose={() => setShowDepositPopup(false)}
+          walletBalance={user?.balance || 0}
+        />
+      )}
+
       <Toast ref={toast} />
 
       

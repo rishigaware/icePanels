@@ -13,8 +13,7 @@ import { useUser } from "../../context/UserContext";
 const HomeHeading = () => {
   const navigate = useNavigate(); // Initialize the navigate function
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal visibility
-  const [balance, setBalance] = useState(0); // State to store wallet balance
-  const { user, setUser, url } = useUser();
+  const { user, setUser, url, refreshUserBalance } = useUser();
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -32,34 +31,12 @@ const HomeHeading = () => {
     localStorage.removeItem('user'); // Remove user from localStorage
   };
 
-  // Function to fetch balance
-  const fetchBalance = async (userId) => {
-    try {
-      const response = await fetch(`${url}/api/user/get-balance/${userId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setBalance(data.balance); // Update balance state
-        setUser.balance = data.balance;
-    } else {
-        console.error('Failed to fetch balance');
-      }
-    } catch (error) {
-      console.error('Error fetching balance:', error);
-    }
-  };
-
   // Fetch balance on component mount and whenever the user changes
   useEffect(() => {
-    if (user) {
-      fetchBalance(user.id);
+    if (user?.id) {
+      refreshUserBalance();
     }
-  }, [user]); // Refetch balance whenever the user changes
+  }, [user?.id, refreshUserBalance]); // Refetch balance whenever the user changes
 
   return (
     <>
@@ -119,7 +96,7 @@ const HomeHeading = () => {
 
             <div className={styles.balanceContainer}>
               <FaBalanceScale size={20} />
-              <p className={styles.balanceAmount}>₹{balance}</p>
+              <p className={styles.balanceAmount}>₹{user?.balance || 0}</p>
             </div>
             <h3 className={styles.balance}>Wallet Balance</h3>
           </div>

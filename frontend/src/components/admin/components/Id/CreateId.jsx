@@ -9,6 +9,7 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import { MdDeleteForever } from "react-icons/md";
 import { FaTrash } from "react-icons/fa";
+import DepositPopup from "../Navbar/DepositPopup";
 
 const CreateId = () => {
   const { user, url } = useUser();
@@ -44,6 +45,7 @@ const CreateId = () => {
   const [editErrorMessage, setEditErrorMessage] = useState("");
   const [file, setFile] = useState(null);
   const [showCategoryModal, setShowCategoryModal] = useState(false); // State for Category management modal
+  const [showDepositPopup, setShowDepositPopup] = useState(false); // State for deposit popup
   
   // Category management states
   const [newCategory, setNewCategory] = useState({ name: "" });
@@ -56,7 +58,7 @@ const CreateId = () => {
   
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10); // Show 10 websites per page
+  const [itemsPerPage] = useState(5); // Show 5 websites per page
 
   // Function to fetch websites data
   const fetchWebsites = async () => {
@@ -423,6 +425,23 @@ const CreateId = () => {
 
   
   const handleCreate = (id) => {
+    // Check wallet balance before allowing ID creation
+    const currentBalance = user?.balance || 0;
+    
+    if (currentBalance < 100) {
+      // Show toast message
+      toast.current.show({
+        severity: 'warn',
+        summary: 'Insufficient Balance',
+        detail: 'You need at least ₹100 in your wallet to create an ID. Please deposit money first.',
+        life: 4000,
+      });
+      
+      // Open deposit popup
+      setShowDepositPopup(true);
+      return;
+    }
+    
     // Find the website by its unique ID, instead of using the index
     const website = websites.find(item => item.id === id); 
     // console.log(website)
@@ -453,6 +472,25 @@ const CreateId = () => {
       setErrorMessage("User must be logged in to create an ID.");
       return;
     }
+
+    if (!username.trim() || !password.trim()) {
+      setErrorMessage("Username and password are required.");
+      return;
+    }
+
+    // Double-check wallet balance before submitting
+    const currentBalance = user?.balance || 0;
+    if (currentBalance < 100) {
+      setErrorMessage("You need at least ₹100 in your wallet to create an ID. Please deposit money first.");
+      toast.current.show({
+        severity: 'warn',
+        summary: 'Insufficient Balance',
+        detail: 'You need at least ₹100 in your wallet to create an ID. Please deposit money first.',
+        life: 4000,
+      });
+      setShowDepositPopup(true);
+      return;
+    }
   
     const { websiteName, websiteUrl, imgUrl } = {
       websiteName: selectedWebsite.website,
@@ -463,6 +501,8 @@ const CreateId = () => {
     
     try {
       setIsLoading(true);
+      setErrorMessage(""); // Clear previous errors
+      
       const response = await fetch(`${url}/api/user/create-id`, {
         method: "POST",
         headers: {
@@ -471,8 +511,8 @@ const CreateId = () => {
         body: JSON.stringify({
           websiteName,
           websiteUrl,
-          username,
-          password,
+          username: username.trim(),
+          password: password.trim(),
           imgUrl,
           createdBy: user.id,
         }),
@@ -484,13 +524,23 @@ const CreateId = () => {
         toast.current.show({
           severity: 'success',
           summary: 'ID Created',
-          detail: 'ID created successfully:',
-          life: 1000,
+          detail: 'ID created successfully!',
+          life: 3000,
         });
         setShowModal(false);
+        setUsername("");
+        setPassword("");
+        setErrorMessage("");
       } else {
         console.error("Error creating ID:", data);
-        setErrorMessage(data.message || "An error occurred.");
+        // Check for specific error messages
+        if (data.message && data.message.includes("username already exists")) {
+          setErrorMessage("This username already exists for this website. Please choose a different username.");
+        } else if (data.message && data.message.includes("duplicate")) {
+          setErrorMessage("A user with this username already exists for this website.");
+        } else {
+          setErrorMessage(data.message || "An error occurred while creating the ID.");
+        }
       }
     } catch (error) {
       console.error("Request failed:", error);
@@ -874,10 +924,27 @@ const CreateId = () => {
 
             {errorMessage && <p className={styles.error}>{errorMessage}</p>}
 
-             {/* Close Button */}
-             <button onClick={handleCloseModal} className={styles.closeButton}>
-               Close
-             </button>
+            {/* Action Buttons */}
+            <div className={styles.modalActions}>
+              <button 
+                onClick={handleSubmit} 
+                className={styles.submitButton}
+                disabled={isLoading || !username.trim() || !password.trim()}
+              >
+                {isLoading ? (
+                  <>
+                    <PulseLoader color="#ffffff" size={8} />
+                    Creating...
+                  </>
+                ) : (
+                  'Create ID'
+                )}
+              </button>
+              
+              <button onClick={handleCloseModal} className={styles.modalCloseButton}>
+                Cancel
+              </button>
+            </div>
            </div>
          </div>
       )}
@@ -1202,6 +1269,14 @@ const CreateId = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Deposit Popup */}
+      {showDepositPopup && (
+        <DepositPopup 
+          onClose={() => setShowDepositPopup(false)} 
+          walletBalance={user?.balance || 0}
+        />
       )}
 
       <Toast ref={toast} />

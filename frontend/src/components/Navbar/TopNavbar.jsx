@@ -9,44 +9,19 @@ import newlogo from '../../assets/newlogo.png'
 import { useUser } from "../../context/UserContext";
 
 export default function TopNavbar() {
-  const { user, setUser, url } = useUser();
+  const { user, setUser, url, refreshUserBalance } = useUser();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [walletBalance, setWalletBalance] = useState(100000);
   const [showDepositPopup, setShowDepositPopup] = useState(false); // State to toggle popup
-  const [balance, setBalance] = useState(0); // State to store wallet balance
   const navigate = useNavigate();
-
-
-
-  // Function to fetch balance
-  const fetchBalance = async (userId) => {
-    try {
-      const response = await fetch(`${url}/api/user/get-balance/${userId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setBalance(data.balance); // Update balance state
-        setUser.balance = data.balance;
-    } else {
-        console.error('Failed to fetch balance');
-      }
-    } catch (error) {
-      console.error('Error fetching balance:', error);
-    }
-  };
 
   // Fetch balance on component mount and whenever the user changes
   useEffect(() => {
-    if (user) {
-      fetchBalance(user.id);
+    if (user?.id) {
+      refreshUserBalance();
     }
-  }, [user]); // Refetch balance whenever the user changes
+  }, [user?.id, refreshUserBalance]); // Refetch balance whenever the user changes
 
 
   const handleLoginClick = () => {
@@ -85,7 +60,7 @@ export default function TopNavbar() {
       <div className={styles.navLinks}>
           <div className={styles.walletContainer}>
             <span className={styles.walletBalance}>Wallet : </span>
-            <span className={styles.balanceAmount}>₹{balance}</span>
+            <span className={styles.balanceAmount}>₹{user?.balance || 0}</span>
         </div>
 
         <button className={styles.navButton} onClick={handleDepositClick}>

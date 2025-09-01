@@ -12,7 +12,7 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
 export default function DepositPopup({ onClose, walletBalance = 0, setWalletBalance }) {
-    const { user, url } = useUser();
+    const { user, url, refreshUserBalance } = useUser();
 
   const [isDetailedView, setIsDetailedView] = useState(false); // Toggle between views
   const [activeTab, setActiveTab] = useState("depositFunds"); // Toggle between tabs
@@ -36,6 +36,13 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
       return;
     }
   }, [user]); // Only runs when user state changes
+
+  // Fetch balance on component mount and whenever the user changes
+  useEffect(() => {
+    if (user?.id) {
+      refreshUserBalance();
+    }
+  }, [user?.id, refreshUserBalance]);
 
   // Handle tab change
   const handleTabChange = (tab) => {
@@ -152,14 +159,17 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
       const data = await response.json();
       console.log("Transaction created:");
   
-      // Show success toast
+            // Show success toast
       toast.current.show({
         severity: "success",
         summary: "Transaction Successful",
         detail: "Transaction was successfully created.",
         life: 3000,
       });
-  
+
+      // Refresh user balance after successful deposit
+      await refreshUserBalance();
+
       // Optionally reset form or close modal
       onClose();
     } catch (error) {
@@ -201,7 +211,7 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
 
               {/* Wallet Balance */}
               <p className={styles.wallet}>
-                <strong>Wallet Balance : ₹ {walletBalance}</strong>
+                <strong>Wallet Balance : ₹ {user?.balance || 0}</strong>
               </p>
             </div>
 

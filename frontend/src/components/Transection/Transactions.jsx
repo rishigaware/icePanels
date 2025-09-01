@@ -12,6 +12,7 @@ const Transactions = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null); // Track selected image for modal
   const [currentPage, setCurrentPage] = useState(1);
   const [transactionsPerPage] = useState(10);
 
@@ -20,7 +21,10 @@ const Transactions = () => {
 
   // Open/close modal handlers
   const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedImage(null); // Clear selected image when modal closes
+  };
 
   // Fetch transactions from API
   const fetchTransactions = async () => {
@@ -33,7 +37,7 @@ const Transactions = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${url}/api/user/deposit-transaction?userId=${user.username}`
+        `${url}/api/user/deposit-transaction?userId=${user.id}`
       );
 
       if (!response.ok) {
@@ -134,6 +138,12 @@ const Transactions = () => {
     return pageNumbers;
   };
 
+  // Handle image click to open modal
+  const handleImageClick = (imagePath) => {
+    setSelectedImage(`${url}/${imagePath}`);
+    setIsModalOpen(false);
+  };
+
   // Render loading state
   if (loading) {
     return (
@@ -187,6 +197,19 @@ const Transactions = () => {
               <div className={`${styles.column} ${styles.amountField}`}>
                 <strong>Amount:</strong> ₹{txn.amount}
               </div>
+              <div className={styles.column}>
+                {txn.imagePath && (
+                  <img
+                    src={`${url}/${txn.imagePath}`} // Ensure the correct base URL
+                    alt="Transaction"
+                    className={styles.transactionImage}
+                    onClick={() => handleImageClick(txn.imagePath)} // Open modal on click
+                    onError={(e) => {
+                      e.target.style.display = "none"; // Hide the image if it fails to load
+                    }}
+                  />
+                )}
+              </div>
             </div>
           ))
         ) : (
@@ -233,6 +256,13 @@ const Transactions = () => {
           <div className={styles.paginationInfo}>
             Page {currentPage} of {totalPages}
           </div>
+        </div>
+      )}
+      
+      {/* Image Modal */}
+      { selectedImage && (
+        <div className={styles.modal} onClick={closeModal}>
+          <img src={selectedImage} alt="Full Transaction" className={styles.fullImage} />
         </div>
       )}
       

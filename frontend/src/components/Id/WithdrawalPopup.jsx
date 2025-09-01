@@ -12,39 +12,14 @@ export default function WithdrawalPopup({
   const [withdrawalAmount, setWithdrawalAmount] = useState(""); // State for input amount
   const [errorMessage, setErrorMessage] = useState(""); // State for error message
   const toast = useRef(null); // Add a reference for Toast
-  const { user, setUser, url } = useUser();
-  const [balance, setBalance] = useState(user.balance); // State to store wallet balance
-
-
-
-  // Function to fetch balance
-  const fetchBalance = async (userId) => {
-    try {
-      const response = await fetch(`${url}/api/user/get-balance/${userId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setBalance(data.balance); // Update balance state
-        setUser.balance = data.balance;
-    } else {
-        console.error('Failed to fetch balance');
-      }
-    } catch (error) {
-      console.error('Error fetching balance:', error);
-    }
-  };
+  const { user, setUser, url, refreshUserBalance } = useUser();
 
   // Fetch balance on component mount and whenever the user changes
   useEffect(() => {
-    if (user) {
-      fetchBalance(user.id);
+    if (user?.id) {
+      refreshUserBalance();
     }
-  }, [user]); // Refetch balance whenever the user changes
+  }, [user?.id, refreshUserBalance]); // Refetch balance whenever the user changes
 
 
 
@@ -97,6 +72,10 @@ export default function WithdrawalPopup({
       }
   
       const result = await response.json(); // Assuming the API returns JSON data
+      
+      // Refresh user balance after successful withdrawal
+      await refreshUserBalance();
+      
       // Success toast message
       toast.current.show({
         severity: "success",
@@ -148,7 +127,7 @@ export default function WithdrawalPopup({
             <strong>₹ {withdrawalAmount || "0.00"}</strong>
           </div>
           <p className={styles.wallet}>
-            <strong>Wallet Balance: ₹ {balance}</strong>
+            <strong>Wallet Balance: ₹ {user?.balance || 0}</strong>
           </p>
         </div>
 

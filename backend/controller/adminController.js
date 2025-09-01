@@ -234,7 +234,39 @@ exports.acceptTransaction = async (req, res) => {
       // console.log(transaction);
   
       // Update the status of the transaction to 'Completed'
-      await txnDoc.ref.update({ status: 'Completed' });
+      await txnDoc.ref.update({ 
+        status: 'Completed',
+        acceptedAt: new Date().toISOString()
+      });
+
+      // Update user balance based on transaction type
+      if (transaction.paymentMethod === 'Bank Account' || transaction.paymentMethod === 'UPI' || transaction.paymentMethod === 'Card') {
+        // This is a deposit transaction - add to user balance
+        const userRef = db.collection('user').doc(transaction.createdBy);
+        const userDoc = await userRef.get();
+        
+        if (userDoc.exists) {
+          const userData = userDoc.data();
+          const currentBalance = userData.balance || 0;
+          const newBalance = currentBalance + parseFloat(transaction.amount);
+          
+          await userRef.update({ balance: newBalance });
+          console.log(`Updated user ${transaction.createdBy} balance from ${currentBalance} to ${newBalance}`);
+        }
+      } else if (transaction.paymentMethod === 'Withdraw From Wallet') {
+        // This is a withdrawal transaction - subtract from user balance
+        const userRef = db.collection('user').doc(transaction.createdBy);
+        const userDoc = await userRef.get();
+        
+        if (userDoc.exists) {
+          const userData = userDoc.data();
+          const currentBalance = userData.balance || 0;
+          const newBalance = Math.max(0, currentBalance - parseFloat(transaction.amount)); // Ensure balance doesn't go negative
+          
+          await userRef.update({ balance: newBalance });
+          console.log(`Updated user ${transaction.createdBy} balance from ${currentBalance} to ${newBalance}`);
+        }
+      }
   
       // Respond with the updated transaction
       res.status(200).json({ message: 'Transaction accepted', transactionId: txnId, status: 'Completed' });
@@ -490,6 +522,60 @@ exports.getAccountDetailsDeposit = async (req, res) => {
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Failed to reject ID', error: error.message });
+    }
+  };
+
+  // Controller to update ID information (username, password, comment)
+  exports.updateId = async (req, res) => {
+    const { id, username, password, comment } = req.body;
+    
+    // Validation: Ensure required fields are provided
+    if (!id) {
+      return res.status(400).json({ message: 'ID is required to update the information.' });
+    }
+    
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username and password are required.' });
+    }
+    
+    try {
+      // Reference to the document in the collection
+      const idDoc = await db.collection('id').doc(id).get();
+      
+      // Check if the document exists
+      if (!idDoc.exists) {
+        return res.status(404).json({ message: 'ID not found' });
+      }
+      
+      // Prepare update data
+      const updateData = {
+        username: username.trim(),
+        password: password.trim(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      // Add comment if provided
+      if (comment && comment.trim()) {
+        updateData.comment = comment.trim();
+      }
+      
+      // Update the ID information
+      await idDoc.ref.update(updateData);
+      
+      // Get the updated document
+      const updatedDoc = await idDoc.ref.get();
+      const updatedData = {
+        id: updatedDoc.id,
+        ...updatedDoc.data()
+      };
+      
+      res.status(200).json({
+        message: 'ID information updated successfully',
+        id: updatedData
+      });
+    } catch (error) {
+      console.error('Error updating ID:', error);
+      res.status(500).json({ message: 'Failed to update ID information', error: error.message });
     }
   };
   

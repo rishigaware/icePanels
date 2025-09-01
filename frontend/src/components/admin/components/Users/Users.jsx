@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import styles from "./Users.module.css";
 import TopNavbar from "../Navbar/TopNavbar";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import AddIcon from '@mui/icons-material/Add';
 import { PulseLoader } from "react-spinners";
 import { Toast } from "primereact/toast";
 import { useUser } from "../../../../context/UserContext";
@@ -18,6 +19,17 @@ const Users = () => {
     const [updatingPassword, setUpdatingPassword] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [usersPerPage] = useState(12);
+    const [showAddUserModal, setShowAddUserModal] = useState(false);
+    const [addUserFormData, setAddUserFormData] = useState({
+        name: '',
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        phoneNumber: '',
+    });
+    const [addUserErrors, setAddUserErrors] = useState({});
+    const [addingUser, setAddingUser] = useState(false);
     const toast = useRef(null);
     const { user, url } = useUser();
 
@@ -32,6 +44,112 @@ const Users = () => {
             return (nameParts[0].charAt(0) + nameParts[nameParts.length - 1].charAt(0)).toUpperCase();
         }
         return 'U';
+    };
+
+    // Validate email format
+    const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    // Validate phone number format
+    const validatePhoneNumber = (phoneNumber) => /^\d{10}$/.test(phoneNumber);
+
+    // Handle add user form input changes
+    const handleAddUserChange = (e) => {
+        const { name, value } = e.target;
+        setAddUserFormData((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
+
+    // Handle add user form submission
+    const handleAddUserSubmit = async (e) => {
+        e.preventDefault();
+        const newErrors = {};
+
+        // Validation logic
+        if (!addUserFormData.name.trim()) newErrors.name = 'Name is required.';
+        if (!addUserFormData.username.trim()) newErrors.username = 'Username is required.';
+        if (!addUserFormData.email.trim()) newErrors.email = 'Email is required.';
+        else if (!validateEmail(addUserFormData.email)) newErrors.email = 'Enter a valid email.';
+
+        if (!addUserFormData.password) newErrors.password = 'Password is required.';
+        else if (addUserFormData.password.length < 6) newErrors.password = 'Password must be at least 6 characters.';
+
+        if (!addUserFormData.confirmPassword) newErrors.confirmPassword = 'Confirm your password.';
+        else if (addUserFormData.password !== addUserFormData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match.';
+
+        if (!addUserFormData.phoneNumber.trim()) newErrors.phoneNumber = 'Phone number is required.';
+        else if (!validatePhoneNumber(addUserFormData.phoneNumber)) newErrors.phoneNumber = 'Phone number must be 10 digits.';
+
+        setAddUserErrors(newErrors);
+
+        // If no errors, submit the form
+        if (Object.keys(newErrors).length === 0) {
+            setAddingUser(true);
+            try {
+                const response = await fetch(`${url}/api/user/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(addUserFormData),
+                });
+
+                if (response.ok) {
+                    toast.current.show({
+                        severity: 'success',
+                        summary: 'User Created',
+                        detail: 'New user created successfully',
+                        life: 2000,
+                    });
+                    
+                    // Reset form
+                    setAddUserFormData({
+                        name: '',
+                        username: '',
+                        email: '',
+                        password: '',
+                        confirmPassword: '',
+                        phoneNumber: '',
+                    });
+                    setAddUserErrors({});
+                    setShowAddUserModal(false);
+                    
+                    // Refresh users list
+                    fetchUsers();
+                } else {
+                    const errorData = await response.json();
+                    toast.current.show({
+                        severity: 'error',
+                        summary: 'Creation Failed',
+                        detail: errorData.message || 'Failed to create user',
+                        life: 2000,
+                    });
+                }
+            } catch (error) {
+                console.error('Error creating user:', error);
+                toast.current.show({
+                    severity: 'error',
+                    summary: 'Creation Failed',
+                    detail: 'An error occurred while creating user',
+                    life: 2000,
+                });
+            } finally {
+                setAddingUser(false);
+            }
+        }
+    };
+
+    // Handle close add user modal
+    const handleCloseAddUserModal = () => {
+        setShowAddUserModal(false);
+        setAddUserFormData({
+            name: '',
+            username: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+            phoneNumber: '',
+        });
+        setAddUserErrors({});
     };
 
     const fetchUsers = async () => {
@@ -310,9 +428,18 @@ const Users = () => {
             <Toast ref={toast} />
             <TopNavbar />
             
-            <h2 className={styles.heading}>
-                <strong>Users Management</strong>
-            </h2>
+            <div className={styles.headerSection}>
+                <h2 className={styles.heading}>
+                    <strong>Users Management</strong>
+                </h2>
+                <button 
+                    className={styles.addUserButton}
+                    onClick={() => setShowAddUserModal(true)}
+                >
+                    <AddIcon className={styles.addIcon} />
+                    Add User
+                </button>
+            </div>
 
             {/* Search Container */}
             <div className={styles.searchContainer}>
@@ -506,6 +633,131 @@ const Users = () => {
                                 </button>
                             </div>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Add User Modal */}
+            {showAddUserModal && (
+                <div className={styles.addUserModal}>
+                    <div className={styles.addUserModalContent}>
+                        <button onClick={handleCloseAddUserModal} className={styles.closeButton}>
+                            &times;
+                        </button>
+                        
+                        <div className={styles.addUserModalHeader}>
+                            <h2>Add New User</h2>
+                        </div>
+                        
+                        <form onSubmit={handleAddUserSubmit} className={styles.addUserForm}>
+                            <div className={styles.formGroup}>
+                                <label htmlFor="name" className={styles.label}>Name</label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    placeholder="Enter user's name"
+                                    value={addUserFormData.name}
+                                    onChange={handleAddUserChange}
+                                    className={styles.input}
+                                />
+                                {addUserErrors.name && <p className={styles.errorText}>{addUserErrors.name}</p>}
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label htmlFor="username" className={styles.label}>Username</label>
+                                <input
+                                    type="text"
+                                    id="username"
+                                    name="username"
+                                    placeholder="Enter username"
+                                    value={addUserFormData.username}
+                                    onChange={handleAddUserChange}
+                                    className={styles.input}
+                                />
+                                {addUserErrors.username && <p className={styles.errorText}>{addUserErrors.username}</p>}
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label htmlFor="email" className={styles.label}>Email</label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    placeholder="Enter email address"
+                                    value={addUserFormData.email}
+                                    onChange={handleAddUserChange}
+                                    className={styles.input}
+                                />
+                                {addUserErrors.email && <p className={styles.errorText}>{addUserErrors.email}</p>}
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label htmlFor="phoneNumber" className={styles.label}>Phone Number</label>
+                                <input
+                                    type="text"
+                                    id="phoneNumber"
+                                    name="phoneNumber"
+                                    placeholder="Enter phone number"
+                                    value={addUserFormData.phoneNumber}
+                                    onChange={handleAddUserChange}
+                                    className={styles.input}
+                                />
+                                {addUserErrors.phoneNumber && <p className={styles.errorText}>{addUserErrors.phoneNumber}</p>}
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label htmlFor="password" className={styles.label}>Password</label>
+                                <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    placeholder="Enter password"
+                                    value={addUserFormData.password}
+                                    onChange={handleAddUserChange}
+                                    className={styles.input}
+                                />
+                                {addUserErrors.password && <p className={styles.errorText}>{addUserErrors.password}</p>}
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label htmlFor="confirmPassword" className={styles.label}>Confirm Password</label>
+                                <input
+                                    type="password"
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    placeholder="Confirm password"
+                                    value={addUserFormData.confirmPassword}
+                                    onChange={handleAddUserChange}
+                                    className={styles.input}
+                                />
+                                {addUserErrors.confirmPassword && <p className={styles.errorText}>{addUserErrors.confirmPassword}</p>}
+                            </div>
+
+                            <div className={styles.formActions}>
+                                <button 
+                                    type="button" 
+                                    onClick={handleCloseAddUserModal}
+                                    className={styles.cancelButton}
+                                >
+                                    Cancel
+                                </button>
+                                <button 
+                                    type="submit" 
+                                    className={styles.submitButton}
+                                    disabled={addingUser}
+                                >
+                                    {addingUser ? (
+                                        <>
+                                            <PulseLoader color="#ffffff" size={8} />
+                                            <span style={{ marginLeft: '0.5rem' }}>Creating...</span>
+                                        </>
+                                    ) : (
+                                        'Create User'
+                                    )}
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             )}

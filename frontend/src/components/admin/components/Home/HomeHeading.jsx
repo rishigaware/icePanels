@@ -91,7 +91,7 @@ const HomeHeading = () => {
             </div>
                     <div className={styles.balanceContainer}>
                         <BiMoneyWithdraw size={20} />
-                        <p className={styles.balanceAmount}>₹{balance}</p> 
+                        <p className={styles.balanceAmount}>₹{user?.balance || 0}</p> 
                     </div>
                     <h3 className={styles.balance}>Wallet Ballance</h3>
 

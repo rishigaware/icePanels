@@ -14,42 +14,15 @@ import LoginPopup from '../Login/LoginPopup';
 import { Toast } from "primereact/toast";
 
 const ProfilePage = () => {
-  const { user, setUser, url } = useUser();  // Get user and setUser from context
+  const { user, setUser, url, refreshUserBalance } = useUser();  // Get user and setUser from context
   const navigate = useNavigate(); // For navigation
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal visibility
-  const [balance, setBalance] = useState(0); // State to store wallet balance
   const toast = useRef(null); // Add a reference for Toast
-
-  // Function to fetch balance
-  const fetchBalance = async (userId) => {
-    try {
-      const response = await fetch(`${url}/api/user/get-balance/${userId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setBalance(data.balance); // Update balance state
-        // Update user context with new balance
-        setUser(prevUser => ({
-          ...prevUser,
-          balance: data.balance
-        }));
-      } else {
-        console.error('Failed to fetch balance');
-      }
-    } catch (error) {
-      console.error('Error fetching balance:', error);
-    }
-  };
 
   // Fetch balance on component mount and whenever the user changes
   useEffect(() => {
-    if (user) {
-      fetchBalance(user.id);
+    if (user?.id) {
+      refreshUserBalance();
     }
   }, [user]); // Refetch balance whenever the user changes
 
@@ -298,7 +271,7 @@ const ProfilePage = () => {
           <div className={styles.balanceContent}>
             <div className={styles.balanceAmount}>
               <span className={styles.currency}>₹</span>
-              <span className={styles.amount}>{balance}</span>
+              <span className={styles.amount}>{user?.balance || 0}</span>
             </div>
             <p className={styles.balanceLabel}>Wallet Balance</p>
           </div>

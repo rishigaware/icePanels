@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './index.css';
 import { UserProvider, useUser } from './context/UserContext'; 
+import BalanceProvider from './components/BalanceProvider/BalanceProvider';
 import Navbar from './components/Navbar/Navbar';
 import AdminNavbar from './components/admin/components/Navbar/Navbar';
 
@@ -33,29 +34,23 @@ const RoleBasedNavbar = () => {
 function App() {
   return (
     <UserProvider>
-      <Router
-        future={{
-          v7_startTransition: true,
-          v7_relativeSplatPath: true
-        }}
-      >
-        {/* Render the navbar for all users */}
-        <RoleBasedNavbar />
+      <BalanceProvider>
+        <Router
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true
+          }}
+        >
+          {/* Render the navbar for all users */}
+          <RoleBasedNavbar />
 
         <Routes>
           {/* Public Routes */}
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
 
-          {/* User Routes */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute allowedRoles={['user']}>
-                <Home />
-              </ProtectedRoute>
-            }
-          />
+          {/* Protected User Routes */}
           <Route
             path="/profile"
             element={
@@ -123,7 +118,8 @@ function App() {
             }
           />
         </Routes>
-      </Router>
+        </Router>
+      </BalanceProvider>
     </UserProvider>
   );
 }

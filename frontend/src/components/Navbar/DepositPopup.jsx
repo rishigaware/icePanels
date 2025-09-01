@@ -12,7 +12,7 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
 export default function DepositPopup({ onClose, walletBalance = 0, setWalletBalance }) {
-  const { user, setUser, url } = useUser();
+  const { user, setUser, url, refreshUserBalance } = useUser();
 
   const [accountDetails, setAccountDetails] = useState(null); // Store account details
   const [isDetailedView, setIsDetailedView] = useState(false); // Toggle between views
@@ -22,41 +22,18 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
   const [paymentMethod, setPaymentMethod] = useState(""); // State for payment method
   const [file, setFile] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal visibility
-  const [balance, setBalance] = useState(user.balance); // State to store wallet balance
 
   const toast = useRef(null); // Add a reference for Toast
 
 
 
 
-  // Function to fetch balance
-  const fetchBalance = async (userId) => {
-    try {
-      const response = await fetch(`${url}/api/user/get-balance/${userId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setBalance(data.balance); // Update balance state
-        setUser.balance = data.balance;
-    } else {
-        console.error('Failed to fetch balance');
-      }
-    } catch (error) {
-      console.error('Error fetching balance:', error);
-    }
-  };
-
   // Fetch balance on component mount and whenever the user changes
   useEffect(() => {
-    if (user) {
-      fetchBalance(user.id);
+    if (user?.id) {
+      refreshUserBalance();
     }
-  }, [user]); // Refetch balance whenever the user changes
+  }, [user?.id, refreshUserBalance]); // Refetch balance whenever the user changes
 
 
 
@@ -216,6 +193,9 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
         life: 1000,
       });
   
+      // Refresh user balance after successful deposit
+      await refreshUserBalance();
+  
       // Optionally reset form or close modal
       onClose();
     } catch (error) {
@@ -257,7 +237,7 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
 
               {/* Wallet Balance */}
               <p className={styles.wallet}>
-                <strong>Wallet Balance : ₹ {balance}</strong>
+                <strong>Wallet Balance : ₹ {user?.balance || 0}</strong>
               </p>
             </div>
 

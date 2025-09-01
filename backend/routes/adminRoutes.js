@@ -41,6 +41,8 @@ router.post("/upload/bottom-card-carousel", uploadCorousel.single('image'), admi
 router.post("/accept-id", adminController.acceptId);
 // Reject ID Route
 router.post("/reject-id", adminController.rejectId);
+// Update ID information (username, password, comment)
+router.patch("/update-id", adminController.updateId);
 
 router.patch('/accept-transaction/:txnId', adminController.acceptTransaction);
 // Route to reject a transaction

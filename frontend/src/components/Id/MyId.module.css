@@ -59,6 +59,20 @@
   color: #4670d5;
 }
 
+.idBalance {
+  font-size: 0.8rem;
+  color: #059669;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.coinRate {
+  font-size: 0.8rem;
+  color: #3b82f6;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
 
 
 
@@ -297,5 +311,328 @@ text-align: center;}
   color: #aaa; /* Lighter color for placeholder text */
   font-style: italic; /* Optional: italicize */
   font-size: 12px; /* Set the font size for the placeholder */
+}
 
+/* ===== PAGINATION STYLES (Matching Transaction Page) ===== */
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  padding: 0 1rem;
+  gap: 0.5rem;
+}
+
+.paginationButton {
+  padding: 0.75rem 1rem;
+  border: 2px solid #e9ecef;
+  background: #ffffff;
+  color: #3267d2;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 45px;
+  text-align: center;
+}
+
+.paginationButton:hover:not(:disabled) {
+  border-color: #3267d2;
+  background: #3267d2;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.paginationButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.paginationButton.active {
+  background: #3267d2;
+  color: #ffffff;
+  border-color: #3267d2;
+}
+
+.paginationInfo {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin: 0 1rem;
+  text-align: center;
+}
+
+/* IDs Count */
+.idsCount {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #6c757d;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* ===== ICON COLORS ===== */
+.depositIcon {
+  color: #10b981; /* Green */
+}
+
+.withdrawalIcon {
+  color: #f59e0b; /* Amber */
+}
+
+.editIcon {
+  color: #3b82f6; /* Blue */
+}
+
+.transactionIcon {
+  color: #8b5cf6; /* Purple */
+}
+
+.closeIcon {
+  color: #ef4444; /* Red */
+}
+
+/* ===== MOBILE POPUP STYLES ===== */
+.mobileMenu {
+  display: none;
+  position: relative;
+}
+
+.threeDotsIcon {
+  font-size: 1.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.threeDotsIcon:hover {
+  background: rgba(255, 255, 255, 1);
+  color: #374151;
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.mobilePopup {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  min-width: 180px;
+  padding: 8px 0;
+}
+
+.mobilePopupItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.mobilePopupItem:hover {
+  background-color: #f9fafb;
+}
+
+.mobileIcon {
+  font-size: 20px;
+}
+
+.mobilePopupItem span {
+  font-size: 14px;
+  color: #374151;
+  font-weight: 500;
+}
+
+/* ===== RESPONSIVE ICON STYLES ===== */
+/* Large screens */
+@media (min-width: 1200px) {
+  .desktopIcons {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .mobileMenu {
+    display: none;
+  }
+  
+  .iconWrapper {
+    min-width: 80px;
+  }
+  
+  .icon {
+    font-size: 28px;
+  }
+  
+  .iconLabel {
+    font-size: 0.8rem;
+  }
+}
+
+/* Medium screens */
+@media (max-width: 1199px) and (min-width: 992px) {
+  .desktopIcons {
+    display: flex;
+    gap: 0.8rem;
+  }
+  
+  .mobileMenu {
+    display: none;
+  }
+  
+  .iconWrapper {
+    min-width: 70px;
+  }
+  
+  .icon {
+    font-size: 24px;
+  }
+  
+  .iconLabel {
+    font-size: 0.75rem;
+  }
+}
+
+/* Small screens */
+@media (max-width: 991px) and (min-width: 768px) {
+  .desktopIcons {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .mobileMenu {
+    display: none;
+  }
+  
+  .iconWrapper {
+    min-width: 60px;
+  }
+  
+  .icon {
+    font-size: 20px;
+  }
+  
+  .iconLabel {
+    font-size: 0.7rem;
+  }
+}
+
+/* Mobile screens */
+@media (max-width: 767px) {
+  .desktopIcons {
+    display: none;
+  }
+  
+  .mobileMenu {
+    display: block;
+  }
+}
+
+/* Small mobile screens */
+@media (max-width: 480px) {
+  .iconContainer {
+    gap: 0.3rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .iconWrapper {
+    min-width: 45px;
+  }
+  
+  .icon {
+    font-size: 16px;
+  }
+  
+  .iconLabel {
+    font-size: 0.6rem;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 360px) {
+  .iconContainer {
+    gap: 0.2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .iconWrapper {
+    min-width: 40px;
+  }
+  
+  .icon {
+    font-size: 14px;
+  }
+  
+  .iconLabel {
+    font-size: 0.55rem;
+  }
+}
+
+/* ===== RESPONSIVE PAGINATION STYLES ===== */
+@media (max-width: 768px) {
+  .paginationContainer {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-top: 1.5rem;
+  }
+  
+  .paginationButton {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.9rem;
+    min-width: 40px;
+  }
+  
+  .paginationInfo {
+    font-size: 0.8rem;
+    margin: 0 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .paginationContainer {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-top: 1.5rem;
+  }
+  
+  .paginationButton {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.9rem;
+    min-width: 40px;
+  }
+  
+  .paginationInfo {
+    font-size: 0.8rem;
+    margin: 0 0.5rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .paginationButton {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    min-width: 35px;
+  }
+  
+  .paginationInfo {
+    font-size: 0.75rem;
+    margin: 0 0.25rem;
+  }
 }
