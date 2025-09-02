@@ -200,7 +200,7 @@ const ViewTransactionModal = ({ isOpen, onClose, idData }) => {
                     )}
                     {transaction.amount && (
                       <p className={styles.amount}>
-                        <strong>Amount:</strong> {transaction.amount} coins
+                        <strong>Amount:</strong> {transaction.amount}
                       </p>
                     )}
                     {transaction.paymentMethod && (

@@ -36,10 +36,11 @@ const ProfilePage = () => {
 });
 
   const [paymentInfo, setPaymentInfo] = useState({
-    accountNumber: '1234567890',
-    accountHolderName: 'John Doe',
-    ifscCode: 'ABCD0123456',
-    bankName: 'XYZ Bank'
+    accountNumber: '',
+    accountHolderName: '',
+    ifscCode: '',
+    bankName: '',
+    upiId: ''
   });
 
   const [isProfileEditing, setIsProfileEditing] = useState(false);
@@ -69,10 +70,11 @@ const ProfilePage = () => {
       .then(data => {
         // Assuming the API returns the full profile info
         setPaymentInfo({
-          accountNumber: data.accountNumber,
-          accountHolderName: data.accountHolderName,
-          ifscCode: data.ifscCode,
-          bankName: data.bankName,
+          accountNumber: data.accountNumber || '',
+          accountHolderName: data.accountHolderName || '',
+          ifscCode: data.ifscCode || '',
+          bankName: data.bankName || '',
+          upiId: data.upiId || '',
         });
       })
       .catch(error => {
@@ -124,6 +126,7 @@ const ProfilePage = () => {
           accountHolderName: paymentInfo.accountHolderName,
           ifscCode: paymentInfo.ifscCode,
           bankName: paymentInfo.bankName,
+          upiId: paymentInfo.upiId,
         }),
       });
 
@@ -243,10 +246,11 @@ const ProfilePage = () => {
   // Handle cancel for payment editing
   const handlePaymentCancel = () => {
     setPaymentInfo({
-      accountNumber: '1234567890',
-      accountHolderName: 'John Doe',
-      ifscCode: 'ABCD0123456',
-      bankName: 'XYZ Bank'
+      accountNumber: '',
+      accountHolderName: '',
+      ifscCode: '',
+      bankName: '',
+      upiId: ''
     });
     setIsPaymentEditing(false);
   };
@@ -450,6 +454,23 @@ const ProfilePage = () => {
                   />
                 ) : (
                   <span className={styles.infoText}>{paymentInfo.bankName}</span>
+                )}
+              </div>
+            </div>
+
+            <div className={styles.infoRow}>
+              <label className={styles.infoLabel}>UPI ID</label>
+              <div className={styles.infoValue}>
+                {isPaymentEditing ? (
+                  <input
+                    type="text"
+                    value={paymentInfo.upiId}
+                    onChange={(e) => handlePaymentChange('upiId', e.target.value)}
+                    className={styles.editInput}
+                    placeholder="Enter UPI ID (e.g., user@paytm)"
+                  />
+                ) : (
+                  <span className={styles.infoText}>{paymentInfo.upiId || 'Not provided'}</span>
                 )}
               </div>
             </div>

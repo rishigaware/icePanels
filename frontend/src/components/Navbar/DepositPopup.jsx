@@ -17,6 +17,15 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
   const [accountDetails, setAccountDetails] = useState(null); // Store account details
   const [isDetailedView, setIsDetailedView] = useState(false); // Toggle between views
   const [activeTab, setActiveTab] = useState("depositFunds"); // Toggle between tabs
+  const [withdrawalAmount, setWithdrawalAmount] = useState(""); // State for withdrawal amount
+  const [withdrawalMethod, setWithdrawalMethod] = useState(""); // State for withdrawal method
+  const [withdrawalDetails, setWithdrawalDetails] = useState({
+    upiId: "",
+    accountNumber: "",
+    accountHolderName: "",
+    ifscCode: "",
+    bankName: ""
+  }); // State for withdrawal details
   const [depositAmount, setDepositAmount] = useState("");
   const [errorMessage, setErrorMessage] = useState(""); // State for error message
   const [paymentMethod, setPaymentMethod] = useState(""); // State for payment method
@@ -57,13 +66,7 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
         // console.log(data);
         setAccountDetails(data); // Store account details in state
       } catch (error) {
-        console.error("Error fetching account details:", error);
-        toast.current.show({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to load account details.",
-          life: 3000,
-        });
+        
       }
     };
 
@@ -169,7 +172,7 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
     formData.append("image", file); // Append the image file
     formData.append("amount", depositAmount); // Append other transaction data
     formData.append("createdAt", new Date().toISOString()); // Add current timestamp
-    formData.append("createdBy", user.username); // Add user ID
+    formData.append("createdBy", user.id); // Add user ID
     formData.append("paymentMethod", paymentMethod); // Add payment method
   
     try {
@@ -207,6 +210,112 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
         summary: "Transaction Failed",
         detail: error.message,
         life: 1000,
+      });
+    }
+  };
+
+  // Handle withdrawal submission
+  const handleWithdrawalSubmit = async () => {
+    // Validate withdrawal amount
+    const amount = parseFloat(withdrawalAmount);
+    if (!amount || amount <= 0) {
+      toast.current.show({
+        severity: "error",
+        summary: "Invalid Amount",
+        detail: "Please enter a valid withdrawal amount.",
+        life: 3000,
+      });
+      return;
+    }
+
+    // Check if user has sufficient balance
+    if (amount > (user?.balance || 0)) {
+      toast.current.show({
+        severity: "error",
+        summary: "Insufficient Balance",
+        detail: `You have ₹${user?.balance || 0} in your wallet. Cannot withdraw ₹${amount}.`,
+        life: 3000,
+      });
+      return;
+    }
+
+    // Validate withdrawal details based on method
+    if (withdrawalMethod === "upi" && !withdrawalDetails.upiId) {
+      toast.current.show({
+        severity: "error",
+        summary: "UPI ID Required",
+        detail: "Please enter your UPI ID.",
+        life: 3000,
+      });
+      return;
+    }
+
+    if (withdrawalMethod === "bank") {
+      const { accountNumber, accountHolderName, ifscCode, bankName } = withdrawalDetails;
+      if (!accountNumber || !accountHolderName || !ifscCode || !bankName) {
+        toast.current.show({
+          severity: "error",
+          summary: "Bank Details Required",
+          detail: "Please fill in all bank details.",
+          life: 3000,
+        });
+        return;
+      }
+    }
+
+    try {
+      const response = await fetch(`${url}/api/user/create-wallet-withdrawal`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: amount,
+          withdrawalMethod: withdrawalMethod,
+          withdrawalDetails: withdrawalDetails,
+          createdAt: new Date().toISOString(),
+          createdBy: user.id,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Withdrawal request failed");
+      }
+
+      const data = await response.json();
+      console.log("Withdrawal request created:", data);
+
+      // Show success toast
+      toast.current.show({
+        severity: "success",
+        summary: "Withdrawal Request Submitted",
+        detail: "Your withdrawal request has been submitted for approval.",
+        life: 3000,
+      });
+
+      // Reset form
+      setWithdrawalAmount("");
+      setWithdrawalMethod("");
+      setWithdrawalDetails({
+        upiId: "",
+        accountNumber: "",
+        accountHolderName: "",
+        ifscCode: "",
+        bankName: ""
+      });
+
+      // Close popup
+      onClose();
+    } catch (error) {
+      console.error("Error creating withdrawal request:", error);
+
+      // Show error toast
+      toast.current.show({
+        severity: "error",
+        summary: "Withdrawal Failed",
+        detail: error.message,
+        life: 3000,
       });
     }
   };
@@ -286,6 +395,14 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
               </button>
               <button
                 className={`${styles.tabButton} ${
+                  activeTab === "withdrawFunds" ? styles.activeTab : ""
+                }`}
+                onClick={() => handleTabChange("withdrawFunds")}
+              >
+                Withdraw Funds
+              </button>
+              <button
+                className={`${styles.tabButton} ${
                   activeTab === "bankDetails" ? styles.activeTab : ""
                 }`}
                 onClick={() => handleTabChange("bankDetails")}
@@ -311,6 +428,122 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
                     <strong>Deposit Funds</strong>
                   </h2>
                   <p>Deposit money only in the below available accounts to get the fastest credits and avoid possible delays.</p>
+                </div>
+              )}
+
+              {activeTab === "withdrawFunds" && (
+                <div className={styles.withdrawFunds}>
+                  <h2>
+                    <strong>Withdraw Funds</strong>
+                  </h2>
+                  <p>Withdraw money from your wallet to your bank account or UPI ID.</p>
+                  
+                  {/* Withdrawal Amount Input */}
+                  <div className={styles.inputSection}>
+                    <label className={styles.inputLabel}>
+                      <strong>Withdrawal Amount:</strong>
+                    </label>
+                    <input
+                      type="number"
+                      className={styles.input}
+                      value={withdrawalAmount}
+                      onChange={(e) => setWithdrawalAmount(e.target.value)}
+                      placeholder="Enter withdrawal amount"
+                      min="0"
+                      step="0.01"
+                    />
+                  </div>
+
+                  {/* Withdrawal Method Selection */}
+                  <div className={styles.dropdownSection}>
+                    <label className={styles.dropdownLabel}>
+                      <strong>Withdrawal Method:</strong>
+                      <select
+                        className={styles.dropdown}
+                        value={withdrawalMethod}
+                        onChange={(e) => setWithdrawalMethod(e.target.value)}
+                        required
+                      >
+                        <option value="">-- Select withdrawal method --</option>
+                        <option value="upi">UPI</option>
+                        <option value="bank">Bank Transfer</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  {/* UPI Details */}
+                  {withdrawalMethod === "upi" && (
+                    <div className={styles.withdrawalDetails}>
+                      <label className={styles.inputLabel}>
+                        <strong>UPI ID:</strong>
+                      </label>
+                      <input
+                        type="text"
+                        className={styles.input}
+                        value={withdrawalDetails.upiId}
+                        onChange={(e) => setWithdrawalDetails(prev => ({...prev, upiId: e.target.value}))}
+                        placeholder="Enter your UPI ID (e.g., user@paytm)"
+                      />
+                    </div>
+                  )}
+
+                  {/* Bank Details */}
+                  {withdrawalMethod === "bank" && (
+                    <div className={styles.withdrawalDetails}>
+                      <label className={styles.inputLabel}>
+                        <strong>Account Number:</strong>
+                      </label>
+                      <input
+                        type="text"
+                        className={styles.input}
+                        value={withdrawalDetails.accountNumber}
+                        onChange={(e) => setWithdrawalDetails(prev => ({...prev, accountNumber: e.target.value}))}
+                        placeholder="Enter account number"
+                      />
+                      
+                      <label className={styles.inputLabel}>
+                        <strong>Account Holder Name:</strong>
+                      </label>
+                      <input
+                        type="text"
+                        className={styles.input}
+                        value={withdrawalDetails.accountHolderName}
+                        onChange={(e) => setWithdrawalDetails(prev => ({...prev, accountHolderName: e.target.value}))}
+                        placeholder="Enter account holder name"
+                      />
+                      
+                      <label className={styles.inputLabel}>
+                        <strong>IFSC Code:</strong>
+                      </label>
+                      <input
+                        type="text"
+                        className={styles.input}
+                        value={withdrawalDetails.ifscCode}
+                        onChange={(e) => setWithdrawalDetails(prev => ({...prev, ifscCode: e.target.value}))}
+                        placeholder="Enter IFSC code"
+                      />
+                      
+                      <label className={styles.inputLabel}>
+                        <strong>Bank Name:</strong>
+                      </label>
+                      <input
+                        type="text"
+                        className={styles.input}
+                        value={withdrawalDetails.bankName}
+                        onChange={(e) => setWithdrawalDetails(prev => ({...prev, bankName: e.target.value}))}
+                        placeholder="Enter bank name"
+                      />
+                    </div>
+                  )}
+
+                  {/* Withdrawal Submit Button */}
+                  <button 
+                    className={styles.submitButton} 
+                    onClick={handleWithdrawalSubmit}
+                    disabled={!withdrawalAmount || !withdrawalMethod}
+                  >
+                    <strong>Request Withdrawal</strong>
+                  </button>
                 </div>
               )}
 

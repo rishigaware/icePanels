@@ -74,6 +74,17 @@ const Transactions = () => {
     fetchTransactions();
   }, [user]);
 
+  // Set up periodic refresh to check for status updates
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const interval = setInterval(() => {
+      fetchTransactions();
+    }, 30000); // Refresh every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [user?.id]);
+
   // Pagination logic
   const indexOfLastTransaction = currentPage * transactionsPerPage;
   const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
@@ -174,7 +185,16 @@ const Transactions = () => {
   return (
     <div className={styles.transactionHistory}>
       <TopNavbar />
-      <h3 className={styles.heading}><strong>Transaction History</strong></h3>
+      <div className={styles.headerSection}>
+        <h3 className={styles.heading}><strong>Transaction History</strong></h3>
+        <button 
+          className={styles.refreshButton}
+          onClick={fetchTransactions}
+          disabled={loading}
+        >
+          {loading ? 'Refreshing...' : 'Refresh'}
+        </button>
+      </div>
       
       {/* Transactions Count */}
       <div className={styles.transactionsCount}>

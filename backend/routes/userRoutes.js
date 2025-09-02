@@ -12,6 +12,7 @@ router.post('/update-profile', userController.updateProfileController);   // Add
 router.post('/create-transaction',upload.single('image'), userController.createTransaction);
 router.post('/create-transaction-id', userController.createTransactionById);
 router.post('/create-withdrawal-transaction', upload.none(), userController.createWithdrawalTransactionBy);
+router.post('/create-wallet-withdrawal', userController.createWalletWithdrawal);
 router.post('/create-new-deposit-transaction', userController.createNewDepositTransaction);
 router.post('/create-id', userController.createId); // Add a new website record
 router.post('/close-id', userController.closeId); // Close an ID

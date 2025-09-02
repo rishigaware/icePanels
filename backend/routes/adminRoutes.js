@@ -9,6 +9,7 @@ const router = express.Router();
 router.get('/', adminController.getAllAdmins); // Fetch all admins
 router.get("/get-all-users", adminController.getAllUsers);//get all users
 router.get('/get-all-ids', adminController.getAllIds);
+router.get('/get-balance/:adminId', adminController.getAdminBalance);
 
 router.post('/signup', adminController.addAdmin);    // Add a new admin
 router.patch('/update-transaction', adminController.updateTransaction); // Update transaction
@@ -74,5 +75,25 @@ router.get('/get-all-categories', adminController.getAllCategoriesForDropdown);
 router.post('/remove-category', adminController.removeCategoryFromWebsites);
 // Add a new category
 router.post('/add-category', adminController.addCategory);
+
+// ===== REQUEST HANDLING ROUTES =====
+// Get all pending requests
+router.get('/pending-requests', adminController.getAllPendingRequests);
+
+// Deposit request handling
+router.patch('/approve-deposit/:requestId', adminController.approveDepositRequest);
+router.patch('/reject-deposit/:requestId', adminController.rejectDepositRequest);
+
+// Withdrawal request handling
+router.patch('/approve-withdrawal/:requestId', adminController.approveWithdrawalRequest);
+router.patch('/reject-withdrawal/:requestId', adminController.rejectWithdrawalRequest);
+
+// Close ID request handling
+router.patch('/approve-close-id/:requestId', adminController.approveCloseIdRequest);
+router.patch('/reject-close-id/:requestId', adminController.rejectCloseIdRequest);
+
+// Password change request handling
+router.patch('/approve-password-change/:requestId', adminController.approvePasswordChangeRequest);
+router.patch('/reject-password-change/:requestId', adminController.rejectPasswordChangeRequest);
 
 module.exports = router;

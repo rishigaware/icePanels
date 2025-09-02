@@ -54,6 +54,45 @@ const MyId = () => {
   const navigate = useNavigate();
   const toast = useRef(null);
 
+  // Check for status updates
+  const checkStatusUpdates = async () => {
+    try {
+      if (!safeUser?.id) return;
+
+      // Check for recent transactions with status updates
+      const response = await fetch(`${safeUrl}/api/user/deposit-transaction?userId=${safeUser.id}`);
+      if (response.ok) {
+        const transactions = await response.json();
+        const recentTransactions = transactions.filter(txn => {
+          const createdAt = new Date(txn.createdAt);
+          const now = new Date();
+          const diffInMinutes = (now - createdAt) / (1000 * 60);
+          return diffInMinutes <= 5 && (txn.status === 'Accepted' || txn.status === 'Rejected');
+        });
+
+        recentTransactions.forEach(txn => {
+          if (txn.status === 'Accepted') {
+            toast.current.show({
+              severity: 'success',
+              summary: 'Request Approved',
+              detail: `${txn.description} has been approved`,
+              life: 5000,
+            });
+          } else if (txn.status === 'Rejected') {
+            toast.current.show({
+              severity: 'error',
+              summary: 'Request Rejected',
+              detail: `${txn.description} has been rejected`,
+              life: 5000,
+            });
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error checking status updates:', error);
+    }
+  };
+
   useEffect(() => {
     const fetchIds = async () => {
       try {
@@ -80,6 +119,9 @@ const MyId = () => {
         });
 
         setMyIds(sortedData);
+        
+        // Check for status updates after fetching IDs
+        await checkStatusUpdates();
       } catch (err) {
         console.error(err.message);
         setError(err.message);
@@ -93,6 +135,17 @@ const MyId = () => {
       setNeedRefetch(false);
     }
   }, [safeUser?.id, needRefetch]);
+
+  // Set up periodic status check
+  useEffect(() => {
+    if (!safeUser?.id) return;
+
+    const interval = setInterval(() => {
+      checkStatusUpdates();
+    }, 30000); // Check every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [safeUser?.id]);
 
   const toggleMenu = (index) => {
     setMenuOpen(menuOpen === index ? null : index);
@@ -152,7 +205,6 @@ const MyId = () => {
   };
 
   const handleDepositClick = (item) => {
-    // console.log(item)
     setSelectedId(item)
     setChangePasswordPopup(false)
     setIsWithdrawalPopupVisible(false)
@@ -160,7 +212,6 @@ const MyId = () => {
     setShowNewDepositPopup(true); // Show new deposit popup
   };
   const handleWithdrawalClick = (item) => {
-    // console.log(item)
     setSelectedId(item)
     setChangePasswordPopup(false)
     setShowIdDepositPopup(false); // Show deposit popup
@@ -319,7 +370,7 @@ const MyId = () => {
         },
         body: JSON.stringify({
           id: id,
-          createdBy: user.username,
+          createdBy: user.id,
         }),
       });
 

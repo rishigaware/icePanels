@@ -104,14 +104,29 @@ const HomeHeading = () => {
             
             </div>
             </div>
-            <div className={styles.createId}>
-            <div className={styles.leftSide}>
-                <FaPlus size={20} className={styles.createIdIcon} />
-                <span className={styles.createIdText}>
-                    CREATE SELF ADMIN PANEL'S
-                </span>
+            {/* Sliding Text Section */}
+            <div className={styles.slidingTextSection}>
+              <div className={styles.slidingTextContainer}>
+                <div className={styles.slidingText}>
+                  🚀 Welcome to The247Panel - Your Ultimate Gaming & Betting Platform! 🎮💰 • 🎯 Multiple Gaming Websites • 💎 Premium Features • 🔥 24/7 Support • ⚡ Instant Deposits & Withdrawals • 🏆 Best Odds Guaranteed • 🎲 Live Casino Games • 🎰 Slot Machines • 🃏 Card Games • 🏈 Sports Betting • 🎪 Live Events • 💰 Daily Bonuses • 🎁 Special Promotions • 🔐 Secure & Safe • 📱 Mobile Friendly • 🌟 VIP Membership • 🎊 Join Now & Win Big! 🎊
+                </div>
+              </div>
             </div>
-            <FaArrowRight size={20} className={`${styles.createIdArrow} ${styles.arrow}`} />
+
+            {/* Create Admin Panel Section */}
+            <div className={styles.createId}>
+              <div className={styles.leftSide}>
+                <span className={styles.createIdEmoji}>🚀</span>
+                <FaPlus size={18} className={styles.createIdIcon} />
+                <span className={styles.createIdText}>
+                  CREATE SELF ADMIN PANEL'S
+                </span>
+                <span className={styles.createIdEmoji}>⚡</span>
+              </div>
+              <div className={styles.rightSide}>
+                <span className={styles.createIdEmoji}>🎯</span>
+                <FaArrowRight size={18} className={`${styles.createIdArrow} ${styles.arrow}`} />
+              </div>
             </div>
 
             {isModalOpen && (

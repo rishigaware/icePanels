@@ -817,12 +817,12 @@ const CreateId = () => {
                       )}
                     </div>
                     <div className={styles.websiteActions}>
-                      <button
+                      {/* <button
                         onClick={() => handleCreate(website.id)}
                         className={styles.actionButton}
                       >
                         Create ID
-                      </button>
+                      </button> */}
                       <button
                         onClick={() => openEditModal(website)}
                         className={styles.editButton}

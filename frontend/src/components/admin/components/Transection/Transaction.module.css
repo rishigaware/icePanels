@@ -190,6 +190,17 @@
   margin-top: 0.25rem;
 }
 
+/* Auto-processed Note */
+.autoProcessedNote {
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-style: italic;
+  background: rgba(108, 117, 125, 0.1);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid rgba(108, 117, 125, 0.2);
+}
+
 .acceptButton,
 .deleteButton {
   padding: 0.25rem 0.5rem;

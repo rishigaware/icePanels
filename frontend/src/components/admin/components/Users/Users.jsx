@@ -20,6 +20,8 @@ const Users = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [usersPerPage] = useState(12);
     const [showAddUserModal, setShowAddUserModal] = useState(false);
+    const [userPaymentDetails, setUserPaymentDetails] = useState(null);
+    const [loadingPaymentDetails, setLoadingPaymentDetails] = useState(false);
     const [addUserFormData, setAddUserFormData] = useState({
         name: '',
         username: '',
@@ -261,17 +263,40 @@ const Users = () => {
         }
     };
 
-    const handleUserClick = (user) => {
+    const handleUserClick = async (user) => {
         fetchUsers();
         const latestUser = users.find((u) => u.id === user.id);
         setSelectedUser(latestUser);
         setTempBalance(latestUser.balance || "0");
+        
+        // Fetch payment details for the user
+        await fetchUserPaymentDetails(user.id);
+    };
+
+    // Function to fetch user payment details
+    const fetchUserPaymentDetails = async (userId) => {
+        setLoadingPaymentDetails(true);
+        try {
+            const response = await fetch(`${url}/api/user/get-accountdetails?userId=${userId}`);
+            if (response.ok) {
+                const data = await response.json();
+                setUserPaymentDetails(data);
+            } else {
+                setUserPaymentDetails(null);
+            }
+        } catch (error) {
+            console.error('Error fetching payment details:', error);
+            setUserPaymentDetails(null);
+        } finally {
+            setLoadingPaymentDetails(false);
+        }
     };
 
     const handleClosePopup = () => {
         setSelectedUser(null);
         setTempBalance("");
         setTempPassword("");
+        setUserPaymentDetails(null);
     };
 
     const handleDeleteUser = async (userId, userName) => {
@@ -574,6 +599,27 @@ const Users = () => {
                             <p><strong>Username:</strong> {selectedUser.username || 'N/A'}</p>
                             <p><strong>Phone Number:</strong> {selectedUser.phoneNumber || 'N/A'}</p>
                             <p><strong>Current Balance:</strong> ₹{selectedUser.balance || '0'}</p>
+                            
+                            {/* Payment Details Section */}
+                            <div className={styles.paymentDetailsSection}>
+                                <h3>Payment Details</h3>
+                                {loadingPaymentDetails ? (
+                                    <div className={styles.loadingPayment}>
+                                        <PulseLoader color="#4592ef" size={8} />
+                                        <span style={{ marginLeft: '0.5rem' }}>Loading payment details...</span>
+                                    </div>
+                                ) : userPaymentDetails ? (
+                                    <div className={styles.paymentDetails}>
+                                        <p><strong>Account Number:</strong> {userPaymentDetails.accountNumber || 'Not provided'}</p>
+                                        <p><strong>Account Holder:</strong> {userPaymentDetails.accountHolderName || 'Not provided'}</p>
+                                        <p><strong>IFSC Code:</strong> {userPaymentDetails.ifscCode || 'Not provided'}</p>
+                                        <p><strong>Bank Name:</strong> {userPaymentDetails.bankName || 'Not provided'}</p>
+                                        <p><strong>UPI ID:</strong> {userPaymentDetails.upiId || 'Not provided'}</p>
+                                    </div>
+                                ) : (
+                                    <p className={styles.noPaymentDetails}>No payment details available</p>
+                                )}
+                            </div>
                             
                             {/* Update Balance Section */}
                             <div className={styles.updateBalance}>

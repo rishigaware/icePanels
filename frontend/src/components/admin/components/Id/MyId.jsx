@@ -17,6 +17,7 @@ const MyId = () => {
   const safeUser = user || {};
   const safeUrl = url || '';
   const [myIds, setMyIds] = useState([]);
+  const [pendingRequests, setPendingRequests] = useState([]);
   const [menuOpen, setMenuOpen] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,6 +25,7 @@ const MyId = () => {
   const [newPassword, setNewPassword] = useState("");
   const [needRefetch, setNeedRefetch] = useState(false);
   const [searchQuery, setSearchQuery] = useState(""); // State for the search query
+  const [activeTab, setActiveTab] = useState('ids'); // 'ids' or 'requests'
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -48,6 +50,71 @@ const MyId = () => {
 
   const navigate = useNavigate();
 
+  // Fetch pending requests
+  const fetchPendingRequests = async () => {
+    try {
+      const response = await fetch(`${safeUrl}/api/admin/pending-requests`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch pending requests');
+      }
+      const data = await response.json();
+      setPendingRequests(data);
+    } catch (err) {
+      console.error('Error fetching pending requests:', err);
+    }
+  };
+
+  // Handle request approval/rejection
+  const handleRequestAction = async (requestId, requestType, action) => {
+    try {
+      const endpoint = action === 'approve' 
+        ? `approve-${requestType.replace('_', '-')}` 
+        : `reject-${requestType.replace('_', '-')}`;
+      
+      const response = await fetch(`${safeUrl}/api/admin/${endpoint}/${requestId}`, {
+        method: 'PATCH',
+      });
+
+      if (!response.ok) {
+        // Try to get detailed error message from response
+        let errorMessage = `Failed to ${action} ${requestType} request`;
+        try {
+          const errorData = await response.json();
+          if (errorData.message) {
+            errorMessage = errorData.message;
+            
+            // Handle specific withdrawal balance error
+            if (errorData.message.includes('Insufficient ID balance') && errorData.currentBalance !== undefined) {
+              errorMessage = `Insufficient ID balance: ${errorData.currentBalance} coins available, ${errorData.requiredCoins} coins needed. Shortfall: ${errorData.shortfall} coins.`;
+            }
+          }
+        } catch (parseError) {
+          // If we can't parse the error response, use the default message
+          console.error('Error parsing error response:', parseError);
+        }
+        throw new Error(errorMessage);
+      }
+
+      toast.current.show({
+        severity: 'success',
+        summary: action === 'approve' ? 'Approved' : 'Rejected',
+        detail: `${requestType.replace('_', ' ')} request ${action}d successfully`,
+        life: 3000,
+      });
+
+      // Refresh pending requests and IDs
+      await fetchPendingRequests();
+      setNeedRefetch(true);
+    } catch (err) {
+      toast.current.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: err.message,
+        life: 5000, // Show error for longer duration
+      });
+    }
+  };
+
   useEffect(() => {
     const fetchIds = async () => {
       try {
@@ -65,11 +132,42 @@ const MyId = () => {
 
 
         const data = await response.json();
-        // console.log(data)
 
-        const sortedData = data.sort((a, b) => {
-          const timestampA = a.createdAt._seconds;
-          const timestampB = b.createdAt._seconds;
+        // Filter out invalid data before sorting
+        const validData = data.filter(item => {
+          if (!item || typeof item !== 'object') {
+            return false;
+          }
+          if (Object.keys(item).length === 0) {
+            return false;
+          }
+          return true;
+        });
+
+        const sortedData = validData.sort((a, b) => {
+          // Handle different timestamp formats
+          let timestampA = 0;
+          let timestampB = 0;
+          
+          if (a.createdAt) {
+            if (a.createdAt._seconds) {
+              timestampA = a.createdAt._seconds;
+            } else if (typeof a.createdAt === 'string') {
+              timestampA = new Date(a.createdAt).getTime() / 1000;
+            } else if (a.createdAt instanceof Date) {
+              timestampA = a.createdAt.getTime() / 1000;
+            }
+          }
+          
+          if (b.createdAt) {
+            if (b.createdAt._seconds) {
+              timestampB = b.createdAt._seconds;
+            } else if (typeof b.createdAt === 'string') {
+              timestampB = new Date(b.createdAt).getTime() / 1000;
+            } else if (b.createdAt instanceof Date) {
+              timestampB = b.createdAt.getTime() / 1000;
+            }
+          }
 
           return timestampB - timestampA;
         });
@@ -85,6 +183,7 @@ const MyId = () => {
 
     if (safeUser?.id || needRefetch) {
       fetchIds();
+      fetchPendingRequests();
       setNeedRefetch(false);
     }
   }, [safeUser?.id, needRefetch]);
@@ -350,22 +449,194 @@ const handleReject = async (item) => {
   };
 
   const filteredIds = (myIds || []).filter(
-    (id) =>
-      (id.websiteName && id.websiteName.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (id.websiteUrl && id.websiteUrl.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (id.username && id.username.toLowerCase().includes(searchQuery.toLowerCase()))
+    (id) => {
+      if (!id || typeof id !== 'object') {
+        return false;
+      }
+      
+      // Skip empty objects
+      if (Object.keys(id).length === 0) {
+        return false;
+      }
+      
+      const query = searchQuery.toLowerCase();
+      return (
+        (id.websiteName && id.websiteName.toLowerCase().includes(query)) ||
+        (id.websiteUrl && id.websiteUrl.toLowerCase().includes(query)) ||
+        (id.username && id.username.toLowerCase().includes(query)) ||
+        (id.idType && id.idType.toLowerCase().includes(query)) ||
+        (id.idNumber && id.idNumber.toLowerCase().includes(query)) ||
+        (id.userId && id.userId.toLowerCase().includes(query)) ||
+        (id.createdBy && id.createdBy.toLowerCase().includes(query)) ||
+        (id.id && id.id.toLowerCase().includes(query))
+      );
+    }
+  );
+
+  const filteredRequests = (pendingRequests || []).filter(
+    (request) =>
+      (request.websiteName && request.websiteName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (request.username && request.username.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (request.createdBy && request.createdBy.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   // Pagination logic
-  const totalPages = Math.ceil(filteredIds.length / itemsPerPage);
+  const currentData = activeTab === 'ids' ? filteredIds : filteredRequests;
+  const totalPages = Math.ceil(currentData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentIds = filteredIds.slice(startIndex, endIndex);
+  const currentItems = currentData.slice(startIndex, endIndex);
 
   // Reset to first page when search query changes
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery]);
+
+  // Get request type display info
+  const getRequestTypeInfo = (requestType) => {
+    switch (requestType) {
+      case 'deposit':
+        return { label: 'Deposit Request', color: '#22c55e', icon: '💰' };
+      case 'withdrawal':
+        return { label: 'Withdrawal Request', color: '#f59e0b', icon: '💸' };
+      case 'close_id':
+        return { label: 'Close ID Request', color: '#ef4444', icon: '🔒' };
+      case 'password_change':
+        return { label: 'Password Change Request', color: '#8b5cf6', icon: '🔑' };
+      default:
+        return { label: 'Unknown Request', color: '#6b7280', icon: '❓' };
+    }
+  };
+
+  // Render request item
+  const renderRequestItem = (request, index) => {
+    // Validate request data
+    if (!request || typeof request !== 'object') {
+      console.error('Invalid request data:', request);
+      return null;
+    }
+
+    const typeInfo = getRequestTypeInfo(request.requestType);
+    
+    // Generate unique key
+    const uniqueKey = `${request.id || 'unknown'}-${request.transactionId || request.transactionDocumentId || index}`;
+    
+    return (
+      <div key={uniqueKey} className={styles.idCard}>
+        <div className={styles.logo}>
+          <span style={{ fontSize: '24px' }}>{typeInfo.icon}</span>
+        </div>
+
+        <div className={styles.details}>
+          <p className={styles.websiteName} style={{ color: typeInfo.color }}>
+            {typeInfo.label}
+          </p>
+          <span>
+            <strong>Website:</strong> {request.websiteName || 'N/A'}
+          </span>
+          {request.websiteUrl && (
+            <span>
+              <strong>URL:</strong> {request.websiteUrl}
+            </span>
+          )}
+          <p className={styles.userId}>
+            <strong>User ID:</strong> {request.createdBy || 'N/A'}
+          </p>
+          {request.username && (
+            <p className={styles.userId}>
+              <strong>Username:</strong> {request.username}
+            </p>
+          )}
+          {request.amount && (
+            <p className={styles.userId}>
+              <strong>Amount:</strong> ₹{request.amount}
+            </p>
+          )}
+          {request.coinsToReceive && (
+            <p className={styles.userId}>
+              <strong>Coins to Receive:</strong> {request.coinsToReceive}
+            </p>
+          )}
+          {request.coinsNeeded && (
+            <p className={styles.userId}>
+              <strong>Coins Needed:</strong> {request.coinsNeeded}
+            </p>
+          )}
+          {request.coinRate && (
+            <p className={styles.userId}>
+              <strong>Coin Rate:</strong> ₹{request.coinRate} per coin
+            </p>
+          )}
+          {request.reason && (
+            <p className={styles.userId}>
+              <strong>Reason:</strong> {request.reason}
+            </p>
+          )}
+          {request.withdrawalMethod && (
+            <p className={styles.userId}>
+              <strong>Withdrawal Method:</strong> {request.withdrawalMethod}
+            </p>
+          )}
+          {request.withdrawalDetails && (
+            <div className={styles.userId}>
+              <strong>Withdrawal Details:</strong>
+              {request.withdrawalMethod === 'upi' ? (
+                <p>UPI ID: {request.withdrawalDetails.upiId || 'N/A'}</p>
+              ) : (
+                <div>
+                  <p>Account Number: {request.withdrawalDetails.accountNumber || 'N/A'}</p>
+                  <p>Account Holder: {request.withdrawalDetails.accountHolderName || 'N/A'}</p>
+                  <p>IFSC Code: {request.withdrawalDetails.ifscCode || 'N/A'}</p>
+                  <p>Bank Name: {request.withdrawalDetails.bankName || 'N/A'}</p>
+                </div>
+              )}
+            </div>
+          )}
+          {request.newPassword && (
+            <p className={styles.userId}>
+              <strong>New Password:</strong> {request.newPassword}
+            </p>
+          )}
+          {request.refundable !== undefined && (
+            <p className={styles.userId}>
+              <strong>Refundable:</strong> {request.refundable ? 'Yes' : 'No'}
+            </p>
+          )}
+          <p className={styles.userId}>
+            <strong>Created:</strong> {new Date(request.createdAt).toLocaleString()}
+          </p>
+        </div>
+
+        <div className={styles.iconContainer}>
+          <div className={styles.statusContainer}>
+            <p className={styles.statusText}>
+              <span className={styles.statusPending}>
+                {request.status}
+              </span>
+            </p>
+          </div>
+
+          <div className={styles.actionIcons}>
+            <button
+              className={`${styles.icon} ${styles.acceptIcon}`}
+              title="Approve Request"
+              onClick={() => handleRequestAction(request.id, request.requestType, 'approve')}
+            >
+              <AiOutlineCheckCircle />
+            </button>
+
+            <button
+              className={`${styles.icon} ${styles.rejectIcon}`}
+              title="Reject Request"
+              onClick={() => handleRequestAction(request.id, request.requestType, 'reject')}
+            >
+              <AiOutlineCloseCircle />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   // Generate page numbers for pagination
   const getPageNumbers = () => {
@@ -421,27 +692,69 @@ const handleReject = async (item) => {
 
   return (
     <div className={styles.container}>
+      {/* Tabs */}
+      <div className={styles.tabsContainer}>
+        <button
+          className={`${styles.tab} ${activeTab === 'ids' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('ids')}
+        >
+          All IDs ({myIds.length})
+        </button>
+        <button
+          className={`${styles.tab} ${activeTab === 'requests' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('requests')}
+        >
+          Pending Requests ({pendingRequests.length})
+        </button>
+      </div>
+
       <input
         type="text"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        placeholder="Search by website name, URL, or username"
-        className={styles.searchInput} // Add styling in your CSS file
+        placeholder={`Search by ${activeTab === 'ids' ? 'website name, URL, username, ID type, or ID number' : 'website name, username, or user ID'}`}
+        className={styles.searchInput}
       />
 
-      {filteredIds.length === 0 ? (
-        <p className={styles.noIds}>No IDs match your search criteria.</p>
+      {currentData.length === 0 ? (
+        <p className={styles.noIds}>
+          No {activeTab} match your search criteria.
+        </p>
       ) : (
-        currentIds.map((item, index) => (
+        currentItems.map((item, index) => {
+          if (activeTab === 'ids') {
+            // Validate ID item data
+            if (!item || typeof item !== 'object') {
+              console.error('Invalid ID item data:', item);
+              return null;
+            }
+            
+            // Skip empty objects
+            if (Object.keys(item).length === 0) {
+              return null;
+            }
+
+            // Check if this is a website ID or generic ID
+            const isWebsiteId = item.websiteName && item.websiteUrl;
+            const isGenericId = item.idType && item.idNumber;
+
+            // Render ID item
+            return (
           <div key={item.id} className={styles.idCard}>
-            <div className={styles.logo}>
+                <div className={styles.logo}>
+                  {isWebsiteId ? (
               <img
                 src={`${safeUrl}/${item.imgUrl || ''}`}
                 alt={`${item.websiteName || 'Website'} logo`}
               />
+                  ) : (
+                    <span style={{ fontSize: '24px' }}>🆔</span>
+                  )}
             </div>
 
             <div className={styles.details}>
+                  {isWebsiteId ? (
+                    <>
               <p className={styles.websiteName}>{item.websiteName || 'N/A'}</p>
               <span>
                 <a
@@ -453,10 +766,60 @@ const handleReject = async (item) => {
                   {item.websiteUrl || 'N/A'}
                 </a>
               </span>
+                      {item.username && (
+                        <p className={styles.userId}>
+                          <strong>Username:</strong> {item.username}
+                        </p>
+                      )}
+                      {item.balance !== undefined && (
+                        <p className={styles.userId}>
+                          <strong>Balance:</strong> {item.balance} coins
+                        </p>
+                      )}
+                      {item.coinRate && (
+                        <p className={styles.userId}>
+                          <strong>Coin Rate:</strong> ₹{item.coinRate} per coin
+                        </p>
+                      )}
+                    </>
+                  ) : isGenericId ? (
+                    <>
+                      <p className={styles.websiteName}>ID Document</p>
+                      <p className={styles.userId}>
+                        <strong>Type:</strong> {item.idType || 'N/A'}
+                      </p>
+                      <p className={styles.userId}>
+                        <strong>Number:</strong> {item.idNumber || 'N/A'}
+                      </p>
+                      <p className={styles.userId}>
+                        <strong>User ID:</strong> {item.userId || 'N/A'}
+                      </p>
+                      <p className={styles.userId}>
+                        <strong>Verified:</strong> {item.isVerified ? 'Yes' : 'No'}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className={styles.websiteName}>Unknown ID Type</p>
+                      <p className={styles.userId}>
+                        <strong>ID:</strong> {item.id || 'N/A'}
+                      </p>
+                    </>
+                  )}
+                  
+                  <p className={styles.userId}>
+                    <strong>CreatedBy:</strong> {item.createdBy || 'N/A'}
+                  </p>
+                  
+                  {item.createdAt && (
               <p className={styles.userId}>
-                <strong>CreatedBy : </strong>
-                {item.createdBy || 'N/A'}
-              </p>
+                      <strong>Created:</strong> {
+                        item.createdAt._seconds 
+                          ? new Date(item.createdAt._seconds * 1000).toLocaleString()
+                          : new Date(item.createdAt).toLocaleString()
+                      }
+                    </p>
+                  )}
             </div>
 
             <div className={styles.iconContainer}>
@@ -468,30 +831,30 @@ const handleReject = async (item) => {
                         ? styles.statusRequested
                         : item.status === "Created"
                         ? styles.statusCreated
-                        : item.status === "Accepted"
-                        ? styles.statusAccepted
-                        : item.status === "Rejected"
-                        ? styles.statusRejected
-                        : item.status === "Pending"
-                        ? styles.statusPending
+                            : item.status === "Accepted"
+                            ? styles.statusAccepted
+                            : item.status === "Rejected"
+                            ? styles.statusRejected
+                            : item.status === "Pending"
+                            ? styles.statusPending
                         : item.status === "Username Exists"
                         ? styles.statusUsernameExist
                         : styles.statusActive // Default case if no match
                     }
                   >
-                    {item.status}
+                        {item.status || 'Unknown'}
                   </span>
                 </p>
               </div>
 
               <div className={styles.actionIcons}>
-                <button
-                  className={`${styles.icon} ${styles.editIcon}`}
-                  title="Edit ID"
-                  onClick={() => handleIdClick(item)}
-                >
-                  <FiEdit3 />
-                </button>
+                    <button
+                      className={`${styles.icon} ${styles.editIcon}`}
+                      title="Edit ID"
+                      onClick={() => handleIdClick(item)}
+                    >
+                      <FiEdit3 />
+                    </button>
 
                 <AiOutlineCheckCircle
                   style={{ color: "green", fontSize: "30px" }}
@@ -508,16 +871,20 @@ const handleReject = async (item) => {
                 />
               </div>
             </div>
-
-          </div>
-        ))
+              </div>
+            );
+          } else {
+            // Render request item
+            return renderRequestItem(item, index);
+          }
+        })
       )}
 
       {/* Pagination Controls */}
-      {filteredIds.length > itemsPerPage && (
+      {currentData.length > itemsPerPage && (
         <div className={styles.paginationContainer}>
           <div className={styles.paginationInfo}>
-            Showing {startIndex + 1} to {Math.min(endIndex, filteredIds.length)} of {filteredIds.length} IDs
+            Showing {startIndex + 1} to {Math.min(endIndex, currentData.length)} of {currentData.length} {activeTab}
           </div>
           <div className={styles.paginationControls}>
             <button
@@ -548,7 +915,7 @@ const handleReject = async (item) => {
                 </React.Fragment>
               ))}
             </div>
-            
+
             <button
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
@@ -562,7 +929,7 @@ const handleReject = async (item) => {
 
       {selectedId && changePasswordPopup && (
         <div className={styles.popupOverlay}>
-          <div className={styles.popup}>
+        <div className={styles.popup}>
             <button onClick={handleClosePopup} className={styles.closeButton}>
               &times;
             </button>
@@ -574,7 +941,7 @@ const handleReject = async (item) => {
                 className={styles.popupLogo}
               />
               <div className={styles.headerInfo}>
-                <h2>{selectedId.websiteName || 'N/A'}</h2>
+              <h2>{selectedId.websiteName || 'N/A'}</h2>
                 <p className={styles.websiteUrl}>{selectedId.websiteUrl || 'N/A'}</p>
               </div>
             </div>
@@ -606,11 +973,11 @@ const handleReject = async (item) => {
                   
                   <div className={styles.infoRow}>
                     <label>Status:</label>
-                    <span
+                  <span
                       className={`${styles.statusBadge} ${
                         selectedId.status === "Requested"
                           ? styles.statusRequested
-                          : selectedId.status === "Created"
+                        : selectedId.status === "Created"
                           ? styles.statusCreated
                           : selectedId.status === "Accepted"
                           ? styles.statusAccepted
@@ -618,22 +985,22 @@ const handleReject = async (item) => {
                           ? styles.statusRejected
                           : selectedId.status === "Pending"
                           ? styles.statusPending
-                          : selectedId.status === "Username Exists"
+                        : selectedId.status === "Username Exists"
                           ? styles.statusUsernameExist
                           : styles.statusActive
                       }`}
-                    >
-                      {selectedId.status}
-                    </span>
+                  >
+                    {selectedId.status}
+                  </span>
                   </div>
                   
                   <div className={styles.infoRow}>
                     <label>Created At:</label>
                     <span className={styles.infoValue}>
-                      {formatDate(selectedId.createdAt._seconds)}
+                {formatDate(selectedId.createdAt._seconds)}
                     </span>
-                  </div>
-                  
+            </div>
+
                   {selectedId.comment && (
                     <div className={styles.infoRow}>
                       <label>Comment:</label>
@@ -663,7 +1030,7 @@ const handleReject = async (item) => {
                   <div className={styles.formGroup}>
                     <label htmlFor="editPassword">Password *</label>
                     <div className={styles.passwordInputContainer}>
-                      <input
+              <input
                         type={showPassword ? "text" : "password"}
                         id="editPassword"
                         name="password"
@@ -671,8 +1038,8 @@ const handleReject = async (item) => {
                         onChange={handleEditInputChange}
                         className={`${styles.editInput} ${editErrors.password ? styles.inputError : ""}`}
                         placeholder="Enter password"
-                      />
-                      <button
+              />
+              <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         className={styles.eyeButton}
@@ -730,7 +1097,7 @@ const handleReject = async (item) => {
                     className={styles.cancelButton}
                   >
                     Cancel
-                  </button>
+              </button>
                 </>
               )}
             </div>

@@ -6,8 +6,8 @@ const UserContext = createContext();
 // UserProvider component to wrap the app and provide user data
 export const UserProvider = ({ children }) => {
   // State to manage the user object  
-  const [url, setUrl] = useState("https://betting-accounts-manager.onrender.com");
-  // const [url, setUrl] = useState("http://localhost:3000");
+  // const [url, setUrl] = useState("https://betting-accounts-manager.onrender.com");
+  const [url, setUrl] = useState("http://localhost:3000");
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem('user');
     try {
@@ -23,7 +23,13 @@ export const UserProvider = ({ children }) => {
     if (!userId) return null;
     
     try {
-      const response = await fetch(`${url}/api/user/get-balance/${userId}`, {
+      // Check if this is an admin user (admin IDs typically start with 'admin_')
+      const isAdmin = userId.startsWith('admin_');
+      const endpoint = isAdmin 
+        ? `${url}/api/admin/get-balance/${userId}`
+        : `${url}/api/user/get-balance/${userId}`;
+      
+      const response = await fetch(endpoint, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

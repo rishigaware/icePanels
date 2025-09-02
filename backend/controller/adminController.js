@@ -52,11 +52,44 @@ exports.getAllIds  = async (req, res) => {
       return res.status(404).json({ message: "No IDs found" });
     }
 
-    const ids = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const ids = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return { id: doc.id, ...data };
+    });
+    
     res.status(200).json(ids);
   } catch (error) {
     console.error("Error fetching IDs:", error);
     res.status(500).json({ error: "Failed to fetch IDs" });
+  }
+};
+
+// Get admin balance
+exports.getAdminBalance = async (req, res) => {
+  try {
+    const { adminId } = req.params;
+    
+    if (!adminId) {
+      return res.status(400).json({ message: 'Admin ID is required' });
+    }
+
+    const adminRef = db.collection('admin').doc(adminId);
+    const adminDoc = await adminRef.get();
+
+    if (!adminDoc.exists) {
+      return res.status(404).json({ message: 'Admin not found' });
+    }
+
+    const adminData = adminDoc.data();
+    const balance = adminData.balance || 0;
+
+    res.status(200).json({ 
+      balance: balance,
+      adminId: adminId 
+    });
+  } catch (error) {
+    console.error('Error fetching admin balance:', error);
+    res.status(500).json({ message: 'Error fetching admin balance', error: error.message });
   }
 };
 
@@ -1439,6 +1472,865 @@ exports.addCategory = async (req, res) => {
   } catch (error) {
     console.error('Error adding category:', error);
     res.status(500).json({ message: 'Server error. Please try again later.' });
+  }
+};
+
+// ===== REQUEST HANDLING APIs =====
+
+// Get all pending requests (deposit, withdrawal, close ID, password change)
+exports.getAllPendingRequests = async (req, res) => {
+  try {
+    const allRequests = [];
+
+    // Get deposit requests
+    const depositSnapshot = await db.collection('transactions')
+      .where('status', '==', 'Pending')
+      .where('transactionType', '==', 'deposit')
+      .get();
+    
+    depositSnapshot.docs.forEach(doc => {
+      console.log('Deposit request found with ID:', doc.id, 'Data:', doc.data());
+      const data = doc.data();
+      allRequests.push({
+        ...data,
+        id: doc.id, // This is the actual transaction document ID (override any id from data)
+        transactionDocumentId: doc.id, // Store the actual document ID
+        idDocumentId: data.idDocumentId, // Store the ID document reference
+        requestType: 'deposit'
+      });
+    });
+
+    // Get withdrawal requests
+    const withdrawalSnapshot = await db.collection('transactions')
+      .where('status', '==', 'Pending')
+      .where('transactionType', '==', 'withdrawal')
+      .get();
+    
+    withdrawalSnapshot.docs.forEach(doc => {
+      console.log('Withdrawal request found with ID:', doc.id, 'Data:', doc.data());
+      const data = doc.data();
+      allRequests.push({
+        ...data,
+        id: doc.id, // This is the actual transaction document ID (override any id from data)
+        transactionDocumentId: doc.id, // Store the actual document ID
+        idDocumentId: data.idDocumentId, // Store the ID document reference
+        requestType: 'withdrawal'
+      });
+    });
+
+    // Get close ID requests
+    const closeSnapshot = await db.collection('closeRequests')
+      .where('status', '==', 'Pending')
+      .get();
+    
+    closeSnapshot.docs.forEach(doc => {
+      allRequests.push({
+        id: doc.id,
+        ...doc.data(),
+        requestType: 'close_id'
+      });
+    });
+
+    // Get password change requests
+    const passwordSnapshot = await db.collection('passwordChangeRequests')
+      .where('status', '==', 'Pending')
+      .get();
+    
+    passwordSnapshot.docs.forEach(doc => {
+      allRequests.push({
+        id: doc.id,
+        ...doc.data(),
+        requestType: 'password_change'
+      });
+    });
+
+    // Sort by creation date (newest first)
+    allRequests.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    res.status(200).json(allRequests);
+  } catch (error) {
+    console.error('Error fetching pending requests:', error);
+    res.status(500).json({ message: 'Error fetching pending requests', error: error.message });
+  }
+};
+
+// Approve deposit request
+exports.approveDepositRequest = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    
+    console.log('Approving deposit request with ID:', requestId);
+    
+    // Get the transaction
+    const transactionRef = db.collection('transactions').doc(requestId);
+    const transactionDoc = await transactionRef.get();
+    
+    if (!transactionDoc.exists) {
+      console.log('Transaction not found with ID:', requestId);
+      
+      // Try to find transaction by idDocumentId field
+      const transactionsSnapshot = await db.collection('transactions')
+        .where('idDocumentId', '==', requestId)
+        .where('transactionType', '==', 'deposit')
+        .where('status', '==', 'Pending')
+        .get();
+      
+      if (transactionsSnapshot.empty) {
+        // Try to find by transactionId field as well
+        const transactionsByTransactionId = await db.collection('transactions')
+          .where('transactionId', '==', requestId)
+          .where('transactionType', '==', 'deposit')
+          .where('status', '==', 'Pending')
+          .get();
+        
+        if (transactionsByTransactionId.empty) {
+          return res.status(404).json({ message: 'Transaction not found' });
+        }
+        
+        // Use the first matching transaction by transactionId
+        const transaction = transactionsByTransactionId.docs[0];
+        const transactionData = transaction.data();
+        
+        console.log('Found transaction by transactionId:', transaction.id);
+        
+        // Update transaction status
+        await transaction.ref.update({
+          status: 'Accepted',
+          acceptedAt: new Date().toISOString(),
+          processedBy: req.user?.id || 'admin'
+        });
+        
+        // Update user balance
+        const userRef = db.collection('user').doc(transactionData.createdBy);
+        const userDoc = await userRef.get();
+        
+        if (userDoc.exists) {
+          const userData = userDoc.data();
+          const newBalance = (userData.balance || 0) - transactionData.amount;
+          await userRef.update({ balance: newBalance });
+        }
+        
+        // Update ID balance
+        if (transactionData.idDocumentId) {
+          const idRef = db.collection('id').doc(transactionData.idDocumentId);
+          const idDoc = await idRef.get();
+          
+          if (idDoc.exists) {
+            const idData = idDoc.data();
+            const currentBalance = idData.balance || 0;
+            const coinsToAdd = transactionData.coinsToReceive;
+            const newIdBalance = currentBalance + coinsToAdd;
+            
+            console.log(`Updating ID balance for ${transactionData.idDocumentId}:`);
+            console.log(`- Current balance: ${currentBalance} coins`);
+            console.log(`- Adding: ${coinsToAdd} coins`);
+            console.log(`- New balance: ${newIdBalance} coins`);
+            console.log(`- Deposit amount: ₹${transactionData.amount}`);
+            console.log(`- Coin rate: ₹${transactionData.coinRate} per coin`);
+            
+            await idRef.update({ balance: newIdBalance });
+          }
+        }
+        
+        res.status(200).json({ 
+          message: 'Deposit request approved successfully',
+          transactionId: transaction.id 
+        });
+        return;
+      }
+      
+      // Use the first matching transaction by idDocumentId
+      const transaction = transactionsSnapshot.docs[0];
+      const transactionData = transaction.data();
+      
+      console.log('Found transaction by idDocumentId:', transaction.id);
+      
+      // Update transaction status
+      await transaction.ref.update({
+        status: 'Accepted',
+        acceptedAt: new Date().toISOString(),
+        processedBy: req.user?.id || 'admin'
+      });
+      
+      // Update user balance
+      const userRef = db.collection('user').doc(transactionData.createdBy);
+      const userDoc = await userRef.get();
+      
+      if (userDoc.exists) {
+        const userData = userDoc.data();
+        const newBalance = (userData.balance || 0) - transactionData.amount;
+        await userRef.update({ balance: newBalance });
+      }
+      
+      // Update ID balance
+      if (transactionData.idDocumentId) {
+        const idRef = db.collection('id').doc(transactionData.idDocumentId);
+        const idDoc = await idRef.get();
+        
+        if (idDoc.exists) {
+          const idData = idDoc.data();
+          const currentBalance = idData.balance || 0;
+          const coinsToAdd = transactionData.coinsToReceive;
+          const newIdBalance = currentBalance + coinsToAdd;
+          
+          console.log(`Updating ID balance for ${transactionData.idDocumentId}:`);
+          console.log(`- Current balance: ${currentBalance} coins`);
+          console.log(`- Adding: ${coinsToAdd} coins`);
+          console.log(`- New balance: ${newIdBalance} coins`);
+          console.log(`- Deposit amount: ₹${transactionData.amount}`);
+          console.log(`- Coin rate: ₹${transactionData.coinRate} per coin`);
+          
+          await idRef.update({ balance: newIdBalance });
+        }
+      }
+      
+      res.status(200).json({ 
+        message: 'Deposit request approved successfully',
+        transactionId: transaction.id 
+      });
+      return;
+    }
+    
+    const transactionData = transactionDoc.data();
+    
+    if (transactionData.transactionType !== 'deposit') {
+      return res.status(400).json({ message: 'Invalid transaction type' });
+    }
+    
+    // Update transaction status
+    await transactionRef.update({
+      status: 'Accepted',
+      acceptedAt: new Date().toISOString(),
+      processedBy: req.user?.id || 'admin'
+    });
+    
+    // Update user balance
+    const userRef = db.collection('user').doc(transactionData.createdBy);
+    const userDoc = await userRef.get();
+    
+    if (userDoc.exists) {
+      const userData = userDoc.data();
+      const newBalance = (userData.balance || 0) - transactionData.amount;
+      await userRef.update({ balance: newBalance });
+    }
+    
+    // Update ID balance
+    if (transactionData.idDocumentId) {
+      const idRef = db.collection('id').doc(transactionData.idDocumentId);
+      const idDoc = await idRef.get();
+      
+      if (idDoc.exists) {
+        const idData = idDoc.data();
+        const currentBalance = idData.balance || 0;
+        const coinsToAdd = transactionData.coinsToReceive;
+        const newIdBalance = currentBalance + coinsToAdd;
+        
+        console.log(`Updating ID balance for ${transactionData.idDocumentId}:`);
+        console.log(`- Current balance: ${currentBalance} coins`);
+        console.log(`- Adding: ${coinsToAdd} coins`);
+        console.log(`- New balance: ${newIdBalance} coins`);
+        console.log(`- Deposit amount: ₹${transactionData.amount}`);
+        console.log(`- Coin rate: ₹${transactionData.coinRate} per coin`);
+        
+        await idRef.update({ balance: newIdBalance });
+      }
+    }
+    
+    res.status(200).json({ 
+      message: 'Deposit request approved successfully',
+      transactionId: requestId 
+    });
+  } catch (error) {
+    console.error('Error approving deposit request:', error);
+    res.status(500).json({ message: 'Error approving deposit request', error: error.message });
+  }
+};
+
+// Reject deposit request
+exports.rejectDepositRequest = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    
+    const transactionRef = db.collection('transactions').doc(requestId);
+    const transactionDoc = await transactionRef.get();
+    
+    if (!transactionDoc.exists) {
+      // Try to find transaction by idDocumentId field
+      const transactionsSnapshot = await db.collection('transactions')
+        .where('idDocumentId', '==', requestId)
+        .where('transactionType', '==', 'deposit')
+        .where('status', '==', 'Pending')
+        .get();
+      
+      if (transactionsSnapshot.empty) {
+        // Try to find by transactionId field as well
+        const transactionsByTransactionId = await db.collection('transactions')
+          .where('transactionId', '==', requestId)
+          .where('transactionType', '==', 'deposit')
+          .where('status', '==', 'Pending')
+          .get();
+        
+        if (transactionsByTransactionId.empty) {
+          return res.status(404).json({ message: 'Transaction not found' });
+        }
+        
+        // Use the first matching transaction by transactionId
+        const transaction = transactionsByTransactionId.docs[0];
+        
+        // Update transaction status
+        await transaction.ref.update({
+          status: 'Rejected',
+          rejectedAt: new Date().toISOString(),
+          processedBy: req.user?.id || 'admin'
+        });
+        
+        res.status(200).json({ 
+          message: 'Deposit request rejected successfully',
+          transactionId: transaction.id 
+        });
+        return;
+      }
+      
+      // Use the first matching transaction
+      const transaction = transactionsSnapshot.docs[0];
+      
+      // Update transaction status
+      await transaction.ref.update({
+        status: 'Rejected',
+        rejectedAt: new Date().toISOString(),
+        processedBy: req.user?.id || 'admin'
+      });
+      
+      res.status(200).json({ 
+        message: 'Deposit request rejected successfully',
+        transactionId: transaction.id 
+      });
+      return;
+    }
+    
+    const transactionData = transactionDoc.data();
+    
+    if (transactionData.transactionType !== 'deposit') {
+      return res.status(400).json({ message: 'Invalid transaction type' });
+    }
+    
+    // Update transaction status
+    await transactionRef.update({
+      status: 'Rejected',
+      rejectedAt: new Date().toISOString(),
+      processedBy: req.user?.id || 'admin'
+    });
+    
+    res.status(200).json({ 
+      message: 'Deposit request rejected successfully',
+      transactionId: requestId 
+    });
+  } catch (error) {
+    console.error('Error rejecting deposit request:', error);
+    res.status(500).json({ message: 'Error rejecting deposit request', error: error.message });
+  }
+};
+
+// Approve withdrawal request
+exports.approveWithdrawalRequest = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    
+    console.log('Approving withdrawal request with ID:', requestId);
+    
+    const transactionRef = db.collection('transactions').doc(requestId);
+    const transactionDoc = await transactionRef.get();
+    
+    if (!transactionDoc.exists) {
+      console.log('Transaction not found with ID:', requestId);
+      
+      // Try to find transaction by idDocumentId field
+      const transactionsSnapshot = await db.collection('transactions')
+        .where('idDocumentId', '==', requestId)
+        .where('transactionType', '==', 'withdrawal')
+        .where('status', '==', 'Pending')
+        .get();
+      
+      if (transactionsSnapshot.empty) {
+        // Try to find by transactionId field as well
+        const transactionsByTransactionId = await db.collection('transactions')
+          .where('transactionId', '==', requestId)
+          .where('transactionType', '==', 'withdrawal')
+          .where('status', '==', 'Pending')
+          .get();
+        
+        if (transactionsByTransactionId.empty) {
+          return res.status(404).json({ message: 'Transaction not found' });
+        }
+        
+        // Use the first matching transaction by transactionId
+        const transaction = transactionsByTransactionId.docs[0];
+        const transactionData = transaction.data();
+        
+        console.log('Found transaction by transactionId:', transaction.id);
+        
+        // Check if ID has sufficient balance
+        if (transactionData.idDocumentId) {
+          const idRef = db.collection('id').doc(transactionData.idDocumentId);
+          const idDoc = await idRef.get();
+          
+          if (idDoc.exists) {
+            const idData = idDoc.data();
+            if ((idData.balance || 0) < transactionData.coinsNeeded) {
+              return res.status(400).json({ message: 'Insufficient ID balance' });
+            }
+          }
+        }
+        
+        // Update transaction status
+        await transaction.ref.update({
+          status: 'Accepted',
+          acceptedAt: new Date().toISOString(),
+          processedBy: req.user?.id || 'admin'
+        });
+        
+        // Update user balance
+        const userRef = db.collection('user').doc(transactionData.createdBy);
+        const userDoc = await userRef.get();
+        
+        if (userDoc.exists) {
+          const userData = userDoc.data();
+          const newBalance = (userData.balance || 0) + transactionData.amount;
+          await userRef.update({ balance: newBalance });
+        }
+        
+        // Update ID balance
+        if (transactionData.idDocumentId) {
+          const idRef = db.collection('id').doc(transactionData.idDocumentId);
+          const idDoc = await idRef.get();
+          
+          if (idDoc.exists) {
+            const idData = idDoc.data();
+            const newIdBalance = (idData.balance || 0) - transactionData.coinsNeeded;
+            await idRef.update({ balance: newIdBalance });
+          }
+        }
+        
+        res.status(200).json({ 
+          message: 'Withdrawal request approved successfully',
+          transactionId: transaction.id 
+        });
+        return;
+      }
+      
+      // Use the first matching transaction
+      const transaction = transactionsSnapshot.docs[0];
+      const transactionData = transaction.data();
+      
+      console.log('Found transaction by idDocumentId:', transaction.id);
+      
+      // Check if ID has sufficient balance
+      if (transactionData.idDocumentId) {
+        const idRef = db.collection('id').doc(transactionData.idDocumentId);
+        const idDoc = await idRef.get();
+        
+        if (idDoc.exists) {
+          const idData = idDoc.data();
+          if ((idData.balance || 0) < transactionData.coinsNeeded) {
+            return res.status(400).json({ message: 'Insufficient ID balance' });
+          }
+        }
+      }
+      
+      // Check if ID has sufficient balance before processing
+      if (transactionData.idDocumentId) {
+        const idRef = db.collection('id').doc(transactionData.idDocumentId);
+        const idDoc = await idRef.get();
+        
+        if (idDoc.exists) {
+          const idData = idDoc.data();
+          const currentIdBalance = idData.balance || 0;
+          const coinsNeeded = transactionData.coinsNeeded;
+          
+          console.log(`Checking ID balance for withdrawal: ${transactionData.idDocumentId}`);
+          console.log(`- Current ID balance: ${currentIdBalance} coins`);
+          console.log(`- Coins needed: ${coinsNeeded} coins`);
+          console.log(`- Withdrawal amount: ₹${transactionData.amount}`);
+          
+          if (currentIdBalance < coinsNeeded) {
+            console.log(`Insufficient ID balance: ${currentIdBalance} < ${coinsNeeded}`);
+            return res.status(400).json({ 
+              message: 'Insufficient ID balance for withdrawal',
+              currentBalance: currentIdBalance,
+              requiredCoins: coinsNeeded,
+              shortfall: coinsNeeded - currentIdBalance
+            });
+          }
+        }
+      }
+      
+      // Update transaction status
+      await transaction.ref.update({
+        status: 'Accepted',
+        acceptedAt: new Date().toISOString(),
+        processedBy: req.user?.id || 'admin'
+      });
+      
+      // Update user balance
+      const userRef = db.collection('user').doc(transactionData.createdBy);
+      const userDoc = await userRef.get();
+      
+      if (userDoc.exists) {
+        const userData = userDoc.data();
+        const newBalance = (userData.balance || 0) + transactionData.amount;
+        await userRef.update({ balance: newBalance });
+      }
+      
+      // Update ID balance
+      if (transactionData.idDocumentId) {
+        const idRef = db.collection('id').doc(transactionData.idDocumentId);
+        const idDoc = await idRef.get();
+        
+        if (idDoc.exists) {
+          const idData = idDoc.data();
+          const currentBalance = idData.balance || 0;
+          const coinsToDeduct = transactionData.coinsNeeded;
+          const newIdBalance = currentBalance - coinsToDeduct;
+          
+          console.log(`Updating ID balance for withdrawal: ${transactionData.idDocumentId}`);
+          console.log(`- Current balance: ${currentBalance} coins`);
+          console.log(`- Deducting: ${coinsToDeduct} coins`);
+          console.log(`- New balance: ${newIdBalance} coins`);
+          console.log(`- Withdrawal amount: ₹${transactionData.amount}`);
+          
+          await idRef.update({ balance: newIdBalance });
+        }
+      }
+      
+      res.status(200).json({ 
+        message: 'Withdrawal request approved successfully',
+        transactionId: transaction.id 
+      });
+      return;
+    }
+    
+    const transactionData = transactionDoc.data();
+    
+    if (transactionData.transactionType !== 'withdrawal') {
+      return res.status(400).json({ message: 'Invalid transaction type' });
+    }
+    
+    // Check if ID has sufficient balance
+    if (transactionData.idDocumentId) {
+      const idRef = db.collection('id').doc(transactionData.idDocumentId);
+      const idDoc = await idRef.get();
+      
+      if (idDoc.exists) {
+        const idData = idDoc.data();
+        const currentIdBalance = idData.balance || 0;
+        const coinsNeeded = transactionData.coinsNeeded;
+        
+        console.log(`Checking ID balance for withdrawal: ${transactionData.idDocumentId}`);
+        console.log(`- Current ID balance: ${currentIdBalance} coins`);
+        console.log(`- Coins needed: ${coinsNeeded} coins`);
+        console.log(`- Withdrawal amount: ₹${transactionData.amount}`);
+        
+        if (currentIdBalance < coinsNeeded) {
+          console.log(`Insufficient ID balance: ${currentIdBalance} < ${coinsNeeded}`);
+          return res.status(400).json({ 
+            message: 'Insufficient ID balance for withdrawal',
+            currentBalance: currentIdBalance,
+            requiredCoins: coinsNeeded,
+            shortfall: coinsNeeded - currentIdBalance
+          });
+        }
+      }
+    }
+    
+    // Update transaction status
+    await transactionRef.update({
+      status: 'Accepted',
+      acceptedAt: new Date().toISOString(),
+      processedBy: req.user?.id || 'admin'
+    });
+    
+    // Update user balance
+    const userRef = db.collection('user').doc(transactionData.createdBy);
+    const userDoc = await userRef.get();
+    
+    if (userDoc.exists) {
+      const userData = userDoc.data();
+      const newBalance = (userData.balance || 0) + transactionData.amount;
+      await userRef.update({ balance: newBalance });
+    }
+    
+    // Update ID balance
+    if (transactionData.idDocumentId) {
+      const idRef = db.collection('id').doc(transactionData.idDocumentId);
+      const idDoc = await idRef.get();
+      
+      if (idDoc.exists) {
+        const idData = idDoc.data();
+        const currentBalance = idData.balance || 0;
+        const coinsToDeduct = transactionData.coinsNeeded;
+        const newIdBalance = currentBalance - coinsToDeduct;
+        
+        console.log(`Updating ID balance for withdrawal: ${transactionData.idDocumentId}`);
+        console.log(`- Current balance: ${currentBalance} coins`);
+        console.log(`- Deducting: ${coinsToDeduct} coins`);
+        console.log(`- New balance: ${newIdBalance} coins`);
+        console.log(`- Withdrawal amount: ₹${transactionData.amount}`);
+        
+        await idRef.update({ balance: newIdBalance });
+      }
+    }
+    
+    res.status(200).json({ 
+      message: 'Withdrawal request approved successfully',
+      transactionId: requestId 
+    });
+  } catch (error) {
+    console.error('Error approving withdrawal request:', error);
+    res.status(500).json({ message: 'Error approving withdrawal request', error: error.message });
+  }
+};
+
+// Reject withdrawal request
+exports.rejectWithdrawalRequest = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    
+    const transactionRef = db.collection('transactions').doc(requestId);
+    const transactionDoc = await transactionRef.get();
+    
+    if (!transactionDoc.exists) {
+      // Try to find transaction by idDocumentId field
+      const transactionsSnapshot = await db.collection('transactions')
+        .where('idDocumentId', '==', requestId)
+        .where('transactionType', '==', 'withdrawal')
+        .where('status', '==', 'Pending')
+        .get();
+      
+      if (transactionsSnapshot.empty) {
+        // Try to find by transactionId field as well
+        const transactionsByTransactionId = await db.collection('transactions')
+          .where('transactionId', '==', requestId)
+          .where('transactionType', '==', 'withdrawal')
+          .where('status', '==', 'Pending')
+          .get();
+        
+        if (transactionsByTransactionId.empty) {
+          return res.status(404).json({ message: 'Transaction not found' });
+        }
+        
+        // Use the first matching transaction by transactionId
+        const transaction = transactionsByTransactionId.docs[0];
+        
+        // Update transaction status
+        await transaction.ref.update({
+          status: 'Rejected',
+          rejectedAt: new Date().toISOString(),
+          processedBy: req.user?.id || 'admin'
+        });
+        
+        res.status(200).json({ 
+          message: 'Withdrawal request rejected successfully',
+          transactionId: transaction.id 
+        });
+        return;
+      }
+      
+      // Use the first matching transaction
+      const transaction = transactionsSnapshot.docs[0];
+      
+      // Update transaction status
+      await transaction.ref.update({
+        status: 'Rejected',
+        rejectedAt: new Date().toISOString(),
+        processedBy: req.user?.id || 'admin'
+      });
+      
+      res.status(200).json({ 
+        message: 'Withdrawal request rejected successfully',
+        transactionId: transaction.id 
+      });
+      return;
+    }
+    
+    const transactionData = transactionDoc.data();
+    
+    if (transactionData.transactionType !== 'withdrawal') {
+      return res.status(400).json({ message: 'Invalid transaction type' });
+    }
+    
+    // Update transaction status
+    await transactionRef.update({
+      status: 'Rejected',
+      rejectedAt: new Date().toISOString(),
+      processedBy: req.user?.id || 'admin'
+    });
+    
+    res.status(200).json({ 
+      message: 'Withdrawal request rejected successfully',
+      transactionId: requestId 
+    });
+  } catch (error) {
+    console.error('Error rejecting withdrawal request:', error);
+    res.status(500).json({ message: 'Error rejecting withdrawal request', error: error.message });
+  }
+};
+
+// Approve close ID request
+exports.approveCloseIdRequest = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    
+    const closeRequestRef = db.collection('closeRequests').doc(requestId);
+    const closeRequestDoc = await closeRequestRef.get();
+    
+    if (!closeRequestDoc.exists) {
+      return res.status(404).json({ message: 'Close request not found' });
+    }
+    
+    const closeRequestData = closeRequestDoc.data();
+    
+    // Get the original ID
+    const idRef = db.collection('id').doc(closeRequestData.originalId);
+    const idDoc = await idRef.get();
+    
+    if (!idDoc.exists) {
+      return res.status(404).json({ message: 'Original ID not found' });
+    }
+    
+    const idData = idDoc.data();
+    
+    // Create closed ID document
+    const closedIdData = {
+      ...idData,
+      closedAt: new Date().toISOString(),
+      status: 'Closed',
+      originalId: closeRequestData.originalId,
+      closedBy: req.user?.id || 'admin'
+    };
+    
+    // Add to close collection
+    const closeDocRef = db.collection('close').doc();
+    await closeDocRef.set(closedIdData);
+    
+    // Delete from main collection
+    await idRef.delete();
+    
+    // Update close request status
+    await closeRequestRef.update({
+      status: 'Accepted',
+      processedAt: new Date().toISOString(),
+      processedBy: req.user?.id || 'admin'
+    });
+    
+    res.status(200).json({ 
+      message: 'Close ID request approved successfully',
+      requestId: requestId 
+    });
+  } catch (error) {
+    console.error('Error approving close ID request:', error);
+    res.status(500).json({ message: 'Error approving close ID request', error: error.message });
+  }
+};
+
+// Reject close ID request
+exports.rejectCloseIdRequest = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    
+    const closeRequestRef = db.collection('closeRequests').doc(requestId);
+    const closeRequestDoc = await closeRequestRef.get();
+    
+    if (!closeRequestDoc.exists) {
+      return res.status(404).json({ message: 'Close request not found' });
+    }
+    
+    // Update close request status
+    await closeRequestRef.update({
+      status: 'Rejected',
+      processedAt: new Date().toISOString(),
+      processedBy: req.user?.id || 'admin'
+    });
+    
+    res.status(200).json({ 
+      message: 'Close ID request rejected successfully',
+      requestId: requestId 
+    });
+  } catch (error) {
+    console.error('Error rejecting close ID request:', error);
+    res.status(500).json({ message: 'Error rejecting close ID request', error: error.message });
+  }
+};
+
+// Approve password change request
+exports.approvePasswordChangeRequest = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    
+    const passwordRequestRef = db.collection('passwordChangeRequests').doc(requestId);
+    const passwordRequestDoc = await passwordRequestRef.get();
+    
+    if (!passwordRequestDoc.exists) {
+      return res.status(404).json({ message: 'Password change request not found' });
+    }
+    
+    const passwordRequestData = passwordRequestDoc.data();
+    
+    // Update the original ID password
+    const idRef = db.collection('id').doc(passwordRequestData.originalId);
+    const idDoc = await idRef.get();
+    
+    if (!idDoc.exists) {
+      return res.status(404).json({ message: 'Original ID not found' });
+    }
+    
+    await idRef.update({ 
+      password: passwordRequestData.newPassword,
+      passwordChangedAt: new Date().toISOString()
+    });
+    
+    // Update password change request status
+    await passwordRequestRef.update({
+      status: 'Accepted',
+      processedAt: new Date().toISOString(),
+      processedBy: req.user?.id || 'admin'
+    });
+    
+    res.status(200).json({ 
+      message: 'Password change request approved successfully',
+      requestId: requestId 
+    });
+  } catch (error) {
+    console.error('Error approving password change request:', error);
+    res.status(500).json({ message: 'Error approving password change request', error: error.message });
+  }
+};
+
+// Reject password change request
+exports.rejectPasswordChangeRequest = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    
+    const passwordRequestRef = db.collection('passwordChangeRequests').doc(requestId);
+    const passwordRequestDoc = await passwordRequestRef.get();
+    
+    if (!passwordRequestDoc.exists) {
+      return res.status(404).json({ message: 'Password change request not found' });
+    }
+    
+    // Update password change request status
+    await passwordRequestRef.update({
+      status: 'Rejected',
+      processedAt: new Date().toISOString(),
+      processedBy: req.user?.id || 'admin'
+    });
+    
+    res.status(200).json({ 
+      message: 'Password change request rejected successfully',
+      requestId: requestId 
+    });
+  } catch (error) {
+    console.error('Error rejecting password change request:', error);
+    res.status(500).json({ message: 'Error rejecting password change request', error: error.message });
   }
 };
 

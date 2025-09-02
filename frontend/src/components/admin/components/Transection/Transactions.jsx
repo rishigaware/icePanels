@@ -271,21 +271,30 @@ const Transactions = () => {
                   <strong>Amount:</strong> ₹{txn.amount}
                 </div>
                 
-                {/* Action Buttons - Accept and Reject */}
-                <div className={styles.actions}>
-                  <button
-                    className={styles.acceptButton}
-                    onClick={() => acceptTransaction(txn.id)}
-                  >
-                    <FaCheck /> Accept
-                  </button>
-                  <button
-                    className={styles.deleteButton}
-                    onClick={() => rejectTransaction(txn.id)}
-                  >
-                    <FaTrash /> Reject
-                  </button>
-                </div>
+                {/* Action Buttons - Accept and Reject (Hidden for deposit/withdrawal transactions) */}
+                {!(txn.transactionType === 'deposit' || txn.transactionType === 'withdrawal' || 
+                   txn.description?.includes('Deposit Request') || txn.description?.includes('Withdrawal Request')) ? (
+                  <div className={styles.actions}>
+                    <button
+                      className={styles.acceptButton}
+                      onClick={() => acceptTransaction(txn.id)}
+                    >
+                      <FaCheck /> Accept
+                    </button>
+                    <button
+                      className={styles.deleteButton}
+                      onClick={() => rejectTransaction(txn.id)}
+                    >
+                      <FaTrash /> Reject
+                    </button>
+                  </div>
+                ) : (
+                  <div className={styles.actions}>
+                    <span className={styles.autoProcessedNote}>
+                      Auto-processed via My IDs
+                    </span>
+                  </div>
+                )}
               </div>
               <div className={styles.column}>
                 {txn.imagePath && (

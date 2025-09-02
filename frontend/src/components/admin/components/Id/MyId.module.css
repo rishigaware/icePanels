@@ -8,6 +8,41 @@
   overflow-x: hidden;
 }
 
+/* Tabs Container */
+.tabsContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  gap: 0.5rem;
+}
+
+.tab {
+  padding: 12px 24px;
+  border: 2px solid #e9ecef;
+  background: #ffffff;
+  color: #3267d2;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  min-width: 180px;
+  text-align: center;
+}
+
+.tab:hover {
+  border-color: #3267d2;
+  background: #f8f9ff;
+  transform: translateY(-2px);
+}
+
+.tab.activeTab {
+  background: #3267d2;
+  color: #ffffff;
+  border-color: #3267d2;
+  box-shadow: 0 4px 12px rgba(50, 103, 210, 0.3);
+}
+
 .title {
   font-size: 1.5rem;
   margin-bottom: 10px;
@@ -925,6 +960,7 @@
   .idCard {
     padding: 20px;
     margin-bottom: 20px;
+    min-height: 80px;
   }
   
   .logo img {
@@ -951,6 +987,50 @@
     height: 44px;
     padding: 10px;
     font-size: 26px;
+  }
+}
+
+/* ===== ENHANCED RESPONSIVE DESIGN FOR TABS ===== */
+
+/* Large Desktop (1200px and above) */
+@media (min-width: 1200px) {
+  .tabsContainer {
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .tab {
+    padding: 16px 32px;
+    font-size: 1.1rem;
+    min-width: 220px;
+  }
+}
+
+/* Medium Desktop (992px to 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .tabsContainer {
+    gap: 0.75rem;
+    margin-bottom: 1.75rem;
+  }
+  
+  .tab {
+    padding: 14px 28px;
+    font-size: 1rem;
+    min-width: 200px;
+  }
+}
+
+/* Small Desktop (768px to 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .tabsContainer {
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .tab {
+    padding: 12px 24px;
+    font-size: 0.95rem;
+    min-width: 180px;
   }
 }
 
@@ -1004,6 +1084,28 @@
     padding: 18px 20px 70px 20px;
   }
   
+  .tabsContainer {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .tab {
+    width: 100%;
+    max-width: 300px;
+    min-width: auto;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+  
+  .searchInput {
+    padding: 14px 18px;
+    font-size: 16px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+  }
+  
   .idCard {
     padding: 14px;
     flex-direction: column;
@@ -1039,6 +1141,31 @@
     padding: 7px;
     font-size: 22px;
   }
+  
+  .paginationContainer {
+    gap: 12px;
+    padding: 18px;
+  }
+  
+  .paginationInfo {
+    font-size: 0.85rem;
+  }
+  
+  .paginationControls {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .paginationButton {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+  
+  .pageButton {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    min-width: 32px;
+  }
 }
 
 /* Mobile Large (480px to 599px) */
@@ -1047,11 +1174,40 @@
     padding: 15px 16px 60px 16px;
   }
   
+  .tabsContainer {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .tab {
+    width: 100%;
+    max-width: 280px;
+    min-width: auto;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    border-radius: 10px;
+  }
+  
+  .searchInput {
+    padding: 14px 16px;
+    font-size: 16px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+  }
+  
   .idCard {
     padding: 12px;
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
+    border-radius: 8px;
+    min-height: auto;
+  }
+  
+  .logo {
+    align-self: flex-start;
   }
   
   .logo img {
@@ -1066,14 +1222,21 @@
   
   .websiteName {
     font-size: 0.95rem;
+    margin-bottom: 4px;
+    line-height: 1.2;
   }
   
   .websiteLink {
     font-size: 0.7rem;
+    margin-bottom: 2px;
+    line-height: 1.3;
+    word-break: break-all;
   }
   
   .userId {
     font-size: 0.75rem;
+    margin-bottom: 2px;
+    line-height: 1.3;
   }
   
   .iconContainer {
@@ -1081,6 +1244,7 @@
     flex-direction: row;
     justify-content: space-between;
     min-width: auto;
+    align-items: center;
   }
   
   .statusContainer {
@@ -1089,6 +1253,8 @@
   
   .actionIcons {
     gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
   }
   
   .editIcon,
@@ -1097,48 +1263,7 @@
     min-width: 36px;
     height: 36px;
     padding: 6px;
-  font-size: 20px;
-  }
-  
-  .searchInput {
-    padding: 14px 16px;
-    font-size: 16px;
-  margin-bottom: 20px;
-  }
-}
-
-/* Mobile Medium (400px to 479px) */
-@media (max-width: 479px) and (min-width: 400px) {
-  .container {
-    padding: 12px 14px 50px 14px;
-  }
-  
-  .idCard {
-    padding: 10px;
-    gap: 8px;
-  }
-  
-  .logo img {
-    height: 36px;
-    width: 36px;
-  }
-  
-  .websiteName {
-    font-size: 0.9rem;
-  }
-  
-  .websiteLink {
-    font-size: 0.65rem;
-  }
-  
-  .userId {
-    font-size: 0.7rem;
-  }
-  
-  .searchInput {
-    padding: 12px 14px;
-    font-size: 16px;
-    margin-bottom: 16px;
+    font-size: 20px;
   }
   
   .paginationContainer {
@@ -1148,22 +1273,150 @@
   
   .paginationInfo {
     font-size: 0.8rem;
+    text-align: center;
   }
   
   .paginationControls {
     flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+  }
+  
+  .paginationButton {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    border-radius: 6px;
+  }
+  
+  .pageButton {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    min-width: 30px;
+    border-radius: 4px;
+  }
+}
+
+/* Mobile Medium (400px to 479px) */
+@media (max-width: 479px) and (min-width: 400px) {
+  .container {
+    padding: 12px 14px 50px 14px;
+  }
+  
+  .tabsContainer {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .tab {
+    width: 100%;
+    max-width: 260px;
+    min-width: auto;
+    padding: 10px 18px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+  
+  .searchInput {
+    padding: 12px 14px;
+    font-size: 16px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+  }
+  
+  .idCard {
+    padding: 10px;
     gap: 8px;
+    border-radius: 6px;
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: auto;
+  }
+  
+  .logo {
+    align-self: flex-start;
+  }
+  
+  .logo img {
+    height: 36px;
+    width: 36px;
+  }
+  
+  .details {
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  .websiteName {
+    font-size: 0.9rem;
+    margin-bottom: 3px;
+    line-height: 1.2;
+  }
+  
+  .websiteLink {
+    font-size: 0.65rem;
+    margin-bottom: 2px;
+    line-height: 1.3;
+    word-break: break-all;
+  }
+  
+  .userId {
+    font-size: 0.7rem;
+    margin-bottom: 2px;
+    line-height: 1.3;
+  }
+  
+  .iconContainer {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    min-width: auto;
+    align-items: center;
+  }
+  
+  .actionIcons {
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .editIcon,
+  .acceptIcon,
+  .rejectIcon {
+    min-width: 34px;
+    height: 34px;
+    padding: 5px;
+    font-size: 18px;
+  }
+  
+  .paginationContainer {
+    gap: 8px;
+    padding: 12px;
+  }
+  
+  .paginationInfo {
+    font-size: 0.75rem;
+    text-align: center;
+  }
+  
+  .paginationControls {
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
   }
   
   .paginationButton {
     padding: 6px 12px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    border-radius: 4px;
   }
   
   .pageButton {
     padding: 4px 8px;
-    font-size: 0.75rem;
-    min-width: 30px;
+    font-size: 0.7rem;
+    min-width: 28px;
+    border-radius: 3px;
   }
 }
 
@@ -1173,9 +1426,40 @@
     padding: 10px 12px 40px 12px;
   }
   
+  .tabsContainer {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    margin-bottom: 0.6rem;
+  }
+  
+  .tab {
+    width: 100%;
+    max-width: 240px;
+    min-width: auto;
+    padding: 8px 16px;
+    font-size: 0.8rem;
+    border-radius: 6px;
+  }
+  
+  .searchInput {
+    padding: 10px 12px;
+    font-size: 16px;
+    margin-bottom: 14px;
+    border-radius: 6px;
+  }
+  
   .idCard {
     padding: 8px;
     gap: 6px;
+    border-radius: 4px;
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: auto;
+  }
+  
+  .logo {
+    align-self: flex-start;
   }
   
   .logo img {
@@ -1183,31 +1467,80 @@
     width: 32px;
   }
   
+  .details {
+    width: 100%;
+    margin-left: 0;
+  }
+  
   .websiteName {
     font-size: 0.85rem;
+    margin-bottom: 2px;
+    line-height: 1.2;
   }
   
   .websiteLink {
     font-size: 0.6rem;
+    margin-bottom: 1px;
+    line-height: 1.3;
+    word-break: break-all;
   }
   
   .userId {
     font-size: 0.65rem;
+    margin-bottom: 1px;
+    line-height: 1.3;
   }
   
-  .searchInput {
-    padding: 10px 12px;
-    font-size: 16px;
-    margin-bottom: 14px;
+  .iconContainer {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    min-width: auto;
+    align-items: center;
+  }
+  
+  .actionIcons {
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
   }
   
   .editIcon,
   .acceptIcon,
-.rejectIcon {
-    min-width: 36px;
-    height: 36px;
-    padding: 6px;
-  font-size: 20px;
+  .rejectIcon {
+    min-width: 32px;
+    height: 32px;
+    padding: 4px;
+    font-size: 16px;
+  }
+  
+  .paginationContainer {
+    gap: 6px;
+    padding: 10px;
+  }
+  
+  .paginationInfo {
+    font-size: 0.7rem;
+    text-align: center;
+  }
+  
+  .paginationControls {
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: center;
+  }
+  
+  .paginationButton {
+    padding: 5px 10px;
+    font-size: 0.7rem;
+    border-radius: 3px;
+  }
+  
+  .pageButton {
+    padding: 3px 6px;
+    font-size: 0.65rem;
+    min-width: 24px;
+    border-radius: 2px;
   }
 }
 
@@ -1217,9 +1550,40 @@
     padding: 8px 10px 30px 10px;
   }
   
+  .tabsContainer {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .tab {
+    width: 100%;
+    max-width: 220px;
+    min-width: auto;
+    padding: 6px 14px;
+    font-size: 0.75rem;
+    border-radius: 4px;
+  }
+  
+  .searchInput {
+    padding: 8px 10px;
+    font-size: 16px;
+    margin-bottom: 12px;
+    border-radius: 4px;
+  }
+  
   .idCard {
     padding: 6px;
     gap: 4px;
+    border-radius: 3px;
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: auto;
+  }
+  
+  .logo {
+    align-self: flex-start;
   }
   
   .logo img {
@@ -1227,41 +1591,237 @@
     width: 28px;
   }
   
+  .details {
+    width: 100%;
+    margin-left: 0;
+  }
+  
   .websiteName {
     font-size: 0.8rem;
+    margin-bottom: 1px;
+    line-height: 1.2;
   }
   
   .websiteLink {
     font-size: 0.55rem;
+    margin-bottom: 1px;
+    line-height: 1.3;
+    word-break: break-all;
   }
   
   .userId {
     font-size: 0.6rem;
+    margin-bottom: 1px;
+    line-height: 1.3;
   }
   
-  .searchInput {
-    padding: 8px 10px;
-    font-size: 16px;
-    margin-bottom: 12px;
+  .iconContainer {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    min-width: auto;
+    align-items: center;
+  }
+  
+  .actionIcons {
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
   }
   
   .editIcon,
   .acceptIcon,
   .rejectIcon {
-    min-width: 32px;
-    height: 32px;
-    padding: 4px;
-    font-size: 18px;
+    min-width: 28px;
+    height: 28px;
+    padding: 3px;
+    font-size: 14px;
+  }
+  
+  .paginationContainer {
+    gap: 4px;
+    padding: 8px;
+  }
+  
+  .paginationInfo {
+    font-size: 0.65rem;
+    text-align: center;
+  }
+  
+  .paginationControls {
+    flex-wrap: wrap;
+    gap: 3px;
+    justify-content: center;
   }
   
   .paginationButton {
-    padding: 8px 12px;
+    padding: 4px 8px;
+    font-size: 0.65rem;
+    border-radius: 2px;
+  }
+  
+  .pageButton {
+    padding: 2px 4px;
+    font-size: 0.6rem;
+    min-width: 20px;
+    border-radius: 1px;
+  }
+}
+
+/* Mobile Ultra Small (below 320px) */
+@media (max-width: 319px) {
+  .container {
+    padding: 6px 8px 20px 8px;
+  }
+  
+  .tabsContainer {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+    margin-bottom: 0.4rem;
+  }
+  
+  .tab {
+    width: 100%;
+    max-width: 200px;
+    min-width: auto;
+    padding: 4px 12px;
+    font-size: 0.7rem;
+    border-radius: 3px;
+  }
+  
+  .searchInput {
+    padding: 6px 8px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+  }
+  
+  .idCard {
+    padding: 4px;
+    gap: 2px;
+    border-radius: 2px;
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: auto;
+  }
+  
+  .logo {
+    align-self: flex-start;
+  }
+  
+  .logo img {
+    height: 24px;
+    width: 24px;
+  }
+  
+  .details {
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  .websiteName {
+    font-size: 0.75rem;
+    margin-bottom: 1px;
+    line-height: 1.2;
+  }
+  
+  .websiteLink {
+    font-size: 0.5rem;
+    margin-bottom: 1px;
+    line-height: 1.3;
+    word-break: break-all;
+  }
+  
+  .userId {
+    font-size: 0.55rem;
+    margin-bottom: 1px;
+    line-height: 1.3;
+  }
+  
+  .iconContainer {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    min-width: auto;
+    align-items: center;
+  }
+  
+  .actionIcons {
+    gap: 2px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .editIcon,
+  .acceptIcon,
+  .rejectIcon {
+    min-width: 24px;
+    height: 24px;
+    padding: 2px;
     font-size: 12px;
+  }
+  
+  .paginationContainer {
+    gap: 2px;
+    padding: 6px;
+  }
+  
+  .paginationInfo {
+    font-size: 0.6rem;
+    text-align: center;
+  }
+  
+  .paginationControls {
+    flex-wrap: wrap;
+    gap: 2px;
+    justify-content: center;
+  }
+  
+  .paginationButton {
+    padding: 3px 6px;
+    font-size: 0.6rem;
+    border-radius: 1px;
+  }
+  
+  .pageButton {
+    padding: 1px 3px;
+    font-size: 0.55rem;
+    min-width: 18px;
+    border-radius: 1px;
   }
 }
 
 /* Landscape Mobile */
 @media (max-height: 500px) and (orientation: landscape) {
+  .container {
+    padding: 10px 15px 40px 15px;
+  }
+  
+  .tabsContainer {
+    flex-direction: row;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .tab {
+    flex: 1;
+    max-width: none;
+    padding: 8px 16px;
+    font-size: 0.8rem;
+  }
+  
+  .searchInput {
+    padding: 8px 12px;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  
+  .idCard {
+    padding: 8px;
+    gap: 6px;
+  }
+  
   .popupOverlay {
     padding: 8px;
   }
@@ -1304,6 +1864,31 @@
     min-height: 44px;
     font-size: 16px; /* Prevent zoom on iOS */
   }
+  
+  .tab {
+    min-height: 44px;
+  }
+  
+  .editIcon,
+  .acceptIcon,
+  .rejectIcon {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .paginationButton,
+  .pageButton {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .searchInput {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  .idCard {
+    min-height: 60px; /* Ensure touch targets are adequate */
+  }
 }
 
 /* High DPI Displays */
@@ -1341,6 +1926,170 @@
 .popup {
   position: relative;
   z-index: 10000 !important;
+}
+
+/* ===== ADDITIONAL RESPONSIVE IMPROVEMENTS ===== */
+
+/* Improve text readability on small screens */
+@media (max-width: 480px) {
+  .websiteName {
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  
+  .websiteLink {
+    word-break: break-all;
+    line-height: 1.3;
+  }
+  
+  .userId {
+    line-height: 1.3;
+  }
+  
+  .statusText {
+    font-weight: 600;
+    text-align: center;
+  }
+  
+  .details p {
+    margin-bottom: 4px;
+  }
+  
+  .details span {
+    margin-bottom: 3px;
+  }
+  
+  .details strong {
+    font-weight: 600;
+  }
+}
+
+/* Improve button spacing on mobile */
+@media (max-width: 599px) {
+  .actionIcons {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .editIcon,
+  .acceptIcon,
+  .rejectIcon {
+    margin: 2px;
+  }
+  
+  .statusContainer {
+    margin-bottom: 8px;
+  }
+  
+  .statusText {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+  }
+}
+
+/* Better spacing for request items on mobile */
+@media (max-width: 599px) {
+  .idCard {
+    margin-bottom: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+  }
+  
+  .logo {
+    align-self: flex-start;
+  }
+  
+  .logo img {
+    height: 40px;
+    width: 40px;
+  }
+  
+  .details {
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  .details p {
+    margin-bottom: 3px;
+    line-height: 1.3;
+  }
+  
+  .details span {
+    display: block;
+    margin-bottom: 2px;
+    line-height: 1.3;
+  }
+  
+  /* Ensure proper text wrapping for request details */
+  .details {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  .details strong {
+    display: inline-block;
+    min-width: 80px;
+  }
+  
+  .iconContainer {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    min-width: auto;
+  }
+  
+  .statusContainer {
+    margin-bottom: 0;
+  }
+  
+  .actionIcons {
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .editIcon,
+  .acceptIcon,
+  .rejectIcon {
+    min-width: 36px;
+    height: 36px;
+    padding: 6px;
+    font-size: 20px;
+  }
+}
+
+/* Improve pagination on very small screens */
+@media (max-width: 360px) {
+  .paginationControls {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .pageNumbers {
+    order: -1;
+    justify-content: center;
+  }
+  
+  .paginationButton {
+    width: 100%;
+    max-width: 120px;
+  }
+  
+  .idCard {
+    margin-bottom: 8px;
+  }
+  
+  .details {
+    padding: 4px 0;
+  }
+  
+  .iconContainer {
+    padding: 4px 0;
+  }
 }
 
 .statusText {

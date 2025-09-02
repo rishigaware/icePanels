@@ -15,7 +15,7 @@ import { Toast } from "primereact/toast";
 
 
 const ProfilePage = () => {
-  const { user, setUser } = useUser();  // Get user and setUser from context
+  const { user, setUser, url } = useUser();  // Get user and setUser from context
   const navigate = useNavigate(); // For navigation
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal visibility
   const toast = useRef(null); // Add a reference for Toast
@@ -29,11 +29,11 @@ const ProfilePage = () => {
 });
 
   const [paymentInfo, setPaymentInfo] = useState({
-    accountNumber: '1234567890',
-    accountHolderName: 'John Doe',
-    ifscCode: 'ABCD0123456',
-    bankName: 'XYZ Bank',
-    upiId: 'abc@upi' // Add default empty string for UPI ID
+    accountNumber: '',
+    accountHolderName: '',
+    ifscCode: '',
+    bankName: '',
+    upiId: ''
   });
 
   const [isProfileEditing, setIsProfileEditing] = useState(false);
@@ -52,7 +52,7 @@ const ProfilePage = () => {
       }
 
     // Send GET request with user.id as a query parameter
-    fetch(`http://localhost:3000/api/admin/get-accountdetails?userId=${user.id}`)
+    fetch(`${url}/api/admin/get-accountdetails?userId=${user.id}`)
       .then(response => {
         if (response.ok) {
           return response.json();
@@ -62,11 +62,11 @@ const ProfilePage = () => {
       .then(data => {
         // Assuming the API returns the full profile info
         setPaymentInfo({
-          accountNumber: data.accountNumber,
-          accountHolderName: data.accountHolderName,
-          ifscCode: data.ifscCode,
-          bankName: data.bankName,
-          upiId: data.upiId, // Include UPI ID here
+          accountNumber: data.accountNumber || '',
+          accountHolderName: data.accountHolderName || '',
+          ifscCode: data.ifscCode || '',
+          bankName: data.bankName || '',
+          upiId: data.upiId || '',
         });
       })
       .catch(error => {
@@ -108,7 +108,7 @@ const ProfilePage = () => {
     const userId = user.id;
 
     try {
-      const response = await fetch('http://localhost:3000/api/admin/update-accountdetails', {
+      const response = await fetch(`${url}/api/admin/update-accountdetails`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ const ProfilePage = () => {
   
     try {
       // Send POST request to update profile data
-      const response = await fetch('http://localhost:3000/api/admin/update-profile', {
+      const response = await fetch(`${url}/api/admin/update-profile`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -241,11 +241,11 @@ const ProfilePage = () => {
   // Handle cancel for payment editing
   const handlePaymentCancel = () => {
     setPaymentInfo({
-      accountNumber: '1234567890',
-      accountHolderName: 'John Doe',
-      ifscCode: 'ABCD0123456',
-      bankName: 'XYZ Bank',
-      upiId: 'abc@upi'
+      accountNumber: '',
+      accountHolderName: '',
+      ifscCode: '',
+      bankName: '',
+      upiId: ''
     });
     setIsPaymentEditing(false);
   };

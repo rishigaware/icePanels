@@ -130,7 +130,7 @@ exports.getAccountDetails = async (req, res) => {
   };
   
   exports.updateAccountDetails = async (req, res) => {
-    const { userId, accountNumber, accountHolderName, ifscCode, bankName } = req.body;
+    const { userId, accountNumber, accountHolderName, ifscCode, bankName, upiId } = req.body;
   
     // Validation: Ensure `userId` is provided and is a valid non-empty value
     if (!userId || typeof userId === "undefined" || userId.toString().trim() === "") {
@@ -145,18 +145,20 @@ exports.getAccountDetails = async (req, res) => {
       // Convert userId to string to satisfy Firestore's requirement
       const userDocRef = userAccountsRef.doc(userId.toString());
   
-      const defaultData = {
-        accountNumber: "1234567890",
-        accountHolderName: "John Doe",
-        ifscCode: "ABCD0123456",
-        bankName: "XYZ Bank",
+            const defaultData = {
+        accountNumber: "",
+        accountHolderName: "",
+        ifscCode: "",
+        bankName: "",
+        upiId: "",
       };
-  
+
       const updatedData = {
         accountNumber: accountNumber || defaultData.accountNumber,
         accountHolderName: accountHolderName || defaultData.accountHolderName,
         ifscCode: ifscCode || defaultData.ifscCode,
         bankName: bankName || defaultData.bankName,
+        upiId: upiId || defaultData.upiId,
       };
   
       const doc = await userDocRef.get();
@@ -385,7 +387,7 @@ exports.createWithdrawalTransactionBy = async (req, res) => {
         websiteName,
         websiteUrl,
         username,
-        id, // ID reference
+        idDocumentId: id, // ID document reference
         createdBy,
         imagePath: 'No path',
         transactionType: 'withdrawal'
@@ -409,8 +411,79 @@ exports.createWithdrawalTransactionBy = async (req, res) => {
     }
   };
 
+// Create wallet withdrawal request
+exports.createWalletWithdrawal = async (req, res) => {
+  try {
+    const { 
+      amount, 
+      withdrawalMethod, 
+      withdrawalDetails, 
+      createdAt, 
+      createdBy 
+    } = req.body;
 
+    console.log('Received wallet withdrawal data:', req.body);
 
+    // Validate data
+    if (!amount || !withdrawalMethod || !createdAt || !createdBy) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    // Check if user has sufficient balance
+    const userRef = db.collection('user').doc(createdBy);
+    const userDoc = await userRef.get();
+    
+    if (!userDoc.exists) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const userData = userDoc.data();
+    const currentBalance = userData.balance || 0;
+    const withdrawalAmount = parseFloat(amount);
+
+    if (currentBalance < withdrawalAmount) {
+      return res.status(400).json({ 
+        message: 'Insufficient wallet balance',
+        currentBalance: currentBalance,
+        requestedAmount: withdrawalAmount,
+        shortfall: withdrawalAmount - currentBalance
+      });
+    }
+
+    const transactionId = `wallet_withdrawal_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    // Prepare transaction data
+    const transactionData = {
+      description: `Wallet Withdrawal Request - ₹${amount} via ${withdrawalMethod === 'upi' ? 'UPI' : 'Bank Transfer'}`,
+      transactionId,
+      paymentMethod: withdrawalMethod === 'upi' ? 'UPI Withdrawal' : 'Bank Transfer Withdrawal',
+      createdAt,
+      acceptedAt: 'Not updated',
+      status: 'Pending',
+      amount: withdrawalAmount,
+      withdrawalMethod,
+      withdrawalDetails: withdrawalDetails,
+      createdBy,
+      imagePath: 'No path',
+      transactionType: 'wallet_withdrawal'
+    };
+
+    // Save transaction data to Firestore
+    const transactionRef = await db.collection('transactions').add(transactionData);
+
+    console.log('Wallet withdrawal transaction created:', transactionRef.id);
+
+    // Send a successful response
+    res.status(201).json({
+      message: 'Wallet withdrawal request created successfully',
+      transactionId: transactionRef.id,
+      amount: withdrawalAmount
+    });
+  } catch (error) {
+    console.error('Error creating wallet withdrawal transaction:', error);
+    res.status(500).json({ message: 'Error creating withdrawal request', error: error.message });
+  }
+};
 
 exports.createId = async (req, res) => {
     const { websiteName, websiteUrl, username, imgUrl, createdBy } = req.body;
@@ -534,9 +607,9 @@ exports.getAllIds = async (req, res) => {
 
   
   
-// Close ID - Move ID to close collection
+// Close ID - Create close request for admin approval
 exports.closeId = async (req, res) => {
-    const { id, createdBy } = req.body;
+    const { id, createdBy, reason } = req.body;
 
     // Validation: Ensure required fields are provided
     if (!id || !createdBy) {
@@ -558,28 +631,29 @@ exports.closeId = async (req, res) => {
             return res.status(403).json({ message: 'You are not authorized to close this ID.' });
         }
 
-        // Create the closed ID document
-        const closedIdData = {
-            ...idData,
-            closedAt: new Date().toISOString(),
-            status: 'Closed',
-            originalId: id
+        // Create close request
+        const closeRequestData = {
+            id: db.collection('closeRequests').doc().id,
+            originalId: id,
+            createdBy,
+            reason: reason || 'User requested to close ID',
+            status: 'Pending',
+            createdAt: new Date().toISOString(),
+            websiteName: idData.websiteName,
+            websiteUrl: idData.websiteUrl,
+            username: idData.username
         };
 
-        // Add to close collection with auto-generated ID
-        const closeDocRef = db.collection('close').doc();
-        await closeDocRef.set(closedIdData);
+        // Save the close request
+        await db.collection('closeRequests').doc(closeRequestData.id).set(closeRequestData);
 
-        // Delete from main collection
-        await db.collection('id').doc(id).delete();
-
-        res.status(200).json({
-            message: 'ID closed successfully',
-            closedId: closedIdData
+        res.status(201).json({
+            message: 'Close ID request submitted successfully',
+            request: closeRequestData
         });
     } catch (error) {
-        console.error('Error closing ID:', error);
-        res.status(500).json({ message: 'Error closing ID', error: error.message });
+        console.error('Error creating close ID request:', error);
+        res.status(500).json({ message: 'Error creating close ID request', error: error.message });
     }
 };
 
@@ -642,7 +716,7 @@ exports.getIdTransactions = async (req, res) => {
             // Check multiple criteria for ID-related transactions
             return (
                 // Direct ID matches
-                transaction.id === id ||
+                transaction.idDocumentId === id ||
                 transaction.websiteId === id ||
                 
                 // Website name matches
@@ -826,26 +900,67 @@ exports.getDepositTransactions = async (req, res) => {
     // Reference to the Firestore collection
     const transactionsRef = db.collection('transactions');
 
-    // Query to fetch transactions where createdBy is equal to the userId
-    const snapshot = await transactionsRef
-      .where('createdBy', '==', userId)
-      .get();
-
-    // If no transactions are found
-    if (snapshot.empty) {
-      return res.status(404).json({ message: 'No transactions found.' });
+    // First, try to get user data to find both user.id and user.username
+    let userDoc = await db.collection('user').doc(userId).get();
+    let userData = null;
+    
+    console.log('Looking up user with ID:', userId);
+    
+    if (userDoc.exists) {
+      userData = userDoc.data();
+      console.log('Found user by ID:', userData);
+    } else {
+      // If not found by ID, try to find by username
+      const userSnapshot = await db.collection('user').where('username', '==', userId).get();
+      if (!userSnapshot.empty) {
+        userData = userSnapshot.docs[0].data();
+        console.log('Found user by username:', userData);
+      } else {
+        console.log('User not found by ID or username');
+      }
     }
 
-    // Map Firestore snapshot to a list of transactions
-    const transactions = snapshot.docs.map(doc => ({
-      id: doc.id, // Get document ID
-      ...doc.data(), // Get document fields
+    // Get all transactions and filter them
+    const allTransactionsSnapshot = await transactionsRef.get();
+    
+    if (allTransactionsSnapshot.empty) {
+      return res.status(200).json([]); // Return empty array instead of 404
+    }
+
+    // Filter transactions that match the user
+    const allTransactions = allTransactionsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
     }));
+    
+    console.log('Total transactions found:', allTransactions.length);
+    console.log('Sample transaction createdBy values:', allTransactions.slice(0, 5).map(t => t.createdBy));
+    
+    const transactions = allTransactions.filter(transaction => {
+      const matches = (
+        transaction.createdBy === userId ||
+        transaction.createdBy === userData?.username ||
+        transaction.createdBy === userData?.id ||
+        (userData && transaction.createdBy === userData.username) ||
+        transaction.createdBy === "user" // Handle legacy hardcoded "user" string
+      );
+      
+      if (matches) {
+        console.log('Matching transaction found:', transaction.id, 'createdBy:', transaction.createdBy);
+      }
+      
+      return matches;
+    });
+    
+    console.log('Filtered transactions count:', transactions.length);
+
+    // Sort by creation date (newest first)
+    transactions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     // Respond with the found transactions
     res.status(200).json(transactions);
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching transactions:', error);
     // If there is a server error
     res.status(500).json({ message: 'Failed to fetch transactions', error: error.message });
   }
@@ -1061,11 +1176,20 @@ exports.createNewDepositTransaction = async (req, res) => {
       websiteName,
       websiteUrl,
       username,
-      id, // ID reference
+      idDocumentId: id, // ID document reference
       createdBy,
       imagePath: 'No image required for deposit',
       transactionType: 'deposit'
     };
+
+    console.log('Creating deposit transaction with data:');
+    console.log(`- Amount: ₹${amount}`);
+    console.log(`- Coins to receive: ${coinsToReceive}`);
+    console.log(`- Coin rate: ₹${coinRate} per coin`);
+    console.log(`- Website: ${websiteName}`);
+    console.log(`- Username: ${username}`);
+    console.log(`- ID Document ID: ${id}`);
+    console.log(`- Created by: ${createdBy}`);
 
     // Save transaction to Firestore
     const transactionRef = await db.collection('transactions').add(transactionData);

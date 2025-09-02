@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Carousel as FlowbiteCarousel } from 'flowbite-react';
-import { FileUpload } from 'primereact/fileupload';
 import { Toast } from 'primereact/toast';
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -49,10 +48,10 @@ export default function BottomCarousel() {
   // Function to handle file selection
   const onFileSelect = (e) => {
     try {
-      if (e.files && e.files[0]) {
-        const selectedFile = e.files[0];
-        if (selectedFile.size > 1000000) {
-          throw new Error('File is too large. Max size is 1MB.');
+      if (e.target.files && e.target.files[0]) {
+        const selectedFile = e.target.files[0];
+        if (selectedFile.size > 10000000) {
+          throw new Error('File is too large. Max size is 10MB.');
         }
         if (!selectedFile.type.startsWith('image/')) {
           throw new Error('Invalid file type. Only images are allowed.');
@@ -61,8 +60,8 @@ export default function BottomCarousel() {
         toast.current.show({
           severity: 'success',
           summary: 'File Selected',
-          detail: 'Image uploaded successfully',
-          life: 1000,
+          detail: `${selectedFile.name} selected successfully`,
+          life: 2000,
         });
       } else {
         throw new Error('No file selected.');
@@ -70,10 +69,11 @@ export default function BottomCarousel() {
     } catch (error) {
       toast.current.show({
         severity: 'error',
-        summary: 'Image Upload Failed',
+        summary: 'File Selection Failed',
         detail: error.message,
         life: 3000,
       });
+      setSelectedFile(null);
     }
   };
 
@@ -148,25 +148,51 @@ export default function BottomCarousel() {
       <Toast ref={toast} />
 
       {/* File upload component */}
-      <div className="my-4 flex items-center ml-2.5">
-        <FileUpload
-          mode="basic"
-          name="image"
-          accept="image/*"
-          maxFileSize={1000000}
-          onSelect={onFileSelect}
-        />
+      <div className="my-4 flex items-center ml-2.5 gap-3">
+        <div className="relative">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={onFileSelect}
+            className="hidden"
+            id="file-upload-bottom"
+          />
+          <label
+            htmlFor="file-upload-bottom"
+            className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-6 py-3 rounded-lg cursor-pointer transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2 font-semibold"
+          >
+            <i className="fa fa-image mr-2"></i> Choose Image
+          </label>
+        </div>
+        
+        {selectedFile && (
+          <div className="text-sm text-gray-600 bg-gray-100 px-3 py-2 rounded-lg">
+            Selected: {selectedFile.name}
+          </div>
+        )}
+        
         <button
           onClick={handleUpload}
-          className="bg-blue-500 text-white px-1 py-2 rounded ml-2.5"
+          className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+          disabled={!selectedFile}
+          style={{
+            opacity: selectedFile ? 1 : 0.6,
+            cursor: selectedFile ? 'pointer' : 'not-allowed'
+          }}
         >
-          Upload Image
+          <i className="fa fa-upload mr-2"></i> Upload Image
         </button>
+        
         <button
           onClick={handleDelete}
-          className="bg-red-500 text-white px-4 py-2 rounded flex items-center ml-2.5"
+          className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-4 py-2 rounded-lg flex items-center transition-all duration-300 transform hover:scale-105 shadow-lg"
+          disabled={images.length === 0}
+          style={{
+            opacity: images.length > 0 ? 1 : 0.6,
+            cursor: images.length > 0 ? 'pointer' : 'not-allowed'
+          }}
         >
-          <i className="fa fa-trash mr-2"></i> Delete
+          <i className="fa fa-trash mr-2"></i> Delete Last
         </button>
       </div>
 

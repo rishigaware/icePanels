@@ -863,6 +863,47 @@
   box-shadow: none;
 }
 
+/* Payment Details Section */
+.paymentDetailsSection {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.paymentDetailsSection h3 {
+  margin: 0 0 1rem 0;
+  color: #3267d2;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.paymentDetails p {
+  margin: 0.5rem 0;
+  color: #495057;
+  font-size: 0.9rem;
+}
+
+.paymentDetails strong {
+  color: #212529;
+  font-weight: 600;
+}
+
+.loadingPayment {
+  display: flex;
+  align-items: center;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.noPaymentDetails {
+  color: #6c757d;
+  font-style: italic;
+  text-align: center;
+  margin: 1rem 0;
+}
+
 /* Print Styles */
 @media print {
   .container {
