@@ -35,15 +35,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    position: fixed;
-    top: 5%;
+    position: relative;
+    top: 0;
     left: 0;
     z-index: 1000;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
     animation: slideInDown 0.8s ease-out 0.2s both;
-    position: relative;
     overflow: hidden;
+    margin-top: 60px; /* Account for fixed navbar */
   }
 
   .top::before {
@@ -270,10 +270,8 @@
     height: 40px;
     background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 50%, #ff6b6b 100%);
     border-radius: 20px;
-    position: fixed;
-    top: 27vh;
-    left: 1.5vw;
-    z-index: 998;
+    position: static;
+    margin: 20px auto;
     box-shadow: 0 8px 32px rgba(255, 107, 107, 0.3);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -601,8 +599,7 @@
   .slidingTextSection {
     width: 96vw;
     height: 38px;
-    top: 28vh;
-    left: 2vw;
+    margin: 18px auto;
     border-radius: 19px;
   }
 
@@ -636,15 +633,37 @@
   }
 
   .top {
-    height: 20vh;
-    top: 50px;
+    height: 18vh;
+    margin-top: 50px;
+  }
+
+  .topSquare {
+    width: 90%;
+    height: 70%;
+    border-radius: 15px;
+  }
+
+  .first, .second, .third {
+    height: 90px;
+    font-size: 12px;
+  }
+
+  .deposit, .withdraw, .balance {
+    font-size: 12px;
+  }
+
+  .balanceContainer {
+    font-size: 1.1rem;
+  }
+
+  .balanceAmount {
+    font-size: 14px;
   }
 
   .slidingTextSection {
     width: 95vw;
     height: 35px;
-    top: 25vh;
-    left: 2.5vw;
+    margin: 16px auto;
     border-radius: 18px;
   }
 
@@ -698,21 +717,46 @@
   }
 
   .top {
-    height: 20vh;
-    top: 45px;
+    height: 16vh;
+    margin-top: 45px;
+  }
+
+  .topSquare {
+    width: 92%;
+    height: 75%;
+    border-radius: 12px;
+  }
+
+  .first, .second, .third {
+    height: 85px;
+    font-size: 11px;
+  }
+
+  .deposit, .withdraw, .balance {
+    font-size: 11px;
+  }
+
+  .balanceContainer {
+    font-size: 1rem;
+  }
+
+  .balanceAmount {
+    font-size: 13px;
   }
 
   .slidingTextSection {
-    width: 92vw;
-    height: 30px;
-    top: 22vh;
-    left: 4vw;
+    width: 95vw;
+    height: 35px;
+    margin: 10px auto;
     border-radius: 15px;
+    padding: 5px 0;
   }
 
   .slidingText {
-    font-size: 12px;
-    animation: slideText 10s linear infinite;
+    font-size: 11px;
+    animation: slideText 8s linear infinite;
+    line-height: 1.2;
+    white-space: nowrap;
   }
 
   .createId {
@@ -752,5 +796,75 @@
 
   .balanceAmount {
     font-size: 12px;
+  }
+}
+
+/* Extra Small Mobile Devices (320px and below) */
+@media screen and (max-width: 360px) {
+  .slidingTextSection {
+    width: 96vw;
+    height: 32px;
+    margin: 8px auto;
+    border-radius: 12px;
+    padding: 4px 0;
+  }
+
+  .slidingText {
+    font-size: 10px;
+    animation: slideText 7s linear infinite;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .createId {
+    width: 92%;
+    height: 40px;
+    margin: 8px auto 15px auto;
+    padding: 0 10px;
+    border-radius: 20px;
+  }
+
+  .createIdText {
+    font-size: 10px;
+  }
+
+  .createIdEmoji {
+    font-size: 10px;
+  }
+
+  .createIdIcon {
+    font-size: 14px;
+  }
+
+  .createIdArrow {
+    font-size: 14px;
+  }
+
+  .top {
+    height: 14vh;
+    margin-top: 40px;
+  }
+
+  .topSquare {
+    width: 95%;
+    height: 80%;
+    border-radius: 12px;
+  }
+
+  .first, .second, .third {
+    height: 75px;
+    font-size: 10px;
+  }
+
+  .balanceContainer {
+    font-size: 0.9rem;
+  }
+
+  .balanceAmount {
+    font-size: 11px;
+  }
+
+  .deposit, .withdraw, .balance {
+    font-size: 10px;
   }
 }

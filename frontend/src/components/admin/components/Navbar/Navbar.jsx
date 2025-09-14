@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
@@ -6,86 +6,143 @@ import RecentActorsIcon from '@mui/icons-material/RecentActors';
 import GroupsIcon from '@mui/icons-material/Groups';
 import PaymentsTwoToneIcon from '@mui/icons-material/PaymentsTwoTone';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { Link, useLocation } from 'react-router-dom'; // Import Link and useLocation
-import { FaUsers } from "react-icons/fa";
-import styles from "./Navbar.module.css"; // Import CSS module
+import { Link, useLocation } from 'react-router-dom';
+import styles from "./Navbar.module.css";
+
+// Memoized route mapping to prevent recreation on every render
+const ADMIN_ROUTE_MAP = {
+  "/admin/home": "recents",
+  "/admin/users": "users",
+  "/admin/id": "favorites", 
+  "/admin/transactions": "nearby",
+  "/admin/profile": "folder"
+};
+
+// Memoized navigation items to prevent recreation
+const ADMIN_NAV_ITEMS = [
+  {
+    label: "Home",
+    value: "recents",
+    icon: <MapsHomeWorkIcon />,
+    to: "/admin/home"
+  },
+  {
+    label: "Users",
+    value: "users",
+    icon: <GroupsIcon />,
+    to: "/admin/users"
+  },
+  {
+    label: "Agents",
+    value: "favorites", 
+    icon: <RecentActorsIcon />,
+    to: "/admin/id"
+  },
+  {
+    label: "Transactions",
+    value: "nearby",
+    icon: <PaymentsTwoToneIcon />,
+    to: "/admin/transactions"
+  },
+  {
+    label: "Profile",
+    value: "folder",
+    icon: <AccountCircleIcon />,
+    to: "/admin/profile"
+  }
+];
 
 export default function Navbar() {
-  const location = useLocation(); // Get the current location (route)
+  const location = useLocation();
   
-  // Set the initial value based on the current route
-  const [value, setValue] = useState(getRouteValue(location.pathname));
+  // Memoized function to get route value
+  const getRouteValue = useCallback((pathname) => {
+    return ADMIN_ROUTE_MAP[pathname] || "recents";
+  }, []);
 
-  // Function to get value based on the route
-  function getRouteValue(pathname) {
-    switch (pathname) {
-      case "/admin/home":
-        return "recents"; // Home
-      case "/admin/id":
-        return "favorites"; // IDs
-      case "/admin/users":
-        return "users"; // Settings
-      case "/admin/transactions":
-        return "nearby"; // Transactions
-      case "/admin/profile":
-        return "folder"; // Profile
-      default:
-        return "recents"; // Default to Home if no match
-    }
-  }
+  // Initialize state with current route
+  const [value, setValue] = useState(() => getRouteValue(location.pathname));
 
-  const handleChange = (event, newValue) => {
+  // Memoized change handler
+  const handleChange = useCallback((event, newValue) => {
     setValue(newValue);
-  };
+  }, []);
 
-  // Update the value state whenever the location changes
+  // Update value only when pathname changes (not the entire location object)
   useEffect(() => {
-    setValue(getRouteValue(location.pathname));
-  }, [location]);
+    const newValue = getRouteValue(location.pathname);
+    setValue(prevValue => prevValue !== newValue ? newValue : prevValue);
+  }, [location.pathname, getRouteValue]);
+
+  // Memoized navigation actions to prevent unnecessary re-renders
+  const navigationActions = useMemo(() => 
+    ADMIN_NAV_ITEMS.map((item) => (
+      <BottomNavigationAction
+        key={item.value}
+        label={item.label}
+        value={item.value}
+        icon={item.icon}
+        component={Link}
+        to={item.to}
+        sx={{
+          minWidth: { xs: '45px', sm: '55px', md: '65px' },
+          padding: { xs: '3px 1px', sm: '5px 2px', md: '7px 3px' },
+          fontSize: { xs: '0.6rem', sm: '0.7rem', md: '0.8rem' }
+        }}
+      />
+    )), []
+  );
 
   return (
     <BottomNavigation
-      className={`${styles.navbar} ${styles.navbarBlack}`} // Combine both classes
+      className={`${styles.navbar} ${styles.navbarBlack}`}
       value={value}
       onChange={handleChange}
+      showLabels
+      sx={{
+        '& .MuiBottomNavigationAction-root': {
+          minWidth: { xs: '55px', sm: '65px', md: '75px' },
+          padding: { xs: '5px 3px', sm: '7px 4px', md: '9px 5px' },
+          color: 'rgba(255, 255, 255, 0.8)',
+          '&.Mui-selected': {
+            color: '#ffffff',
+            fontWeight: 700,
+            transform: 'scale(1.1)',
+            transition: 'all 0.3s ease'
+          }
+        },
+        '& .MuiBottomNavigationAction-label': {
+          fontSize: { xs: '0.65rem', sm: '0.75rem', md: '0.85rem' },
+          fontWeight: 600,
+          color: 'rgba(255, 255, 255, 0.8)',
+          marginTop: '5px',
+          display: 'block !important',
+          opacity: '1 !important',
+          visibility: 'visible !important',
+          textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+          lineHeight: 1.2,
+          transition: 'all 0.3s ease'
+        },
+        '& .Mui-selected .MuiBottomNavigationAction-label': {
+          color: '#ffffff !important',
+          fontWeight: 700,
+          opacity: '1 !important',
+          visibility: 'visible !important',
+          textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)',
+          fontSize: { xs: '0.75rem', sm: '0.85rem', md: '0.95rem' },
+          transform: 'scale(1.05)'
+        },
+        '& .MuiBottomNavigationAction-icon': {
+          fontSize: { xs: '1.4rem', sm: '1.6rem', md: '1.8rem' },
+          transition: 'all 0.3s ease'
+        },
+        '& .Mui-selected .MuiBottomNavigationAction-icon': {
+          fontSize: { xs: '1.6rem', sm: '1.8rem', md: '2rem' },
+          transform: 'scale(1.1)'
+        }
+      }}
     >
-      <BottomNavigationAction
-        label="Home"
-        value="recents"
-        icon={<MapsHomeWorkIcon />}
-        component={Link} // Use Link component to navigate
-        to="/admin/home" // Link to the home route
-      />
-
-      <BottomNavigationAction
-        label="ID"
-        value="favorites"
-        icon={<RecentActorsIcon />}
-        component={Link}
-        to="/admin/id" // Link to the ID manager route
-      />
-
-      <BottomNavigationAction
-        label="Users" // Label for the new navigation
-        value="users" // Unique value for this navigation
-        icon={<GroupsIcon/>} // Increase font size
-        component={Link} // Use Link component to navigate
-        to="/admin/users" // Link to the settings route
-      />
-      <BottomNavigationAction
-        label="Transactions"
-        value="nearby"
-        icon={<PaymentsTwoToneIcon />}
-        component={Link}
-        to="/admin/transactions" // Link to the transactions route
-      />
-      <BottomNavigationAction
-        label="Profile"
-        value="folder"
-        icon={<AccountCircleIcon />}
-        component={Link}
-        to="/admin/profile" // Link to the profile route
-      />
+      {navigationActions}
     </BottomNavigation>
   );
 }

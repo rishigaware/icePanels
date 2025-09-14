@@ -27,12 +27,6 @@ export default function MiddleCarousel() {
       })
       .catch((error) => {
         console.error('Error fetching images:', error);
-        toast.current.show({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to fetch images.',
-          life: 3000,
-        });
       });
   };
 

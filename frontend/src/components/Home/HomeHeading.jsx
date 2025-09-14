@@ -108,13 +108,13 @@ const HomeHeading = () => {
         </div>
       </div>
         {/* Sliding Text Section */}
-        <div className={styles.slidingTextSection}>
+        {/* <div className={styles.slidingTextSection}>
           <div className={styles.slidingTextContainer}>
             <div className={styles.slidingText}>
               🚀 Welcome to The247Panel - Your Ultimate Gaming & Betting Platform! 🎮💰 • 🎯 Multiple Gaming Websites • 💎 Premium Features • 🔥 24/7 Support • ⚡ Instant Deposits & Withdrawals • 🏆 Best Odds Guaranteed • 🎲 Live Casino Games • 🎰 Slot Machines • 🃏 Card Games • 🏈 Sports Betting • 🎪 Live Events • 💰 Daily Bonuses • 🎁 Special Promotions • 🔐 Secure & Safe • 📱 Mobile Friendly • 🌟 VIP Membership • 🎊 Join Now & Win Big! 🎊
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Create Admin Panel Section */}
         <div 

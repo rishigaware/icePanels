@@ -1,29 +1,27 @@
-import React from 'react'
 import styles from './HomeHeading.module.css'; // Import the CSS module'
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { useState } from 'react';
 import { PiHandDepositDuotone } from "react-icons/pi";
 import { BiMoneyWithdraw } from "react-icons/bi";
-import { FaBalanceScale } from "react-icons/fa"; // Example balance icon
-import { FaQuestion } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 
 import { FaPlus } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
 // import logo from '../../assets/logo.png'
 import newlogo from '../../assets/newlogo.png'
 import LoginPopup from '../Login/LoginPopup';
+import WithdrawalPopup from './WithdrawalPopup';
 
 import { useUser } from "../../../../context/UserContext";
 
 
 const HomeHeading = () => {
-    const navigate = useNavigate();  // Initialize the navigate function
+    const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal visibility
+    const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] = useState(false); // State to control withdrawal modal
     const { user,setUser } = useUser();
 
-    const balance = 100000; // Example balance value
-    const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
+    const closeWithdrawalModal = () => setIsWithdrawalModalOpen(false);
 
     const handleLogin = () => {
         setIsModalOpen(true)    
@@ -32,6 +30,16 @@ const HomeHeading = () => {
     const handleLogout = () => {
         setUser(null); // Clear user context
         localStorage.removeItem('user'); // Remove user from localStorage
+    };
+
+    const handleDepositClick = () => {
+        // Redirect to deposit page
+        navigate('/admin/deposit');
+    };
+
+    const handleWithdrawalClick = () => {
+        // Open withdrawal popup
+        setIsWithdrawalModalOpen(true);
     };
 
   return (
@@ -68,7 +76,7 @@ const HomeHeading = () => {
             <div className={styles.top}>
             <div className={styles.topSquare}>
 
-                <div className={styles.first}>
+                <div className={styles.first} onClick={handleDepositClick}>
                     <PiHandDepositDuotone />
                     <h3 className={styles.deposit}>Deposit</h3>
                 </div>
@@ -97,20 +105,12 @@ const HomeHeading = () => {
 
                 </div>
 
-                <div className={styles.third}>
+                <div className={styles.third} onClick={handleWithdrawalClick}>
                     <h3 className={styles.withdraw}>Withdraw</h3>
                     <BiMoneyWithdraw />
                 </div>
             
             </div>
-            </div>
-            {/* Sliding Text Section */}
-            <div className={styles.slidingTextSection}>
-              <div className={styles.slidingTextContainer}>
-                <div className={styles.slidingText}>
-                  🚀 Welcome to The247Panel - Your Ultimate Gaming & Betting Platform! 🎮💰 • 🎯 Multiple Gaming Websites • 💎 Premium Features • 🔥 24/7 Support • ⚡ Instant Deposits & Withdrawals • 🏆 Best Odds Guaranteed • 🎲 Live Casino Games • 🎰 Slot Machines • 🃏 Card Games • 🏈 Sports Betting • 🎪 Live Events • 💰 Daily Bonuses • 🎁 Special Promotions • 🔐 Secure & Safe • 📱 Mobile Friendly • 🌟 VIP Membership • 🎊 Join Now & Win Big! 🎊
-                </div>
-              </div>
             </div>
 
             {/* Create Admin Panel Section */}
@@ -119,7 +119,7 @@ const HomeHeading = () => {
                 <span className={styles.createIdEmoji}>🚀</span>
                 <FaPlus size={18} className={styles.createIdIcon} />
                 <span className={styles.createIdText}>
-                  CREATE SELF ADMIN PANEL'S
+                  CREATE SELF ADMIN PANEL&apos;S
                 </span>
                 <span className={styles.createIdEmoji}>⚡</span>
               </div>
@@ -128,9 +128,26 @@ const HomeHeading = () => {
                 <FaArrowRight size={18} className={`${styles.createIdArrow} ${styles.arrow}`} />
               </div>
             </div>
+{/* 
+            <div className={styles.slidingTextSection}>
+              <div className={styles.slidingTextContainer}>
+                <div className={styles.slidingText}>
+                  🚀 Welcome to The247Panel - Your Ultimate Gaming & Betting Platform! 🎮💰 • 🎯 Multiple Gaming Websites • 💎 Premium Features • 🔥 24/7 Support • ⚡ Instant Deposits & Withdrawals • 🏆 Best Odds Guaranteed • 🎲 Live Casino Games • 🎰 Slot Machines • 🃏 Card Games • 🏈 Sports Betting • 🎪 Live Events • 💰 Daily Bonuses • 🎁 Special Promotions • 🔐 Secure & Safe • 📱 Mobile Friendly • 🌟 VIP Membership • 🎊 Join Now & Win Big! 🎊
+                </div>
+              </div>
+            </div> 
+            */}
 
             {isModalOpen && (
                 <LoginPopup isOpen={isModalOpen} isClose={closeModal} />
+            )}
+
+            {isWithdrawalModalOpen && (
+                <WithdrawalPopup 
+                    isOpen={isWithdrawalModalOpen} 
+                    isClose={closeWithdrawalModal}
+                    user={user}
+                />
             )}
       
     </>
