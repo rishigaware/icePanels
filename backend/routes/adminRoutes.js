@@ -96,4 +96,8 @@ router.patch('/reject-close-id/:requestId', adminController.rejectCloseIdRequest
 router.patch('/approve-password-change/:requestId', adminController.approvePasswordChangeRequest);
 router.patch('/reject-password-change/:requestId', adminController.rejectPasswordChangeRequest);
 
+// ID creation request handling
+router.get('/id-requests', adminController.getAllIdRequests);
+router.patch('/update-id-request-status', adminController.updateIdRequestStatus);
+
 module.exports = router;

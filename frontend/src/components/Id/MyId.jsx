@@ -20,6 +20,7 @@ const MyId = () => {
   const safeUser = user || {};
   const safeUrl = url || '';
   const [myIds, setMyIds] = useState([]);
+  const [idRequests, setIdRequests] = useState([]);
   const [menuOpen, setMenuOpen] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -45,6 +46,26 @@ const MyId = () => {
 
   const navigate = useNavigate();
   const toast = useRef(null);
+
+  const fetchIdRequests = async () => {
+    try {
+      if (!safeUser?.username) return;
+
+      console.log('Fetching ID requests for user:', safeUser.username);
+      const response = await fetch(`${safeUrl}/api/user/get-id-requests?userId=${safeUser.username}`);
+      console.log('ID requests response:', response);
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('ID requests data:', data);
+        setIdRequests(data);
+      } else {
+        console.error('Failed to fetch ID requests:', response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching ID requests:', error);
+    }
+  };
 
   const checkStatusUpdates = async () => {
     try {
@@ -107,6 +128,7 @@ const MyId = () => {
 
         setMyIds(sortedData);
         await checkStatusUpdates();
+        await fetchIdRequests(); // Fetch ID requests
       } catch (err) {
         console.error(err.message);
         setError(err.message);
@@ -119,7 +141,7 @@ const MyId = () => {
       fetchIds();
       setNeedRefetch(false);
     }
-  }, [safeUser?.id, needRefetch]);
+  }, [safeUser?.id, safeUser?.username, needRefetch]);
 
   useEffect(() => {
     if (!safeUser?.id) return;
@@ -192,7 +214,23 @@ const MyId = () => {
   const closeNewDepositPopup = () => setShowNewDepositPopup(false);
   const closeWithdrawalPopup = () => setIsWithdrawalPopupVisible(false);
 
-  const filteredIds = (myIds || []).filter(
+  const refreshIdRequests = async () => {
+    await fetchIdRequests();
+    toast.current.show({
+      severity: 'info',
+      summary: 'Refreshed',
+      detail: 'ID requests refreshed successfully',
+      life: 2000
+    });
+  };
+
+  // Combine regular IDs and ID requests
+  const allIds = [
+    ...(myIds || []).map(id => ({ ...id, type: 'active' })),
+    ...(idRequests || []).map(request => ({ ...request, type: 'request' }))
+  ];
+
+  const filteredIds = allIds.filter(
     (id) =>
       (id.websiteName && id.websiteName.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (id.websiteUrl && id.websiteUrl.toLowerCase().includes(searchQuery.toLowerCase())) ||
@@ -314,13 +352,22 @@ const MyId = () => {
 
   return (
     <div className={styles.container}>
-      <input
-        type="text"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        placeholder="Search by website name, URL, or username"
-        className={styles.searchInput}
-      />
+      <div className={styles.searchContainer}>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search by website name, URL, or username"
+          className={styles.searchInput}
+        />
+        <button 
+          onClick={refreshIdRequests}
+          className={styles.refreshButton}
+          title="Refresh ID Requests"
+        >
+          🔄
+        </button>
+      </div>
       <div className={styles.idsCount}>
         {filteredIds.length === 0 ? 'No IDs found' : `${filteredIds.length} ID${filteredIds.length === 1 ? '' : 's'} found`}
         {filteredIds.length > itemsPerPage && (
@@ -332,12 +379,17 @@ const MyId = () => {
         <p className={styles.noIds}>No IDs match your search criteria.</p>
       ) : (
         currentIds.map((item) => (
-          <div key={item.id} className={styles.idCard}>
-            <div className={styles.logo} onClick={() => handleIdClick(item)}>
+          <div key={item.id} className={`${styles.idCard} ${item.type === 'request' ? styles.requestCard : ''}`}>
+            <div className={styles.logo} onClick={() => item.type === 'active' ? handleIdClick(item) : null}>
               <img
                 src={`${safeUrl}/${item.imgUrl || ''}`}
                 alt={`${item.websiteName || 'Website'} logo`}
               />
+              {item.type === 'request' && (
+                <div className={styles.requestBadge}>
+                  <span className={styles.requestStatus}>{item.status || 'Pending'}</span>
+                </div>
+              )}
             </div>
             <div className={styles.details}>
               <p className={styles.websiteName}>{item.websiteName || 'N/A'}</p>
@@ -347,32 +399,60 @@ const MyId = () => {
                 </a>
               </span>
               <p className={styles.userId}><strong>username : </strong>{item.username || 'N/A'}</p>
-              <p className={styles.idBalance}><strong>Balance : </strong>{item.balance || 0} coins</p>
-              {item.coinRate && <p className={styles.coinRate}><strong>Rate : </strong>1 coin = ₹{item.coinRate}</p>}
+              {item.type === 'request' ? (
+                <>
+                  <p className={styles.idBalance}><strong>Coins Requested : </strong>{item.coinAmount || 0} coins</p>
+                  <p className={styles.idBalance}><strong>Amount : </strong>₹{item.convertedCoins || 0}</p>
+                  <p className={styles.coinRate}><strong>Rate : </strong>1 coin = ₹{item.coinRate}</p>
+                  <p className={styles.requestDate}><strong>Requested : </strong>{new Date(item.createdAt).toLocaleDateString()}</p>
+                </>
+              ) : (
+                <>
+                  <p className={styles.idBalance}><strong>Balance : </strong>{item.balance || 0} coins</p>
+                  {item.coinRate && <p className={styles.coinRate}><strong>Rate : </strong>1 coin = ₹{item.coinRate}</p>}
+                </>
+              )}
             </div>
             <div className={styles.iconContainer}>
-              <div className={styles.desktopIcons}>
-                <div className={styles.iconWrapper}>
-                  <PiHandDepositDuotone className={`${styles.icon} ${styles.depositIcon}`} title="Deposit" onClick={() => handleDepositClick(item)} />
-                  <p className={styles.iconLabel}>Deposit</p>
+              {item.type === 'request' ? (
+                <div className={styles.desktopIcons}>
+                  <div className={styles.iconWrapper}>
+                    <span className={`${styles.requestStatusIcon} ${styles.pendingIcon}`} title="Request Status">
+                      ⏳
+                    </span>
+                    <p className={styles.iconLabel}>Pending Approval</p>
+                  </div>
+                  <div className={styles.iconWrapper}>
+                    <span className={`${styles.requestStatusIcon} ${styles.infoIcon}`} title="Request Details">
+                      ℹ️
+                    </span>
+                    <p className={styles.iconLabel}>Request Details</p>
+                  </div>
                 </div>
-                <div className={styles.iconWrapper}>
-                  <BiMoneyWithdraw className={`${styles.icon} ${styles.withdrawalIcon}`} title="Withdrawal" onClick={() => handleWithdrawalClick(item)} />
-                  <p className={styles.iconLabel}>Withdrawal</p>
+              ) : (
+                <div className={styles.desktopIcons}>
+                  <div className={styles.iconWrapper}>
+                    <PiHandDepositDuotone className={`${styles.icon} ${styles.depositIcon}`} title="Deposit" onClick={() => handleDepositClick(item)} />
+                    <p className={styles.iconLabel}>Deposit</p>
+                  </div>
+                  <div className={styles.iconWrapper}>
+                    <BiMoneyWithdraw className={`${styles.icon} ${styles.withdrawalIcon}`} title="Withdrawal" onClick={() => handleWithdrawalClick(item)} />
+                    <p className={styles.iconLabel}>Withdrawal</p>
+                  </div>
+                  <div className={styles.iconWrapper}>
+                    <FiEdit3 className={`${styles.icon} ${styles.editIcon}`} title="Change Password" onClick={() => handleChangePassword(item)} />
+                    <p className={styles.iconLabel}>Change Password</p>
+                  </div>
+                  <div className={styles.iconWrapper}>
+                    <AiOutlineTransaction className={`${styles.icon} ${styles.transactionIcon}`} title="View Transaction" onClick={() => handleViewTransaction(item)} />
+                    <p className={styles.iconLabel}>View Transaction</p>
+                  </div>
+                  <div className={styles.iconWrapper}>
+                    <FiX className={`${styles.icon} ${styles.closeIcon}`} title="Close ID" onClick={() => handleCloseId(item.id)} />
+                    <p className={styles.iconLabel}>Close ID</p>
+                  </div>
                 </div>
-                <div className={styles.iconWrapper}>
-                  <FiEdit3 className={`${styles.icon} ${styles.editIcon}`} title="Change Password" onClick={() => handleChangePassword(item)} />
-                  <p className={styles.iconLabel}>Change Password</p>
-                </div>
-                <div className={styles.iconWrapper}>
-                  <AiOutlineTransaction className={`${styles.icon} ${styles.transactionIcon}`} title="View Transaction" onClick={() => handleViewTransaction(item)} />
-                  <p className={styles.iconLabel}>View Transaction</p>
-                </div>
-                <div className={styles.iconWrapper}>
-                  <FiX className={`${styles.icon} ${styles.closeIcon}`} title="Close ID" onClick={() => handleCloseId(item.id)} />
-                  <p className={styles.iconLabel}>Close ID</p>
-                </div>
-              </div>
+              )}
 
               <div className={styles.mobileMenu}>
                 <FiMoreVertical className={styles.threeDotsIcon} onClick={(e) => handleMobileMenuToggle(item.id, e)} />

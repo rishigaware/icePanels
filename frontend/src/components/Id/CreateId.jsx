@@ -39,6 +39,15 @@ const CreateId = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [showAddModal, setShowAddModal] = useState(false); // State for Add Website modal
   const [file, setFile] = useState(null); // State to store the selected file
+  
+  // New states for coin conversion and refundable options
+  const [coinAmount, setCoinAmount] = useState("");
+  const [refundable, setRefundable] = useState(false);
+  const [convertedCoins, setConvertedCoins] = useState(0);
+  const [coinRate, setCoinRate] = useState(0);
+  const [minimumCoins, setMinimumCoins] = useState(0);
+  const [accountType, setAccountType] = useState("admin");
+  const [currency, setCurrency] = useState("INR");
 
 
   const [searchQuery, setSearchQuery] = useState(""); // Search bar state
@@ -186,7 +195,7 @@ const CreateId = () => {
   
   const handleCreate = (id) => {
     // Check wallet balance before allowing ID creation
-    if (user?.balance < 100) {
+    if ((parseFloat(user?.balance) || 0) < 100) {
       toast.current.show({
         severity: 'warn',
         summary: 'Insufficient Balance',
@@ -199,7 +208,30 @@ const CreateId = () => {
 
     // Find the website by its unique ID, instead of using the index
     const website = websites.find(item => item.id === id); 
-    // console.log(website)
+    
+    if (website) {
+      // Set coin rate and minimum coins from website data
+      setCoinRate(parseFloat(website.coinRate) || 1);
+      setMinimumCoins(parseFloat(website.minimumCoins) || 0);
+      
+      // Calculate maximum coins user can get based on wallet balance
+      const walletBalance = parseFloat(user?.balance) || 0;
+      const maxCoins = walletBalance / (parseFloat(website.coinRate) || 1); // Convert rupees to coins
+      setConvertedCoins(0); // Reset converted coins initially
+      
+      // Check if user can meet minimum coin requirement
+      if (maxCoins < (parseFloat(website.minimumCoins) || 0)) {
+        toast.current.show({
+          severity: 'warn',
+          summary: 'Insufficient Balance',
+          detail: `Your wallet balance can only get ${maxCoins.toFixed(2)} coins, but minimum required is ${website.minimumCoins} coins. Please deposit more money.`,
+          life: 5000,
+        });
+        setShowDepositPopup(true);
+        return;
+      }
+    }
+    
     setSelectedWebsite(website); 
     setMenuOpen(null); // Close the menu
     setShowModal(true); // Show the modal
@@ -209,6 +241,19 @@ const CreateId = () => {
     setShowModal(false);
     setUsername(""); // Reset username
     setErrorMessage(""); // Reset error message
+    setCoinAmount(""); // Reset coin amount
+    setRefundable(false); // Reset refundable
+    setConvertedCoins(0); // Reset converted coins
+  };
+
+  const handleCoinAmountChange = (e) => {
+    const coins = parseFloat(e.target.value) || 0;
+    setCoinAmount(coins);
+    
+    // Calculate rupees based on entered coins
+    // If 1 coin = ₹0.17, then 2000 coins = 2000 * 0.17 = ₹340
+    const calculatedRupees = coins * coinRate;
+    setConvertedCoins(calculatedRupees);
   };
 
   const handleSearch = (e) => {
@@ -285,16 +330,26 @@ const CreateId = () => {
       return;
     }
 
-    // Double-check wallet balance before submitting
-    if (user?.balance < 100) {
-      setErrorMessage("You need at least ₹100 in your wallet to create an ID. Please deposit money first.");
-      toast.current.show({
-        severity: 'warn',
-        summary: 'Insufficient Balance',
-        detail: 'You need at least ₹100 in your wallet to create an ID. Please deposit money first.',
-        life: 4000,
-      });
-      setShowDepositPopup(true);
+    if (!username.trim()) {
+      setErrorMessage("Username is required.");
+      return;
+    }
+
+    if (!coinAmount || coinAmount <= 0) {
+      setErrorMessage("Please enter a valid coin amount.");
+      return;
+    }
+
+    // Check if entered coins meet minimum requirement
+    if (coinAmount < minimumCoins) {
+      setErrorMessage(`Insufficient coins. You need at least ${minimumCoins} coins, but you entered ${coinAmount} coins.`);
+      return;
+    }
+
+    // Check if user has sufficient wallet balance for the conversion
+    const requiredRupees = convertedCoins;
+    if ((parseFloat(user?.balance) || 0) < requiredRupees) {
+      setErrorMessage(`Insufficient wallet balance. You need ₹${requiredRupees.toFixed(2)} but have ₹${(parseFloat(user?.balance) || 0).toFixed(2)}.`);
       return;
     }
   
@@ -307,7 +362,7 @@ const CreateId = () => {
     
     try {
       setIsLoading(true);
-      const response = await fetch(`${url}/api/user/create-id`, {
+      const response = await fetch(`${url}/api/user/create-id-request`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -318,6 +373,14 @@ const CreateId = () => {
           username,
           imgUrl,
           createdBy: user.username,
+          coinAmount: parseFloat(coinAmount), // This is now the coins entered
+          convertedCoins: convertedCoins, // This is now the rupees equivalent
+          coinRate: coinRate,
+          minimumCoins: minimumCoins,
+          refundable: refundable,
+          accountType: accountType,
+          currency: currency,
+          status: "Pending"
         }),
       });
   
@@ -326,13 +389,13 @@ const CreateId = () => {
       if (response.ok) {
         toast.current.show({
           severity: 'success',
-          summary: 'ID Created',
-          detail: 'ID created successfully:',
-          life: 1000,
+          summary: 'ID Request Created',
+          detail: 'Your ID creation request has been submitted and is pending admin approval.',
+          life: 3000,
         });
         setShowModal(false);
       } else {
-        console.error("Error creating ID:", data);
+        console.error("Error creating ID request:", data);
         setErrorMessage(data.message || "An error occurred.");
       }
     } catch (error) {
@@ -587,6 +650,26 @@ const CreateId = () => {
 
              {/* Modal Body */}
              <div className={styles.modalBody}>
+               {/* Coin Conversion Info */}
+               <div className={styles.coinConversionInfo}>
+                 <div className={styles.coinInfoRow}>
+                   <span className={styles.coinLabel}>Your Wallet Balance:</span>
+                   <span className={styles.coinValue}>₹{(parseFloat(user?.balance) || 0).toFixed(2)}</span>
+                 </div>
+                 <div className={styles.coinInfoRow}>
+                   <span className={styles.coinLabel}>Coin Rate:</span>
+                   <span className={styles.coinValue}>1 coin = ₹{coinRate}</span>
+                 </div>
+                 <div className={styles.coinInfoRow}>
+                   <span className={styles.coinLabel}>Minimum Required:</span>
+                   <span className={styles.coinValue}>{minimumCoins} coins</span>
+                 </div>
+                 <div className={styles.coinInfoRow}>
+                   <span className={styles.coinLabel}>Max Coins Available:</span>
+                   <span className={styles.coinValue}>{((parseFloat(user?.balance) || 0) / coinRate).toFixed(2)} coins</span>
+                 </div>
+               </div>
+
                <div className={styles.inputGroup}>
                  <label className={styles.inputLabel}>Username</label>
                  <input
@@ -597,14 +680,80 @@ const CreateId = () => {
                   className={styles.inputField}
                 />
                </div>
+
+               <div className={styles.inputGroup}>
+                 <label className={styles.inputLabel}>Account Type</label>
+                 <select
+                  value={accountType}
+                  onChange={(e) => setAccountType(e.target.value)}
+                  className={styles.inputField}
+                >
+                  <option value="admin">Admin Deposit</option>
+                </select>
+               </div>
+
+               <div className={styles.inputGroup}>
+                 <label className={styles.inputLabel}>Currency</label>
+                 <select
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value)}
+                  className={styles.inputField}
+                >
+                  <option value="INR">Indian Rupee (₹)</option>
+                </select>
+               </div>
+
+               <div className={styles.inputGroup}>
+                 <label className={styles.inputLabel}>Coins to Convert</label>
+                 <input
+                  type="number"
+                  placeholder="Enter coins"
+                  value={coinAmount}
+                  onChange={handleCoinAmountChange}
+                  className={styles.inputField}
+                  min="0"
+                  step="0.01"
+                />
+               </div>
+
+               {coinAmount > 0 && (
+                 <div className={styles.coinConversionResult}>
+                   <div className={styles.coinInfoRow}>
+                     <span className={styles.coinLabel}>Conversion:</span>
+                     <span className={styles.coinValue}>{coinAmount} coins = ₹{convertedCoins.toFixed(2)}</span>
+                   </div>
+                 </div>
+               )}
+
+               <div className={styles.inputGroup}>
+                 <label className={styles.checkboxLabel}>
+                   <input
+                    type="checkbox"
+                    checked={refundable}
+                    onChange={(e) => setRefundable(e.target.checked)}
+                    className={styles.checkbox}
+                  />
+                   <span className={styles.checkboxText}>
+                     Refundable (Coins can be withdrawn as ₹{convertedCoins.toFixed(2) || 0})
+                   </span>
+                 </label>
+               </div>
+
+               {refundable && (
+                 <div className={styles.refundMessage}>
+                   <p className={styles.refundText}>
+                     ✓ Refund Policy: Your coins can be withdrawn as ₹{convertedCoins.toFixed(2) || 0} at any time
+                   </p>
+                 </div>
+               )}
                
                <div className={styles.modalActions}>
                  <button
                    onClick={handleSubmit}
                    className={styles.submitButton}
-                   disabled={isLoading || !username.trim()}
+                   disabled={isLoading || !username.trim() || !coinAmount || coinAmount < minimumCoins}
                  >
-                   {isLoading ? "Creating..." : "Create"}
+                   {isLoading ? "Creating..." : "Create ID Request"}
                  </button>
                  <button onClick={handleCloseModal} className={styles.cancelButton}>
                    Cancel
@@ -694,7 +843,7 @@ const CreateId = () => {
       {showDepositPopup && (
         <DepositPopup
           onClose={() => setShowDepositPopup(false)}
-          walletBalance={user?.balance || 0}
+          walletBalance={parseFloat(user?.balance) || 0}
         />
       )}
 

@@ -14,6 +14,7 @@ import Home from './components/Home/Home';
 import AdminHome from './components/admin/components/Home/Home';
 import IdManager from './components/Id/Id';
 import AdminIdManager from './components/admin/components/Id/Id';
+import IdRequests from './components/admin/components/IdRequests/IdRequests';
 import Users from './components/admin/components/Users/Users';
 import Signup from './components/Signup/Signup';
 import Login from './components/Login/Login';
@@ -114,6 +115,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['admin']}>
                 <Users />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/id-requests"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <IdRequests />
               </ProtectedRoute>
             }
           />

@@ -15,6 +15,7 @@ router.post('/create-withdrawal-transaction', upload.none(), userController.crea
 router.post('/create-wallet-withdrawal', userController.createWalletWithdrawal);
 router.post('/create-new-deposit-transaction', userController.createNewDepositTransaction);
 router.post('/create-id', userController.createId); // Add a new website record
+router.post('/create-id-request', userController.createIdRequest); // Create ID request with coin conversion
 router.post('/close-id', userController.closeId); // Close an ID
 router.get('/id-transactions', userController.getIdTransactions); // Get transactions for specific ID
 router.post('/request-password-change', userController.requestPasswordChange); // Request password change
@@ -27,6 +28,7 @@ router.get('/get-accountdetails', userController.getAccountDetails); // Add a ne
 router.get('/deposit-transaction', userController.getDepositTransactions);
 // id routes
 router.get('/get-all-ids', userController.getAllIds); // Add a new website record
+router.get('/get-id-requests', userController.getUserIdRequests); // Get user's ID requests
 // Route to get user balance
 router.get('/get-balance/:userId', userController.getBalanceController);
 router.get('/get-id-balance/:id', userController.getIdBalanceController);

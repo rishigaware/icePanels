@@ -1478,6 +1478,121 @@ exports.addCategory = async (req, res) => {
 // ===== REQUEST HANDLING APIs =====
 
 // Get all pending requests (deposit, withdrawal, close ID, password change)
+// Get all ID creation requests
+exports.getAllIdRequests = async (req, res) => {
+  try {
+    const snapshot = await db.collection('idRequests').orderBy('createdAt', 'desc').get();
+    
+    if (snapshot.empty) {
+      return res.status(404).json({ message: 'No ID requests found.' });
+    }
+
+    const idRequests = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    res.status(200).json(idRequests);
+  } catch (error) {
+    console.error('Error fetching ID requests:', error);
+    res.status(500).json({ message: 'Error fetching ID requests', error: error.message });
+  }
+};
+
+// Update ID request status (Accept/Reject)
+exports.updateIdRequestStatus = async (req, res) => {
+  const { requestId, status, adminNotes, processedBy } = req.body;
+
+  if (!requestId || !status) {
+    return res.status(400).json({ message: 'Request ID and status are required.' });
+  }
+
+  if (!['Accepted', 'Rejected'].includes(status)) {
+    return res.status(400).json({ message: 'Status must be either Accepted or Rejected.' });
+  }
+
+  try {
+    const requestRef = db.collection('idRequests').doc(requestId);
+    const requestDoc = await requestRef.get();
+
+    if (!requestDoc.exists) {
+      return res.status(404).json({ message: 'ID request not found.' });
+    }
+
+    const requestData = requestDoc.data();
+    const processedAt = new Date().toISOString();
+
+    // Update the ID request
+    await requestRef.update({
+      status: status,
+      processedAt: processedAt,
+      processedBy: processedBy || 'admin',
+      adminNotes: adminNotes || null
+    });
+
+    // Update the corresponding transaction
+    const transactionSnapshot = await db.collection('transactions')
+      .where('idRequestId', '==', requestId)
+      .get();
+
+    if (!transactionSnapshot.empty) {
+      const transactionDoc = transactionSnapshot.docs[0];
+      await transactionDoc.ref.update({
+        status: status === 'Accepted' ? 'Completed' : 'Rejected',
+        acceptedAt: processedAt,
+        adminNotes: adminNotes || null
+      });
+    }
+
+    // If accepted, create the actual ID and update user balance
+    if (status === 'Accepted') {
+      // Deduct amount from user balance
+      const userSnapshot = await db.collection('user').where('username', '==', requestData.createdBy).get();
+      
+      if (!userSnapshot.empty) {
+        const userDoc = userSnapshot.docs[0];
+        const userData = userDoc.data();
+        const newBalance = userData.balance - requestData.coinAmount;
+        
+        await userDoc.ref.update({ balance: newBalance });
+      }
+
+      // Create the actual ID
+      const newId = db.collection('id').doc().id;
+      const idData = {
+        id: newId,
+        websiteName: requestData.websiteName,
+        websiteUrl: requestData.websiteUrl,
+        username: requestData.username,
+        imgUrl: requestData.imgUrl,
+        createdBy: requestData.createdBy,
+        coinAmount: requestData.coinAmount,
+        convertedCoins: requestData.convertedCoins,
+        coinRate: requestData.coinRate,
+        minimumCoins: requestData.minimumCoins,
+        refundable: requestData.refundable,
+        accountType: requestData.accountType,
+        currency: requestData.currency,
+        status: 'Active',
+        createdAt: processedAt,
+        idRequestId: requestId
+      };
+
+      await db.collection('id').doc(newId).set(idData);
+    }
+
+    res.status(200).json({
+      message: `ID request ${status.toLowerCase()} successfully`,
+      requestId: requestId,
+      status: status,
+      processedAt: processedAt
+    });
+  } catch (error) {
+    console.error('Error updating ID request status:', error);
+    res.status(500).json({ message: 'Error updating ID request status', error: error.message });
+  }
+};
+
 exports.getAllPendingRequests = async (req, res) => {
   try {
     const allRequests = [];

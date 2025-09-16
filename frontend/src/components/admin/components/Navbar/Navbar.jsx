@@ -4,6 +4,7 @@ import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
 import RecentActorsIcon from '@mui/icons-material/RecentActors';
 import GroupsIcon from '@mui/icons-material/Groups';
+import RequestPageIcon from '@mui/icons-material/RequestPage';
 import PaymentsTwoToneIcon from '@mui/icons-material/PaymentsTwoTone';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link, useLocation } from 'react-router-dom';
@@ -14,6 +15,7 @@ const ADMIN_ROUTE_MAP = {
   "/admin/home": "recents",
   "/admin/users": "users",
   "/admin/id": "favorites", 
+  "/admin/id-requests": "requests",
   "/admin/transactions": "nearby",
   "/admin/profile": "folder"
 };
@@ -37,6 +39,12 @@ const ADMIN_NAV_ITEMS = [
     value: "favorites", 
     icon: <RecentActorsIcon />,
     to: "/admin/id"
+  },
+  {
+    label: "Requests",
+    value: "requests",
+    icon: <RequestPageIcon />,
+    to: "/admin/id-requests"
   },
   {
     label: "Transactions",

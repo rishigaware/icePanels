@@ -605,6 +605,127 @@ exports.getAllIds = async (req, res) => {
   }
 };
 
+// Create ID Request with coin conversion and refundable options
+exports.createIdRequest = async (req, res) => {
+  const { 
+    websiteName, 
+    websiteUrl, 
+    username, 
+    imgUrl, 
+    createdBy, 
+    coinAmount, 
+    convertedCoins, 
+    coinRate, 
+    minimumCoins, 
+    refundable, 
+    accountType, 
+    currency, 
+    status 
+  } = req.body;
+
+  // Validation: Ensure required fields are provided
+  if (!websiteName || !websiteUrl || !username || !imgUrl || !createdBy || !coinAmount || !convertedCoins) {
+    return res.status(400).json({ message: 'All required fields are provided.' });
+  }
+
+  try {
+    // Check user's wallet balance
+    const userSnapshot = await db.collection('user').where('username', '==', createdBy).get();
+    
+    if (userSnapshot.empty) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    const userData = userSnapshot.docs[0].data();
+    const userBalance = userData.balance || 0;
+
+    // Check if user has sufficient balance for the converted amount
+    if (userBalance < convertedCoins) {
+      return res.status(400).json({ 
+        message: 'Insufficient balance for the requested amount.',
+        currentBalance: userBalance,
+        requestedAmount: convertedCoins
+      });
+    }
+
+    // Check if entered coins meet minimum requirement
+    if (coinAmount < minimumCoins) {
+      return res.status(400).json({ 
+        message: 'Insufficient coins. Minimum required coins not met.',
+        coinAmount: coinAmount,
+        minimumCoins: minimumCoins
+      });
+    }
+
+    // Generate a unique ID for the request
+    const requestId = db.collection('idRequests').doc().id;
+
+    // Get the current date and time
+    const createdAt = new Date();
+
+    // Prepare the ID request data
+    const idRequestData = {
+      id: requestId,
+      websiteName,
+      websiteUrl,
+      username,
+      imgUrl,
+      createdBy,
+      coinAmount: parseFloat(coinAmount),
+      convertedCoins: parseFloat(convertedCoins),
+      coinRate: parseFloat(coinRate),
+      minimumCoins: parseFloat(minimumCoins),
+      refundable: Boolean(refundable),
+      accountType: accountType || 'admin',
+      currency: currency || 'INR',
+      status: status || 'Pending',
+      createdAt: createdAt.toISOString(),
+      processedAt: null,
+      processedBy: null,
+      adminNotes: null
+    };
+
+    // Save ID request data to Firestore
+    await db.collection('idRequests').doc(requestId).set(idRequestData);
+
+    // Create a transaction record for this request
+    const transactionData = {
+      description: `ID Creation Request - ${websiteName} (${username})`,
+      transactionId: `id_req_${Date.now()}`,
+      paymentMethod: "ID Creation Request",
+      createdAt: createdAt.toISOString(),
+      acceptedAt: "Not updated",
+      status: "Pending",
+      amount: parseFloat(coinAmount),
+      createdBy: createdBy,
+      idRequestId: requestId,
+      websiteName: websiteName,
+      websiteUrl: websiteUrl,
+      username: username,
+      convertedCoins: parseFloat(convertedCoins),
+      coinRate: parseFloat(coinRate),
+      refundable: Boolean(refundable),
+      accountType: accountType || 'admin',
+      currency: currency || 'INR',
+      transactionType: 'id_creation'
+    };
+
+    // Save transaction data to Firestore
+    const transactionRef = await db.collection('transactions').add(transactionData);
+
+    // Send a successful response
+    res.status(201).json({
+      message: 'ID creation request submitted successfully',
+      requestId: requestId,
+      transactionId: transactionRef.id,
+      idRequest: idRequestData
+    });
+  } catch (error) {
+    console.error('Error creating ID request:', error);
+    res.status(500).json({ message: 'Error creating ID request', error: error.message });
+  }
+};
+
   
   
 // Close ID - Create close request for admin approval
@@ -1032,6 +1153,48 @@ exports.getIdBalanceController = async (req, res) => {
   }
 };
 
+
+// Get user's ID requests
+exports.getUserIdRequests = async (req, res) => {
+  try {
+    const { userId } = req.query;
+
+    // Validate the userId
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    // Reference to the Firestore collection
+    const idRequestsRef = db.collection("idRequests");
+
+    // Query Firestore to get all documents where 'createdBy' matches 'userId'
+    const snapshot = await idRequestsRef.where("createdBy", "==", userId).get();
+
+    // If no matching documents are found
+    if (snapshot.empty) {
+      return res.status(200).json([]); // Return empty array instead of 404
+    }
+
+    // Map the Firestore documents to an array
+    const userRequests = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    // Sort by creation date (newest first)
+    userRequests.sort((a, b) => {
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
+      return dateB - dateA;
+    });
+
+    // Return the fetched data
+    res.status(200).json(userRequests);
+  } catch (error) {
+    console.error("Error fetching user ID requests:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 // API to add coin rates to websites that are missing them
 exports.addCoinRatesToWebsites = async (req, res) => {
