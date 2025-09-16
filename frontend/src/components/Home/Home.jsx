@@ -1,12 +1,6 @@
-import React from "react";
-import styles from "./Home.module.css"; // Make sure this CSS is correctly defined
-import Carousel from "../Carousel/Carousel";
-import MiddleCarousel from "../Carousel/MiddleCarousel";
-import BottomCarousel from "../Carousel/BottomCarousel";
+import styles from "./Home.module.css";
 import HomeHeading from "./HomeHeading";
-import CardCarousel from "./CardCarousel";
-import BottomCardCarousel from "./BottomCardCarousel";
-import Slider from "./Slider";
+import ImageCarousel from "../ImageCarousel/ImageCarousel";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 
@@ -16,20 +10,19 @@ const Home = () => {
     <>
       <HomeHeading />
       <div className={styles.carouselContainer}>
-        <div className={styles.carousel}>
-          <Carousel  />
-        </div>
-        {/* <Slider/> */}
-        <CardCarousel/>
-        <div className={styles.carousel}>
-          <MiddleCarousel  />
-        </div>
-        {/* <Slider/>  */}
-        <BottomCardCarousel />
-
-        <div className={styles.secondCarousel}>
-          <BottomCarousel  />
-        </div> 
+        {/* Horizontal Image Carousel */}
+        <ImageCarousel 
+          type="horizontal" 
+          carouselId="horizontal-main"
+          canManage={false}
+        />
+        
+        {/* Square Image Carousel */}
+        <ImageCarousel 
+          type="square" 
+          carouselId="square-main"
+          canManage={false}
+        />
 
         {/* Social Media Icons */}
         <div className={styles.socialIcons}>
@@ -46,7 +39,6 @@ const Home = () => {
             <i className="fab fa-facebook"></i>
           </a>
         </div>
-   
       </div>
     </>
   );

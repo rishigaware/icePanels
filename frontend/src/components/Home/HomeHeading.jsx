@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './HomeHeading.module.css'; // Import the CSS module
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { PiHandDepositDuotone } from "react-icons/pi";
 import { BiMoneyWithdraw } from "react-icons/bi";
-import { FaBalanceScale } from "react-icons/fa"; // Example balance icon
+import { FaBalanceScale, FaCrown, FaShieldAlt, FaRocket, FaTrophy, FaGift, FaStar, FaCoins, FaClock, FaUsers, FaChartLine } from "react-icons/fa";
 import { FaPlus, FaArrowRight } from "react-icons/fa";
 // import logo from '../../assets/logo.png';
 import newlogo from '../../assets/newlogo.png';
@@ -13,9 +13,8 @@ import { useUser } from "../../context/UserContext";
 const HomeHeading = () => {
   const navigate = useNavigate(); // Initialize the navigate function
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal visibility
-  const { user, setUser, url, refreshUserBalance } = useUser();
+  const { user, setUser, refreshUserBalance } = useUser();
 
-  const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
   const handleLogin = () => {
@@ -116,6 +115,37 @@ const HomeHeading = () => {
           </div>
         </div> */}
 
+        {/* Animated Features Section */}
+        <div className={styles.featuresSection}>
+          <div className={styles.featuresGrid}>
+            <div className={styles.featureCard}>
+              <FaCrown className={styles.featureIcon} />
+              <h4>Premium Gaming</h4>
+              <p>Access to top gaming platforms</p>
+            </div>
+            <div className={styles.featureCard}>
+              <FaShieldAlt className={styles.featureIcon} />
+              <h4>100% Secure</h4>
+              <p>Bank-level security for all transactions</p>
+            </div>
+            <div className={styles.featureCard}>
+              <FaRocket className={styles.featureIcon} />
+              <h4>Instant Deposits</h4>
+              <p>Fast and reliable payment processing</p>
+            </div>
+            <div className={styles.featureCard}>
+              <FaGift className={styles.featureIcon} />
+              <h4>Daily Bonuses</h4>
+              <p>Exclusive rewards and promotions</p>
+            </div>
+            <div className={styles.featureCard}>
+              <FaClock className={styles.featureIcon} />
+              <h4>24/7 Support</h4>
+              <p>Round-the-clock customer service</p>
+            </div>
+          </div>
+        </div>
+
         {/* Create Admin Panel Section */}
         <div 
             className={styles.createId} 
@@ -125,12 +155,144 @@ const HomeHeading = () => {
           <div className={styles.leftSide}>
             <span className={styles.createIdEmoji}>🚀</span>
             <FaPlus size={18} className={styles.createIdIcon} />
-            <span className={styles.createIdText}>CREATE SELF ADMIN PANEL'S</span>
+            <span className={styles.createIdText}>CREATE SELF ADMIN PANEL&apos;S</span>
             <span className={styles.createIdEmoji}>⚡</span>
           </div>
           <div className={styles.rightSide}>
             <span className={styles.createIdEmoji}>🎯</span>
             <FaArrowRight size={18} className={`${styles.createIdArrow} ${styles.arrow}`} />
+          </div>
+        </div>
+
+        {/* Animated Stats Section */}
+        <div className={styles.statsSection}>
+          <div className={styles.statsContainer}>
+            <div className={styles.statItem}>
+              <FaUsers className={styles.statIcon} />
+              <div className={styles.statNumber}>10K+</div>
+              <div className={styles.statLabel}>Active Users</div>
+            </div>
+            <div className={styles.statItem}>
+              <FaCoins className={styles.statIcon} />
+              <div className={styles.statNumber}>₹50M+</div>
+              <div className={styles.statLabel}>Total Winnings</div>
+            </div>
+            <div className={styles.statItem}>
+              <FaChartLine className={styles.statIcon} />
+              <div className={styles.statNumber}>99.9%</div>
+              <div className={styles.statLabel}>Uptime</div>
+            </div>
+            <div className={styles.statItem}>
+              <FaStar className={styles.statIcon} />
+              <div className={styles.statNumber}>4.9/5</div>
+              <div className={styles.statLabel}>User Rating</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Gaming Platforms Section */}
+        <div className={styles.gamingPlatformsSection}>
+          <h2 className={styles.sectionTitle}>🎮 Popular Gaming Platforms</h2>
+          <div className={styles.platformsGrid}>
+            <div className={styles.platformCard}>
+              <div className={styles.platformIcon}>🎰</div>
+              <h3>Slot Games</h3>
+              <p>500+ Slot Machines</p>
+              <div className={styles.platformBadge}>Hot</div>
+            </div>
+            <div className={styles.platformCard}>
+              <div className={styles.platformIcon}>🃏</div>
+              <h3>Card Games</h3>
+              <p>Live Poker & Blackjack</p>
+              <div className={styles.platformBadge}>Live</div>
+            </div>
+            <div className={styles.platformCard}>
+              <div className={styles.platformIcon}>⚽</div>
+              <h3>Sports Betting</h3>
+              <p>All Major Leagues</p>
+              <div className={styles.platformBadge}>New</div>
+            </div>
+            <div className={styles.platformCard}>
+              <div className={styles.platformIcon}>🎲</div>
+              <h3>Live Casino</h3>
+              <p>Real-time Gaming</p>
+              <div className={styles.platformBadge}>Trending</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Testimonials Section */}
+        <div className={styles.testimonialsSection}>
+          <h2 className={styles.sectionTitle}>💬 What Our Users Say</h2>
+          <div className={styles.testimonialsContainer}>
+            <div className={styles.testimonialCard}>
+              <div className={styles.testimonialContent}>
+                <div className={styles.quoteIcon}>"</div>
+                <p>Amazing platform! Fast withdrawals and great customer support. I've been using it for 2 years now.</p>
+                <div className={styles.testimonialAuthor}>
+                  <div className={styles.authorAvatar}>R</div>
+                  <div className={styles.authorInfo}>
+                    <h4>Rajesh Kumar</h4>
+                    <span>Verified User</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className={styles.testimonialCard}>
+              <div className={styles.testimonialContent}>
+                <div className={styles.quoteIcon}>"</div>
+                <p>24/7 support is amazing. They helped me resolve my issue within minutes. Great service!</p>
+                <div className={styles.testimonialAuthor}>
+                  <div className={styles.authorAvatar}>A</div>
+                  <div className={styles.authorInfo}>
+                    <h4>Amit Patel</h4>
+                    <span>Premium User</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* How It Works Section */}
+        <div className={styles.howItWorksSection}>
+          <h2 className={styles.sectionTitle}>🚀 How It Works</h2>
+          <div className={styles.stepsContainer}>
+            <div className={styles.stepItem}>
+              <div className={styles.stepNumber}>1</div>
+              <div className={styles.stepContent}>
+                <h3>Sign Up</h3>
+                <p>Create your account in seconds with just your mobile number</p>
+              </div>
+              <div className={styles.stepIcon}>📱</div>
+            </div>
+            <div className={styles.stepArrow}>→</div>
+            <div className={styles.stepItem}>
+              <div className={styles.stepNumber}>2</div>
+              <div className={styles.stepContent}>
+                <h3>Deposit</h3>
+                <p>Add money to your wallet using UPI, cards, or net banking</p>
+              </div>
+              <div className={styles.stepIcon}>💰</div>
+            </div>
+            <div className={styles.stepArrow}>→</div>
+            <div className={styles.stepItem}>
+              <div className={styles.stepNumber}>3</div>
+              <div className={styles.stepContent}>
+                <h3>Play & Win</h3>
+                <p>Start playing your favorite games and win real money</p>
+              </div>
+              <div className={styles.stepIcon}>🎯</div>
+            </div>
+            <div className={styles.stepArrow}>→</div>
+            <div className={styles.stepItem}>
+              <div className={styles.stepNumber}>4</div>
+              <div className={styles.stepContent}>
+                <h3>Withdraw</h3>
+                <p>Withdraw your winnings instantly to your bank account</p>
+              </div>
+              <div className={styles.stepIcon}>🏦</div>
+            </div>
           </div>
         </div>
 
@@ -140,5 +302,7 @@ const HomeHeading = () => {
     </>
   );
 };
+
+
 
 export default HomeHeading;

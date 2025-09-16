@@ -4,6 +4,7 @@ const path = require('path'); // Add this line
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const authRoutes = require('./routes/authRoutes');
+const imageRoutes = require('./routes/imageRoutes');
 const cors = require('cors');
 
 const app = express();
@@ -66,6 +67,7 @@ app.use(
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/images', imageRoutes);
 
 // Handling dynamic port for Vercel or fallback to local port 5000
 const PORT = process.env.PORT || 5000;
