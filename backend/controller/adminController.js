@@ -1575,10 +1575,14 @@ exports.updateIdRequestStatus = async (req, res) => {
         currency: requestData.currency,
         status: 'Active',
         createdAt: processedAt,
-        idRequestId: requestId
+        idRequestId: requestId,
+        balance: 0 // Initialize balance to 0 for new ID
       };
 
       await db.collection('id').doc(newId).set(idData);
+      
+      // Delete the ID request after successful approval to avoid duplication
+      await requestRef.delete();
     }
 
     res.status(200).json({

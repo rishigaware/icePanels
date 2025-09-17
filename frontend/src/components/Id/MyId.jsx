@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import styles from "./MyId.module.css";
 import { useUser } from "../../context/UserContext";
-import { useNavigate } from "react-router-dom";
 
 import { PulseLoader } from "react-spinners";
 import { PiHandDepositDuotone } from "react-icons/pi";
 import { BiMoneyWithdraw } from "react-icons/bi";
 import { FiEdit3, FiMoreVertical, FiX } from "react-icons/fi";
 import { AiOutlineTransaction } from "react-icons/ai";
-import IdDepositPopup from "./IdDepositPopup";
 import NewDepositPopup from "./NewDepositPopup";
 import NewWithdrawalPopup from "./NewWithdrawalPopup";
 import ViewTransactionModal from "./ViewTransactionModal";
@@ -21,19 +19,15 @@ const MyId = () => {
   const safeUrl = url || '';
   const [myIds, setMyIds] = useState([]);
   const [idRequests, setIdRequests] = useState([]);
-  const [menuOpen, setMenuOpen] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
-  const [newPassword, setNewPassword] = useState("");
   const [needRefetch, setNeedRefetch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
-  const [walletBalance, setWalletBalance] = useState(100);
-  const [showIdDepositPopup, setShowIdDepositPopup] = useState(false);
   const [showNewDepositPopup, setShowNewDepositPopup] = useState(false);
   const [changePasswordPopup, setChangePasswordPopup] = useState(false);
   const [isWithdrawalPopupVisible, setIsWithdrawalPopupVisible] = useState(false);
@@ -43,11 +37,11 @@ const MyId = () => {
   const [showViewTransactionModal, setShowViewTransactionModal] = useState(false);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const [selectedIdForModal, setSelectedIdForModal] = useState(null);
+  const [lastFetchTime, setLastFetchTime] = useState(0);
 
-  const navigate = useNavigate();
   const toast = useRef(null);
 
-  const fetchIdRequests = async () => {
+  const fetchIdRequests = useCallback(async () => {
     try {
       if (!safeUser?.username) return;
 
@@ -61,16 +55,38 @@ const MyId = () => {
         setIdRequests(data);
       } else {
         console.error('Failed to fetch ID requests:', response.status, response.statusText);
+        if (response.status === 503) {
+          toast.current?.show({
+            severity: 'warn',
+            summary: 'Service Temporarily Unavailable',
+            detail: 'Database quota exceeded. Please try again later.',
+            life: 5000,
+          });
+        }
       }
     } catch (error) {
       console.error('Error fetching ID requests:', error);
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Connection Error',
+        detail: 'Unable to fetch data. Please check your connection.',
+        life: 3000,
+      });
     }
-  };
+  }, [safeUser?.username, safeUrl]);
 
-  const checkStatusUpdates = async () => {
+  const checkStatusUpdates = useCallback(async () => {
     try {
       if (!safeUser?.id) return;
 
+      // Add caching to prevent excessive API calls
+      const now = Date.now();
+      if (now - lastFetchTime < 30000) { // 30 seconds cache
+        return;
+      }
+      setLastFetchTime(now);
+
+      // Check for transaction updates
       const response = await fetch(`${safeUrl}/api/user/deposit-transaction?userId=${safeUser.id}`);
       if (response.ok) {
         const transactions = await response.json();
@@ -99,10 +115,41 @@ const MyId = () => {
           }
         });
       }
+
+      // Check for ID request status updates
+      const idRequestsResponse = await fetch(`${safeUrl}/api/user/get-id-requests?userId=${safeUser.username}`);
+      if (idRequestsResponse.ok) {
+        const currentIdRequests = await idRequestsResponse.json();
+        const previousIdRequests = idRequests || [];
+        
+        // Check for newly approved/rejected ID requests
+        currentIdRequests.forEach(currentRequest => {
+          const previousRequest = previousIdRequests.find(prev => prev.id === currentRequest.id);
+          if (previousRequest && previousRequest.status === 'Pending' && currentRequest.status !== 'Pending') {
+            if (currentRequest.status === 'Accepted') {
+              toast.current.show({
+                severity: 'success',
+                summary: 'ID Request Approved',
+                detail: `Your ID request for ${currentRequest.websiteName} has been approved! You can now use deposit, withdrawal, and transaction features.`,
+                life: 8000,
+              });
+              // Refresh the IDs to show the newly approved ID
+              setNeedRefetch(true);
+            } else if (currentRequest.status === 'Rejected') {
+              toast.current.show({
+                severity: 'error',
+                summary: 'ID Request Rejected',
+                detail: `Your ID request for ${currentRequest.websiteName} has been rejected.`,
+                life: 5000,
+              });
+            }
+          }
+        });
+      }
     } catch (error) {
       console.error('Error checking status updates:', error);
     }
-  };
+  }, [safeUser?.id, safeUser?.username, safeUrl, idRequests, setNeedRefetch, lastFetchTime]);
 
   useEffect(() => {
     const fetchIds = async () => {
@@ -141,17 +188,18 @@ const MyId = () => {
       fetchIds();
       setNeedRefetch(false);
     }
-  }, [safeUser?.id, safeUser?.username, needRefetch]);
+  }, [safeUser?.id, safeUser?.username, needRefetch, safeUrl, checkStatusUpdates, fetchIdRequests]);
 
   useEffect(() => {
     if (!safeUser?.id) return;
 
+    // Increase interval to 2 minutes to reduce Firestore reads
     const interval = setInterval(() => {
       checkStatusUpdates();
-    }, 30000);
+    }, 120000); // 2 minutes instead of 30 seconds
 
     return () => clearInterval(interval);
-  }, [safeUser?.id]);
+  }, [safeUser?.id, checkStatusUpdates]);
   
   const handleIdClick = (item) => {
     setSelectedId(item);
@@ -167,39 +215,6 @@ const MyId = () => {
     return date.toLocaleString();
   };
 
-  const handlePasswordChange = async () => {
-    try {
-      if (!safeUser?.id || !selectedId?.id) {
-        throw new Error("User ID or selected ID is missing");
-      }
-
-      const response = await fetch(
-        `${safeUrl}/api/user/change-id-password`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId: safeUser.id,
-            selectedId: selectedId.id,
-            newPassword: newPassword,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        alert("Failed to change password");
-        throw new Error("Failed to change password");
-      }
-
-      alert("Password changed successfully");
-      setNewPassword("");
-      setSelectedId(null);
-      setNeedRefetch(true);
-    } catch (err) {
-      console.error(err);
-      alert("Error changing password");
-    }
-  };
 
   const handleDepositClick = (item) => {
     setSelectedId(item);
@@ -216,10 +231,12 @@ const MyId = () => {
 
   const refreshIdRequests = async () => {
     await fetchIdRequests();
+    // Also refresh active IDs to catch newly approved ones
+    setNeedRefetch(true);
     toast.current.show({
       severity: 'info',
       summary: 'Refreshed',
-      detail: 'ID requests refreshed successfully',
+      detail: 'ID requests and active IDs refreshed successfully',
       life: 2000
     });
   };
@@ -227,7 +244,7 @@ const MyId = () => {
   // Combine regular IDs and ID requests
   const allIds = [
     ...(myIds || []).map(id => ({ ...id, type: 'active' })),
-    ...(idRequests || []).map(request => ({ ...request, type: 'request' }))
+    ...(idRequests || []).filter(request => request.status === 'Pending').map(request => ({ ...request, type: 'request' }))
   ];
 
   const filteredIds = allIds.filter(
@@ -347,7 +364,7 @@ const MyId = () => {
   }
 
   if (error) {
-    return <p className={styles.error}><strong>No Id's created yet</strong></p>;
+    return <p className={styles.error}><strong>No IDs created yet</strong></p>;
   }
 
   return (

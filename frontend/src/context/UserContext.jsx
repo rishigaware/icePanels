@@ -6,8 +6,8 @@ const UserContext = createContext();
 // UserProvider component to wrap the app and provide user data
 export const UserProvider = ({ children }) => {
   // State to manage the user object  
-  const [url, setUrl] = useState("https://betting-accounts-manager.onrender.com");
-  // const [url, setUrl] = useState("http://localhost:3000");
+  // const [url, setUrl] = useState("https://betting-accounts-manager.onrender.com");
+  const [url, setUrl] = useState("http://localhost:3000");
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem('user');
     try {
@@ -40,6 +40,9 @@ console.log("starting")
       if (response.ok) {
         const data = await response.json();
         return data.balance;
+      } else if (response.status === 503) {
+        console.warn('Database quota exceeded - balance fetch failed');
+        return null;
       } else {
         console.error('Failed to fetch balance');
         return null;
