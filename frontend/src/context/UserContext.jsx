@@ -17,7 +17,7 @@ export const UserProvider = ({ children }) => {
         return null;
     }
 });
-
+console.log("starting")
 
   // Centralized balance fetching function
   const fetchUserBalance = useCallback(async (userId) => {
