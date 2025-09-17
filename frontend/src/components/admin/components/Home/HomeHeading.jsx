@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { PiHandDepositDuotone } from "react-icons/pi";
 import { BiMoneyWithdraw } from "react-icons/bi";
 import { useNavigate } from 'react-router-dom';
-import { FaCrown, FaShieldAlt, FaRocket, FaTrophy, FaGift, FaStar, FaCoins, FaClock, FaUsers, FaChartLine } from "react-icons/fa";
+import { FaCrown, FaShieldAlt, FaRocket, FaGift, FaStar, FaClock, FaChartLine } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
 // import logo from '../../assets/logo.png'
@@ -43,7 +43,7 @@ const HomeHeading = () => {
     };
 
   return (
-    <>
+    <div className={styles.mainContainer}>
             <div className={styles.navbar}>
             <img 
                 src={newlogo} 
@@ -213,8 +213,8 @@ const HomeHeading = () => {
           <div className={styles.testimonialsContainer}>
             <div className={styles.testimonialCard}>
               <div className={styles.testimonialContent}>
-                <div className={styles.quoteIcon}>"</div>
-                <p>Amazing platform! Fast withdrawals and great customer support. I've been using it for 2 years now.</p>
+                <div className={styles.quoteIcon}>&ldquo;</div>
+                <p>&ldquo;Amazing platform! Fast withdrawals and great customer support. I&apos;ve been using it for 2 years now.&rdquo;</p>
                 <div className={styles.testimonialAuthor}>
                   <div className={styles.authorAvatar}>R</div>
                   <div className={styles.authorInfo}>
@@ -226,8 +226,8 @@ const HomeHeading = () => {
             </div>
             <div className={styles.testimonialCard}>
               <div className={styles.testimonialContent}>
-                <div className={styles.quoteIcon}>"</div>
-                <p>24/7 support is amazing. They helped me resolve my issue within minutes. Great service!</p>
+                <div className={styles.quoteIcon}>&ldquo;</div>
+                <p>&ldquo;24/7 support is amazing. They helped me resolve my issue within minutes. Great service!&rdquo;</p>
                 <div className={styles.testimonialAuthor}>
                   <div className={styles.authorAvatar}>A</div>
                   <div className={styles.authorInfo}>
@@ -304,7 +304,7 @@ const HomeHeading = () => {
                 />
             )}
       
-    </>
+    </div>
   )
 }
 
