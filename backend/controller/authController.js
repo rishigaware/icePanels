@@ -1,4 +1,5 @@
-const { db } = require('../config/firebase-config');
+const Admin = require('../models/Admin');
+const User = require('../models/User');
 
 // loginController.js
 exports.loginController = async (req, res) => {
@@ -12,24 +13,21 @@ exports.loginController = async (req, res) => {
     }
 
     // Check in the admin collection first
-    let snapshot = await db.collection('admin').where('username', '==', username).get();
+    const admin = await Admin.findOne({ username });
 
-    if (!snapshot.empty) {
+    if (admin) {
       // Admin found, check the password
-      const admin = snapshot.docs[0].data();
-      const adminId = snapshot.docs[0].id;
-
       if (admin.password !== password) {
         return res.status(401).json({ message: 'Invalid password' });
       }
 
       // Structure the admin object to match the user structure
       const adminWithId = {
-        id: adminId,
+        id: admin._id,
         username: admin.username,
         email: admin.email || '', // Add email if available
         role: 'admin', // Explicitly define the role
-        ...admin, // Include other admin fields
+        ...admin.toObject(), // Include other admin fields
       };
       delete adminWithId.password; // Exclude the password
 
@@ -39,16 +37,13 @@ exports.loginController = async (req, res) => {
       });
     }
     // If not found in the admin collection, check in the user collection
-    snapshot = await db.collection('user').where('username', '==', username).get();
+    const user = await User.findOne({ username });
 
-    if (snapshot.empty) {
+    if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
     // User found, check the password
-    const user = snapshot.docs[0].data();
-    const userId = snapshot.docs[0].id;
-
     if (user.password !== password) {
       return res.status(401).json({ message: 'Invalid password' });
     }
@@ -57,7 +52,9 @@ exports.loginController = async (req, res) => {
     // console.log('User found:', user);
 
     // Combine user data with the id and exclude the password
-    const userWithId = { id: userId, ...user };
+    const userWithId = { id: user._id, ...user.toObject() };
+    delete userWithId.password;
+
     return res.status(200).json({
       message: 'User login successful',
       user: userWithId, // Exclude password

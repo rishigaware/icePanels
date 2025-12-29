@@ -6,9 +6,8 @@ const adminRoutes = require('./routes/adminRoutes');
 const authRoutes = require('./routes/authRoutes');
 const imageRoutes = require('./routes/imageRoutes');
 const cors = require('cors');
-// MongoDB connection (optional)
-// const connectDB = require('./config/mongodb');
-// connectDB();
+const connectDB = require('./config/db');
+connectDB();
 
 const app = express();
 

@@ -1,284 +1,249 @@
-const { db } = require('../config/firebase-config');
-const bcrypt = require('bcrypt');  // Add bcrypt import here
-// console.log("Firestore DB:", db);  // Log the db object
+const User = require('../models/User');
+const UserAccount = require('../models/UserAccount');
+const Transaction = require('../models/Transaction');
+const Website = require('../models/Website');
+const WebsiteId = require('../models/WebsiteId');
+const IdRequest = require('../models/IdRequest');
+const CloseRequest = require('../models/CloseRequest');
+const PasswordChangeRequest = require('../models/PasswordChangeRequest');
+const AdminAccount = require('../models/AdminAccount');
+const bcrypt = require('bcrypt');
 const { uploadUserDeposite } = require('../config/multerConfig');
 
 
 
 exports.getUserByUsername = async (req, res) => {
-    try {
-        const { username } = req.body; // Assuming username comes from query parameters
+  try {
+    const { username } = req.body;
 
-        if (!username) {
-            return res.status(400).json({ message: 'Username is required' });
-        }
-
-        // Query Firestore to find the user with the matching username
-        const snapshot = await db.collection('user').where('username', '==', username).get();
-
-        if (snapshot.empty) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        // Get the first user
-        const user = snapshot.docs[0].data();
-        const userId = snapshot.docs[0].id;
-        // console.log(user,">>>>")
-
-        // Respond with user data
-        res.status(200).json({
-            id: userId,
-            ...user,
-        });
-    } catch (error) {
-        console.error('Error retrieving user:', error); // Log the full error to the console
-        res.status(500).json({
-            message: 'Error retrieving user',
-            error: error.message || 'Unknown error occurred', // Return a meaningful error message
-        });
+    if (!username) {
+      return res.status(400).json({ message: 'Username is required' });
     }
+
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({
+      id: user._id,
+      ...user.toObject(),
+    });
+  } catch (error) {
+    console.error('Error retrieving user:', error);
+    res.status(500).json({
+      message: 'Error retrieving user',
+      error: error.message || 'Unknown error occurred',
+    });
+  }
 };
 
 
 // Fetch all users
+// Fetch all users
 exports.getAllUsers = async (req, res) => {
-    try {
-        const snapshot = await db.collection('users').get();
-        const users = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
-        res.status(200).json(users);
-    } catch (error) {
-        res.status(500).json({ message: 'Error retrieving users', error });
-    }
+  try {
+    const users = await User.find();
+    const formattedUsers = users.map(user => ({
+      id: user._id,
+      ...user.toObject(),
+    }));
+    res.status(200).json(formattedUsers);
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving users', error });
+  }
 };
 
+// Add a new user (Signup)
 // Add a new user (Signup)
 exports.addUser = async (req, res) => {
   const { name, phoneNumber, email, password, username } = req.body;
 
-  // Basic validation
   if (!name || !phoneNumber || !email || !password || !username) {
     return res.status(400).json({ message: 'All fields are required.' });
   }
 
   try {
-    // Check if the username is already taken
-    const usernameSnapshot = await db
-      .collection('user')
-      .where('username', '==', username)
-      .get();
+    const existingUser = await User.findOne({ username });
 
-    if (!usernameSnapshot.empty) {
+    if (existingUser) {
       return res.status(400).json({ message: 'Username is already taken.' });
     }
 
-    // Generate a unique ID using Firestore's auto-generated document ID
-    const userRef = db.collection('user').doc(); // Auto-generate a string ID
-    const newId = userRef.id;
-
-    // Create the user object
-    const newUser = {
-      id: newId, // Use the auto-generated string ID
+    const newUser = new User({
       name,
       phoneNumber,
-      email: email.toLowerCase(), // Convert email to lowercase
+      email: email.toLowerCase(),
       password, // NOTE: Hash the password before saving in production
       username,
-      balance: 0, // Default balance
-      role: 'user', // Default role
-    };
+      balance: 0,
+      role: 'user',
+    });
 
-    // Add the user to Firestore
-    await userRef.set(newUser);
+    await newUser.save();
 
-    // Respond with success
-    res.status(201).json({ message: 'User signed up successfully', user: newUser });
+    res.status(201).json({ message: 'User signed up successfully', user: { id: newUser._id, ...newUser.toObject() } });
   } catch (error) {
-    console.error('Error details:', error); // Log the full error details
+    console.error('Error details:', error);
     res.status(500).json({ message: 'Error adding user', error: error.message });
   }
 };
 
 
 // Get Account Details
+// Get Account Details
 exports.getAccountDetails = async (req, res) => {
-    try {
-      const userId = req.query.userId; // Get the userId from the query parameter
-  
-      if (!userId) {
-        return res.status(400).json({ message: "User ID is required" });
-      }
-  
-      // Query Firestore for a document where userId matches recordName
-      const userAccountRef = db.collection('userAccounts').doc(userId); // Use userId as the document name
-      const doc = await userAccountRef.get();
-  
-      if (!doc.exists) {
-        return res.status(404).json({ message: "User account not found" });
-      }
-  
-      // Get user account data
-      const userAccount = doc.data();
-      return res.status(200).json(userAccount); // Send data as response
-  
-    } catch (error) {
-      console.error('Error fetching account details:', error);
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
-  };
-  
-  exports.updateAccountDetails = async (req, res) => {
-    const { userId, accountNumber, accountHolderName, ifscCode, bankName, upiId } = req.body;
-  
-    // Validation: Ensure `userId` is provided and is a valid non-empty value
-    if (!userId || typeof userId === "undefined" || userId.toString().trim() === "") {
-      return res.status(400).json({ message: "Invalid userId. It must be a non-empty string or number." });
-    }
-  
-    // console.log("Validated userId (before conversion):", userId);
-  
-    try {
-      const userAccountsRef = db.collection("userAccounts");
-  
-      // Convert userId to string to satisfy Firestore's requirement
-      const userDocRef = userAccountsRef.doc(userId.toString());
-  
-            const defaultData = {
-        accountNumber: "",
-        accountHolderName: "",
-        ifscCode: "",
-        bankName: "",
-        upiId: "",
-      };
+  try {
+    const userId = req.query.userId;
 
-      const updatedData = {
-        accountNumber: accountNumber || defaultData.accountNumber,
-        accountHolderName: accountHolderName || defaultData.accountHolderName,
-        ifscCode: ifscCode || defaultData.ifscCode,
-        bankName: bankName || defaultData.bankName,
-        upiId: upiId || defaultData.upiId,
-      };
-  
-      const doc = await userDocRef.get();
-  
-      if (doc.exists) {
-        await userDocRef.update(updatedData);
-        return res.status(200).json({
-          message: "Account details updated successfully",
-          updatedAccount: { userId, ...updatedData },
-        });
-      } else {
-        await userDocRef.set({ userId, ...updatedData });
-        return res.status(201).json({
-          message: "Account details created successfully",
-          newAccount: { userId, ...updatedData },
-        });
-      }
-    } catch (error) {
-      console.error("Error upserting account details:", error);
-      res.status(500).json({ message: "Error handling account details", error: error.message });
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
     }
-  };
 
-  
-  exports.updateProfileController = async (req, res) => {
-    const { userId, name, phoneNumber, email, password } = req.body;
-    // console.log('Received userId:', userId);  // Log the received userId from frontend
-  
-    // Validate incoming data
-    if (!userId || !name || !phoneNumber || !email) {
-      return res.status(400).json({ message: 'Missing required fields' });
+    const userAccount = await UserAccount.findOne({ userId });
+
+    if (!userAccount) {
+      return res.status(404).json({ message: "User account not found" });
     }
-  
-    try {
-      // Get a reference to the 'users' collection and convert the userId to string
-      const userRef = db.collection('user').doc(userId.toString());  // Ensure userId is in string format
-  
-      // Fetch the user document
-      const userDoc = await userRef.get();
-  
-      // Check if the document exists
-      if (!userDoc.exists) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      // Prepare the update data
-      const updateData = {};
-  
-      // Only update the provided fields
-      if (name) updateData.name = name;
-      if (phoneNumber) updateData.phoneNumber = phoneNumber;
-      if (email) updateData.email = email;
-      if (password && password.trim() !== '') updateData.password = password;
-  
-      // Update the user document with the provided fields
-      await userRef.update(updateData);
-  
-      // Fetch the updated user document
-      const updatedUserDoc = await userRef.get();
-  
-      // Return the updated user data (excluding password if not necessary)
-      res.status(200).json({
-        message: 'Profile updated successfully',
-        updatedUser: {
-          userId,
-          name: updatedUserDoc.data().name,
-          phoneNumber: updatedUserDoc.data().phoneNumber,
-          email: updatedUserDoc.data().email,
-          password: updatedUserDoc.data().password,  // **Not recommended to include**
-        },
-      })
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      res.status(500).json({ message: 'Server error. Please try again later.' });
+
+    return res.status(200).json(userAccount);
+
+  } catch (error) {
+    console.error('Error fetching account details:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+exports.updateAccountDetails = async (req, res) => {
+  const { userId, accountNumber, accountHolderName, ifscCode, bankName, upiId } = req.body;
+
+  if (!userId || typeof userId === "undefined" || userId.toString().trim() === "") {
+    return res.status(400).json({ message: "Invalid userId. It must be a non-empty string or number." });
+  }
+
+  try {
+    const defaultData = {
+      accountNumber: "",
+      accountHolderName: "",
+      ifscCode: "",
+      bankName: "",
+      upiId: "",
+    };
+
+    const updatedData = {
+      accountNumber: accountNumber || defaultData.accountNumber,
+      accountHolderName: accountHolderName || defaultData.accountHolderName,
+      ifscCode: ifscCode || defaultData.ifscCode,
+      bankName: bankName || defaultData.bankName,
+      upiId: upiId || defaultData.upiId,
+    };
+
+    let userAccount = await UserAccount.findOne({ userId });
+
+    if (userAccount) {
+      Object.assign(userAccount, updatedData);
+      await userAccount.save();
+      return res.status(200).json({
+        message: "Account details updated successfully",
+        updatedAccount: { userId, ...updatedData },
+      });
+    } else {
+      userAccount = new UserAccount({ userId, ...updatedData });
+      await userAccount.save();
+      return res.status(201).json({
+        message: "Account details created successfully",
+        newAccount: { userId, ...updatedData },
+      });
     }
-  };
-  
+  } catch (error) {
+    console.error("Error upserting account details:", error);
+    res.status(500).json({ message: "Error handling account details", error: error.message });
+  }
+};
+
+
+exports.updateProfileController = async (req, res) => {
+  const { userId, name, phoneNumber, email, password } = req.body;
+
+  if (!userId || !name || !phoneNumber || !email) {
+    return res.status(400).json({ message: 'Missing required fields' });
+  }
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (name) user.name = name;
+    if (phoneNumber) user.phoneNumber = phoneNumber;
+    if (email) user.email = email;
+    if (password && password.trim() !== '') user.password = password;
+
+    await user.save();
+
+    res.status(200).json({
+      message: 'Profile updated successfully',
+      updatedUser: {
+        userId,
+        name: user.name,
+        phoneNumber: user.phoneNumber,
+        email: user.email,
+        password: user.password,
+      },
+    })
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ message: 'Server error. Please try again later.' });
+  }
+};
+
 exports.createTransaction = async (req, res) => {
-    const { amount, createdAt, createdBy, paymentMethod } = req.body;
-    const imageFile = req.file; // The uploaded file will be available in req.file
+  const { amount, createdAt, createdBy, paymentMethod } = req.body;
+  const imageFile = req.file; // The uploaded file will be available in req.file
 
-    // console.log('Form Data:', req.body);
-    // console.log('Uploaded File:', imageFile);
+  // console.log('Form Data:', req.body);
+  // console.log('Uploaded File:', imageFile);
 
-    // Validation: Ensure required fields are provided
-    if (!amount || !createdAt || !createdBy || !imageFile) {
-        return res.status(400).json({ message: 'Amount, createdAt, createdBy, and image are required.' });
-    }
+  // Validation: Ensure required fields are provided
+  if (!amount || !createdAt || !createdBy || !imageFile) {
+    return res.status(400).json({ message: 'Amount, createdAt, createdBy, and image are required.' });
+  }
 
-    try {
-        // Generate a unique transaction ID (this can be updated later)
-        const transactionId = "Not Updated"; // Placeholder for unique transaction ID
-        // Prepare the transaction data
-        const transactionData = {
-            description : "Payment For Deposite",
-            transactionId,
-            paymentMethod: paymentMethod, // Payment method
-            createdAt,
-            acceptedAt: "Not updated",   // Default value
-            status: "Pending",           // Default status
-            amount,
-            createdBy,
-            imagePath: imageFile.path,   // Store the path to the uploaded file
-        };
+  try {
+    // Generate a unique transaction ID (this can be updated later)
+    const transactionId = "Not Updated"; // Placeholder for unique transaction ID
+    // Prepare the transaction data
+    const transactionData = {
+      description: "Payment For Deposite",
+      transactionId,
+      paymentMethod: paymentMethod, // Payment method
+      createdAt,
+      acceptedAt: "Not updated",   // Default value
+      status: "Pending",           // Default status
+      amount,
+      createdBy,
+      imagePath: imageFile.path,   // Store the path to the uploaded file
+    };
 
-        // Save transaction data to Firestore (or your DB of choice)
-        const transactionRef = await db.collection('transactions').add(transactionData);
+    // Save transaction data to Firestore (or your DB of choice)
+    const transaction = new Transaction(transactionData);
+    await transaction.save();
 
-        // Send a successful response with the transaction data
-        res.status(201).json({
-            message: 'Transaction created successfully',
-            transaction: {
-                id: transactionRef.id,
-                ...transactionData,
-            },
-        });
-    } catch (error) {
-        console.error('Error creating transaction:', error);
-        res.status(500).json({ message: 'Error creating transaction', error: error.message });
-    }
+    // Send a successful response with the transaction data
+    res.status(201).json({
+      message: 'Transaction created successfully',
+      transaction: {
+        id: transaction._id,
+        ...transaction.toObject(),
+      },
+    });
+  } catch (error) {
+    console.error('Error creating transaction:', error);
+    res.status(500).json({ message: 'Error creating transaction', error: error.message });
+  }
 };
 
 exports.createTransactionById = async (req, res) => {
@@ -291,10 +256,9 @@ exports.createTransactionById = async (req, res) => {
     username,
     status,
     createdAtSelectedId,
-    id, // The unique ID from selectedId
+    id,
   } = req.body;
 
-  // Validation: Ensure required fields are provided
   if (!amount || !createdAt || !createdBy || !websiteName || !id) {
     return res.status(400).json({
       message: "Amount, createdAt, createdBy, websiteName, and ID are required.",
@@ -302,29 +266,26 @@ exports.createTransactionById = async (req, res) => {
   }
 
   try {
-    // Generate a unique transaction ID (this can be updated later)
-    const transactionId = `txn_${Date.now()}`; // You can replace this with a better unique ID generation method
-    
-    // Prepare the transaction data
+    const transactionId = `txn_${Date.now()}`;
+
     const transactionData = {
-      description: `Payment For Deposit - ${websiteName} (${username})`, // Updated description
+      description: `Payment For Deposit - ${websiteName} (${username})`,
       transactionId,
-      paymentMethod:"Withdraw From Wallet", // Use the paymentMethod passed from the client
+      paymentMethod: "Withdraw From Wallet",
       createdAt,
-      acceptedAt: "Not updated",   // Default value
-      status: "Pending",           // Default status
+      acceptedAt: "Not updated",
+      status: "Pending",
       amount,
-      createdBy: createdBy, // Use createdBy from the client (e.g., user's username)
+      createdBy: createdBy,
     };
 
-    // Save transaction data to Firestore (or your DB of choice)
-    const transactionRef = await db.collection('transactions').add(transactionData);
+    const transaction = new Transaction(transactionData);
+    await transaction.save();
 
-    // Send a successful response with the transaction data
     res.status(201).json({
       message: 'Transaction created successfully',
       transaction: {
-        id: transactionRef.id,
+        id: transaction._id,
       },
     });
   } catch (error) {
@@ -336,113 +297,106 @@ exports.createTransactionById = async (req, res) => {
 
 exports.createWithdrawalTransactionBy = async (req, res) => {
   try {
-      const { 
-        amount, 
-        coinsNeeded, 
-        coinRate, 
-        withdrawalMethod, 
-        withdrawalDetails, 
-        createdAt, 
-        createdBy, 
-        websiteName, 
-        websiteUrl, 
-        username, 
-        status, 
-        id 
-      } = req.body;
+    const {
+      amount,
+      coinsNeeded,
+      coinRate,
+      withdrawalMethod,
+      withdrawalDetails,
+      createdAt,
+      createdBy,
+      websiteName,
+      websiteUrl,
+      username,
+      status,
+      id
+    } = req.body;
 
-      console.log('Received withdrawal data:', req.body);
+    console.log('Received withdrawal data:', req.body);
 
-      // Validate data (ensure that all necessary fields are received)
-      if (!amount || !createdAt || !createdBy || !websiteName || !websiteUrl || !username || !status || !id) {
-        return res.status(400).json({ message: 'Missing required fields' });
-      }
-
-      // Parse withdrawal details if it's a string
-      let parsedWithdrawalDetails = withdrawalDetails;
-      if (typeof withdrawalDetails === 'string') {
-        try {
-          parsedWithdrawalDetails = JSON.parse(withdrawalDetails);
-        } catch (e) {
-          console.error('Error parsing withdrawal details:', e);
-          parsedWithdrawalDetails = {};
-        }
-      }
-
-      const transactionId = `withdrawal_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-      // Prepare transaction data with enhanced information
-      const transactionData = {
-        description: `Withdrawal Request - ${websiteName} (${username}) - ₹${amount} (${coinsNeeded} coins)`,
-        transactionId,
-        paymentMethod: withdrawalMethod === 'upi' ? 'UPI' : 'Bank Transfer',
-        createdAt,
-        acceptedAt: 'Not updated',
-        status: 'Pending',
-        amount: parseFloat(amount),
-        coinsNeeded: parseInt(coinsNeeded),
-        coinRate: parseFloat(coinRate),
-        withdrawalMethod,
-        withdrawalDetails: parsedWithdrawalDetails,
-        websiteName,
-        websiteUrl,
-        username,
-        idDocumentId: id, // ID document reference
-        createdBy,
-        imagePath: 'No path',
-        transactionType: 'withdrawal'
-      };
-
-      // Save transaction data to Firestore
-      const transactionRef = await db.collection('transactions').add(transactionData);
-
-      console.log('Withdrawal transaction created:', transactionRef.id);
-
-      // Send a successful response
-      res.status(201).json({
-        message: 'Withdrawal request created successfully',
-        transactionId: transactionRef.id,
-        coinsNeeded: coinsNeeded,
-        amount: amount
-      });
-    } catch (error) {
-      console.error('Error creating withdrawal transaction:', error);
-      res.status(500).json({ message: 'Error creating transaction', error: error.message });
+    if (!amount || !createdAt || !createdBy || !websiteName || !websiteUrl || !username || !status || !id) {
+      return res.status(400).json({ message: 'Missing required fields' });
     }
-  };
 
+    let parsedWithdrawalDetails = withdrawalDetails;
+    if (typeof withdrawalDetails === 'string') {
+      try {
+        parsedWithdrawalDetails = JSON.parse(withdrawalDetails);
+      } catch (e) {
+        console.error('Error parsing withdrawal details:', e);
+        parsedWithdrawalDetails = {};
+      }
+    }
+
+    const transactionId = `withdrawal_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    const transactionData = {
+      description: `Withdrawal Request - ${websiteName} (${username}) - ₹${amount} (${coinsNeeded} coins)`,
+      transactionId,
+      paymentMethod: withdrawalMethod === 'upi' ? 'UPI' : 'Bank Transfer',
+      createdAt,
+      acceptedAt: 'Not updated',
+      status: 'Pending',
+      amount: parseFloat(amount),
+      coinsNeeded: parseInt(coinsNeeded),
+      coinRate: parseFloat(coinRate),
+      withdrawalMethod,
+      withdrawalDetails: parsedWithdrawalDetails,
+      websiteName,
+      websiteUrl,
+      username,
+      idDocumentId: id,
+      createdBy,
+      imagePath: 'No path',
+      transactionType: 'withdrawal'
+    };
+
+    const transaction = new Transaction(transactionData);
+    await transaction.save();
+
+    console.log('Withdrawal transaction created:', transaction._id);
+
+    res.status(201).json({
+      message: 'Withdrawal request created successfully',
+      transactionId: transaction._id,
+      coinsNeeded: coinsNeeded,
+      amount: amount
+    });
+  } catch (error) {
+    console.error('Error creating withdrawal transaction:', error);
+    res.status(500).json({ message: 'Error creating transaction', error: error.message });
+  }
+};
+
+// Create wallet withdrawal request
 // Create wallet withdrawal request
 exports.createWalletWithdrawal = async (req, res) => {
   try {
-    const { 
-      amount, 
-      withdrawalMethod, 
-      withdrawalDetails, 
-      createdAt, 
-      createdBy 
+    const {
+      amount,
+      withdrawalMethod,
+      withdrawalDetails,
+      createdAt,
+      createdBy
     } = req.body;
 
     console.log('Received wallet withdrawal data:', req.body);
 
-    // Validate data
     if (!amount || !withdrawalMethod || !createdAt || !createdBy) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
-    // Check if user has sufficient balance
-    const userRef = db.collection('user').doc(createdBy);
-    const userDoc = await userRef.get();
-    
-    if (!userDoc.exists) {
+    const user = await User.findOne({ username: createdBy }); // Assuming createdBy is username
+
+    if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const userData = userDoc.data();
-    const currentBalance = userData.balance || 0;
+    const currentBalance = user.balance || 0;
     const withdrawalAmount = parseFloat(amount);
 
     if (currentBalance < withdrawalAmount) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: 'Insufficient wallet balance',
         currentBalance: currentBalance,
         requestedAmount: withdrawalAmount,
@@ -452,7 +406,6 @@ exports.createWalletWithdrawal = async (req, res) => {
 
     const transactionId = `wallet_withdrawal_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    // Prepare transaction data
     const transactionData = {
       description: `Wallet Withdrawal Request - ₹${amount} via ${withdrawalMethod === 'upi' ? 'UPI' : 'Bank Transfer'}`,
       transactionId,
@@ -468,15 +421,14 @@ exports.createWalletWithdrawal = async (req, res) => {
       transactionType: 'wallet_withdrawal'
     };
 
-    // Save transaction data to Firestore
-    const transactionRef = await db.collection('transactions').add(transactionData);
+    const transaction = new Transaction(transactionData);
+    await transaction.save();
 
-    console.log('Wallet withdrawal transaction created:', transactionRef.id);
+    console.log('Wallet withdrawal transaction created:', transaction._id);
 
-    // Send a successful response
     res.status(201).json({
       message: 'Wallet withdrawal request created successfully',
-      transactionId: transactionRef.id,
+      transactionId: transaction._id,
       amount: withdrawalAmount
     });
   } catch (error) {
@@ -486,119 +438,90 @@ exports.createWalletWithdrawal = async (req, res) => {
 };
 
 exports.createId = async (req, res) => {
-    const { websiteName, websiteUrl, username, imgUrl, createdBy } = req.body;
-    // console.log(req.body);
+  const { websiteName, websiteUrl, username, imgUrl, createdBy } = req.body;
 
-    // Validation: Ensure required fields are provided
-    if (!websiteName || !websiteUrl || !username || !imgUrl || !createdBy) {
-        return res.status(400).json({ message: 'All required fields are provided.' });
+  if (!websiteName || !websiteUrl || !username || !imgUrl || !createdBy) {
+    return res.status(400).json({ message: 'All required fields are provided.' });
+  }
+
+  try {
+    const user = await User.findOne({ username: createdBy });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
     }
+
+    const userBalance = user.balance || 0;
+
+    if (userBalance < 100) {
+      return res.status(400).json({
+        message: 'Insufficient balance. Minimum balance of ₹100 required to create ID.',
+        currentBalance: userBalance,
+        requiredBalance: 100
+      });
+    }
+
+    let coinRate = 1;
+    let minimumCoins = 0;
 
     try {
-        // Check user's wallet balance
-        const userSnapshot = await db.collection('user').where('username', '==', createdBy).get();
-        
-        if (userSnapshot.empty) {
-            return res.status(404).json({ message: 'User not found.' });
-        }
+      const website = await Website.findOne({ website: websiteName });
 
-        const userData = userSnapshot.docs[0].data();
-        const userBalance = userData.balance || 0;
-
-        // Check if user has sufficient balance (≥100)
-        if (userBalance < 100) {
-            return res.status(400).json({ 
-                message: 'Insufficient balance. Minimum balance of ₹100 required to create ID.',
-                currentBalance: userBalance,
-                requiredBalance: 100
-            });
-        }
-
-        // Fetch website details to get coin rate
-        let coinRate = 1; // Default coin rate
-        let minimumCoins = 0; // Default minimum coins
-        
-        try {
-            const websitesSnapshot = await db.collection('websites').get();
-            const websites = websitesSnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
-            
-            const website = websites.find(w => w.website === websiteName);
-            
-            if (website) {
-                coinRate = parseFloat(website.coinRate) || 1;
-                minimumCoins = parseFloat(website.minimumCoins) || 0;
-            }
-        } catch (error) {
-            console.error('Error fetching website details:', error);
-            // Continue with default values
-        }
-
-        // Generate a unique ID for the new document
-        const newId = db.collection('id').doc().id;
-
-        // Get the current date and time
-        const createdAt = new Date();
-
-        // Create the new website record with default status and createdAt field
-        const newWebsite = {
-            id: newId,
-            websiteName,
-            websiteUrl,
-            username,
-            password: '', // Empty password as it's not required
-            imgUrl,
-            createdBy,
-            status: 'Requested', // Default status
-            balance: 0, // Default balance for this ID
-            coinRate, // Store coin rate from website
-            minimumCoins, // Store minimum coins from website
-            createdAt, // Add the timestamp
-        };
-
-        // Add to Firestore
-        await db.collection('id').doc(newId).set(newWebsite);
-
-        res.status(201).json({
-            message: 'New ID created successfully',
-            website: newWebsite,
-        });
+      if (website) {
+        coinRate = parseFloat(website.coinRate) || 1;
+        minimumCoins = parseFloat(website.minimumCoins) || 0;
+      }
     } catch (error) {
-        console.error('Error adding ID:', error);
-        res.status(500).json({ message: 'Error adding ID', error: error.message });
+      console.error('Error fetching website details:', error);
     }
+
+    const createdAt = new Date();
+
+    const newWebsite = new WebsiteId({
+      websiteName,
+      websiteUrl,
+      username,
+      password: '',
+      imgUrl,
+      createdBy,
+      status: 'Requested',
+      balance: 0,
+      coinRate,
+      minimumCoins,
+      createdAt: createdAt.toISOString(),
+    });
+
+    await newWebsite.save();
+
+    res.status(201).json({
+      message: 'New ID created successfully',
+      website: { id: newWebsite._id, ...newWebsite.toObject() },
+    });
+  } catch (error) {
+    console.error('Error adding ID:', error);
+    res.status(500).json({ message: 'Error adding ID', error: error.message });
+  }
 };
 exports.getAllIds = async (req, res) => {
   try {
-    // Extract userId from the query parameters
     const { userId } = req.query;
 
-    // Validate the userId
     if (!userId) {
       return res.status(400).json({ error: "User ID is required" });
     }
 
-    // Reference to the Firestore collection
-    const idsRef = db.collection("id");
+    const ids = await WebsiteId.find({ createdBy: userId });
 
-    // Query Firestore to get all documents where 'createdBy' matches 'userId'
-    const snapshot = await idsRef.where("createdBy", "==", userId).get();
-
-    // If no matching documents are found
-    if (snapshot.empty) {
+    if (ids.length === 0) {
       return res.status(404).json({ message: "No IDs found for this user" });
     }
 
-    // Map the Firestore documents to an array
-    const userIds = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
+    const formattedIds = ids.map((doc) => ({
+      id: doc._id,
+      ...doc.toObject(),
     }));
 
-    // Return the fetched data
-    res.status(200).json(userIds);
+    res.status(200).json(formattedIds);
   } catch (error) {
     console.error("Error fetching IDs:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -607,65 +530,54 @@ exports.getAllIds = async (req, res) => {
 
 // Create ID Request with coin conversion and refundable options
 exports.createIdRequest = async (req, res) => {
-  const { 
-    websiteName, 
-    websiteUrl, 
-    username, 
-    imgUrl, 
-    createdBy, 
-    coinAmount, 
-    convertedCoins, 
-    coinRate, 
-    minimumCoins, 
-    refundable, 
-    accountType, 
-    currency, 
-    status 
+  const {
+    websiteName,
+    websiteUrl,
+    username,
+    imgUrl,
+    createdBy,
+    coinAmount,
+    convertedCoins,
+    coinRate,
+    minimumCoins,
+    refundable,
+    accountType,
+    currency,
+    status
   } = req.body;
 
-  // Validation: Ensure required fields are provided
   if (!websiteName || !websiteUrl || !username || !imgUrl || !createdBy || !coinAmount || !convertedCoins) {
     return res.status(400).json({ message: 'All required fields are provided.' });
   }
 
   try {
-    // Check user's wallet balance
-    const userSnapshot = await db.collection('user').where('username', '==', createdBy).get();
-    
-    if (userSnapshot.empty) {
+    const user = await User.findOne({ username: createdBy });
+
+    if (!user) {
       return res.status(404).json({ message: 'User not found.' });
     }
 
-    const userData = userSnapshot.docs[0].data();
-    const userBalance = userData.balance || 0;
+    const userBalance = user.balance || 0;
 
-    // Check if user has sufficient balance for the converted amount
     if (userBalance < convertedCoins) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: 'Insufficient balance for the requested amount.',
         currentBalance: userBalance,
         requestedAmount: convertedCoins
       });
     }
 
-    // Check if entered coins meet minimum requirement
     if (coinAmount < minimumCoins) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: 'Insufficient coins. Minimum required coins not met.',
         coinAmount: coinAmount,
         minimumCoins: minimumCoins
       });
     }
 
-    // Generate a unique ID for the request
-    const requestId = db.collection('idRequests').doc().id;
-
-    // Get the current date and time
     const createdAt = new Date();
 
-    // Prepare the ID request data
-    const idRequestData = {
-      id: requestId,
+    const idRequest = new IdRequest({
       websiteName,
       websiteUrl,
       username,
@@ -683,12 +595,10 @@ exports.createIdRequest = async (req, res) => {
       processedAt: null,
       processedBy: null,
       adminNotes: null
-    };
+    });
 
-    // Save ID request data to Firestore
-    await db.collection('idRequests').doc(requestId).set(idRequestData);
+    await idRequest.save();
 
-    // Create a transaction record for this request
     const transactionData = {
       description: `ID Creation Request - ${websiteName} (${username})`,
       transactionId: `id_req_${Date.now()}`,
@@ -698,7 +608,7 @@ exports.createIdRequest = async (req, res) => {
       status: "Pending",
       amount: parseFloat(coinAmount),
       createdBy: createdBy,
-      idRequestId: requestId,
+      idRequestId: idRequest._id.toString(),
       websiteName: websiteName,
       websiteUrl: websiteUrl,
       username: username,
@@ -710,15 +620,14 @@ exports.createIdRequest = async (req, res) => {
       transactionType: 'id_creation'
     };
 
-    // Save transaction data to Firestore
-    const transactionRef = await db.collection('transactions').add(transactionData);
+    const transaction = new Transaction(transactionData);
+    await transaction.save();
 
-    // Send a successful response
     res.status(201).json({
       message: 'ID creation request submitted successfully',
-      requestId: requestId,
-      transactionId: transactionRef.id,
-      idRequest: idRequestData
+      requestId: idRequest._id,
+      transactionId: transaction._id,
+      idRequest: idRequest.toObject()
     });
   } catch (error) {
     console.error('Error creating ID request:', error);
@@ -726,277 +635,242 @@ exports.createIdRequest = async (req, res) => {
   }
 };
 
-  
-  
+
+
 // Close ID - Create close request for admin approval
 exports.closeId = async (req, res) => {
-    const { id, createdBy, reason } = req.body;
+  const { id, createdBy, reason } = req.body;
 
-    // Validation: Ensure required fields are provided
-    if (!id || !createdBy) {
-        return res.status(400).json({ message: 'ID and createdBy are required.' });
+  if (!id || !createdBy) {
+    return res.status(400).json({ message: 'ID and createdBy are required.' });
+  }
+
+  try {
+    const idDoc = await WebsiteId.findById(id);
+
+    if (!idDoc) {
+      return res.status(404).json({ message: 'ID not found.' });
     }
 
-    try {
-        // Get the ID document from the main collection
-        const idDoc = await db.collection('id').doc(id).get();
-        
-        if (!idDoc.exists) {
-            return res.status(404).json({ message: 'ID not found.' });
-        }
-
-        const idData = idDoc.data();
-
-        // Verify the user owns this ID
-        if (idData.createdBy !== createdBy) {
-            return res.status(403).json({ message: 'You are not authorized to close this ID.' });
-        }
-
-        // Create close request
-        const closeRequestData = {
-            id: db.collection('closeRequests').doc().id,
-            originalId: id,
-            createdBy,
-            reason: reason || 'User requested to close ID',
-            status: 'Pending',
-            createdAt: new Date().toISOString(),
-            websiteName: idData.websiteName,
-            websiteUrl: idData.websiteUrl,
-            username: idData.username
-        };
-
-        // Save the close request
-        await db.collection('closeRequests').doc(closeRequestData.id).set(closeRequestData);
-
-        res.status(201).json({
-            message: 'Close ID request submitted successfully',
-            request: closeRequestData
-        });
-    } catch (error) {
-        console.error('Error creating close ID request:', error);
-        res.status(500).json({ message: 'Error creating close ID request', error: error.message });
+    if (idDoc.createdBy !== createdBy) {
+      return res.status(403).json({ message: 'You are not authorized to close this ID.' });
     }
+
+    const closeRequest = new CloseRequest({
+      originalId: id,
+      createdBy,
+      reason: reason || 'User requested to close ID',
+      status: 'Pending',
+      createdAt: new Date().toISOString(),
+      websiteName: idDoc.websiteName,
+      websiteUrl: idDoc.websiteUrl,
+      username: idDoc.username
+    });
+
+    await closeRequest.save();
+
+    res.status(201).json({
+      message: 'Close ID request submitted successfully',
+      request: { id: closeRequest._id, ...closeRequest.toObject() }
+    });
+  } catch (error) {
+    console.error('Error creating close ID request:', error);
+    res.status(500).json({ message: 'Error creating close ID request', error: error.message });
+  }
 };
 
 // Get transactions for specific ID
 exports.getIdTransactions = async (req, res) => {
-    const { id, userId } = req.query;
+  const { id, userId } = req.query;
 
-    if (!id || !userId) {
-        return res.status(400).json({ message: 'ID and userId are required.' });
+  if (!id || !userId) {
+    return res.status(400).json({ message: 'ID and userId are required.' });
+  }
+
+  try {
+    console.log('Getting transactions for ID:', id, 'User:', userId);
+
+    const idDoc = await WebsiteId.findById(id);
+    if (!idDoc) {
+      return res.status(404).json({ message: 'ID not found.' });
     }
 
-    try {
-        console.log('Getting transactions for ID:', id, 'User:', userId);
-        
-        // Get the ID details first to get website information
-        const idDoc = await db.collection('id').doc(id).get();
-        if (!idDoc.exists) {
-            return res.status(404).json({ message: 'ID not found.' });
-        }
-        
-        const idData = idDoc.data();
-        const websiteName = idData.websiteName || '';
-        const websiteUrl = idData.websiteUrl || '';
-        const username = idData.username || '';
+    const websiteName = idDoc.websiteName || '';
+    const websiteUrl = idDoc.websiteUrl || '';
+    const username = idDoc.username || '';
 
-        console.log('ID Data:', { websiteName, websiteUrl, username, createdBy: idData.createdBy });
+    console.log('ID Data:', { websiteName, websiteUrl, username, createdBy: idDoc.createdBy });
 
-        // Get all transactions for this user (without ordering to avoid index requirement)
-        const transactionsSnapshot = await db.collection('transactions')
-            .where('createdBy', '==', userId)
-            .get();
+    // Get all transactions for this user (without ordering to avoid index requirement)
+    const transactions = await Transaction.find({ createdBy: userId });
 
-        console.log('Found transactions:', transactionsSnapshot.size);
+    console.log('Found transactions:', transactions.length);
 
-        // If no transactions found, return empty array instead of error
-        if (transactionsSnapshot.empty) {
-            return res.status(200).json([]);
-        }
-
-        // Filter transactions that are related to this specific ID
-        const allTransactions = transactionsSnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
-
-        // Sort by creation date in JavaScript (newest first)
-        allTransactions.sort((a, b) => {
-            const dateA = new Date(a.createdAt || 0);
-            const dateB = new Date(b.createdAt || 0);
-            return dateB - dateA;
-        });
-
-        // Enhanced filtering to find all transactions related to this ID
-        const relatedTransactions = allTransactions.filter(transaction => {
-            const description = transaction.description || '';
-            const transactionWebsiteName = transaction.websiteName || '';
-            const transactionWebsiteUrl = transaction.websiteUrl || '';
-            const transactionUsername = transaction.username || '';
-            
-            // Check multiple criteria for ID-related transactions
-            return (
-                // Direct ID matches
-                transaction.idDocumentId === id ||
-                transaction.websiteId === id ||
-                
-                // Website name matches
-                (websiteName && transactionWebsiteName.toLowerCase().includes(websiteName.toLowerCase())) ||
-                (websiteName && description.toLowerCase().includes(websiteName.toLowerCase())) ||
-                
-                // Website URL matches
-                (websiteUrl && transactionWebsiteUrl.toLowerCase().includes(websiteUrl.toLowerCase())) ||
-                (websiteUrl && description.toLowerCase().includes(websiteUrl.toLowerCase())) ||
-                
-                // Username matches
-                (username && transactionUsername.toLowerCase().includes(username.toLowerCase())) ||
-                (username && description.toLowerCase().includes(username.toLowerCase())) ||
-                
-                // Description contains ID or website info
-                description.toLowerCase().includes(id.toLowerCase()) ||
-                
-                // Check for deposit/withdrawal transactions that might be related
-                (transaction.paymentMethod && (
-                    transaction.paymentMethod.toLowerCase().includes('deposit') ||
-                    transaction.paymentMethod.toLowerCase().includes('withdrawal') ||
-                    transaction.paymentMethod.toLowerCase().includes('withdraw')
-                ))
-            );
-        });
-
-        // Add ID information to each transaction for better context
-        const enrichedTransactions = relatedTransactions.map(transaction => ({
-            ...transaction,
-            relatedId: {
-                id: id,
-                websiteName: websiteName,
-                websiteUrl: websiteUrl,
-                username: username
-            }
-        }));
-
-        res.status(200).json(enrichedTransactions);
-    } catch (error) {
-        console.error('Error fetching ID transactions:', error);
-        res.status(500).json({ message: 'Error fetching transactions', error: error.message });
+    // If no transactions found, return empty array instead of error
+    if (transactions.length === 0) {
+      return res.status(200).json([]);
     }
+
+    // Filter transactions that are related to this specific ID
+    const allTransactions = transactions.map(doc => ({
+      id: doc._id,
+      ...doc.toObject()
+    }));
+
+    // Sort by creation date in JavaScript (newest first)
+    allTransactions.sort((a, b) => {
+      const dateA = new Date(a.createdAt || 0);
+      const dateB = new Date(b.createdAt || 0);
+      return dateB - dateA;
+    });
+
+    // Enhanced filtering to find all transactions related to this ID
+    const relatedTransactions = allTransactions.filter(transaction => {
+      const description = transaction.description || '';
+      const transactionWebsiteName = transaction.websiteName || '';
+      const transactionWebsiteUrl = transaction.websiteUrl || '';
+      const transactionUsername = transaction.username || '';
+
+      // Check multiple criteria for ID-related transactions
+      return (
+        // Direct ID matches
+        transaction.idDocumentId === id ||
+        transaction.websiteId === id ||
+
+        // Website name matches
+        (websiteName && transactionWebsiteName.toLowerCase().includes(websiteName.toLowerCase())) ||
+        (websiteName && description.toLowerCase().includes(websiteName.toLowerCase())) ||
+
+        // Website URL matches
+        (websiteUrl && transactionWebsiteUrl.toLowerCase().includes(websiteUrl.toLowerCase())) ||
+        (websiteUrl && description.toLowerCase().includes(websiteUrl.toLowerCase())) ||
+
+        // Username matches
+        (username && transactionUsername.toLowerCase().includes(username.toLowerCase())) ||
+        (username && description.toLowerCase().includes(username.toLowerCase())) ||
+
+        // Description contains ID or website info
+        description.toLowerCase().includes(id.toLowerCase()) ||
+
+        // Check for deposit/withdrawal transactions that might be related
+        (transaction.paymentMethod && (
+          transaction.paymentMethod.toLowerCase().includes('deposit') ||
+          transaction.paymentMethod.toLowerCase().includes('withdrawal') ||
+          transaction.paymentMethod.toLowerCase().includes('withdraw')
+        ))
+      );
+    });
+
+    // Add ID information to each transaction for better context
+    const enrichedTransactions = relatedTransactions.map(transaction => ({
+      ...transaction,
+      relatedId: {
+        id: id,
+        websiteName: websiteName,
+        websiteUrl: websiteUrl,
+        username: username
+      }
+    }));
+
+    res.status(200).json(enrichedTransactions);
+  } catch (error) {
+    console.error('Error fetching ID transactions:', error);
+    res.status(500).json({ message: 'Error fetching transactions', error: error.message });
+  }
 };
 
 // Request password change for ID
+// Request password change for ID
 exports.requestPasswordChange = async (req, res) => {
-    const { id, createdBy, newPassword, reason } = req.body;
+  const { id, createdBy, newPassword, reason } = req.body;
 
-    if (!id || !createdBy || !newPassword) {
-        return res.status(400).json({ message: 'ID, createdBy, and newPassword are required.' });
+  if (!id || !createdBy || !newPassword) {
+    return res.status(400).json({ message: 'ID, createdBy, and newPassword are required.' });
+  }
+
+  try {
+    const idDoc = await WebsiteId.findById(id);
+
+    if (!idDoc) {
+      return res.status(404).json({ message: 'ID not found.' });
     }
 
-    try {
-        // Verify the ID exists and user owns it
-        const idDoc = await db.collection('id').doc(id).get();
-        
-        if (!idDoc.exists) {
-            return res.status(404).json({ message: 'ID not found.' });
-        }
-
-        const idData = idDoc.data();
-
-        if (idData.createdBy !== createdBy) {
-            return res.status(403).json({ message: 'You are not authorized to change password for this ID.' });
-        }
-
-        // Create password change request
-        const passwordChangeRequest = {
-            id: db.collection('passwordChangeRequests').doc().id,
-            originalId: id,
-            createdBy,
-            newPassword,
-            reason: reason || 'User requested password change',
-            status: 'Pending',
-            createdAt: new Date().toISOString(),
-            websiteName: idData.websiteName,
-            websiteUrl: idData.websiteUrl,
-            username: idData.username
-        };
-
-        // Save the request
-        await db.collection('passwordChangeRequests').doc(passwordChangeRequest.id).set(passwordChangeRequest);
-
-        res.status(201).json({
-            message: 'Password change request submitted successfully',
-            request: passwordChangeRequest
-        });
-    } catch (error) {
-        console.error('Error requesting password change:', error);
-        res.status(500).json({ message: 'Error requesting password change', error: error.message });
+    if (idDoc.createdBy !== createdBy) {
+      return res.status(403).json({ message: 'You are not authorized to change password for this ID.' });
     }
+
+    const passwordChangeRequest = new PasswordChangeRequest({
+      originalId: id,
+      createdBy,
+      newPassword,
+      reason: reason || 'User requested password change',
+      status: 'Pending',
+      createdAt: new Date().toISOString(),
+      websiteName: idDoc.websiteName,
+      websiteUrl: idDoc.websiteUrl,
+      username: idDoc.username
+    });
+
+    await passwordChangeRequest.save();
+
+    res.status(201).json({
+      message: 'Password change request submitted successfully',
+      request: { id: passwordChangeRequest._id, ...passwordChangeRequest.toObject() }
+    });
+  } catch (error) {
+    console.error('Error requesting password change:', error);
+    res.status(500).json({ message: 'Error requesting password change', error: error.message });
+  }
 };
 
 exports.changeIdPassword = async (req, res) => {
 
-    const { userId, selectedId, newPassword } = req.body;
+  const { userId, selectedId, newPassword } = req.body;
 
-    if (!userId || !selectedId || !newPassword) {
+  if (!userId || !selectedId || !newPassword) {
     return res.status(400).json({ message: 'Missing required fields' });
-    }
-    // console.log(userId, selectedId, newPassword);
+  }
 
-    try {
-    // Get the "id" collection document using the selectedId
-    const selectedItemRef = db.collection('id').doc(selectedId); // Assuming the document ID is selectedId
-    const selectedItemDoc = await selectedItemRef.get();
+  try {
+    const selectedItemDoc = await WebsiteId.findById(selectedId);
 
-    if (!selectedItemDoc.exists) {
-        return res.status(404).json({ message: 'Selected ID not found' });
+    if (!selectedItemDoc) {
+      return res.status(404).json({ message: 'Selected ID not found' });
     }
 
-    // You can also check if the user matches with the userId if necessary.
-    const selectedItemData = selectedItemDoc.data();
-
-        // Log values and their types
-        // console.log("selectedItemData.createdBy:", selectedItemData.createdBy, "Type:", typeof selectedItemData.createdBy);
-        // console.log("userId:", userId, "Type:", typeof userId);
-    
-        // If you need to verify that the selectedId belongs to the correct user (optional step)
-    if (selectedItemData.createdBy != userId) {
-        return res.status(403).json({ message: 'Unauthorized to change this password' });
+    if (selectedItemDoc.createdBy != userId) {
+      return res.status(403).json({ message: 'Unauthorized to change this password' });
     }
 
-    // Update the password field
-    await selectedItemRef.update({ password: newPassword });
+    selectedItemDoc.password = newPassword;
+    await selectedItemDoc.save();
 
     res.status(200).json({ message: 'Password changed successfully' });
-    } catch (err) {
+  } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
-    }
+  }
 };
 
 
 // Get Account Details (Record where id == 1)
+// Get Account Details (Record where id == 1)
 exports.getAccountDetailsDeposit = async (req, res) => {
   try {
-    const userId = "1"; // The value you're searching for in the userId field
+    const userId = "1";
 
-    // Query Firestore to find a document where 'userId' field equals 1
-    const userAccountRef = db.collection('adminAccountDetails').where('userId', '==', userId);
-    const snapshot = await userAccountRef.get();
+    const userAccount = await AdminAccount.findOne({ userId });
 
-    // If no matching document is found
-    if (snapshot.empty) {
+    if (!userAccount) {
       return res.status(404).json({ message: "No account found with id = 1" });
     }
 
-    // Get the first document from the snapshot (assuming only one document matches)
-    const doc = snapshot.docs[0];
-    const userAccount = doc.data(); // Get the data from the document
-
-    // Send data as response, including the account details
     return res.status(200).json({
       accountNumber: userAccount.accountNumber,
       accountHolderName: userAccount.accountHolderName,
       ifscCode: userAccount.ifscCode,
       bankName: userAccount.bankName,
-      upiId: userAccount.upiId, // Include UPI ID here
+      upiId: userAccount.upiId,
     });
   } catch (error) {
     console.error('Error fetching account details:', error);
@@ -1008,81 +882,58 @@ exports.getAccountDetailsDeposit = async (req, res) => {
 // get the user deposite history
 
 // Controller function to fetch transactions for a user
+// Controller function to fetch transactions for a user
 exports.getDepositTransactions = async (req, res) => {
-  // Extract userId from the query string
   const userId = req.query.userId;
 
-  // Check if userId is provided
   if (!userId) {
     return res.status(400).json({ message: 'User ID is required.' });
   }
 
   try {
-    // Reference to the Firestore collection
-    const transactionsRef = db.collection('transactions');
-
-    // First, try to get user data to find both user.id and user.username
-    let userDoc = await db.collection('user').doc(userId).get();
     let userData = null;
-    
-    console.log('Looking up user with ID:', userId);
-    
-    if (userDoc.exists) {
-      userData = userDoc.data();
-      console.log('Found user by ID:', userData);
+    let userDoc = null;
+
+    // Check if userId is a valid ObjectId
+    if (mongoose.Types.ObjectId.isValid(userId)) {
+      userDoc = await User.findById(userId);
+    }
+
+    if (userDoc) {
+      userData = userDoc.toObject();
     } else {
-      // If not found by ID, try to find by username
-      const userSnapshot = await db.collection('user').where('username', '==', userId).get();
-      if (!userSnapshot.empty) {
-        userData = userSnapshot.docs[0].data();
-        console.log('Found user by username:', userData);
-      } else {
-        console.log('User not found by ID or username');
+      userDoc = await User.findOne({ username: userId });
+      if (userDoc) {
+        userData = userDoc.toObject();
       }
     }
 
-    // Get all transactions and filter them
-    const allTransactionsSnapshot = await transactionsRef.get();
-    
-    if (allTransactionsSnapshot.empty) {
-      return res.status(200).json([]); // Return empty array instead of 404
+    const allTransactions = await Transaction.find();
+
+    if (allTransactions.length === 0) {
+      return res.status(200).json([]);
     }
 
-    // Filter transactions that match the user
-    const allTransactions = allTransactionsSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    
-    console.log('Total transactions found:', allTransactions.length);
-    console.log('Sample transaction createdBy values:', allTransactions.slice(0, 5).map(t => t.createdBy));
-    
     const transactions = allTransactions.filter(transaction => {
       const matches = (
         transaction.createdBy === userId ||
         transaction.createdBy === userData?.username ||
-        transaction.createdBy === userData?.id ||
-        (userData && transaction.createdBy === userData.username) ||
-        transaction.createdBy === "user" // Handle legacy hardcoded "user" string
+        (userData && transaction.createdBy === userData._id.toString()) ||
+        transaction.createdBy === "user"
       );
-      
-      if (matches) {
-        console.log('Matching transaction found:', transaction.id, 'createdBy:', transaction.createdBy);
-      }
-      
       return matches;
     });
-    
-    console.log('Filtered transactions count:', transactions.length);
 
-    // Sort by creation date (newest first)
     transactions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-    // Respond with the found transactions
-    res.status(200).json(transactions);
+    const formattedTransactions = transactions.map(t => ({
+      id: t._id,
+      ...t.toObject()
+    }));
+
+    res.status(200).json(formattedTransactions);
   } catch (error) {
     console.error('Error fetching transactions:', error);
-    // If there is a server error
     res.status(500).json({ message: 'Failed to fetch transactions', error: error.message });
   }
 };
@@ -1091,27 +942,28 @@ exports.getDepositTransactions = async (req, res) => {
 
 
 // Controller to get user balance
+// Controller to get user balance
 exports.getBalanceController = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    // Validate input
     if (!userId) {
       return res.status(400).json({ message: 'User ID is required' });
     }
 
-    // Fetch user data from Firestore
-    const userDoc = await db.collection('user').doc(userId).get();
+    let user;
+    if (mongoose.Types.ObjectId.isValid(userId)) {
+      user = await User.findById(userId);
+    } else {
+      user = await User.findOne({ username: userId });
+    }
 
-    if (!userDoc.exists) {
+    if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Extract balance from user data
-    const userData = userDoc.data();
-    const balance = userData.balance || 0; // Default to 0 if balance is not set
+    const balance = user.balance || 0;
 
-    // Send the balance as a response
     return res.status(200).json({ balance });
   } catch (error) {
     console.error('Error fetching user balance:', error);
@@ -1120,32 +972,28 @@ exports.getBalanceController = async (req, res) => {
 };
 
 // Controller to get ID balance
+// Controller to get ID balance
 exports.getIdBalanceController = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Validate input
     if (!id) {
       return res.status(400).json({ message: 'ID is required' });
     }
 
-    // Fetch ID data from Firestore
-    const idDoc = await db.collection('id').doc(id).get();
+    const idDoc = await WebsiteId.findById(id);
 
-    if (!idDoc.exists) {
+    if (!idDoc) {
       return res.status(404).json({ message: 'ID not found' });
     }
 
-    // Extract balance from ID data
-    const idData = idDoc.data();
-    const balance = idData.balance || 0; // Default to 0 if balance is not set
+    const balance = idDoc.balance || 0;
 
-    // Send the balance as a response
-    return res.status(200).json({ 
+    return res.status(200).json({
       id: id,
       balance: balance,
-      websiteName: idData.websiteName,
-      username: idData.username
+      websiteName: idDoc.websiteName,
+      username: idDoc.username
     });
   } catch (error) {
     console.error('Error fetching ID balance:', error);
@@ -1155,41 +1003,33 @@ exports.getIdBalanceController = async (req, res) => {
 
 
 // Get user's ID requests
+// Get user's ID requests
 exports.getUserIdRequests = async (req, res) => {
   try {
     const { userId } = req.query;
 
-    // Validate the userId
     if (!userId) {
       return res.status(400).json({ error: "User ID is required" });
     }
 
-    // Reference to the Firestore collection
-    const idRequestsRef = db.collection("idRequests");
+    const userRequests = await IdRequest.find({ createdBy: userId });
 
-    // Query Firestore to get all documents where 'createdBy' matches 'userId'
-    const snapshot = await idRequestsRef.where("createdBy", "==", userId).get();
-
-    // If no matching documents are found
-    if (snapshot.empty) {
-      return res.status(200).json([]); // Return empty array instead of 404
+    if (userRequests.length === 0) {
+      return res.status(200).json([]);
     }
 
-    // Map the Firestore documents to an array
-    const userRequests = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
+    const formattedRequests = userRequests.map((doc) => ({
+      id: doc._id,
+      ...doc.toObject(),
     }));
 
-    // Sort by creation date (newest first)
-    userRequests.sort((a, b) => {
+    formattedRequests.sort((a, b) => {
       const dateA = new Date(a.createdAt);
       const dateB = new Date(b.createdAt);
       return dateB - dateA;
     });
 
-    // Return the fetched data
-    res.status(200).json(userRequests);
+    res.status(200).json(formattedRequests);
   } catch (error) {
     console.error("Error fetching user ID requests:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -1197,78 +1037,67 @@ exports.getUserIdRequests = async (req, res) => {
 };
 
 // API to add coin rates to websites that are missing them
+// API to add coin rates to websites that are missing them
 exports.addCoinRatesToWebsites = async (req, res) => {
   try {
     console.log('Adding coin rates to websites that are missing them...');
-    
-    // Get all websites
-    const websitesSnapshot = await db.collection('websites').get();
-    const websites = websitesSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-    
+
+    const websites = await Website.find();
+
     console.log('Found websites:', websites.length);
-    
+
     let updatedCount = 0;
     let skippedCount = 0;
-    
-    // Update each website
-    for (const websiteDoc of websitesSnapshot.docs) {
-      const websiteData = websiteDoc.data();
-      
-      // Check if website already has coin rate
-      if (websiteData.coinRate !== undefined && websiteData.minimumCoins !== undefined) {
-        console.log(`Skipping website ${websiteDoc.id} - already has coin rate:`, websiteData.coinRate);
+
+    for (const website of websites) {
+      if (website.coinRate !== undefined && website.minimumCoins !== undefined) {
+        console.log(`Skipping website ${website._id} - already has coin rate:`, website.coinRate);
         skippedCount++;
         continue;
       }
-      
-      // Set default coin rate based on website name or use 1.0 as default
+
       let coinRate = 1.0;
       let minimumCoins = 0;
-      
-      // You can customize coin rates for specific websites here
-      if (websiteData.website === 'qweqweqqwe') {
+
+      if (website.website === 'qweqweqqwe') {
         coinRate = 0.25;
         minimumCoins = 12000;
-      } else if (websiteData.website === 'asd') {
+      } else if (website.website === 'asd') {
         coinRate = 2.0;
         minimumCoins = 100;
-      } else if (websiteData.website === 'jhgjh') {
+      } else if (website.website === 'jhgjh') {
         coinRate = 1.5;
         minimumCoins = 200;
-      } else if (websiteData.website === 'sdf') {
+      } else if (website.website === 'sdf') {
         coinRate = 0.5;
         minimumCoins = 500;
       }
-      
-      const updateData = {
-        coinRate: coinRate.toString(),
-        minimumCoins: minimumCoins.toString()
-      };
-      
-      await websiteDoc.ref.update(updateData);
-      console.log(`Updated website ${websiteDoc.id} (${websiteData.website}) with coin rate:`, coinRate, 'minimum coins:', minimumCoins);
+
+      website.coinRate = coinRate;
+      website.minimumCoins = minimumCoins;
+      await website.save();
+
+      console.log(`Updated website ${website._id} (${website.website}) with coin rate:`, coinRate, 'minimum coins:', minimumCoins);
       updatedCount++;
     }
-    
+
     res.status(200).json({
       message: 'Coin rates added to websites successfully',
       totalWebsites: websites.length,
       updated: updatedCount,
       skipped: skippedCount
     });
-    
+
   } catch (error) {
     console.error('Error adding coin rates to websites:', error);
-    res.status(500).json({ 
-      message: 'Failed to add coin rates to websites', 
-      error: error.message 
+    res.status(500).json({
+      message: 'Failed to add coin rates to websites',
+      error: error.message
     });
   }
 };
 
+// New deposit API with coin conversion and validation
 // New deposit API with coin conversion and validation
 exports.createNewDepositTransaction = async (req, res) => {
   try {
@@ -1286,45 +1115,37 @@ exports.createNewDepositTransaction = async (req, res) => {
       status
     } = req.body;
 
-    // Validation
     if (!amount || !coinsToReceive || !coinRate || !websiteName || !username || !id || !createdBy) {
-      return res.status(400).json({ 
-        message: 'Missing required fields: amount, coinsToReceive, coinRate, websiteName, username, id, createdBy' 
+      return res.status(400).json({
+        message: 'Missing required fields: amount, coinsToReceive, coinRate, websiteName, username, id, createdBy'
       });
     }
 
-    // Check if user has sufficient wallet balance
     console.log('Looking for user with ID:', createdBy);
-    let userDoc = await db.collection('user').doc(createdBy).get();
-    
-    // If not found by ID, try to find by username
-    if (!userDoc.exists) {
-      console.log('User document not found with ID, trying username:', createdBy);
-      const userSnapshot = await db.collection('user').where('username', '==', createdBy).get();
-      if (userSnapshot.empty) {
-        console.log('User not found with username either:', createdBy);
-        return res.status(404).json({ message: 'User not found' });
-      }
-      // Use the first matching user
-      const userData = userSnapshot.docs[0].data();
-      userDoc = { exists: true, data: () => userData };
+    let user = null;
+    if (mongoose.Types.ObjectId.isValid(createdBy)) {
+      user = await User.findById(createdBy);
+    } else {
+      user = await User.findOne({ username: createdBy });
     }
 
-    const userData = userDoc.data();
-    const userBalance = userData.balance || 0;
+    if (!user) {
+      console.log('User not found with username either:', createdBy);
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const userBalance = user.balance || 0;
 
     if (parseFloat(amount) > userBalance) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: 'Insufficient wallet balance',
         currentBalance: userBalance,
         requiredAmount: parseFloat(amount)
       });
     }
 
-    // Generate unique transaction ID
     const transactionId = `DEP_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    // Prepare transaction data
     const transactionData = {
       description: `Deposit Request - ${websiteName} (${username}) - ₹${amount} (${coinsToReceive} coins)`,
       transactionId,
@@ -1339,58 +1160,43 @@ exports.createNewDepositTransaction = async (req, res) => {
       websiteName,
       websiteUrl,
       username,
-      idDocumentId: id, // ID document reference
+      idDocumentId: id,
       createdBy,
       imagePath: 'No image required for deposit',
       transactionType: 'deposit'
     };
 
-    console.log('Creating deposit transaction with data:');
-    console.log(`- Amount: ₹${amount}`);
-    console.log(`- Coins to receive: ${coinsToReceive}`);
-    console.log(`- Coin rate: ₹${coinRate} per coin`);
-    console.log(`- Website: ${websiteName}`);
-    console.log(`- Username: ${username}`);
-    console.log(`- ID Document ID: ${id}`);
-    console.log(`- Created by: ${createdBy}`);
+    const transaction = new Transaction(transactionData);
+    await transaction.save();
 
-    // Save transaction to Firestore
-    const transactionRef = await db.collection('transactions').add(transactionData);
-
-    console.log('New deposit transaction created:', transactionRef.id);
+    console.log('New deposit transaction created:', transaction._id);
 
     res.status(201).json({
       message: 'Deposit request submitted successfully',
       transaction: {
-        id: transactionRef.id,
+        id: transaction._id,
         ...transactionData,
       },
     });
 
   } catch (error) {
     console.error('Error creating deposit transaction:', error);
-    res.status(500).json({ 
-      message: 'Error creating deposit transaction', 
-      error: error.message 
+    res.status(500).json({
+      message: 'Error creating deposit transaction',
+      error: error.message
     });
   }
 };
 
 // Migration script to update existing IDs with coin rates
+// Migration script to update existing IDs with coin rates
 exports.migrateIdsWithCoinRates = async (req, res) => {
   try {
     console.log('Starting migration to add coin rates to existing IDs...');
-    
-    // Get all websites to create a lookup map
-    const websitesSnapshot = await db.collection('websites').get();
-    const websites = websitesSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-    
+
+    const websites = await Website.find();
     console.log('Found websites:', websites.length);
-    
-    // Create a lookup map for faster searching
+
     const websiteMap = {};
     websites.forEach(website => {
       websiteMap[website.website] = {
@@ -1398,60 +1204,46 @@ exports.migrateIdsWithCoinRates = async (req, res) => {
         minimumCoins: parseFloat(website.minimumCoins) || 0
       };
     });
-    
+
     console.log('Website map:', websiteMap);
-    
-    // Get all IDs
-    const idsSnapshot = await db.collection('id').get();
-    const ids = idsSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-    
+
+    const ids = await WebsiteId.find();
     console.log('Found IDs:', ids.length);
-    
+
     let updatedCount = 0;
     let skippedCount = 0;
-    
-    // Update each ID
-    for (const idDoc of idsSnapshot.docs) {
-      const idData = idDoc.data();
-      const websiteName = idData.websiteName;
-      
-      // Check if ID already has coin rate
-      if (idData.coinRate !== undefined) {
-        console.log(`Skipping ID ${idDoc.id} - already has coin rate:`, idData.coinRate);
+
+    for (const idDoc of ids) {
+      const websiteName = idDoc.websiteName;
+
+      if (idDoc.coinRate !== undefined) {
+        console.log(`Skipping ID ${idDoc._id} - already has coin rate:`, idDoc.coinRate);
         skippedCount++;
         continue;
       }
-      
-      // Get coin rate from website
+
       const websiteInfo = websiteMap[websiteName];
       if (websiteInfo) {
-        const updateData = {
-          coinRate: websiteInfo.coinRate,
-          minimumCoins: websiteInfo.minimumCoins,
-          balance: idData.balance !== undefined ? idData.balance : 0
-        };
-        
-        await idDoc.ref.update(updateData);
-        console.log(`Updated ID ${idDoc.id} for website ${websiteName} with coin rate:`, websiteInfo.coinRate);
+        idDoc.coinRate = websiteInfo.coinRate;
+        idDoc.minimumCoins = websiteInfo.minimumCoins;
+        idDoc.balance = idDoc.balance !== undefined ? idDoc.balance : 0;
+
+        await idDoc.save();
+        console.log(`Updated ID ${idDoc._id} for website ${websiteName} with coin rate:`, websiteInfo.coinRate);
         updatedCount++;
       } else {
-        console.log(`Website not found for ID ${idDoc.id}, website: ${websiteName}`);
-        // Set default values
-        const updateData = {
-          coinRate: 1,
-          minimumCoins: 0,
-          balance: idData.balance !== undefined ? idData.balance : 0
-        };
-        
-        await idDoc.ref.update(updateData);
-        console.log(`Updated ID ${idDoc.id} with default coin rate: 1`);
+        console.log(`Website not found for ID ${idDoc._id}, website: ${websiteName}`);
+
+        idDoc.coinRate = 1;
+        idDoc.minimumCoins = 0;
+        idDoc.balance = idDoc.balance !== undefined ? idDoc.balance : 0;
+
+        await idDoc.save();
+        console.log(`Updated ID ${idDoc._id} with default coin rate: 1`);
         updatedCount++;
       }
     }
-    
+
     res.status(200).json({
       message: 'Migration completed successfully',
       totalIds: ids.length,
@@ -1459,12 +1251,12 @@ exports.migrateIdsWithCoinRates = async (req, res) => {
       skipped: skippedCount,
       websiteMap: websiteMap
     });
-    
+
   } catch (error) {
     console.error('Error during migration:', error);
-    res.status(500).json({ 
-      message: 'Migration failed', 
-      error: error.message 
+    res.status(500).json({
+      message: 'Migration failed',
+      error: error.message
     });
   }
 };

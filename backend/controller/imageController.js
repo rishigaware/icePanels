@@ -1,10 +1,8 @@
-const admin = require('firebase-admin');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const multer = require('multer');
-
-// Initialize Firestore
-const db = admin.firestore();
+const ImageCarousel = require('../models/ImageCarousel');
+const fs = require('fs');
 
 // Multer configuration for image uploads
 const storage = multer.diskStorage({
@@ -35,26 +33,19 @@ const upload = multer({
 const getImages = async (req, res) => {
   try {
     const { carouselId } = req.params;
-    
-    // Reference to the images collection for this carousel
-    const imagesRef = db.collection('imageCarousels').doc(carouselId).collection('images');
-    
-    // Fetch all documents in the collection
-    const snapshot = await imagesRef.orderBy('createdAt', 'desc').get();
-    
-    // Check if the collection is empty
-    if (snapshot.empty) {
+
+    const images = await ImageCarousel.find({ carouselId }).sort({ createdAt: -1 });
+
+    if (images.length === 0) {
       return res.status(200).json([]);
     }
-    
-    // Map the documents to an array of data
-    const images = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
+
+    const formattedImages = images.map(doc => ({
+      id: doc._id,
+      ...doc.toObject(),
     }));
-    
-    // Respond with the fetched data
-    res.status(200).json(images);
+
+    res.status(200).json(formattedImages);
   } catch (error) {
     console.error('Error fetching images:', error);
     res.status(500).json({ message: 'Server error. Please try again later.' });
@@ -69,32 +60,26 @@ const uploadImage = async (req, res) => {
     }
 
     const { type, carouselId } = req.body;
-    
+
     if (!type || !carouselId) {
       return res.status(400).json({ message: 'Type and carouselId are required.' });
     }
 
     const imagePath = path.join('uploads', 'images', req.file.filename);
-    const imageId = uuidv4();
 
-    const newImage = {
-      id: imageId,
+    const newImage = new ImageCarousel({
       imagePath,
       type,
       carouselId,
       originalName: req.file.originalname,
-      size: req.file.size,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
-    };
+      size: req.file.size
+    });
 
-    // Save to Firestore
-    const imageRef = db.collection('imageCarousels').doc(carouselId).collection('images').doc(imageId);
-    await imageRef.set(newImage);
+    await newImage.save();
 
     res.status(201).json({
       message: 'Image uploaded successfully.',
-      image: newImage
+      image: { id: newImage._id, ...newImage.toObject() }
     });
   } catch (error) {
     console.error('Error uploading image:', error);
@@ -112,27 +97,19 @@ const deleteImage = async (req, res) => {
       return res.status(400).json({ message: 'CarouselId and type are required.' });
     }
 
-    // Reference to the specific image document
-    const imageRef = db.collection('imageCarousels').doc(carouselId).collection('images').doc(imageId);
-    
-    // Get the image document to get the file path
-    const imageDoc = await imageRef.get();
-    
-    if (!imageDoc.exists) {
+    const image = await ImageCarousel.findByIdAndDelete(imageId);
+
+    if (!image) {
       return res.status(404).json({ message: 'Image not found.' });
     }
 
-    const imageData = imageDoc.data();
-    
-    // Delete the document from Firestore
-    await imageRef.delete();
-
-    // TODO: Delete the actual file from the filesystem
-    // const fs = require('fs');
-    // const filePath = path.join(__dirname, '..', imageData.imagePath);
-    // if (fs.existsSync(filePath)) {
-    //   fs.unlinkSync(filePath);
-    // }
+    // Delete the actual file from the filesystem
+    if (image.imagePath) {
+      const filePath = path.join(__dirname, '..', image.imagePath);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
 
     res.status(200).json({
       message: 'Image deleted successfully.',
@@ -148,16 +125,15 @@ const deleteImage = async (req, res) => {
 const getImageStats = async (req, res) => {
   try {
     const { carouselId } = req.params;
-    
-    const imagesRef = db.collection('imageCarousels').doc(carouselId).collection('images');
-    const snapshot = await imagesRef.get();
-    
+
+    const count = await ImageCarousel.countDocuments({ carouselId });
+
     const stats = {
-      totalImages: snapshot.size,
+      totalImages: count,
       carouselId: carouselId,
       lastUpdated: new Date().toISOString()
     };
-    
+
     res.status(200).json(stats);
   } catch (error) {
     console.error('Error fetching image stats:', error);
