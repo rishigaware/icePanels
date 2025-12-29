@@ -3,9 +3,9 @@ const path = require('path');
 
 // Configuration object - update these values when you get new Firebase credentials
 const firebaseConfig = {
-  serviceAccountPath: './the247panel-firebase-adminsdk-fbsvc-92970eca60.json', // Update this path
-  databaseURL: 'https://the247panel.firebaseio.com', // Update this URL
-  projectId: 'the247panel' // Update this project ID
+  serviceAccountPath: './the247-2.json', // Update this path
+  databaseURL: 'https://the247-2.firebaseio.com', // Update this URL to match your new project
+  projectId: 'the247-2' // Update this project ID
 };
 
 let db;

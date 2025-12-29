@@ -6,6 +6,9 @@ const adminRoutes = require('./routes/adminRoutes');
 const authRoutes = require('./routes/authRoutes');
 const imageRoutes = require('./routes/imageRoutes');
 const cors = require('cors');
+// MongoDB connection (optional)
+// const connectDB = require('./config/mongodb');
+// connectDB();
 
 const app = express();
 
@@ -28,7 +31,19 @@ app.use(express.json());
 // );
 
 // CORS configuration
-const allowedOrigins = process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : [];
+const allowedOrigins = process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : [
+  'https://www.the247panel.shop',
+  'https://the247panel.shop',
+  'https://the247panel.vercel.app',
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:5173'
+];
+
+console.log('🔧 CORS Configuration loaded:');
+console.log('🔧 Allowed origins:', allowedOrigins);
 
 // app.use(
 //   cors({
@@ -49,15 +64,23 @@ const allowedOrigins = process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split
 app.use(
   cors({
     origin: (origin, callback) => {
-      console.log('🔍 CORS request from:', origin);  // Add this line for debugging
+      console.log('🔍 CORS request from:', origin);
 
-      if (!origin || allowedOrigins.includes(origin.trim())) {
-        console.log('✅ CORS allowed:', origin);
-        callback(null, true);
-      } else {
-        console.error('--- CORS blocked:', origin);
-        callback(new Error('Not allowed by CORS'));
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) {
+        console.log('✅ CORS allowed: no origin');
+        return callback(null, true);
       }
+
+      // Check if origin is in allowed list
+      if (allowedOrigins.includes(origin.trim())) {
+        console.log('✅ CORS allowed:', origin);
+        return callback(null, true);
+      }
+
+      console.error('--- CORS blocked:', origin);
+      console.error('--- Allowed origins:', allowedOrigins);
+      callback(new Error('Not allowed by CORS'));
     },
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,

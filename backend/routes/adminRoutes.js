@@ -1,5 +1,6 @@
 const express = require('express');
 const adminController = require('../controller/adminController');
+const hybridAdminController = require('../controller/hybridAdminController'); // Hybrid controller
 const uploadLogo = require('../config/multerLogoUpload'); // Import multer configuration
 const uploadCorousel = require('../config/multerCorusel'); // Import multer configuration
 
@@ -98,6 +99,6 @@ router.patch('/reject-password-change/:requestId', adminController.rejectPasswor
 
 // ID creation request handling
 router.get('/id-requests', adminController.getAllIdRequests);
-router.patch('/update-id-request-status', adminController.updateIdRequestStatus);
+router.patch('/update-id-request-status', hybridAdminController.updateIdRequestStatus);
 
 module.exports = router;

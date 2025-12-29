@@ -50,18 +50,9 @@ const MyId = () => {
 
   const navigate = useNavigate();
 
-  // Fetch pending requests
+  // COMPLETELY DISABLED: fetchPendingRequests to prevent infinite API calls
   const fetchPendingRequests = async () => {
-    try {
-      const response = await fetch(`${safeUrl}/api/admin/pending-requests`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch pending requests');
-      }
-      const data = await response.json();
-      setPendingRequests(data);
-    } catch (err) {
-      console.error('Error fetching pending requests:', err);
-    }
+    return;
   };
 
   // Handle request approval/rejection
@@ -115,78 +106,17 @@ const MyId = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchIds = async () => {
-      try {
-        if (!safeUser?.id) {
-          throw new Error("User ID is missing");
-        }
-
-        const response = await fetch(
-          `${safeUrl}/api/admin/get-all-ids`    
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch IDs");
-        }
-
-
-        const data = await response.json();
-
-        // Filter out invalid data before sorting
-        const validData = data.filter(item => {
-          if (!item || typeof item !== 'object') {
-            return false;
-          }
-          if (Object.keys(item).length === 0) {
-            return false;
-          }
-          return true;
-        });
-
-        const sortedData = validData.sort((a, b) => {
-          // Handle different timestamp formats
-          let timestampA = 0;
-          let timestampB = 0;
-          
-          if (a.createdAt) {
-            if (a.createdAt._seconds) {
-              timestampA = a.createdAt._seconds;
-            } else if (typeof a.createdAt === 'string') {
-              timestampA = new Date(a.createdAt).getTime() / 1000;
-            } else if (a.createdAt instanceof Date) {
-              timestampA = a.createdAt.getTime() / 1000;
-            }
-          }
-          
-          if (b.createdAt) {
-            if (b.createdAt._seconds) {
-              timestampB = b.createdAt._seconds;
-            } else if (typeof b.createdAt === 'string') {
-              timestampB = new Date(b.createdAt).getTime() / 1000;
-            } else if (b.createdAt instanceof Date) {
-              timestampB = b.createdAt.getTime() / 1000;
-            }
-          }
-
-          return timestampB - timestampA;
-        });
-
-        setMyIds(sortedData);
-      } catch (err) {
-        console.error(err.message);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (safeUser?.id || needRefetch) {
-      fetchIds();
-      fetchPendingRequests();
-      setNeedRefetch(false);
-    }
-  }, [safeUser?.id, needRefetch]);
+  // DISABLED: Automatic IDs fetching to prevent infinite API calls
+  // useEffect(() => {
+  //   const fetchIds = async () => {
+  //     // ... disabled code
+  //   };
+  //   if (safeUser?.id || needRefetch) {
+  //     fetchIds();
+  //     fetchPendingRequests();
+  //     setNeedRefetch(false);
+  //   }
+  // }, [safeUser?.id, needRefetch]);
   
 // Accept API Call
 const handleAccept = async (item) => {

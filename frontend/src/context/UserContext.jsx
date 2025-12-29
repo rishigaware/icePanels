@@ -17,56 +17,18 @@ export const UserProvider = ({ children }) => {
         return null;
     }
 });
-console.log("starting")
 
-  // Centralized balance fetching function
+  // COMPLETELY DISABLED: fetchUserBalance to stop infinite API calls
   const fetchUserBalance = useCallback(async (userId) => {
-    if (!userId) return null;
-    
-    try {
-      // Check if this is an admin user (admin IDs typically start with 'admin_')
-      const isAdmin = userId.startsWith('admin_');
-      const endpoint = isAdmin 
-        ? `${url}/api/admin/get-balance/${userId}`
-        : `${url}/api/user/get-balance/${userId}`;
-      
-      const response = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        return data.balance;
-      } else if (response.status === 503) {
-        console.warn('Database quota exceeded - balance fetch failed');
-        return null;
-      } else {
-        console.error('Failed to fetch balance');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error fetching balance:', error);
-      return null;
-    }
-  }, [url]);
-
-  // Function to refresh user balance
-  const refreshUserBalance = useCallback(async () => {
-    if (user?.id) {
-      const newBalance = await fetchUserBalance(user.id);
-      if (newBalance !== null) {
-        setUser(prevUser => ({
-          ...prevUser,
-          balance: newBalance
-        }));
-        return newBalance;
-      }
-    }
+    console.log('fetchUserBalance called but DISABLED');
     return null;
-  }, [user?.id, fetchUserBalance]);
+  }, []);
+
+  // COMPLETELY DISABLED: refreshUserBalance to stop infinite API calls
+  const refreshUserBalance = useCallback(async () => {
+    console.log('refreshUserBalance called but DISABLED');
+    return null;
+  }, []);
 
   // Sync user state with localStorage
   useEffect(() => {

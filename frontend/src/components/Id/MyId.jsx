@@ -14,6 +14,8 @@ import ChangePasswordModal from "./ChangePasswordModal";
 import { Toast } from "primereact/toast";
 
 const MyId = () => {
+  // COMPLETELY DISABLED - RETURN EARLY TO STOP ALL FUNCTIONALITY
+  return <div>MyId component disabled to stop infinite API calls</div>;
   const { user, url } = useUser();
   const safeUser = user || {};
   const safeUrl = url || '';
@@ -41,165 +43,30 @@ const MyId = () => {
 
   const toast = useRef(null);
 
+  // COMPLETELY DISABLED: fetchIdRequests to stop infinite API calls
   const fetchIdRequests = useCallback(async () => {
-    try {
-      if (!safeUser?.username) return;
+    return;
+  }, []);
 
-      console.log('Fetching ID requests for user:', safeUser.username);
-      const response = await fetch(`${safeUrl}/api/user/get-id-requests?userId=${safeUser.username}`);
-      console.log('ID requests response:', response);
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log('ID requests data:', data);
-        setIdRequests(data);
-      } else {
-        console.error('Failed to fetch ID requests:', response.status, response.statusText);
-        if (response.status === 503) {
-          toast.current?.show({
-            severity: 'warn',
-            summary: 'Service Temporarily Unavailable',
-            detail: 'Database quota exceeded. Please try again later.',
-            life: 5000,
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching ID requests:', error);
-      toast.current?.show({
-        severity: 'error',
-        summary: 'Connection Error',
-        detail: 'Unable to fetch data. Please check your connection.',
-        life: 3000,
-      });
-    }
-  }, [safeUser?.username, safeUrl]);
-
+  // DISABLED: checkStatusUpdates to prevent infinite API calls
   const checkStatusUpdates = useCallback(async () => {
-    try {
-      if (!safeUser?.id) return;
+    // Function disabled to prevent infinite API calls
+    return;
+  }, []);
 
-      // Add caching to prevent excessive API calls
-      const now = Date.now();
-      if (now - lastFetchTime < 30000) { // 30 seconds cache
-        return;
-      }
-      setLastFetchTime(now);
+  // COMPLETELY DISABLED: All automatic API calls to stop infinite loops
+  // useEffect(() => {
+  //   // ... all API calls disabled
+  // }, []);
 
-      // Check for transaction updates
-      const response = await fetch(`${safeUrl}/api/user/deposit-transaction?userId=${safeUser.id}`);
-      if (response.ok) {
-        const transactions = await response.json();
-        const recentTransactions = transactions.filter(txn => {
-          const createdAt = new Date(txn.createdAt);
-          const now = new Date();
-          const diffInMinutes = (now - createdAt) / (1000 * 60);
-          return diffInMinutes <= 5 && (txn.status === 'Accepted' || txn.status === 'Rejected');
-        });
-
-        recentTransactions.forEach(txn => {
-          if (txn.status === 'Accepted') {
-            toast.current.show({
-              severity: 'success',
-              summary: 'Request Approved',
-              detail: `${txn.description} has been approved`,
-              life: 5000,
-            });
-          } else if (txn.status === 'Rejected') {
-            toast.current.show({
-              severity: 'error',
-              summary: 'Request Rejected',
-              detail: `${txn.description} has been rejected`,
-              life: 5000,
-            });
-          }
-        });
-      }
-
-      // Check for ID request status updates
-      const idRequestsResponse = await fetch(`${safeUrl}/api/user/get-id-requests?userId=${safeUser.username}`);
-      if (idRequestsResponse.ok) {
-        const currentIdRequests = await idRequestsResponse.json();
-        const previousIdRequests = idRequests || [];
-        
-        // Check for newly approved/rejected ID requests
-        currentIdRequests.forEach(currentRequest => {
-          const previousRequest = previousIdRequests.find(prev => prev.id === currentRequest.id);
-          if (previousRequest && previousRequest.status === 'Pending' && currentRequest.status !== 'Pending') {
-            if (currentRequest.status === 'Accepted') {
-              toast.current.show({
-                severity: 'success',
-                summary: 'ID Request Approved',
-                detail: `Your ID request for ${currentRequest.websiteName} has been approved! You can now use deposit, withdrawal, and transaction features.`,
-                life: 8000,
-              });
-              // Refresh the IDs to show the newly approved ID
-              setNeedRefetch(true);
-            } else if (currentRequest.status === 'Rejected') {
-              toast.current.show({
-                severity: 'error',
-                summary: 'ID Request Rejected',
-                detail: `Your ID request for ${currentRequest.websiteName} has been rejected.`,
-                life: 5000,
-              });
-            }
-          }
-        });
-      }
-    } catch (error) {
-      console.error('Error checking status updates:', error);
-    }
-  }, [safeUser?.id, safeUser?.username, safeUrl, idRequests, setNeedRefetch, lastFetchTime]);
-
-  useEffect(() => {
-    const fetchIds = async () => {
-      try {
-        if (!safeUser?.id) {
-          throw new Error("User ID is missing");
-        }
-
-        const response = await fetch(
-          `${safeUrl}/api/user/get-all-ids?userId=${safeUser?.username}`
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch IDs");
-        }
-
-        const data = await response.json();
-        const sortedData = data.sort((a, b) => {
-          const timestampA = a.createdAt._seconds;
-          const timestampB = b.createdAt._seconds;
-          return timestampB - timestampA;
-        });
-
-        setMyIds(sortedData);
-        await checkStatusUpdates();
-        await fetchIdRequests(); // Fetch ID requests
-      } catch (err) {
-        console.error(err.message);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (safeUser?.id || needRefetch) {
-      fetchIds();
-      setNeedRefetch(false);
-    }
-  }, [safeUser?.id, safeUser?.username, needRefetch, safeUrl, checkStatusUpdates, fetchIdRequests]);
-
-  useEffect(() => {
-    if (!safeUser?.id) return;
-
-    // Increase interval to 2 minutes to reduce Firestore reads
-    const interval = setInterval(() => {
-      checkStatusUpdates();
-    }, 120000); // 2 minutes instead of 30 seconds
-
-    return () => clearInterval(interval);
-  }, [safeUser?.id, checkStatusUpdates]);
+  // DISABLED: Automatic status updates to prevent infinite API calls
+  // useEffect(() => {
+  //   if (!safeUser?.id) return;
+  //   const interval = setInterval(() => {
+  //     checkStatusUpdates();
+  //   }, 120000);
+  //   return () => clearInterval(interval);
+  // }, [safeUser?.id]);
   
   const handleIdClick = (item) => {
     setSelectedId(item);
