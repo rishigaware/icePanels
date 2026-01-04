@@ -14,15 +14,30 @@
 }
 
 /* Upload controls */
+.uploadControlsWrapper {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.uploadTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #4a5568;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid #edf2f7;
+  padding-bottom: 10px;
+}
+
 .uploadControls {
   display: flex;
   align-items: center;
   gap: 15px;
-  margin-bottom: 20px;
-  padding: 15px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   flex-wrap: wrap;
 }
 
@@ -110,8 +125,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Carousel container */
@@ -235,7 +255,8 @@
 .squareImage {
   width: 100%;
   height: 100%;
-  object-fit: contain; /* Changed from cover to contain */
+  object-fit: contain;
+  /* Changed from cover to contain */
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
@@ -415,7 +436,7 @@
   .squareCardWrapper {
     height: 280px;
   }
-  
+
   .squareCardImage {
     width: 180px;
     height: 180px;
@@ -426,12 +447,12 @@
   .squareCardWrapper {
     height: 260px;
   }
-  
+
   .squareCarousel {
     margin: 25px 0;
     padding: 0 10px;
   }
-  
+
   .squareCardImage {
     width: 160px;
     height: 160px;
@@ -444,53 +465,53 @@
     align-items: stretch;
     gap: 10px;
   }
-  
+
   .uploadButton,
   .uploadSubmitButton {
     justify-content: center;
     padding: 10px 20px;
   }
-  
+
   .selectedFile {
     max-width: none;
     text-align: center;
   }
-  
+
   .horizontalCarousel .carouselContainer {
     height: 200px;
   }
-  
+
   .squareCarousel .carouselContainer {
     min-height: 250px;
   }
-  
+
   .squareCardWrapper {
     height: 240px;
     padding: 0 6px;
   }
-  
+
   .squareCardImage {
     width: 140px;
     height: 140px;
   }
-  
+
   .deleteButton {
     width: 35px;
     height: 35px;
     top: 8px;
     right: 8px;
   }
-  
+
   .squareCarousel :global(.slick-arrow) {
     width: 35px;
     height: 35px;
     font-size: 16px;
   }
-  
+
   .squareCarousel :global(.slick-prev) {
     left: -15px;
   }
-  
+
   .squareCarousel :global(.slick-next) {
     right: -15px;
   }
@@ -498,36 +519,37 @@
 
 /* Large Mobile Devices */
 @media (max-width: 640px) {
+
   .horizontalCarousel,
   .squareCarousel {
     margin: 18px 0;
     padding: 0 8px;
   }
-  
+
   .squareCarousel .carouselContainer {
     min-height: 220px;
   }
-  
+
   .squareCardWrapper {
     height: 200px;
     padding: 0 5px;
   }
-  
+
   .squareCardImage {
     width: 120px;
     height: 120px;
   }
-  
+
   .squareCarousel :global(.slick-arrow) {
     width: 32px;
     height: 32px;
     font-size: 14px;
   }
-  
+
   .squareCarousel :global(.slick-prev) {
     left: -12px;
   }
-  
+
   .squareCarousel :global(.slick-next) {
     right: -12px;
   }
@@ -535,49 +557,50 @@
 
 /* Medium Mobile Devices */
 @media (max-width: 480px) {
+
   .horizontalCarousel,
   .squareCarousel {
     margin: 15px 0;
     padding: 0 5px;
   }
-  
+
   .uploadControls {
     padding: 12px;
     margin-bottom: 15px;
   }
-  
+
   .horizontalCarousel .carouselContainer {
     height: 180px;
   }
-  
+
   .squareCarousel .carouselContainer {
     min-height: 200px;
   }
-  
+
   .squareCardWrapper {
     height: 180px;
     padding: 0 4px;
   }
-  
+
   .squareCardImage {
     width: 100px;
     height: 100px;
   }
-  
+
   .squareCarousel :global(.slick-arrow) {
     width: 30px;
     height: 30px;
     font-size: 12px;
   }
-  
+
   .squareCarousel :global(.slick-prev) {
     left: -10px;
   }
-  
+
   .squareCarousel :global(.slick-next) {
     right: -10px;
   }
-  
+
   .squareCarousel :global(.slick-dots) {
     bottom: -25px;
   }
@@ -585,44 +608,45 @@
 
 /* Small Mobile Devices */
 @media (max-width: 360px) {
+
   .horizontalCarousel,
   .squareCarousel {
     margin: 12px 0;
     padding: 0 4px;
   }
-  
+
   .horizontalCarousel .carouselContainer {
     height: 160px;
   }
-  
+
   .squareCarousel .carouselContainer {
     min-height: 180px;
   }
-  
+
   .squareCardWrapper {
     height: 160px;
     padding: 0 3px;
   }
-  
+
   .squareCardImage {
     width: 80px;
     height: 80px;
   }
-  
+
   .squareCarousel :global(.slick-arrow) {
     width: 28px;
     height: 28px;
     font-size: 10px;
   }
-  
+
   .squareCarousel :global(.slick-prev) {
     left: -8px;
   }
-  
+
   .squareCarousel :global(.slick-next) {
     right: -8px;
   }
-  
+
   .squareCarousel :global(.slick-dots) {
     bottom: -20px;
   }
@@ -630,44 +654,45 @@
 
 /* Extra Small Mobile Devices */
 @media (max-width: 320px) {
+
   .horizontalCarousel,
   .squareCarousel {
     margin: 10px 0;
     padding: 0 3px;
   }
-  
+
   .horizontalCarousel .carouselContainer {
     height: 140px;
   }
-  
+
   .squareCarousel .carouselContainer {
     min-height: 160px;
   }
-  
+
   .squareCardWrapper {
     height: 140px;
     padding: 0 2px;
   }
-  
+
   .squareCardImage {
     width: 70px;
     height: 70px;
   }
-  
+
   .squareCarousel :global(.slick-arrow) {
     width: 25px;
     height: 25px;
     font-size: 8px;
   }
-  
+
   .squareCarousel :global(.slick-prev) {
     left: -6px;
   }
-  
+
   .squareCarousel :global(.slick-next) {
     right: -6px;
   }
-  
+
   .squareCarousel :global(.slick-dots) {
     bottom: -15px;
   }
@@ -681,31 +706,31 @@
     margin: 25px 0;
     padding: 0 15px;
   }
-  
+
   .carouselTitle {
     font-size: 1.8rem;
     margin-bottom: 20px;
   }
-  
+
   .horizontalCarousel .carouselContainer {
     height: 280px;
   }
-  
+
   .squareCarousel .carouselContainer {
     min-height: 350px;
     max-height: 70vh;
   }
-  
+
   .squareCardWrapper {
     height: 200px;
     padding: 0 6px;
   }
-  
+
   .squareCardContainer {
     width: 180px;
     height: 180px;
   }
-  
+
   .squareCardImage {
     width: 100%;
     height: 100%;
@@ -719,46 +744,46 @@
     margin: 18px 0;
     padding: 0 8px;
   }
-  
+
   .carouselTitle {
     font-size: 1.3rem;
     margin-bottom: 12px;
   }
-  
+
   .uploadSection {
     margin-bottom: 15px;
   }
-  
+
   .uploadButton {
     padding: 6px 12px;
     font-size: 0.85rem;
   }
-  
+
   .horizontalCarousel .carouselContainer {
     height: 200px;
   }
-  
+
   .squareCarousel .carouselContainer {
     min-height: 250px;
     max-height: 60vh;
   }
-  
+
   .squareCardWrapper {
     height: 170px;
     padding: 0 4px;
   }
-  
+
   .squareCardContainer {
     width: 150px;
     height: 150px;
   }
-  
+
   .squareCardImage {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-  
+
   .squareDeleteButton {
     top: 4px;
     right: 4px;
@@ -766,13 +791,13 @@
     height: 22px;
     font-size: 0.7rem;
   }
-  
+
   .squareCarousel :global(.slick-arrow) {
     width: 25px;
     height: 25px;
     font-size: 0.9rem;
   }
-  
+
   .squareCarousel :global(.slick-dots) {
     bottom: -25px;
   }
@@ -784,46 +809,46 @@
     margin: 15px 0;
     padding: 0 5px;
   }
-  
+
   .carouselTitle {
     font-size: 1.2rem;
     margin-bottom: 10px;
   }
-  
+
   .uploadSection {
     margin-bottom: 12px;
   }
-  
+
   .uploadButton {
     padding: 5px 10px;
     font-size: 0.8rem;
   }
-  
+
   .horizontalCarousel .carouselContainer {
     height: 180px;
   }
-  
+
   .squareCarousel .carouselContainer {
     min-height: 200px;
     max-height: 50vh;
   }
-  
+
   .squareCardWrapper {
     height: 140px;
     padding: 0 3px;
   }
-  
+
   .squareCardContainer {
     width: 120px;
     height: 120px;
   }
-  
+
   .squareCardImage {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-  
+
   .squareDeleteButton {
     top: 3px;
     right: 3px;
@@ -831,13 +856,13 @@
     height: 20px;
     font-size: 0.65rem;
   }
-  
+
   .squareCarousel :global(.slick-arrow) {
     width: 22px;
     height: 22px;
     font-size: 0.8rem;
   }
-  
+
   .squareCarousel :global(.slick-dots) {
     bottom: -20px;
   }
@@ -849,48 +874,48 @@
     margin: 12px 0;
     padding: 0 3px;
   }
-  
+
   .carouselTitle {
     font-size: 1.1rem;
     margin-bottom: 8px;
   }
-  
+
   .uploadSection {
     margin-bottom: 10px;
   }
-  
+
   .uploadButton {
     padding: 4px 8px;
     font-size: 0.75rem;
   }
-  
+
   .horizontalCarousel .carouselContainer {
     height: 160px;
   }
-  
+
   .squareCarousel .carouselContainer {
     min-height: 180px;
     max-height: 45vh;
     padding: 0 5px;
   }
-  
+
   .squareCardWrapper {
     height: 120px;
     padding: 0 2px;
   }
-  
+
   .squareCardContainer {
     width: 100px;
     height: 100px;
     margin: 0 auto;
   }
-  
+
   .squareCardImage {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-  
+
   .squareDeleteButton {
     top: 2px;
     right: 2px;
@@ -898,15 +923,15 @@
     height: 18px;
     font-size: 0.6rem;
   }
-  
+
   .squareCarousel :global(.slick-arrow) {
     display: none !important;
   }
-  
+
   .squareCarousel :global(.slick-dots) {
     bottom: -18px;
   }
-  
+
   .squareCarousel :global(.slick-dots li button) {
     width: 6px;
     height: 6px;
@@ -919,32 +944,32 @@
     margin: 8px 0;
     padding: 0 2px;
   }
-  
+
   .squareCarousel .carouselContainer {
     min-height: 150px;
     max-height: 40vh;
     padding: 0 3px;
   }
-  
+
   .squareCardWrapper {
     height: 100px;
     padding: 0 1px;
   }
-  
+
   .squareCardContainer {
     width: 80px;
     height: 80px;
     margin: 0 auto;
     border-radius: 8px;
   }
-  
+
   .squareCardImage {
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: 6px;
   }
-  
+
   .squareDeleteButton {
     top: 1px;
     right: 1px;
@@ -952,20 +977,20 @@
     height: 16px;
     font-size: 0.55rem;
   }
-  
+
   .squareCarousel :global(.slick-arrow) {
     display: none !important;
   }
-  
+
   .squareCarousel :global(.slick-dots) {
     bottom: -15px;
   }
-  
+
   .squareCarousel :global(.slick-dots li button) {
     width: 4px;
     height: 4px;
   }
-  
+
   .squareCarousel :global(.slick-dots li) {
     margin: 0 2px;
   }
@@ -991,17 +1016,17 @@
     margin: 10px 0;
     padding: 0 5px;
   }
-  
+
   .squareCarousel .carouselContainer {
     min-height: 150px;
   }
-  
+
   .squareCardWrapper {
     display: flex;
     justify-content: center;
     align-items: center;
   }
-  
+
   .squareCardContainer {
     display: flex;
     justify-content: center;

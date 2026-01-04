@@ -9,6 +9,7 @@ const Home = () => {
   return (
     <>
       <HomeHeading />
+
       <div className={styles.carouselContainer}>
         {/* Horizontal Image Carousel */}
         <ImageCarousel 

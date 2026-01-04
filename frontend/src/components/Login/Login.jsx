@@ -31,7 +31,12 @@ const Login = () => {
           setUser(data.user); // Set user in context
           localStorage.setItem('user', JSON.stringify(data.user)); // Store user in localStorage
           // Redirect to the homepage ("/") after successful login
-          navigate('/');
+          // Redirect based on user role
+          if (data.user.role === 'admin') {
+            navigate('/admin/home');
+          } else {
+            navigate('/');
+          }
         } else {
           window.alert('User data is missing from the response');
         }

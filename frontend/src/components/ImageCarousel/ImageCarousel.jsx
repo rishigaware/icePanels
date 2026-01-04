@@ -374,42 +374,48 @@ const ImageCarousel = ({ type, carouselId, canManage = false }) => {
       {/* Toast component for displaying messages */}
       <Toast ref={toast} />
 
-      {/* Upload controls - only show for admin */}
+
+
       {canManage && (
-        <div className={styles.uploadControls}>
-          <div className={styles.fileInputContainer}>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={onFileSelect}
-              className="hidden"
-              id={`file-upload-${carouselId}`}
-            />
-            <label
-              htmlFor={`file-upload-${carouselId}`}
-              className={styles.uploadButton}
-            >
-              <i className="fa fa-image mr-2"></i> Choose Image
-            </label>
-          </div>
-          
-          {selectedFile && (
-            <div className={styles.selectedFile}>
-              Selected: {selectedFile.name}
+        <div className={styles.uploadControlsWrapper}>
+          <h3 className={styles.uploadTitle}>
+            <i className="fa fa-cog mr-2"></i> Manage {type === 'horizontal' ? 'Horizontal' : 'Square'} Carousel
+          </h3>
+          <div className={styles.uploadControls}>
+            <div className={styles.fileInputContainer}>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={onFileSelect}
+                className="hidden"
+                id={`file-upload-${carouselId}`}
+              />
+              <label
+                htmlFor={`file-upload-${carouselId}`}
+                className={styles.uploadButton}
+              >
+                <i className="fa fa-image mr-2"></i> Choose Image
+              </label>
             </div>
-          )}
-          
-          <button
-            onClick={handleUpload}
-            className={styles.uploadSubmitButton}
-            disabled={!selectedFile}
-            style={{
-              opacity: selectedFile ? 1 : 0.6,
-              cursor: selectedFile ? 'pointer' : 'not-allowed'
-            }}
-          >
-            <i className="fa fa-upload mr-2"></i> Upload Image
-          </button>
+            
+            {selectedFile && (
+              <div className={styles.selectedFile}>
+                Selected: {selectedFile.name}
+              </div>
+            )}
+            
+            <button
+              onClick={handleUpload}
+              className={styles.uploadSubmitButton}
+              disabled={!selectedFile}
+              style={{
+                opacity: selectedFile ? 1 : 0.6,
+                cursor: selectedFile ? 'pointer' : 'not-allowed'
+              }}
+            >
+              <i className="fa fa-upload mr-2"></i> Upload Image
+            </button>
+          </div>
         </div>
       )}
 
