@@ -6,8 +6,8 @@ const UserContext = createContext();
 // UserProvider component to wrap the app and provide user data
 export const UserProvider = ({ children }) => {
   // State to manage the user object  
-  const [url, setUrl] = useState("https://betting-accounts-manager.onrender.com");
-  // const [url, setUrl] = useState("http://localhost:3000");
+  // const [url, setUrl] = useState("https://betting-accounts-manager.onrender.com");
+  const [url, setUrl] = useState("http://localhost:3000");
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem('user');
     try {
@@ -18,17 +18,29 @@ export const UserProvider = ({ children }) => {
     }
 });
 
-  // COMPLETELY DISABLED: fetchUserBalance to stop infinite API calls
   const fetchUserBalance = useCallback(async (userId) => {
-    console.log('fetchUserBalance called but DISABLED');
-    return null;
-  }, []);
+    if (!userId) return null;
+    try {
+      const response = await fetch(`${url}/api/user/get-balance/${userId}`);
+      if (response.ok) {
+        const data = await response.json();
+        return data.balance;
+      }
+      return null;
+    } catch (error) {
+      console.error("Error fetching user balance:", error);
+      return null;
+    }
+  }, [url]);
 
-  // COMPLETELY DISABLED: refreshUserBalance to stop infinite API calls
   const refreshUserBalance = useCallback(async () => {
-    console.log('refreshUserBalance called but DISABLED');
-    return null;
-  }, []);
+    if (user?.id) {
+      const balance = await fetchUserBalance(user.id);
+      if (balance !== null) {
+        setUser(prev => ({ ...prev, balance }));
+      }
+    }
+  }, [user?.id, fetchUserBalance]);
 
   // Sync user state with localStorage
   useEffect(() => {

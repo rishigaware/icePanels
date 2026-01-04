@@ -67,7 +67,7 @@ const CreateId = () => {
       const response = await fetch(`${url}/api/admin/get-websites`);
       const data = await response.json();
       if (response.ok) {
-        setWebsites(data.websites);
+        setWebsites(data);
       } else {
         console.error("Error fetching websites:", data);
       }

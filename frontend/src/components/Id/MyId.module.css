@@ -82,19 +82,23 @@
 }
 
 .popStatusRequested {
-  color: rgb(255, 175, 28); /* Color for 'Requested' status */
+  color: rgb(255, 175, 28);
+  /* Color for 'Requested' status */
 }
 
 .popStatusCreated {
-  color: green; /* Color for 'Created' status */
+  color: green;
+  /* Color for 'Created' status */
 }
 
 .popStatusUsernameExist {
-  color: red; /* Color for 'Username Exist' status */
+  color: red;
+  /* Color for 'Username Exist' status */
 }
 
 .popStatusActive {
-  color: rgb(255, 175, 28); /* Default color for active status */
+  color: rgb(255, 175, 28);
+  /* Default color for active status */
 }
 
 
@@ -198,9 +202,12 @@
 
 .loading {
   display: flex;
-  justify-content: center; /* Center horizontally */
-  align-items: center;     /* Center vertically */
-  height: 100vh;           /* Full viewport height */
+  justify-content: center;
+  /* Center horizontally */
+  align-items: center;
+  /* Center vertically */
+  height: 100vh;
+  /* Full viewport height */
   width: 100vw;
 }
 
@@ -224,24 +231,31 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   color: #005f66;
-text-align: center;}
+  text-align: center;
+}
 
 .passwordInput::placeholder {
-  text-align: center; /* Centers the placeholder text */
+  text-align: center;
+  /* Centers the placeholder text */
 }
 
 .changePasswordButton {
   margin-top: 10px;
-  padding: 5px 10px; /* Added horizontal padding */
+  padding: 5px 10px;
+  /* Added horizontal padding */
   background-color: #4592ef;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  display: block; /* Center the button */
-  width: 200px; /* Set a fixed width */
-  margin-left: auto; /* Center horizontally */
-  margin-right: auto; /* Center horizontally */
+  display: block;
+  /* Center the button */
+  width: 200px;
+  /* Set a fixed width */
+  margin-left: auto;
+  /* Center horizontally */
+  margin-right: auto;
+  /* Center horizontally */
 }
 
 .changePasswordButton:hover {
@@ -254,7 +268,8 @@ text-align: center;}
 
 .iconContainer {
   display: flex;
-  gap: 20px; /* Space between the icons */
+  gap: 20px;
+  /* Space between the icons */
   justify-content: center;
   align-items: center;
   margin-top: 10px;
@@ -267,50 +282,72 @@ text-align: center;}
 }
 
 .icon {
-  font-size: 30px; /* Adjust the size as needed */
-  color: #4592ef; /* Icon color */
+  font-size: 30px;
+  /* Adjust the size as needed */
+  color: #4592ef;
+  /* Icon color */
   cursor: pointer;
 }
 
 .icon:hover {
-  color: #004a99; /* Change color on hover */
+  color: #004a99;
+  /* Change color on hover */
 }
 
 .iconLabel {
-  font-size: 10px; /* Adjust font size for labels */
-  margin-top: 5px; /* Space between the icon and label */
-  color: #4a99ff; /* Text color */
+  font-size: 10px;
+  /* Adjust font size for labels */
+  margin-top: 5px;
+  /* Space between the icon and label */
+  color: #4a99ff;
+  /* Text color */
   text-align: center;
 }
 
 /* Styling for the search bar */
 .searchInput {
   margin-top: -20px;
-  width: 100%; /* Full width of the container */
-  max-width: 500px; /* Optional: limit the width */
-  padding: 10px 15px; /* Add some inner spacing */
-  font-size: 16px; /* Text size */
-  color: #333; /* Text color */
-  background-color: #f9f9f9; /* Light background */
-  border: 1px solid #ccc; /* Border color */
-  border-radius: 5px; /* Rounded corners */
-  outline: none; /* Remove default outline */
-  transition: all 0.3s ease; /* Smooth transition for hover/focus */
+  width: 100%;
+  /* Full width of the container */
+  max-width: 500px;
+  /* Optional: limit the width */
+  padding: 10px 15px;
+  /* Add some inner spacing */
+  font-size: 16px;
+  /* Text size */
+  color: #333;
+  /* Text color */
+  background-color: #f9f9f9;
+  /* Light background */
+  border: 1px solid #ccc;
+  /* Border color */
+  border-radius: 5px;
+  /* Rounded corners */
+  outline: none;
+  /* Remove default outline */
+  transition: all 0.3s ease;
+  /* Smooth transition for hover/focus */
   margin-bottom: 20px;
 }
 
 /* Change border color and shadow on focus */
 .searchInput:focus {
-  border-color: #4592ef; /* Highlight border color */
-  box-shadow: 0 0 8px rgba(69, 146, 239, 0.4); /* Add subtle glow */
-  background-color: #fff; /* Brighten background */
+  border-color: #4592ef;
+  /* Highlight border color */
+  box-shadow: 0 0 8px rgba(69, 146, 239, 0.4);
+  /* Add subtle glow */
+  background-color: #fff;
+  /* Brighten background */
 }
 
 /* Styling for placeholder text */
 .searchInput::placeholder {
-  color: #aaa; /* Lighter color for placeholder text */
-  font-style: italic; /* Optional: italicize */
-  font-size: 12px; /* Set the font size for the placeholder */
+  color: #aaa;
+  /* Lighter color for placeholder text */
+  font-style: italic;
+  /* Optional: italicize */
+  font-size: 12px;
+  /* Set the font size for the placeholder */
 }
 
 /* ===== PAGINATION STYLES (Matching Transaction Page) ===== */
@@ -373,23 +410,28 @@ text-align: center;}
 
 /* ===== ICON COLORS ===== */
 .depositIcon {
-  color: #10b981; /* Green */
+  color: #10b981;
+  /* Green */
 }
 
 .withdrawalIcon {
-  color: #f59e0b; /* Amber */
+  color: #f59e0b;
+  /* Amber */
 }
 
 .editIcon {
-  color: #3b82f6; /* Blue */
+  color: #3b82f6;
+  /* Blue */
 }
 
 .transactionIcon {
-  color: #8b5cf6; /* Purple */
+  color: #8b5cf6;
+  /* Purple */
 }
 
 .closeIcon {
-  color: #ef4444; /* Red */
+  color: #ef4444;
+  /* Red */
 }
 
 /* ===== MOBILE POPUP STYLES ===== */
@@ -464,19 +506,19 @@ text-align: center;}
     display: flex;
     gap: 1rem;
   }
-  
+
   .mobileMenu {
     display: none;
   }
-  
+
   .iconWrapper {
     min-width: 80px;
   }
-  
+
   .icon {
     font-size: 28px;
   }
-  
+
   .iconLabel {
     font-size: 0.8rem;
   }
@@ -488,19 +530,19 @@ text-align: center;}
     display: flex;
     gap: 0.8rem;
   }
-  
+
   .mobileMenu {
     display: none;
   }
-  
+
   .iconWrapper {
     min-width: 70px;
   }
-  
+
   .icon {
     font-size: 24px;
   }
-  
+
   .iconLabel {
     font-size: 0.75rem;
   }
@@ -514,19 +556,19 @@ text-align: center;}
     flex-wrap: wrap;
     justify-content: center;
   }
-  
+
   .mobileMenu {
     display: none;
   }
-  
+
   .iconWrapper {
     min-width: 60px;
   }
-  
+
   .icon {
     font-size: 20px;
   }
-  
+
   .iconLabel {
     font-size: 0.7rem;
   }
@@ -537,7 +579,7 @@ text-align: center;}
   .desktopIcons {
     display: none;
   }
-  
+
   .mobileMenu {
     display: block;
   }
@@ -550,15 +592,15 @@ text-align: center;}
     flex-wrap: wrap;
     justify-content: center;
   }
-  
+
   .iconWrapper {
     min-width: 45px;
   }
-  
+
   .icon {
     font-size: 16px;
   }
-  
+
   .iconLabel {
     font-size: 0.6rem;
   }
@@ -571,15 +613,15 @@ text-align: center;}
     flex-wrap: wrap;
     justify-content: center;
   }
-  
+
   .iconWrapper {
     min-width: 40px;
   }
-  
+
   .icon {
     font-size: 14px;
   }
-  
+
   .iconLabel {
     font-size: 0.55rem;
   }
@@ -592,13 +634,13 @@ text-align: center;}
     gap: 0.25rem;
     margin-top: 1.5rem;
   }
-  
+
   .paginationButton {
     padding: 0.625rem 0.875rem;
     font-size: 0.9rem;
     min-width: 40px;
   }
-  
+
   .paginationInfo {
     font-size: 0.8rem;
     margin: 0 0.5rem;
@@ -611,13 +653,13 @@ text-align: center;}
     gap: 0.25rem;
     margin-top: 1.5rem;
   }
-  
+
   .paginationButton {
     padding: 0.625rem 0.875rem;
     font-size: 0.9rem;
     min-width: 40px;
   }
-  
+
   .paginationInfo {
     font-size: 0.8rem;
     margin: 0 0.5rem;
@@ -630,7 +672,7 @@ text-align: center;}
     font-size: 0.8rem;
     min-width: 35px;
   }
-  
+
   .paginationInfo {
     font-size: 0.75rem;
     margin: 0 0.25rem;
@@ -740,28 +782,28 @@ text-align: center;}
 }
 
 .refreshButton {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  color: white;
+  background: transparent;
+  color: #3b82f6;
   border: none;
-  border-radius: 8px;
-  padding: 10px 15px;
-  font-size: 16px;
+  border-radius: 50%;
+  padding: 8px;
+  font-size: 24px;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 50px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .refreshButton:hover {
-  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  background-color: rgba(59, 130, 246, 0.1);
+  transform: rotate(180deg);
+  box-shadow: none;
 }
 
 .refreshButton:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+  transform: rotate(180deg) scale(0.95);
+  box-shadow: none;
 }

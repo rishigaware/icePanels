@@ -51,8 +51,41 @@ const MyId = () => {
   const navigate = useNavigate();
 
   // COMPLETELY DISABLED: fetchPendingRequests to prevent infinite API calls
+  const fetchIds = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${safeUrl}/api/admin/get-all-ids`);
+      const data = await response.json();
+      if (response.ok) {
+        // Handle both array and object response formats for robustness
+        const idsData = Array.isArray(data) ? data : (data.ids || []);
+        setMyIds(idsData);
+      } else {
+        console.error("Error fetching IDs:", data);
+        setError("Failed to fetch IDs");
+      }
+    } catch (error) {
+      console.error("Failed to fetch IDs:", error);
+      setError("Failed to fetch IDs");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fetchPendingRequests = async () => {
-    return;
+    try {
+      const response = await fetch(`${safeUrl}/api/admin/pending-requests`);
+      const data = await response.json();
+      if (response.ok) {
+        // Handle both array and object response formats for robustness
+        const requestsData = Array.isArray(data) ? data : (data.requests || []);
+        setPendingRequests(requestsData);
+      } else {
+        console.error("Error fetching pending requests:", data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch pending requests:", error);
+    }
   };
 
   // Handle request approval/rejection
@@ -107,16 +140,13 @@ const MyId = () => {
   };
 
   // DISABLED: Automatic IDs fetching to prevent infinite API calls
-  // useEffect(() => {
-  //   const fetchIds = async () => {
-  //     // ... disabled code
-  //   };
-  //   if (safeUser?.id || needRefetch) {
-  //     fetchIds();
-  //     fetchPendingRequests();
-  //     setNeedRefetch(false);
-  //   }
-  // }, [safeUser?.id, needRefetch]);
+  useEffect(() => {
+    if (safeUser?.id || needRefetch) {
+      fetchIds();
+      fetchPendingRequests();
+      setNeedRefetch(false);
+    }
+  }, [safeUser?.id, needRefetch]);
   
 // Accept API Call
 const handleAccept = async (item) => {

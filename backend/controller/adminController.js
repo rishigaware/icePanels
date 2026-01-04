@@ -13,6 +13,7 @@ const ClosedId = require('../models/ClosedId');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
+const mongoose = require('mongoose');
 
 
 // Fetch all admins
@@ -171,20 +172,26 @@ exports.addAdmin = async (req, res) => {
 
 // Controller for handling the addition of a new website
 exports.addWebsite = async (req, res) => {
-  const { name, url, coinRate, minimumCoins, category } = req.body;
+  const { website, url, coinRate, minimumCoins, category } = req.body;
 
   // Validation: Ensure all fields are provided
-  if (!name || !url || !coinRate || !minimumCoins) {
+  if (!website || !url || !coinRate || !minimumCoins) {
     return res.status(400).json({ message: 'All fields are required.' });
   }
 
   try {
+    let logoPath = '';
+    if (req.file) {
+      logoPath = `uploads/logo/${req.file.filename}`;
+    }
+
     const newWebsite = new Website({
-      name,
+      website,
       url,
       coinRate: parseFloat(coinRate),
       minimumCoins: parseInt(minimumCoins, 10),
-      category: category || '' // Add category field
+      category: category || '', // Add category field
+      logo: logoPath
     });
 
     await newWebsite.save();
@@ -582,7 +589,7 @@ exports.updateId = async (req, res) => {
 exports.updateWebsite = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, url, coinRate, minimumCoins, category } = req.body;
+    const { website: newName, url, coinRate, minimumCoins, category } = req.body;
 
     const website = await Website.findById(id);
 
@@ -590,11 +597,15 @@ exports.updateWebsite = async (req, res) => {
       return res.status(404).json({ message: 'Website not found.' });
     }
 
-    if (name) website.name = name;
+    if (newName) website.website = newName;
     if (url) website.url = url;
     if (coinRate) website.coinRate = parseFloat(coinRate);
     if (minimumCoins) website.minimumCoins = parseInt(minimumCoins, 10);
     if (category !== undefined) website.category = category;
+
+    if (req.file) {
+      website.logo = `uploads/logo/${req.file.filename}`;
+    }
 
     await website.save();
 

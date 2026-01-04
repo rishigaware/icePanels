@@ -1,4 +1,3 @@
-
 .container {
   height: 80vh;
   width: 100vw;
@@ -31,7 +30,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9999;
   padding: 20px;
   box-sizing: border-box;
   animation: modalFadeIn 0.3s ease-out;
@@ -43,6 +42,7 @@
     opacity: 0;
     backdrop-filter: blur(0px);
   }
+
   to {
     opacity: 1;
     backdrop-filter: blur(8px);
@@ -52,21 +52,24 @@
 /* Modal Content */
 .modalContent {
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  width: 95%; /* More responsive width */
-  max-width: 1200px !important; /* Much larger max width for big screens */
+  width: 95%;
+  /* More responsive width */
+  max-width: 1200px !important;
+  /* Much larger max width for big screens */
   border-radius: 20px;
   padding: 32px;
   max-height: 95vh;
   overflow-y: auto;
   margin: auto;
-  box-shadow: 
+  box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.15),
     0 8px 25px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
   display: flex;
   flex-direction: column;
   gap: 24px;
-  overflow-y: auto; /* Allow scrolling for smaller screens */
+  overflow-y: auto;
+  /* Allow scrolling for smaller screens */
   border: 1px solid rgba(255, 255, 255, 0.3);
   position: relative;
   animation: modalSlideIn 0.4s ease-out;
@@ -78,6 +81,7 @@
     opacity: 0;
     transform: translateY(-30px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -393,7 +397,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.modalContent h4{
+.modalContent h4 {
   color: #1579dc;
   font-size: 0.8rem;
   margin-bottom: -10px;
@@ -409,7 +413,8 @@
 }
 
 .inputField::placeholder {
-  color: #a9a9a9; /* Placeholder color */
+  color: #a9a9a9;
+  /* Placeholder color */
 }
 
 /* Upload Section */
@@ -450,7 +455,7 @@
   background-color: #d32f2f;
 }
 
-.addWebsiteButton{
+.addWebsiteButton {
   margin-left: 1px;
   margin-bottom: 5px;
   background: #2267cf;
@@ -1114,7 +1119,8 @@
 }
 
 .createButton {
-  background-color: #3c7af8; /* Red background */
+  background-color: #3c7af8;
+  /* Red background */
   color: rgb(255, 255, 255);
   border: none;
   padding: 10px 8px 10px 8px;
@@ -1172,10 +1178,13 @@
   border-radius: 5px;
   color: #004386;
 }
+
 /* Add this to your CreateId.module.css */
 .inputField::placeholder {
-  color: #a9a9a9; /* Replace with your desired color */
-  opacity: 1; /* Ensure full opacity for better visibility */
+  color: #a9a9a9;
+  /* Replace with your desired color */
+  opacity: 1;
+  /* Ensure full opacity for better visibility */
   font-size: 0.6rem;
 }
 
@@ -1189,7 +1198,8 @@
 }
 
 .submitButton:hover {
-  background-color: #006fde; /* Darker shade for hover */
+  background-color: #006fde;
+  /* Darker shade for hover */
 }
 
 .closeButton {
@@ -1204,15 +1214,17 @@
 }
 
 
-.closeButton:hover{
+.closeButton:hover {
   background-color: #cbcbcb;
 
 }
 
 .buttonWrapper {
   display: flex;
-  justify-content: center; /* Center horizontally */
-  margin: 20px 0; /* Add spacing around the button */
+  justify-content: center;
+  /* Center horizontally */
+  margin: 20px 0;
+  /* Add spacing around the button */
 }
 
 .registerButton {
@@ -1230,74 +1242,108 @@
   background-color: #004a99;
 }
 
-.searchSortWrapper{
+.searchSortWrapper {
   height: 100px;
 }
 
 /* Styling for the search input */
 .searchInput {
   margin-top: -20px;
-  width: 100%; /* Full width of the container */
-  max-width: 500px; /* Optional: limit the width */
-  padding: 10px 15px; /* Add some inner spacing */
-  font-size: 16px; /* Text size */
-  color: #3785e4; /* Same text color */
-  background-color: #f9f9f9; /* Light background */
-  border: 1px solid #ccc; /* Border color */
-  border-radius: 5px; /* Rounded corners */
-  outline: none; /* Remove default outline */
-  transition: all 0.3s ease; /* Smooth transition for hover/focus */
+  width: 100%;
+  /* Full width of the container */
+  max-width: 500px;
+  /* Optional: limit the width */
+  padding: 10px 15px;
+  /* Add some inner spacing */
+  font-size: 16px;
+  /* Text size */
+  color: #3785e4;
+  /* Same text color */
+  background-color: #f9f9f9;
+  /* Light background */
+  border: 1px solid #ccc;
+  /* Border color */
+  border-radius: 5px;
+  /* Rounded corners */
+  outline: none;
+  /* Remove default outline */
+  transition: all 0.3s ease;
+  /* Smooth transition for hover/focus */
   margin-bottom: 20px;
 }
 
 /* Change border color and shadow on focus */
 .searchInput:focus {
-  border-color: #4592ef; /* Highlight border color */
-  box-shadow: 0 0 8px rgba(69, 146, 239, 0.4); /* Add subtle glow */
-  background-color: #fff; /* Brighten background */
+  border-color: #4592ef;
+  /* Highlight border color */
+  box-shadow: 0 0 8px rgba(69, 146, 239, 0.4);
+  /* Add subtle glow */
+  background-color: #fff;
+  /* Brighten background */
 }
 
 /* Styling for placeholder text */
 .searchInput::placeholder {
-  color: #aaa; /* Lighter color for placeholder text */
-  font-style: italic; /* Optional: italicize */
-  font-size: 12px; /* Set the font size for the placeholder */
+  color: #aaa;
+  /* Lighter color for placeholder text */
+  font-style: italic;
+  /* Optional: italicize */
+  font-size: 12px;
+  /* Set the font size for the placeholder */
 }
 
 /* Styling for the category dropdown */
 .categoryDropdown {
-  width: 100%; /* Full width of the container */
-  max-width: 200px; /* Optional: limit the width */
-  padding: 5px 10px; /* Same inner spacing as search bar */
-  font-size: 15px; /* Same text size */
+  width: 100%;
+  /* Full width of the container */
+  max-width: 200px;
+  /* Optional: limit the width */
+  padding: 5px 10px;
+  /* Same inner spacing as search bar */
+  font-size: 15px;
+  /* Same text size */
   font-weight: 500;
-  color: #3785e4; /* Same text color */
-  background-color: #f9f9f9; /* Same background color */
-  border: 1px solid #ccc; /* Same border color */
-  border-radius: 5px; /* Same rounded corners */
-  outline: none; /* Remove default outline */
-  transition: all 0.3s ease; /* Smooth transition for hover/focus */
-  float: right; /* Float the dropdown to the right */
+  color: #3785e4;
+  /* Same text color */
+  background-color: #f9f9f9;
+  /* Same background color */
+  border: 1px solid #ccc;
+  /* Same border color */
+  border-radius: 5px;
+  /* Same rounded corners */
+  outline: none;
+  /* Remove default outline */
+  transition: all 0.3s ease;
+  /* Smooth transition for hover/focus */
+  float: right;
+  /* Float the dropdown to the right */
 
 }
 
 /* Change border color and shadow on focus for dropdown */
 .categoryDropdown:focus {
-  border-color: #4592ef; /* Highlight border color */
-  box-shadow: 0 0 8px rgba(69, 146, 239, 0.4); /* Subtle glow effect */
-  background-color: #fff; /* Brighten background */
+  border-color: #4592ef;
+  /* Highlight border color */
+  box-shadow: 0 0 8px rgba(69, 146, 239, 0.4);
+  /* Subtle glow effect */
+  background-color: #fff;
+  /* Brighten background */
 }
 
 /* Styling for option elements inside the dropdown */
 .categoryDropdown option {
-  background-color: #f9f9f9; /* Same background color */
-  color: #333; /* Text color */
-  font-size: 16px; /* Text size for options */
+  background-color: #f9f9f9;
+  /* Same background color */
+  color: #333;
+  /* Text color */
+  font-size: 16px;
+  /* Text size for options */
 }
 
 /* Hover effect for options */
 .categoryDropdown option:hover {
-  background-color: #e9e9e9; /* Slightly darker background on hover */
+  background-color: #e9e9e9;
+  /* Slightly darker background on hover */
 }
 
 
@@ -1305,14 +1351,18 @@
 .loading {
   display: flex;
   padding-top: 30vh;
-  justify-content: center; /* Center horizontally */
-  height: 100vh;           /* Full viewport height */
-  width: 100vw;            /* Full viewport width */
-  background-color: #f9f9f9; /* Optional: background to indicate loading state */
+  justify-content: center;
+  /* Center horizontally */
+  height: 100vh;
+  /* Full viewport height */
+  width: 100vw;
+  /* Full viewport width */
+  background-color: #f9f9f9;
+  /* Optional: background to indicate loading state */
 }
 
-.deleteContainer{
-padding: 10px 0 10px 10px;
+.deleteContainer {
+  padding: 10px 0 10px 10px;
 }
 
 /* CreateId.module.css */
@@ -1323,8 +1373,10 @@ padding: 10px 0 10px 10px;
 }
 
 .deleteIcon:hover {
-  color: rgb(255, 0, 0); /* Change to desired hover color */
-  transform: scale(1.1); /* Slight zoom effect */
+  color: rgb(255, 0, 0);
+  /* Change to desired hover color */
+  transform: scale(1.1);
+  /* Slight zoom effect */
 }
 
 /* Website Cards */
@@ -1484,34 +1536,36 @@ padding: 10px 0 10px 10px;
   .websiteCard {
     padding: 15px;
   }
-  
+
   .websiteInfo {
     flex-direction: column;
     text-align: center;
     gap: 15px;
+    width: 100%;
   }
-  
+
   .websiteActions {
     justify-content: center;
     width: 100%;
+    flex-wrap: wrap;
   }
-  
+
   .websiteLogo {
     width: 50px;
     height: 50px;
   }
-  
+
   .websiteDetails h3 {
     font-size: 16px;
   }
-  
+
   .websiteDetails p {
     font-size: 13px;
   }
-  
+
   .actionButton,
   .deleteButton {
-    padding: 6px 12px;
+    padding: 8px 12px;
     font-size: 12px;
     min-width: 70px;
   }
@@ -1522,28 +1576,28 @@ padding: 10px 0 10px 10px;
     padding: 10px;
     margin-bottom: 12px;
   }
-  
+
   .websiteInfo {
     gap: 10px;
   }
-  
+
   .websiteLogo {
     width: 40px;
     height: 40px;
   }
-  
+
   .websiteDetails h3 {
     font-size: 14px;
   }
-  
+
   .websiteDetails p {
     font-size: 11px;
   }
-  
+
   .websiteActions {
     gap: 6px;
   }
-  
+
   .actionButton,
   .deleteButton {
     padding: 4px 8px;
@@ -1554,22 +1608,23 @@ padding: 10px 0 10px 10px;
 
 /* Responsive styles for new information fields */
 @media (max-width: 768px) {
+
   .coinInfo,
   .dateInfo {
     font-size: 9px !important;
     margin: 1px 0 !important;
   }
-  
+
   .statusTag {
     font-size: 8px;
     padding: 1px 6px;
   }
-  
+
   .websiteDetails h3 {
     font-size: 14px;
     margin-bottom: 4px;
   }
-  
+
   .websiteDetails p {
     font-size: 11px;
     margin: 1px 0;
@@ -1577,20 +1632,21 @@ padding: 10px 0 10px 10px;
 }
 
 @media (max-width: 480px) {
+
   .coinInfo,
   .dateInfo {
     font-size: 8px !important;
   }
-  
+
   .statusTag {
     font-size: 7px;
     padding: 1px 4px;
   }
-  
+
   .websiteDetails h3 {
     font-size: 13px;
   }
-  
+
   .websiteDetails p {
     font-size: 10px;
   }
@@ -1661,13 +1717,13 @@ padding: 10px 0 10px 10px;
     gap: 0.25rem;
     margin-top: 1.5rem;
   }
-  
+
   .paginationButton {
     padding: 0.625rem 0.875rem;
     font-size: 0.9rem;
     min-width: 40px;
   }
-  
+
   .paginationInfo {
     font-size: 0.8rem;
     margin: 0 0.5rem;
@@ -1680,13 +1736,13 @@ padding: 10px 0 10px 10px;
     gap: 0.25rem;
     margin-top: 1.5rem;
   }
-  
+
   .paginationButton {
     padding: 0.625rem 0.875rem;
     font-size: 0.9rem;
     min-width: 40px;
   }
-  
+
   .paginationInfo {
     font-size: 0.8rem;
     margin: 0 0.5rem;
@@ -1699,7 +1755,7 @@ padding: 10px 0 10px 10px;
     font-size: 0.8rem;
     min-width: 35px;
   }
-  
+
   .paginationInfo {
     font-size: 0.75rem;
     margin: 0 0.25rem;
@@ -1714,11 +1770,11 @@ padding: 10px 0 10px 10px;
     max-width: 1200px !important;
     padding: 40px;
   }
-  
+
   .modalContent h2 {
     font-size: 1.6rem;
   }
-  
+
   .websiteLogo {
     width: 72px;
     height: 72px;
@@ -1731,7 +1787,7 @@ padding: 10px 0 10px 10px;
     max-width: 650px;
     padding: 32px;
   }
-  
+
   .submitButton,
   .cancelButton {
     padding: 9px 18px;
@@ -1745,11 +1801,11 @@ padding: 10px 0 10px 10px;
     max-width: 900px !important;
     padding: 28px;
   }
-  
+
   .modalContent h2 {
     font-size: 1.4rem;
   }
-  
+
   .submitButton,
   .cancelButton {
     padding: 8px 16px;
@@ -1762,31 +1818,31 @@ padding: 10px 0 10px 10px;
   .modal {
     padding: 16px;
   }
-  
+
   .modalContent {
     width: 95%;
     max-width: none;
     padding: 24px;
     gap: 20px;
   }
-  
+
   .modalContent h2 {
     font-size: 1.3rem;
   }
-  
+
   .websiteLogo {
     width: 56px;
     height: 56px;
   }
-  
+
   .websiteDetails {
     padding: 16px;
   }
-  
+
   .modalActions {
     gap: 12px;
   }
-  
+
   .submitButton,
   .cancelButton {
     padding: 8px 16px;
@@ -1800,7 +1856,7 @@ padding: 10px 0 10px 10px;
   .modal {
     padding: 12px;
   }
-  
+
   .modalContent {
     width: 98%;
     max-width: none;
@@ -1808,34 +1864,34 @@ padding: 10px 0 10px 10px;
     gap: 16px;
     border-radius: 16px;
   }
-  
+
   .modalContent h2 {
     font-size: 1.2rem;
   }
-  
+
   .websiteLogo {
     width: 48px;
     height: 48px;
   }
-  
+
   .websiteDetails {
     padding: 14px;
     border-radius: 12px;
   }
-  
+
   .detailRow {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
     padding: 10px 0;
   }
-  
+
   .modalActions {
     flex-direction: column;
     gap: 12px;
     margin-top: 20px;
   }
-  
+
   .submitButton,
   .cancelButton {
     width: 100%;
@@ -1843,7 +1899,7 @@ padding: 10px 0 10px 10px;
     font-size: 0.8rem;
     min-width: auto;
   }
-  
+
   .closeButton {
     top: 12px;
     right: 12px;
@@ -1858,47 +1914,47 @@ padding: 10px 0 10px 10px;
   .modal {
     padding: 8px;
   }
-  
+
   .modalContent {
     padding: 16px;
     gap: 14px;
     border-radius: 12px;
   }
-  
+
   .modalContent h2 {
     font-size: 1.1rem;
   }
-  
+
   .websiteLogo {
     width: 44px;
     height: 44px;
   }
-  
+
   .websiteDetails {
     padding: 12px;
     border-radius: 10px;
   }
-  
+
   .detailLabel,
   .detailValue {
     font-size: 0.85rem;
   }
-  
+
   .inputField {
     padding: 14px 16px;
     font-size: 0.95rem;
   }
-  
+
   .inputLabel {
     font-size: 0.9rem;
   }
-  
+
   .submitButton,
   .cancelButton {
     padding: 8px 14px;
     font-size: 0.75rem;
   }
-  
+
   .closeButton {
     top: 10px;
     right: 10px;
@@ -1913,40 +1969,40 @@ padding: 10px 0 10px 10px;
   .modal {
     padding: 4px;
   }
-  
+
   .modalContent {
     padding: 14px;
     gap: 12px;
     border-radius: 10px;
   }
-  
+
   .modalContent h2 {
     font-size: 1rem;
   }
-  
+
   .websiteLogo {
     width: 40px;
     height: 40px;
   }
-  
+
   .websiteDetails {
     padding: 10px;
   }
-  
+
   .detailLabel,
   .detailValue {
     font-size: 0.8rem;
   }
-  
+
   .inputField {
     padding: 12px 14px;
     font-size: 0.9rem;
   }
-  
+
   .inputLabel {
     font-size: 0.85rem;
   }
-  
+
   .submitButton,
   .cancelButton {
     padding: 6px 12px;
@@ -1961,15 +2017,15 @@ padding: 10px 0 10px 10px;
     padding: 16px;
     gap: 12px;
   }
-  
+
   .modalHeader {
     padding-bottom: 12px;
   }
-  
+
   .websiteDetails {
     padding: 10px;
   }
-  
+
   .modalActions {
     margin-top: 12px;
     padding-top: 12px;
@@ -2086,16 +2142,16 @@ padding: 10px 0 10px 10px;
     gap: 20px;
     padding: 25px;
   }
-  
+
   .coinInfoRow {
     padding: 10px 0;
     margin-bottom: 15px;
   }
-  
+
   .coinLabel {
     font-size: 15px;
   }
-  
+
   .coinValue {
     font-size: 17px;
     padding: 6px 14px;
@@ -2108,16 +2164,16 @@ padding: 10px 0 10px 10px;
     gap: 25px;
     padding: 30px;
   }
-  
+
   .coinInfoRow {
     padding: 12px 0;
     margin-bottom: 18px;
   }
-  
+
   .coinLabel {
     font-size: 16px;
   }
-  
+
   .coinValue {
     font-size: 18px;
     padding: 8px 16px;
@@ -2132,16 +2188,16 @@ padding: 10px 0 10px 10px;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 12px;
   }
-  
+
   .coinInfoRow {
     margin-bottom: 10px;
     padding: 6px 0;
   }
-  
+
   .coinLabel {
     font-size: 13px;
   }
-  
+
   .coinValue {
     font-size: 15px;
     padding: 3px 10px;
@@ -2156,7 +2212,7 @@ padding: 10px 0 10px 10px;
     grid-template-columns: 1fr;
     gap: 10px;
   }
-  
+
   .coinInfoRow {
     flex-direction: column;
     align-items: flex-start;
@@ -2164,38 +2220,38 @@ padding: 10px 0 10px 10px;
     margin-bottom: 8px;
     padding: 5px 0;
   }
-  
+
   .coinLabel {
     font-size: 12px;
     font-weight: 600;
   }
-  
+
   .coinValue {
     font-size: 14px;
     padding: 3px 8px;
     align-self: flex-start;
   }
-  
+
   .checkboxLabel {
     padding: 12px;
     margin: 8px 0;
   }
-  
+
   .checkboxText {
     font-size: 13px;
     line-height: 1.3;
   }
-  
+
   .refundMessage {
     padding: 12px;
     margin: 8px 0;
   }
-  
+
   .refundText {
     font-size: 13px;
     line-height: 1.3;
   }
-  
+
   .coinConversionResult {
     padding: 12px;
     margin: 12px 0;
@@ -2207,35 +2263,35 @@ padding: 10px 0 10px 10px;
     padding: 12px;
     margin-bottom: 18px;
   }
-  
+
   .coinInfoRow {
     margin-bottom: 6px;
     padding: 4px 0;
   }
-  
+
   .coinLabel {
     font-size: 11px;
   }
-  
+
   .coinValue {
     font-size: 13px;
     padding: 2px 6px;
   }
-  
+
   .checkboxLabel {
     padding: 10px;
     margin: 6px 0;
   }
-  
+
   .checkboxText {
     font-size: 12px;
   }
-  
+
   .refundMessage {
     padding: 10px;
     margin: 6px 0;
   }
-  
+
   .refundText {
     font-size: 12px;
   }
@@ -2247,50 +2303,50 @@ padding: 10px 0 10px 10px;
     margin-bottom: 15px;
     border-radius: 8px;
   }
-  
+
   .coinInfoRow {
     margin-bottom: 5px;
     padding: 3px 0;
   }
-  
+
   .coinLabel {
     font-size: 10px;
     font-weight: 600;
   }
-  
+
   .coinValue {
     font-size: 12px;
     padding: 2px 5px;
     border-radius: 15px;
   }
-  
+
   .checkboxLabel {
     padding: 8px;
     margin: 5px 0;
     border-radius: 6px;
   }
-  
+
   .checkbox {
     width: 16px;
     height: 16px;
   }
-  
+
   .checkboxText {
     font-size: 11px;
     line-height: 1.2;
   }
-  
+
   .refundMessage {
     padding: 8px;
     margin: 5px 0;
     border-radius: 6px;
   }
-  
+
   .refundText {
     font-size: 11px;
     line-height: 1.2;
   }
-  
+
   .coinConversionResult {
     padding: 10px;
     margin: 10px 0;
@@ -2303,40 +2359,40 @@ padding: 10px 0 10px 10px;
     padding: 8px;
     margin-bottom: 12px;
   }
-  
+
   .coinInfoRow {
     margin-bottom: 4px;
     padding: 2px 0;
   }
-  
+
   .coinLabel {
     font-size: 9px;
   }
-  
+
   .coinValue {
     font-size: 11px;
     padding: 1px 4px;
   }
-  
+
   .checkboxLabel {
     padding: 6px;
     margin: 4px 0;
   }
-  
+
   .checkbox {
     width: 14px;
     height: 14px;
   }
-  
+
   .checkboxText {
     font-size: 10px;
   }
-  
+
   .refundMessage {
     padding: 6px;
     margin: 4px 0;
   }
-  
+
   .refundText {
     font-size: 10px;
   }
@@ -2347,35 +2403,35 @@ padding: 10px 0 10px 10px;
     padding: 6px;
     margin-bottom: 10px;
   }
-  
+
   .coinInfoRow {
     margin-bottom: 3px;
     padding: 1px 0;
   }
-  
+
   .coinLabel {
     font-size: 8px;
   }
-  
+
   .coinValue {
     font-size: 10px;
     padding: 1px 3px;
   }
-  
+
   .checkboxLabel {
     padding: 5px;
     margin: 3px 0;
   }
-  
+
   .checkboxText {
     font-size: 9px;
   }
-  
+
   .refundMessage {
     padding: 5px;
     margin: 3px 0;
   }
-  
+
   .refundText {
     font-size: 9px;
   }

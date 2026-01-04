@@ -46,7 +46,7 @@ const CreateId = () => {
   const [convertedCoins, setConvertedCoins] = useState(0);
   const [coinRate, setCoinRate] = useState(0);
   const [minimumCoins, setMinimumCoins] = useState(0);
-  const [accountType, setAccountType] = useState("admin");
+  // const [accountType, setAccountType] = useState("admin"); // Removed as per request
   const [currency, setCurrency] = useState("INR");
 
 
@@ -68,7 +68,7 @@ const CreateId = () => {
       const data = await response.json();
       if (response.ok) {
         // console.log(data,"<<<")
-        setWebsites(data.websites); // Assuming the API returns an object with a "websites" key
+        setWebsites(data); // Assuming the API returns an object with a "websites" key
       } else {
         console.error("Error fetching websites:", data);
       }
@@ -325,23 +325,28 @@ const CreateId = () => {
   };
   
   const handleSubmit = async () => {
+    console.log("handleSubmit called");
     if (!user) {
+      console.log("Validation failed: User not logged in");
       setErrorMessage("User must be logged in to create an ID.");
       return;
     }
 
     if (!username.trim()) {
+      console.log("Validation failed: Username required");
       setErrorMessage("Username is required.");
       return;
     }
 
     if (!coinAmount || coinAmount <= 0) {
+      console.log("Validation failed: Invalid coin amount", coinAmount);
       setErrorMessage("Please enter a valid coin amount.");
       return;
     }
 
     // Check if entered coins meet minimum requirement
     if (coinAmount < minimumCoins) {
+      console.log("Validation failed: Insufficient coins", { coinAmount, minimumCoins });
       setErrorMessage(`Insufficient coins. You need at least ${minimumCoins} coins, but you entered ${coinAmount} coins.`);
       return;
     }
@@ -349,6 +354,7 @@ const CreateId = () => {
     // Check if user has sufficient wallet balance for the conversion
     const requiredRupees = convertedCoins;
     if ((parseFloat(user?.balance) || 0) < requiredRupees) {
+      console.log("Validation failed: Insufficient balance", { balance: user?.balance, requiredRupees });
       setErrorMessage(`Insufficient wallet balance. You need ₹${requiredRupees.toFixed(2)} but have ₹${(parseFloat(user?.balance) || 0).toFixed(2)}.`);
       return;
     }
@@ -362,6 +368,24 @@ const CreateId = () => {
     
     try {
       setIsLoading(true);
+      console.log("Sending create-id-request with body:", {
+          websiteName,
+          websiteUrl,
+          username,
+          imgUrl,
+          createdBy: user.username,
+          coinAmount: parseFloat(coinAmount),
+          convertedCoins: convertedCoins,
+          coinRate: coinRate,
+          minimumCoins: minimumCoins,
+          refundable: refundable,
+          minimumCoins: minimumCoins,
+          refundable: refundable,
+          accountType: "admin", // Defaulting to admin since field is removed
+          currency: currency,
+          status: "Pending"
+      });
+
       const response = await fetch(`${url}/api/user/create-id-request`, {
         method: "POST",
         headers: {
@@ -372,13 +396,15 @@ const CreateId = () => {
           websiteUrl,
           username,
           imgUrl,
-          createdBy: user.username,
+          createdBy: user.id,
           coinAmount: parseFloat(coinAmount), // This is now the coins entered
           convertedCoins: convertedCoins, // This is now the rupees equivalent
           coinRate: coinRate,
           minimumCoins: minimumCoins,
           refundable: refundable,
-          accountType: accountType,
+          minimumCoins: minimumCoins,
+          refundable: refundable,
+          accountType: "admin", // Defaulting to admin since field is removed
           currency: currency,
           status: "Pending"
         }),
@@ -681,16 +707,7 @@ const CreateId = () => {
                 />
                </div>
 
-               <div className={styles.inputGroup}>
-                 <label className={styles.inputLabel}>Account Type</label>
-                 <select
-                  value={accountType}
-                  onChange={(e) => setAccountType(e.target.value)}
-                  className={styles.inputField}
-                >
-                  <option value="admin">Admin Deposit</option>
-                </select>
-               </div>
+               {/* Account Type field removed */}
 
                <div className={styles.inputGroup}>
                  <label className={styles.inputLabel}>Currency</label>
@@ -751,7 +768,7 @@ const CreateId = () => {
                  <button
                    onClick={handleSubmit}
                    className={styles.submitButton}
-                   disabled={isLoading || !username.trim() || !coinAmount || coinAmount < minimumCoins}
+                   disabled={isLoading}
                  >
                    {isLoading ? "Creating..." : "Create ID Request"}
                  </button>

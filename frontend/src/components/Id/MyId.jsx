@@ -14,8 +14,7 @@ import ChangePasswordModal from "./ChangePasswordModal";
 import { Toast } from "primereact/toast";
 
 const MyId = () => {
-  // COMPLETELY DISABLED - RETURN EARLY TO STOP ALL FUNCTIONALITY
-  return <div>MyId component disabled to stop infinite API calls</div>;
+
   const { user, url } = useUser();
   const safeUser = user || {};
   const safeUrl = url || '';
@@ -43,21 +42,48 @@ const MyId = () => {
 
   const toast = useRef(null);
 
-  // COMPLETELY DISABLED: fetchIdRequests to stop infinite API calls
+  const fetchIds = useCallback(async () => {
+    if (!safeUser?.id) return;
+    try {
+      setLoading(true);
+      const response = await fetch(`${safeUrl}/api/user/get-all-ids?userId=${safeUser.id}`);
+      const data = await response.json();
+      if (response.ok) {
+        setMyIds(Array.isArray(data) ? data : []);
+      } else {
+        // console.error("Error fetching IDs:", data);
+        setMyIds([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch IDs:", error);
+      setError("Failed to fetch IDs");
+    } finally {
+      setLoading(false);
+    }
+  }, [safeUser?.id, safeUrl]);
+
   const fetchIdRequests = useCallback(async () => {
-    return;
-  }, []);
+    if (!safeUser?.id) return;
+    try {
+      const response = await fetch(`${safeUrl}/api/user/get-id-requests?userId=${safeUser.id}`);
+      const data = await response.json();
+      if (response.ok) {
+        setIdRequests(Array.isArray(data) ? data : []);
+      } else {
+        console.error("Error fetching ID requests:", data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch ID requests:", error);
+    }
+  }, [safeUser?.id, safeUrl]);
 
-  // DISABLED: checkStatusUpdates to prevent infinite API calls
-  const checkStatusUpdates = useCallback(async () => {
-    // Function disabled to prevent infinite API calls
-    return;
-  }, []);
-
-  // COMPLETELY DISABLED: All automatic API calls to stop infinite loops
-  // useEffect(() => {
-  //   // ... all API calls disabled
-  // }, []);
+  useEffect(() => {
+    if (safeUser?.id || needRefetch) {
+      fetchIds();
+      fetchIdRequests();
+      if (needRefetch) setNeedRefetch(false);
+    }
+  }, [safeUser?.id, needRefetch, fetchIds, fetchIdRequests]);
 
   // DISABLED: Automatic status updates to prevent infinite API calls
   // useEffect(() => {

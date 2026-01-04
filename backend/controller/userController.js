@@ -9,6 +9,7 @@ const PasswordChangeRequest = require('../models/PasswordChangeRequest');
 const AdminAccount = require('../models/AdminAccount');
 const bcrypt = require('bcrypt');
 const { uploadUserDeposite } = require('../config/multerConfig');
+const mongoose = require('mongoose');
 
 
 
@@ -445,7 +446,7 @@ exports.createId = async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ username: createdBy });
+    const user = await User.findById(createdBy);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found.' });
@@ -551,7 +552,7 @@ exports.createIdRequest = async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ username: createdBy });
+    const user = await User.findById(createdBy);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found.' });
