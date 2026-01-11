@@ -2,9 +2,12 @@ import styles from "./Home.module.css";
 import HomeHeading from "./HomeHeading";
 import ImageCarousel from "../ImageCarousel/ImageCarousel";
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import { useUser } from "../../context/UserContext";
 
 
 const Home = () => {
+  const { user } = useUser();
+  const isAdmin = user?.role === 'admin';
 
   return (
     <>
@@ -15,14 +18,14 @@ const Home = () => {
         <ImageCarousel 
           type="horizontal" 
           carouselId="horizontal-main"
-          canManage={false}
+          canManage={isAdmin}
         />
         
         {/* Square Image Carousel */}
         <ImageCarousel 
           type="square" 
           carouselId="square-main"
-          canManage={false}
+          canManage={isAdmin}
         />
 
         {/* Social Media Icons */}

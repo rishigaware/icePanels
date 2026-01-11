@@ -154,8 +154,8 @@ const ImageCarousel = ({ type, carouselId, canManage = false }) => {
 
       const data = await response.json();
       
-      // Update the images state with the new image
-      setImages(prevImages => [...prevImages, data]);
+      // Refresh images from server to ensure consistency
+      await fetchImages();
       setSelectedFile(null);
       
       toast.current?.show({
@@ -438,6 +438,10 @@ const ImageCarousel = ({ type, carouselId, canManage = false }) => {
                     src={`${url}/${image.imagePath}`}
                     alt={`${type} carousel ${index + 1}`}
                     className={getImageClass()}
+                    onError={(e) => {
+                      console.error(`Error loading image: ${url}/${image.imagePath}`);
+                      e.target.style.display = 'none'; // Hide broken image
+                    }}
                   />
                   {canManage && (
                     <button
@@ -460,6 +464,10 @@ const ImageCarousel = ({ type, carouselId, canManage = false }) => {
                       src={`${url}/${image.imagePath}`}
                       alt={`${type} carousel ${index + 1}`}
                       className={styles.squareCardImage}
+                      onError={(e) => {
+                        console.error(`Error loading square image: ${url}/${image.imagePath}`);
+                        e.target.style.display = 'none'; // Hide broken image
+                      }}
                     />
                     {canManage && (
                       <button
