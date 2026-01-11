@@ -237,14 +237,13 @@
   justify-content: center;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  opacity: 1;
-  transform: scale(1);
-  z-index: 10;
+  opacity: 0;
+  transform: scale(0.8);
 }
 
 .squareCardContainer:hover .squareDeleteButton {
   opacity: 1;
-  transform: scale(1.1);
+  transform: scale(1);
 }
 
 .squareDeleteButton:hover {
@@ -272,7 +271,8 @@
 .deleteButton {
   position: absolute;
   top: 10px;
-  right: 10px;
+  left: 50%;
+  transform: translateX(-50%) scale(1);
   background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
   color: white;
   border: none;
@@ -286,17 +286,17 @@
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   opacity: 1;
-  transform: scale(1);
-  z-index: 10;
+  z-index: 9999;
+  pointer-events: auto;
 }
 
 .imageContainer:hover .deleteButton {
-  opacity: 1;
-  transform: scale(1.1);
+  transform: translateX(-50%) scale(1.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .deleteButton:hover {
-  transform: scale(1.1);
+  transform: translateX(-50%) scale(1.1);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 

@@ -2,12 +2,16 @@ import styles from "./Home.module.css";
 import HomeHeading from "./HomeHeading";
 import ImageCarousel from "../ImageCarousel/ImageCarousel";
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { useUser } from "../../context/UserContext";
 
+
+import { useUser } from "../../context/UserContext";
 
 const Home = () => {
   const { user } = useUser();
   const isAdmin = user?.role === 'admin';
+
+  console.log("Home.jsx - User:", user);
+  console.log("Home.jsx - isAdmin:", isAdmin);
 
   return (
     <>

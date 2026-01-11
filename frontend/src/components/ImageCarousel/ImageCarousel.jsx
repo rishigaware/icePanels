@@ -12,7 +12,64 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
+const PrevArrow = ({ onClick }) => {
+  return (
+    <div className={`${styles.customArrow} ${styles.customPrevArrow}`} onClick={onClick}>
+      <i className="fa fa-chevron-left"></i>
+    </div>
+  );
+};
+
+// Capture-phase delete button to bypass carousel event stealing
+const DeleteButton = ({ onDelete, className, title, style }) => {
+  const elementRef = useRef(null);
+
+  useEffect(() => {
+    const element = elementRef.current;
+    if (!element) return;
+
+    const handleEvent = (e) => {
+      // Log all captured events to debug interaction
+      console.log("DeleteButton CAPTURE event:", e.type);
+      
+      e.stopPropagation();
+      if (e.type === 'click') {
+        e.preventDefault();
+        console.log("Capture phase delete clicked - triggering onDelete");
+        onDelete();
+      }
+    };
+
+    // Add capture phase listeners for all relevant events
+    const events = ['click', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'pointerdown', 'pointerup'];
+    events.forEach(event => {
+      element.addEventListener(event, handleEvent, { capture: true });
+    });
+
+    return () => {
+      events.forEach(event => {
+        element.removeEventListener(event, handleEvent, { capture: true });
+      });
+    };
+  }, [onDelete]);
+
+  return (
+    <div
+      ref={elementRef}
+      role="button"
+      className={className}
+      title={title}
+      style={style}
+      onMouseEnter={() => console.log("DeleteButton MouseEnter")}
+      onMouseLeave={() => console.log("DeleteButton MouseLeave")}
+    >
+      <i className="fa fa-trash"></i>
+    </div>
+  );
+};
+
 const ImageCarousel = ({ type, carouselId, canManage = false }) => {
+  console.log(`ImageCarousel (${type}) - canManage:`, canManage);
   const [images, setImages] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -186,6 +243,7 @@ const ImageCarousel = ({ type, carouselId, canManage = false }) => {
 
   // Function to handle deletion
   const handleDelete = async (imageId) => {
+    console.log("handleDelete called for imageId:", imageId);
     try {
       // Show confirmation toast
       toast.current?.show({
@@ -201,6 +259,7 @@ const ImageCarousel = ({ type, carouselId, canManage = false }) => {
       
       try {
         deleteEndpoint = `${url}/api/images/delete/${imageId}`;
+        console.log("Attempting delete at:", deleteEndpoint);
         response = await fetch(deleteEndpoint, {
           method: 'DELETE',
           headers: {
@@ -212,13 +271,17 @@ const ImageCarousel = ({ type, carouselId, canManage = false }) => {
           }),
         });
       } catch (newEndpointError) {
+        console.log("New endpoint failed, trying fallback...");
         // Fallback to old carousel delete endpoints
         const oldEndpoint = getOldDeleteEndpoint(carouselId);
         deleteEndpoint = `${url}/api/admin/delete-one/${oldEndpoint}`;
+        console.log("Attempting fallback delete at:", deleteEndpoint);
         response = await fetch(deleteEndpoint, {
           method: 'DELETE',
         });
       }
+
+      console.log("Delete response status:", response.status);
 
       if (!response.ok) {
         throw new Error(`Delete failed: ${response.status} ${response.statusText}`);
@@ -443,15 +506,14 @@ const ImageCarousel = ({ type, carouselId, canManage = false }) => {
                       e.target.style.display = 'none'; // Hide broken image
                     }}
                   />
-                  {canManage && (
-                    <button
-                      onClick={() => handleDelete(image.id)}
+                  {/* {canManage && ( */}
+                    <DeleteButton
+                      onDelete={() => handleDelete(image.id)}
                       className={styles.deleteButton}
                       title="Delete image"
-                    >
-                      <i className="fa fa-trash"></i>
-                    </button>
-                  )}
+                      style={{ zIndex: 100, pointerEvents: 'auto', cursor: 'pointer' }}
+                    />
+                  {/* )} */}
                 </div>
               ))}
             </FlowbiteCarousel>
