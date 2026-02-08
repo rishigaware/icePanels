@@ -117,6 +117,10 @@
   color: #64748b;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  /* Ensure it's on top */
+  display: flex !important;
+  /* Force display */
 }
 
 .closeButton:hover {
@@ -222,7 +226,12 @@
   border-radius: 8px;
   margin: 0 -8px;
   padding-left: 8px;
+  /* Ensure padding for content */
   padding-right: 8px;
+  flex-wrap: wrap;
+  /* Allow wrapping */
+  gap: 8px;
+  /* Gap between items when wrapped */
 }
 
 .detailRow:hover {
@@ -231,6 +240,44 @@
 
 .detailRow:last-child {
   border-bottom: none;
+}
+
+/* Ensure label and value are visible and responsive */
+.detailLabel {
+  font-weight: 600;
+  color: #475569;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  /* Prevent label from shrinking */
+}
+
+.detailValue {
+  color: #1e293b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: right;
+  word-break: break-word;
+  /* Prevent long text overflow */
+  max-width: 60%;
+  /* Limit width to force wrap if needed */
+}
+
+@media (max-width: 480px) {
+  .detailRow {
+    flex-direction: column;
+    /* Stack on very small screens */
+    align-items: flex-start;
+  }
+
+  .detailValue {
+    text-align: left;
+    max-width: 100%;
+    padding-left: 12px;
+    /* Indent value under label */
+  }
 }
 
 .detailLabel {
@@ -289,10 +336,10 @@
   gap: 8px;
 }
 
-.inputLabel::before {
+/* .inputLabel::before {
   content: '👤';
   font-size: 1.1rem;
-}
+} */
 
 .inputField {
   padding: 16px 20px;
@@ -481,18 +528,22 @@
 @media (min-width: 1024px) {
   .modalContent {
     width: 90%;
-    max-width: 900px !important;
-    padding: 36px;
+    max-width: 800px !important;
+    /* Reduced max-width */
+    padding: 30px;
+    /* Reduced padding */
   }
 
   .modalContent h2 {
-    font-size: 1.6rem;
+    font-size: 1.4rem;
+    /* Reduced font size */
     margin-bottom: 20px;
   }
 
   .websiteLogo {
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    /* Reduced size */
+    height: 60px;
   }
 
   .websiteDetails {
@@ -501,191 +552,75 @@
 
   .detailLabel,
   .detailValue {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    /* Kept smaller */
   }
 
   .inputField {
-    font-size: 0.95rem;
-    padding: 14px 18px;
+    font-size: 0.9rem;
+    padding: 12px 16px;
+    /* Reduced padding */
   }
 
   .inputLabel {
-    font-size: 0.95rem;
-    margin-bottom: 10px;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
   }
 
   .submitButton,
   .cancelButton {
-    padding: 12px 24px;
-    font-size: 0.95rem;
-    min-width: 130px;
+    padding: 10px 20px;
+    /* Reduced padding */
+    font-size: 0.9rem;
+    min-width: 150px;
+    /* Fixed width for consistency */
+    width: 150px;
+    /* Ensure same size */
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .closeButton {
     top: 18px;
     right: 18px;
-    width: 40px;
-    height: 40px;
-    font-size: 1.3rem;
+    width: 35px;
+    height: 35px;
+    font-size: 1.2rem;
   }
 }
 
-/* Large Screens */
+/* Large Screens - Cap the growth */
 @media (min-width: 1200px) {
   .modalContent {
     width: 85%;
-    max-width: 1000px !important;
-    padding: 40px;
+    max-width: 900px !important;
+    padding: 32px;
   }
 
   .modalContent h2 {
-    font-size: 1.8rem;
-    margin-bottom: 25px;
-  }
-
-  .websiteLogo {
-    width: 80px;
-    height: 80px;
-  }
-
-  .websiteDetails {
-    padding: 25px;
-  }
-
-  .detailLabel,
-  .detailValue {
-    font-size: 1rem;
-  }
-
-  .inputField {
-    font-size: 1rem;
-    padding: 16px 20px;
-  }
-
-  .inputLabel {
-    font-size: 1rem;
-    margin-bottom: 12px;
-  }
-
-  .submitButton,
-  .cancelButton {
-    padding: 14px 28px;
-    font-size: 1rem;
-    min-width: 140px;
-  }
-
-  .closeButton {
-    top: 20px;
-    right: 20px;
-    width: 45px;
-    height: 45px;
     font-size: 1.5rem;
   }
+
+  .submitButton,
+  .cancelButton {
+    min-width: 150px;
+    width: 150px;
+  }
 }
 
-/* Extra Large Screens */
+/* Extra Large Screens - removing excessive growth */
 @media (min-width: 1400px) {
   .modalContent {
-    width: 80%;
-    max-width: 1200px !important;
-    padding: 48px;
-  }
-
-  .modalContent h2 {
-    font-size: 2rem;
-    margin-bottom: 30px;
-  }
-
-  .websiteLogo {
-    width: 90px;
-    height: 90px;
-  }
-
-  .websiteDetails {
-    padding: 30px;
-  }
-
-  .detailLabel,
-  .detailValue {
-    font-size: 1.1rem;
-  }
-
-  .inputField {
-    font-size: 1.1rem;
-    padding: 18px 24px;
-  }
-
-  .inputLabel {
-    font-size: 1.1rem;
-    margin-bottom: 15px;
-  }
-
-  .submitButton,
-  .cancelButton {
-    padding: 16px 32px;
-    font-size: 1.1rem;
-    min-width: 160px;
-  }
-
-  .closeButton {
-    top: 24px;
-    right: 24px;
-    width: 50px;
-    height: 50px;
-    font-size: 1.8rem;
+    max-width: 1000px !important;
   }
 }
 
-/* Ultra Wide Screens */
+/* Ultra Wide Screens - removing excessive growth */
 @media (min-width: 1600px) {
   .modalContent {
-    width: 75%;
-    max-width: 1400px !important;
-    padding: 56px;
-  }
-
-  .modalContent h2 {
-    font-size: 2.2rem;
-    margin-bottom: 35px;
-  }
-
-  .websiteLogo {
-    width: 100px;
-    height: 100px;
-  }
-
-  .websiteDetails {
-    padding: 35px;
-  }
-
-  .detailLabel,
-  .detailValue {
-    font-size: 1.2rem;
-  }
-
-  .inputField {
-    font-size: 1.2rem;
-    padding: 20px 28px;
-  }
-
-  .inputLabel {
-    font-size: 1.2rem;
-    margin-bottom: 18px;
-  }
-
-  .submitButton,
-  .cancelButton {
-    padding: 18px 36px;
-    font-size: 1.2rem;
-    min-width: 180px;
-  }
-
-  .closeButton {
-    top: 28px;
-    right: 28px;
-    width: 55px;
-    height: 55px;
-    font-size: 2rem;
+    max-width: 1100px !important;
   }
 }
 

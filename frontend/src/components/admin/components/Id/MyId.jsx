@@ -733,7 +733,7 @@ const handleReject = async (item) => {
                       )}
                       {item.balance !== undefined && (
                         <p className={styles.userId}>
-                          <strong>Balance:</strong> {item.balance} coins
+                          <strong>Last Updated Balance:</strong> {item.balance} coins
                         </p>
                       )}
                       {item.coinRate && (

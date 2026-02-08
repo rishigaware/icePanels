@@ -318,7 +318,7 @@ const MyId = () => {
                 </>
               ) : (
                 <>
-                  <p className={styles.idBalance}><strong>Balance : </strong>{item.balance || 0} coins</p>
+                  <p className={styles.idBalance}><strong>Last UpdatedBalance : </strong>{item.balance || 0} coins</p>
                   {item.coinRate && <p className={styles.coinRate}><strong>Rate : </strong>1 coin = ₹{item.coinRate}</p>}
                 </>
               )}

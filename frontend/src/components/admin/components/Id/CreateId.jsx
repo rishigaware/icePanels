@@ -805,11 +805,6 @@ const CreateId = () => {
                           <strong>Min Coins:</strong> {website.minimumCoins}
                         </p>
                       )}
-                      {website.createdAt && (
-                        <p className={styles.dateInfo}>
-                          <strong>Added:</strong> {new Date(website.createdAt).toLocaleDateString()}
-                        </p>
-                      )}
                       {website.isActive !== undefined && (
                         <span className={`${styles.statusTag} ${website.isActive ? styles.activeStatus : styles.inactiveStatus}`}>
                           {website.isActive ? 'Active' : 'Inactive'}

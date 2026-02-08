@@ -10,18 +10,18 @@ const Home = () => {
 
       <div className={styles.carouselContainer}>
         {/* Horizontal Image Carousel */}
-        <ImageCarousel 
+        {/* <ImageCarousel 
           type="horizontal" 
           carouselId="horizontal-main"
           canManage={true}
-        />
+        /> */}
         
         {/* Square Image Carousel */}
-        <ImageCarousel 
+        {/* <ImageCarousel 
           type="square" 
           carouselId="square-main"
           canManage={true}
-        />
+        /> */}
 
         {/* Social Media Icons */}
         <div className={styles.socialIcons}>

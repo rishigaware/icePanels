@@ -3,7 +3,7 @@ import styles from './HomeHeading.module.css'; // Import the CSS module
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { PiHandDepositDuotone } from "react-icons/pi";
 import { BiMoneyWithdraw } from "react-icons/bi";
-import { FaBalanceScale, FaCrown, FaGlobe, FaBolt, FaBullhorn, FaTools, FaHeadset, FaStar, FaChartLine, FaUsers, FaCoins } from "react-icons/fa";
+import { FaBalanceScale, FaCrown, FaGlobe, FaBolt, FaBullhorn, FaTools, FaHeadset, FaStar, FaChartLine, FaUsers, FaCoins, FaWhatsapp, FaTelegramPlane, FaCreditCard, FaSimCard, FaAd, FaLaptop, FaBriefcase } from "react-icons/fa";
 import { FaPlus, FaArrowRight } from "react-icons/fa";
 // import logo from '../../assets/logo.png';
 import newlogo from '../../assets/newlogo.png';
@@ -110,6 +110,23 @@ const HomeHeading = () => {
             </div>
           </div>
         </div> */}
+        {/* Create Admin Panel Section */}
+        <div 
+            className={styles.createId} 
+            onClick={handleClick}
+            style={{ cursor: 'pointer' }}
+        >
+          <div className={styles.leftSide}>
+            <span className={styles.createIdEmoji}>🚀</span>
+            <FaPlus size={18} className={styles.createIdIcon} />
+            <span className={styles.createIdText}>CREATE SELF ADMIN PANEL&apos;S</span>
+            <span className={styles.createIdEmoji}>⚡</span>
+          </div>
+          <div className={styles.rightSide}>
+            <span className={styles.createIdEmoji}>🎯</span>
+            <FaArrowRight size={18} className={`${styles.createIdArrow} ${styles.arrow}`} />
+          </div>
+        </div>
 
         {/* Animated Features Section */}
         <div className={styles.featuresSection}>
@@ -147,36 +164,15 @@ const HomeHeading = () => {
           </div>
         </div>
 
-        {/* Create Admin Panel Section */}
-        <div 
-            className={styles.createId} 
-            onClick={handleClick}
-            style={{ cursor: 'pointer' }}
-        >
-          <div className={styles.leftSide}>
-            <span className={styles.createIdEmoji}>🚀</span>
-            <FaPlus size={18} className={styles.createIdIcon} />
-            <span className={styles.createIdText}>CREATE SELF ADMIN PANEL&apos;S</span>
-            <span className={styles.createIdEmoji}>⚡</span>
-          </div>
-          <div className={styles.rightSide}>
-            <span className={styles.createIdEmoji}>🎯</span>
-            <FaArrowRight size={18} className={`${styles.createIdArrow} ${styles.arrow}`} />
-          </div>
-        </div>
+        
 
         {/* Animated Stats Section */}
         <div className={styles.statsSection}>
           <div className={styles.statsContainer}>
             <div className={styles.statItem}>
               <FaUsers className={styles.statIcon} />
-              <div className={styles.statNumber}>10K+</div>
+              <div className={styles.statNumber}>2K+</div>
               <div className={styles.statLabel}>Active Users</div>
-            </div>
-            <div className={styles.statItem}>
-              <FaCoins className={styles.statIcon} />
-              <div className={styles.statNumber}>₹50M+</div>
-              <div className={styles.statLabel}>Total Winnings</div>
             </div>
             <div className={styles.statItem}>
               <FaChartLine className={styles.statIcon} />
@@ -191,32 +187,32 @@ const HomeHeading = () => {
           </div>
         </div>
 
-        {/* Gaming Platforms Section */}
+        {/* Services Section */}
         <div className={styles.gamingPlatformsSection}>
-          <h2 className={styles.sectionTitle}>🎮 Popular Gaming Platforms</h2>
+          <h2 className={styles.sectionTitle}>🚀 Our Premium Services</h2>
           <div className={styles.platformsGrid}>
             <div className={styles.platformCard}>
-              <div className={styles.platformIcon}>🎰</div>
-              <h3>Slot Games</h3>
-              <p>500+ Slot Machines</p>
-              <div className={styles.platformBadge}>Hot</div>
+              <div className={styles.platformIcon} style={{ color: '#25D366' }}><FaWhatsapp size={40} /></div>
+              <h3>APIs</h3>
+              <p>WhatsApp API <br/> Telegram Bot</p>
+              <div className={styles.platformBadge}>Best</div>
             </div>
             <div className={styles.platformCard}>
-              <div className={styles.platformIcon}>🃏</div>
-              <h3>Card Games</h3>
-              <p>Live Poker & Blackjack</p>
-              <div className={styles.platformBadge}>Live</div>
+              <div className={styles.platformIcon} style={{ color: '#FFD700' }}><FaCreditCard size={40} /></div>
+              <h3>Payments</h3>
+              <p>Payment Gateway <br/> Rental Account</p>
+              <div className={styles.platformBadge}>Secure</div>
             </div>
             <div className={styles.platformCard}>
-              <div className={styles.platformIcon}>⚽</div>
-              <h3>Sports Betting</h3>
-              <p>All Major Leagues</p>
+              <div className={styles.platformIcon} style={{ color: '#0088cc' }}><FaSimCard size={40} /></div>
+              <h3>SIM Services</h3>
+              <p>Indian Virtual SIM <br/> International Virtual SIM</p>
               <div className={styles.platformBadge}>New</div>
             </div>
             <div className={styles.platformCard}>
-              <div className={styles.platformIcon}>🎲</div>
-              <h3>Live Casino</h3>
-              <p>Real-time Gaming</p>
+              <div className={styles.platformIcon} style={{ color: '#E1306C' }}><FaLaptop size={40} /></div>
+              <h3>Digital Marketing</h3>
+              <p>Google & Meta Ads <br/> Telegram & Instagram Ads</p>
               <div className={styles.platformBadge}>Trending</div>
             </div>
           </div>
@@ -280,21 +276,27 @@ const HomeHeading = () => {
             <div className={styles.stepItem}>
               <div className={styles.stepNumber}>3</div>
               <div className={styles.stepContent}>
-                <h3>Play & Win</h3>
-                <p>Start playing your favorite games and win real money</p>
+                <h3>Buy Your Panel</h3>
+                <p>Access to all top websites</p>
               </div>
-              <div className={styles.stepIcon}>🎯</div>
+              <div className={styles.stepIcon}><FaBriefcase /></div>
             </div>
             <div className={styles.stepArrow}>→</div>
             <div className={styles.stepItem}>
               <div className={styles.stepNumber}>4</div>
               <div className={styles.stepContent}>
-                <h3>Withdraw</h3>
-                <p>Withdraw your winnings instantly to your bank account</p>
+                <h3>Refill & Withdrawal</h3>
+                <p>Any panel refill, anytime withdrawal</p>
               </div>
               <div className={styles.stepIcon}>🏦</div>
             </div>
           </div>
+        </div>
+
+        
+        {/* Copyright Section */}
+        <div className={styles.copyrightSection}>
+          <p>© 2019 The247Panel. All rights reserved.</p>
         </div>
     </div>
   );

@@ -1,30 +1,31 @@
 /* Modern Responsive Deposit Popup Styles */
 .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(8px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   z-index: 9999;
   padding: 20px;
   box-sizing: border-box;
-  }
-  
-  .popup {
+}
+
+.popup {
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
   border-radius: 20px;
   width: 100%;
   max-width: 500px;
-    position: relative;
+  position: relative;
   margin: 0;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  overflow: hidden;
+  overflow-y: auto;
+  max-height: 90vh;
   animation: slideIn 0.3s ease-out;
   z-index: 10000;
   transform: translateZ(0);
@@ -35,20 +36,21 @@
     opacity: 0;
     transform: translateY(-20px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
-  }
-  
-  .closeButton {
-    position: absolute;
+}
+
+.closeButton {
+  position: absolute;
   top: 15px;
   right: 20px;
   background: rgba(255, 255, 255, 0.9);
-    border: none;
+  border: none;
   font-size: 24px;
-    cursor: pointer;
+  cursor: pointer;
   color: #dc3545;
   width: 40px;
   height: 40px;
@@ -65,10 +67,10 @@
   background: #dc3545;
   color: white;
   transform: scale(1.1);
-  }
-  
-  .heading {
-    text-align: center;
+}
+
+.heading {
+  text-align: center;
   margin: 30px 20px 20px;
   color: #2c3e50;
   font-size: 24px;
@@ -129,9 +131,9 @@
   align-items: center;
   margin: 30px 20px;
   padding: 0 10px;
-  }
-  
-  .inputLabel {
+}
+
+.inputLabel {
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 12px;
@@ -234,7 +236,7 @@
   box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
   text-transform: uppercase;
   letter-spacing: 1px;
-    display: block;
+  display: block;
   position: relative;
   overflow: hidden;
 }
@@ -317,7 +319,7 @@
   justify-content: space-between;
   background: #f8f9fa;
   padding: 15px 20px;
-    margin: 15px 0;
+  margin: 15px 0;
   border-radius: 10px;
   border: 1px solid #e9ecef;
   transition: all 0.3s ease;
@@ -416,25 +418,25 @@
   .popup {
     max-width: 600px;
   }
-  
+
   .balanceContainer {
     padding: 35px 30px;
   }
-  
+
   .amount {
     font-size: 3rem;
   }
-  
+
   .wallet {
     font-size: 1.2rem;
   }
-  
+
   .input {
     max-width: 350px;
     padding: 18px 24px;
     font-size: 18px;
   }
-  
+
   .submitButton,
   .mainActionButton {
     max-width: 350px;
@@ -448,19 +450,19 @@
   .popup {
     max-width: 550px;
   }
-  
+
   .balanceContainer {
     padding: 30px 25px;
   }
-  
+
   .amount {
     font-size: 2.8rem;
   }
-  
+
   .input {
     max-width: 320px;
   }
-  
+
   .submitButton,
   .mainActionButton {
     max-width: 320px;
@@ -472,23 +474,23 @@
   .overlay {
     padding: 20px;
   }
-  
+
   .popup {
     max-width: 500px;
   }
-  
+
   .balanceContainer {
     padding: 28px 25px;
   }
-  
+
   .amount {
     font-size: 2.5rem;
   }
-  
+
   .input {
     max-width: 300px;
   }
-  
+
   .submitButton,
   .mainActionButton {
     max-width: 300px;
@@ -500,51 +502,51 @@
   .overlay {
     padding: 15px;
   }
-  
+
   .popup {
     max-width: 100%;
     margin: 0;
     border-radius: 16px;
   }
-  
+
   .heading {
     font-size: 22px;
     margin: 25px 20px 20px;
   }
-  
+
   .balanceContainer {
     width: 95%;
     padding: 25px 20px;
   }
-  
+
   .amount {
     font-size: 2.3rem;
   }
-  
+
   .wallet {
     font-size: 1.1rem;
   }
-  
+
   .inputSection {
     margin: 25px 20px;
   }
-  
+
   .input {
     max-width: 100%;
     padding: 16px 20px;
   }
-  
+
   .tabButtons {
     flex-direction: row;
     gap: 10px;
   }
-  
+
   .tabButton {
     min-width: 120px;
     padding: 14px 18px;
     font-size: 14px;
   }
-  
+
   .submitButton,
   .mainActionButton {
     width: 95%;
@@ -558,67 +560,67 @@
   .overlay {
     padding: 12px;
   }
-  
+
   .popup {
     border-radius: 14px;
     max-height: 90vh;
     overflow-y: auto;
   }
-  
+
   .heading {
     font-size: 20px;
     margin: 20px 15px 15px;
   }
-  
+
   .balanceContainer {
     width: 96%;
     padding: 20px 18px;
   }
-  
+
   .amount {
     font-size: 2rem;
   }
-  
+
   .wallet {
     font-size: 1.05rem;
   }
-  
+
   .inputSection {
     margin: 22px 15px;
   }
-  
+
   .input {
     padding: 14px 18px;
     font-size: 16px;
   }
-  
+
   .tabButtons {
     flex-direction: column;
     gap: 8px;
     margin: 20px 15px 15px;
   }
-  
+
   .tabButton {
     width: 100%;
     padding: 12px 16px;
     font-size: 13px;
   }
-  
+
   .tabContent {
     margin: 18px 15px;
   }
-  
+
   .copyContainer {
     padding: 12px 16px;
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
-  
+
   .copyContainer:hover {
     transform: none;
   }
-  
+
   .submitButton,
   .mainActionButton {
     width: 96%;
@@ -633,12 +635,12 @@
   .overlay {
     padding: 10px;
   }
-  
+
   .popup {
     border-radius: 12px;
     max-height: 85vh;
   }
-  
+
   .heading {
     font-size: 18px;
     margin: 18px 12px 12px;
@@ -648,47 +650,47 @@
     width: 98%;
     padding: 18px 15px;
   }
-  
+
   .amount {
     font-size: 1.8rem;
   }
-  
+
   .wallet {
     font-size: 1rem;
   }
-  
+
   .inputSection {
     margin: 20px 12px;
   }
-  
+
   .input {
     padding: 13px 16px;
     font-size: 16px;
   }
-  
+
   .tabButtons {
     flex-direction: column;
     gap: 6px;
     margin: 18px 12px 12px;
   }
-  
+
   .tabButton {
     width: 100%;
     padding: 11px 14px;
     font-size: 12px;
   }
-  
+
   .tabContent {
     margin: 16px 12px;
   }
-  
+
   .copyContainer {
     padding: 11px 14px;
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
   }
-  
+
   .submitButton,
   .mainActionButton {
     width: 98%;
@@ -703,26 +705,26 @@
   .overlay {
     padding: 8px;
   }
-  
+
   .popup {
     border-radius: 10px;
     max-height: 80vh;
   }
-  
+
   .heading {
     font-size: 17px;
     margin: 15px 10px 10px;
   }
-  
+
   .balanceContainer {
     width: 99%;
     padding: 15px 12px;
   }
-  
+
   .amount {
     font-size: 1.6rem;
   }
-  
+
   .wallet {
     font-size: 0.95rem;
   }
@@ -730,35 +732,35 @@
   .inputSection {
     margin: 18px 10px;
   }
-  
+
   .input {
     padding: 12px 14px;
     font-size: 15px;
   }
-  
+
   .tabButtons {
     flex-direction: column;
     gap: 5px;
     margin: 15px 10px 10px;
   }
-  
+
   .tabButton {
     width: 100%;
     padding: 10px 12px;
     font-size: 11px;
   }
-  
+
   .tabContent {
     margin: 15px 10px;
   }
-  
+
   .copyContainer {
     padding: 10px 12px;
     flex-direction: column;
     align-items: flex-start;
     gap: 5px;
   }
-  
+
   .submitButton,
   .mainActionButton {
     width: 99%;
@@ -773,62 +775,62 @@
   .overlay {
     padding: 6px;
   }
-  
+
   .popup {
     border-radius: 8px;
     max-height: 75vh;
   }
-  
+
   .heading {
     font-size: 16px;
     margin: 12px 8px 8px;
   }
-  
+
   .balanceContainer {
     width: 100%;
     padding: 12px 10px;
   }
-  
+
   .amount {
     font-size: 1.4rem;
   }
-  
+
   .wallet {
     font-size: 0.9rem;
   }
-  
+
   .inputSection {
     margin: 15px 8px;
   }
-  
+
   .input {
     padding: 10px 12px;
     font-size: 14px;
   }
-  
+
   .tabButtons {
     flex-direction: column;
     gap: 4px;
     margin: 12px 8px 8px;
   }
-  
+
   .tabButton {
     width: 100%;
     padding: 8px 10px;
     font-size: 10px;
   }
-  
+
   .tabContent {
     margin: 12px 8px;
   }
-  
+
   .copyContainer {
     padding: 8px 10px;
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
   }
-  
+
   .submitButton,
   .mainActionButton {
     width: 100%;
@@ -843,51 +845,51 @@
   .overlay {
     padding: 4px;
   }
-  
+
   .popup {
     border-radius: 6px;
     max-height: 70vh;
   }
-  
+
   .heading {
     font-size: 15px;
     margin: 10px 6px 6px;
   }
-  
+
   .balanceContainer {
     width: 100%;
     padding: 10px 8px;
   }
-  
+
   .amount {
     font-size: 1.2rem;
   }
-  
+
   .wallet {
     font-size: 0.85rem;
   }
-  
+
   .inputSection {
     margin: 12px 6px;
   }
-  
+
   .input {
     padding: 8px 10px;
     font-size: 13px;
   }
-  
+
   .tabButtons {
     flex-direction: column;
     gap: 3px;
     margin: 10px 6px 6px;
   }
-  
+
   .tabButton {
     width: 100%;
     padding: 6px 8px;
     font-size: 9px;
   }
-  
+
   .tabContent {
     margin: 10px 6px;
   }
@@ -898,7 +900,7 @@
     align-items: flex-start;
     gap: 3px;
   }
-  
+
   .submitButton,
   .mainActionButton {
     width: 100%;
@@ -909,11 +911,12 @@
 }
 
 /* High DPI Displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
   .popup {
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
   }
-  
+
   .balanceContainer {
     box-shadow: 0 4px 15px rgba(50, 103, 210, 0.2);
   }
@@ -927,46 +930,46 @@
   .overlay {
     padding: 8px;
   }
-  
+
   .popup {
     max-height: 90vh;
     overflow-y: auto;
     max-width: 80vw;
   }
-  
+
   .balanceContainer {
     padding: 15px 20px;
     margin: 15px auto;
   }
-  
+
   .amount {
     font-size: 1.6rem;
   }
-  
+
   .wallet {
     font-size: 0.9rem;
   }
-  
+
   .inputSection {
     margin: 15px 20px;
   }
-  
+
   .input {
     padding: 12px 16px;
     font-size: 15px;
   }
-  
+
   .tabButtons {
     flex-direction: row;
     gap: 8px;
     margin: 15px 20px 12px;
   }
-  
+
   .tabButton {
     padding: 10px 14px;
     font-size: 12px;
   }
-  
+
   .submitButton,
   .mainActionButton {
     padding: 12px 20px;
@@ -977,19 +980,22 @@
 
 /* Touch Device Optimizations */
 @media (hover: none) and (pointer: coarse) {
+
   .submitButton,
   .mainActionButton,
   .tabButton,
   .closeButton {
-    min-height: 44px; /* iOS minimum touch target */
+    min-height: 44px;
+    /* iOS minimum touch target */
     min-width: 44px;
   }
-  
+
   .input {
     min-height: 44px;
-    font-size: 16px; /* Prevent zoom on iOS */
+    font-size: 16px;
+    /* Prevent zoom on iOS */
   }
-  
+
   .copyIcon {
     min-height: 44px;
     min-width: 44px;
@@ -1005,12 +1011,12 @@
     position: static;
     background: none;
   }
-  
+
   .popup {
     box-shadow: none;
     border: 1px solid #ddd;
   }
-  
+
   .closeButton,
   .submitButton {
     display: none;
@@ -1042,5 +1048,4 @@
   margin-top: auto;
   padding-top: 20px;
   border-top: 1px solid #e9ecef;
-  }
-  
+}

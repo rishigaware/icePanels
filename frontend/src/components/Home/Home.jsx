@@ -19,18 +19,18 @@ const Home = () => {
 
       <div className={styles.carouselContainer}>
         {/* Horizontal Image Carousel */}
-        <ImageCarousel 
+        {/* <ImageCarousel 
           type="horizontal" 
           carouselId="horizontal-main"
           canManage={isAdmin}
-        />
+        /> */}
         
         {/* Square Image Carousel */}
-        <ImageCarousel 
+        {/* <ImageCarousel 
           type="square" 
           carouselId="square-main"
           canManage={isAdmin}
-        />
+        /> */}
 
         {/* Social Media Icons */}
         <div className={styles.socialIcons}>

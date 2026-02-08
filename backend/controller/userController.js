@@ -214,8 +214,8 @@ exports.createTransaction = async (req, res) => {
   }
 
   try {
-    // Generate a unique transaction ID (this can be updated later)
-    const transactionId = "Not Updated"; // Placeholder for unique transaction ID
+    // Generate a unique transaction ID
+    const transactionId = `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     // Prepare the transaction data
     const transactionData = {
       description: "Payment For Deposite",
@@ -600,14 +600,19 @@ exports.createIdRequest = async (req, res) => {
 
     await idRequest.save();
 
+    // Deduct the balance from the user's wallet
+    await User.findByIdAndUpdate(createdBy, {
+      $inc: { balance: -parseFloat(convertedCoins) }
+    });
+
     const transactionData = {
-      description: `ID Creation Request - ${websiteName} (${username})`,
+      description: `ID Creation Request - ${websiteName} (${username}) - ${parseFloat(coinAmount)} coins`,
       transactionId: `id_req_${Date.now()}`,
       paymentMethod: "ID Creation Request",
       createdAt: createdAt.toISOString(),
       acceptedAt: "Not updated",
-      status: "Pending",
-      amount: parseFloat(coinAmount),
+      status: "Success", // Transaction is successful as balance is deducted
+      amount: parseFloat(convertedCoins), // Store the deducted amount (Rupees)
       createdBy: createdBy,
       idRequestId: idRequest._id.toString(),
       websiteName: websiteName,
@@ -618,7 +623,7 @@ exports.createIdRequest = async (req, res) => {
       refundable: Boolean(refundable),
       accountType: accountType || 'admin',
       currency: currency || 'INR',
-      transactionType: 'id_creation'
+      transactionType: 'id_creation_deduction' // Mark as a deduction transaction
     };
 
     const transaction = new Transaction(transactionData);

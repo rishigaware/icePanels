@@ -256,6 +256,7 @@ const Transactions = () => {
         {currentTransactions.length > 0 ? (
           currentTransactions.map((txn) => (
             <div className={styles.transactionItem} key={txn.id}>
+              
               <div className={styles.column}><strong>User Id:</strong> {txn.createdBy}</div>
               <div className={styles.column}>
                 <strong>Description:</strong>
@@ -299,7 +300,7 @@ const Transactions = () => {
               <div className={styles.column}>
                 {txn.imagePath && (
                   <img
-                    src={`${url}/${txn.imagePath}`} // Ensure the correct base URL
+                    src={`${url}/${txn.imagePath.replace(/\\/g, '/').replace('backend/', '')}`} // Normalize path
                     alt="Transaction"
                     className={styles.transactionImage}
                     onClick={() => handleImageClick(txn.imagePath)} // Open modal on click

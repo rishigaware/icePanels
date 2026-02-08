@@ -7,8 +7,11 @@ import { Toast } from "primereact/toast";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
-import { MdDeleteForever } from "react-icons/md";
-import { FaTrash } from "react-icons/fa";
+import { FaUser, FaMoneyBillWave, FaCoins } from "react-icons/fa";
+
+// ... (existing code)
+
+
 import DepositPopup from "../Navbar/DepositPopup";
 
 
@@ -249,10 +252,22 @@ const CreateId = () => {
   const handleCoinAmountChange = (e) => {
     const coins = parseFloat(e.target.value) || 0;
     setCoinAmount(coins);
+
+    let currentRate = parseFloat(selectedWebsite?.coinRate) || 0;
     
-    // Calculate rupees based on entered coins
-    // If 1 coin = ₹0.17, then 2000 coins = 2000 * 0.17 = ₹340
-    const calculatedRupees = coins * coinRate;
+    // Dynamic Rate Logic
+    if (coins > 0) { // Only apply if coins are entered
+        if (coins < 50000) {
+            currentRate += 0.03;
+        } else if (coins < 100000) {
+            currentRate += 0.01;
+        }
+    }
+    
+    setCoinRate(parseFloat(currentRate.toFixed(2))); // Update the displayed rate
+
+    // Calculate rupees based on effective rate
+    const calculatedRupees = coins * currentRate;
     setConvertedCoins(calculatedRupees);
   };
 
@@ -535,11 +550,6 @@ const CreateId = () => {
                       <strong>Min Coins:</strong> {item.minimumCoins}
                     </p>
                   )}
-                  {item.createdAt && (
-                    <p className={styles.dateInfo}>
-                      <strong>Added:</strong> {new Date(item.createdAt).toLocaleDateString()}
-                    </p>
-                  )}
                   {item.isActive !== undefined && (
                     <span className={`${styles.statusTag} ${item.isActive ? styles.activeStatus : styles.inactiveStatus}`}>
                       {item.isActive ? 'Active' : 'Inactive'}
@@ -618,7 +628,7 @@ const CreateId = () => {
         <div className={styles.modal}>
           <div className={styles.modalContent}>
             {/* Close Button */}
-            <button onClick={handleCloseModal} className={styles.closeButton}>
+            <button type="button" onClick={handleCloseModal} className={styles.closeButton}>
               ×
             </button>
             
@@ -640,64 +650,39 @@ const CreateId = () => {
               </a>
             </div>
 
-            {/* Website Details */}
-            <div className={styles.websiteDetails}>
-              <div className={styles.detailRow}>
-                <span className={styles.detailLabel}>Category:</span>
-                <span className={styles.detailValue}>{selectedWebsite.category || 'N/A'}</span>
-              </div>
-              {selectedWebsite.coinRate && (
-                <div className={styles.detailRow}>
-                  <span className={styles.detailLabel}>Coin Rate:</span>
-                  <span className={styles.detailValue}>{selectedWebsite.coinRate}</span>
-                </div>
-              )}
-              {selectedWebsite.minimumCoins && (
-                <div className={styles.detailRow}>
-                  <span className={styles.detailLabel}>Minimum Coins:</span>
-                  <span className={styles.detailValue}>{selectedWebsite.minimumCoins}</span>
-                </div>
-              )}
-              {selectedWebsite.createdAt && (
-                <div className={styles.detailRow}>
-                  <span className={styles.detailLabel}>Added:</span>
-                  <span className={styles.detailValue}>{new Date(selectedWebsite.createdAt).toLocaleDateString()}</span>
-                </div>
-              )}
-              {selectedWebsite.isActive !== undefined && (
-                <div className={styles.detailRow}>
-                  <span className={styles.detailLabel}>Status:</span>
-                  <span className={`${styles.detailValue} ${selectedWebsite.isActive ? styles.activeStatus : styles.inactiveStatus}`}>
-                    {selectedWebsite.isActive ? 'Active' : 'Inactive'}
-                  </span>
-                </div>
-              )}
-            </div>
-
              {/* Modal Body */}
              <div className={styles.modalBody}>
                {/* Coin Conversion Info */}
                <div className={styles.coinConversionInfo}>
+                
                  <div className={styles.coinInfoRow}>
                    <span className={styles.coinLabel}>Your Wallet Balance:</span>
                    <span className={styles.coinValue}>₹{(parseFloat(user?.balance) || 0).toFixed(2)}</span>
                  </div>
                  <div className={styles.coinInfoRow}>
                    <span className={styles.coinLabel}>Coin Rate:</span>
-                   <span className={styles.coinValue}>1 coin = ₹{coinRate}</span>
+                   <span className={styles.coinValue}>
+                     {coinAmount > 0 && coinAmount < 50000 ? (
+                       <span style={{ fontSize: '0.9em' }}>
+                         {selectedWebsite?.coinRate} + 0.03 = <b>₹{coinRate}</b> <span style={{ color: '#2ecc71', fontSize: '0.8em' }}>(Rate increased for &lt; 50k coins)</span>
+                       </span>
+                     ) : coinAmount >= 50000 && coinAmount < 100000 ? (
+                       <span style={{ fontSize: '0.9em' }}>
+                         {selectedWebsite?.coinRate} + 0.01 = <b>₹{coinRate}</b> <span style={{ color: '#2ecc71', fontSize: '0.8em' }}>(Rate increased for &lt; 100k coins)</span>
+                       </span>
+                     ) : (
+                       <span>1 coin = ₹{coinRate}</span>
+                     )}
+                   </span>
                  </div>
                  <div className={styles.coinInfoRow}>
                    <span className={styles.coinLabel}>Minimum Required:</span>
                    <span className={styles.coinValue}>{minimumCoins} coins</span>
                  </div>
-                 <div className={styles.coinInfoRow}>
-                   <span className={styles.coinLabel}>Max Coins Available:</span>
-                   <span className={styles.coinValue}>{((parseFloat(user?.balance) || 0) / coinRate).toFixed(2)} coins</span>
-                 </div>
                </div>
 
                <div className={styles.inputGroup}>
-                 <label className={styles.inputLabel}>Username</label>
+                 <label className={styles.inputLabel}><FaUser /> Username</label>
                  <input
                   type="text"
                   placeholder="Enter username"
@@ -710,7 +695,7 @@ const CreateId = () => {
                {/* Account Type field removed */}
 
                <div className={styles.inputGroup}>
-                 <label className={styles.inputLabel}>Currency</label>
+                 <label className={styles.inputLabel}><FaMoneyBillWave /> Currency</label>
                  <select
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value)}
@@ -721,7 +706,7 @@ const CreateId = () => {
                </div>
 
                <div className={styles.inputGroup}>
-                 <label className={styles.inputLabel}>Coins to Convert</label>
+                 <label className={styles.inputLabel}><FaCoins /> Coins to Convert</label>
                  <input
                   type="number"
                   placeholder="Enter coins"
@@ -737,7 +722,12 @@ const CreateId = () => {
                  <div className={styles.coinConversionResult}>
                    <div className={styles.coinInfoRow}>
                      <span className={styles.coinLabel}>Conversion:</span>
-                     <span className={styles.coinValue}>{coinAmount} coins = ₹{convertedCoins.toFixed(2)}</span>
+                     <span className={styles.coinValue}>
+                       {coinAmount} x {coinRate}
+                       {coinAmount < 50000 && <span style={{fontSize: '0.8em', color: '#2ecc71', margin: '0 5px'}}>(+0.03 rate applied for &lt; 50k)</span>}
+                       {coinAmount >= 50000 && coinAmount < 100000 && <span style={{fontSize: '0.8em', color: '#2ecc71', margin: '0 5px'}}>(+0.01 rate applied for &lt; 100k)</span>}
+                       = <b>₹{convertedCoins.toFixed(2)}</b>
+                     </span>
                    </div>
                  </div>
                )}
