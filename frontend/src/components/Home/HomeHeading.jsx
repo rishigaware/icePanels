@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import styles from './HomeHeading.module.css'; // Import the CSS module
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { PiHandDepositDuotone } from "react-icons/pi";
@@ -7,18 +7,14 @@ import { FaBalanceScale, FaCrown, FaGlobe, FaBolt, FaBullhorn, FaTools, FaHeadse
 import { FaPlus, FaArrowRight } from "react-icons/fa";
 // import logo from '../../assets/logo.png';
 import newlogo from '../../assets/newlogo.png';
-import LoginPopup from '../Login/LoginPopup';
 import { useUser } from "../../context/UserContext";
 
 const HomeHeading = () => {
   const navigate = useNavigate(); // Initialize the navigate function
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal visibility
   const { user, setUser, refreshUserBalance } = useUser();
 
-  const closeModal = () => setIsModalOpen(false);
-
   const handleLogin = () => {
-    setIsModalOpen(true);
+    navigate('/login');
   };
 
   const handleClick = () => {
@@ -300,10 +296,6 @@ const HomeHeading = () => {
             </div>
           </div>
         </div>
-
-      {isModalOpen && (
-        <LoginPopup isOpen={isModalOpen} isClose={closeModal} />
-      )}
     </div>
   );
 };

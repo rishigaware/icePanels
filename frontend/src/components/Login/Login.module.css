@@ -34,6 +34,23 @@
   border-radius: 20px 20px 0 0;
 }
 
+/* Close Icon */
+.closeIcon {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.3s ease;
+  z-index: 10;
+}
+
+.closeIcon:hover {
+  color: #ffffff;
+  transform: scale(1.1);
+}
+
 /* Heading Styling */
 .loginHeading {
   font-size: 2rem;
@@ -133,15 +150,16 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-.signupLink a {
+.linkText {
   color: #60a5fa;
   text-decoration: none;
   font-weight: 600;
   transition: all 0.3s ease;
   position: relative;
+  cursor: pointer;
 }
 
-.signupLink a::after {
+.linkText::after {
   content: '';
   position: absolute;
   width: 0;
@@ -153,11 +171,11 @@
   transform: translateX(-50%);
 }
 
-.signupLink a:hover::after {
+.linkText:hover::after {
   width: 100%;
 }
 
-.signupLink a:hover {
+.linkText:hover {
   color: #93c5fd;
 }
 
@@ -166,26 +184,26 @@
   .loginContainer {
     padding: 0.75rem;
   }
-  
+
   .loginForm {
     padding: 2rem;
     border-radius: 16px;
   }
-  
+
   .loginHeading {
     font-size: 1.75rem;
     margin-bottom: 1.5rem;
   }
-  
+
   .formGroup {
     margin-bottom: 1.25rem;
   }
-  
+
   .formGroup input {
     padding: 0.875rem 1rem;
     font-size: 0.95rem;
   }
-  
+
   .loginButton {
     padding: 0.875rem 1.25rem;
     font-size: 1rem;
@@ -196,31 +214,31 @@
   .loginContainer {
     padding: 0.5rem;
   }
-  
+
   .loginForm {
     padding: 1.5rem;
     border-radius: 12px;
   }
-  
+
   .loginHeading {
     font-size: 1.5rem;
     margin-bottom: 1.25rem;
   }
-  
+
   .formGroup {
     margin-bottom: 1rem;
   }
-  
+
   .formGroup input {
     padding: 0.75rem 0.875rem;
     font-size: 0.9rem;
   }
-  
+
   .loginButton {
     padding: 0.75rem 1rem;
     font-size: 0.95rem;
   }
-  
+
   .signupLink {
     margin-top: 1.5rem;
   }
@@ -230,16 +248,16 @@
   .loginForm {
     padding: 1.25rem;
   }
-  
+
   .loginHeading {
     font-size: 1.3rem;
   }
-  
+
   .formGroup input {
     padding: 0.625rem 0.75rem;
     font-size: 0.85rem;
   }
-  
+
   .loginButton {
     padding: 0.625rem 0.875rem;
     font-size: 0.9rem;
@@ -251,25 +269,26 @@
   .loginContainer {
     padding: 0.5rem;
   }
-  
+
   .loginForm {
     padding: 1.5rem;
     max-height: 90vh;
     overflow-y: auto;
   }
-  
+
   .loginHeading {
     font-size: 1.5rem;
     margin-bottom: 1rem;
   }
-  
+
   .formGroup {
     margin-bottom: 1rem;
   }
 }
 
 /* High DPI Displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
   .loginForm {
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
   }
@@ -280,12 +299,12 @@
   .loginContainer {
     background: #ffffff;
   }
-  
+
   .loginForm {
     box-shadow: none;
     border: 1px solid #ddd;
   }
-  
+
   .loginButton {
     box-shadow: none;
   }
@@ -297,17 +316,17 @@
     background: rgba(30, 30, 30, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
-  
+
   .formGroup input {
     background: rgba(40, 40, 40, 0.8);
     border-color: rgba(255, 255, 255, 0.2);
     color: #ffffff;
   }
-  
+
   .formGroup input::placeholder {
     color: #adb5bd;
   }
-  
+
   .formGroup label {
     color: #ffffff;
   }

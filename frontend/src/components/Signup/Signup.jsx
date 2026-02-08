@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styles from './Signup.module.css'; // Import the CSS module
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { useUser } from "../../context/UserContext";
+import { FaTimes } from 'react-icons/fa';
 
 
 const SignupForm = () => {
@@ -92,6 +93,7 @@ const SignupForm = () => {
     return (
         <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
+                <FaTimes className={styles.closeIcon} onClick={() => navigate('/')} />
                 <h2 className={styles.heading}>Signup Form</h2>
                 <form onSubmit={handleSubmit}>
                     <div className={styles.formGroup}>

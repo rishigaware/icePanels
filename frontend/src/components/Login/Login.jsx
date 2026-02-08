@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for routing
 import { useUser } from '../../context/UserContext'; // Import the useUser hook for context
 import styles from './Login.module.css'; // Import CSS module for styling
+import { FaTimes } from 'react-icons/fa';
+
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -59,6 +61,7 @@ const Login = () => {
   return (
     <div className={styles.loginContainer}>
       <div className={styles.loginForm}>
+        <FaTimes className={styles.closeIcon} onClick={() => navigate('/')} />
         <h2 className={styles.loginHeading}>Login</h2>
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
@@ -88,7 +91,7 @@ const Login = () => {
           <button type="submit" className={styles.loginButton}>Login</button>
         </form>
           <p className={styles.signupLink}>
-            Don&apos;t have an account? <a href="/signup">Sign up here</a>
+            Don&apos;t have an account? <span onClick={() => navigate('/signup')} className={styles.linkText}>Sign up here</span>
           </p>
       </div>
     </div>
