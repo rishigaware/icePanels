@@ -3,7 +3,7 @@ import styles from './HomeHeading.module.css'; // Import the CSS module
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { PiHandDepositDuotone } from "react-icons/pi";
 import { BiMoneyWithdraw } from "react-icons/bi";
-import { FaBalanceScale, FaCrown, FaShieldAlt, FaRocket, FaGift, FaStar, FaClock, FaChartLine, FaUsers, FaCoins } from "react-icons/fa";
+import { FaBalanceScale, FaCrown, FaGlobe, FaBolt, FaBullhorn, FaTools, FaHeadset, FaStar, FaChartLine, FaUsers, FaCoins } from "react-icons/fa";
 import { FaPlus, FaArrowRight } from "react-icons/fa";
 // import logo from '../../assets/logo.png';
 import newlogo from '../../assets/newlogo.png';
@@ -120,28 +120,33 @@ const HomeHeading = () => {
           <div className={styles.featuresGrid}>
             <div className={styles.featureCard}>
               <FaCrown className={styles.featureIcon} />
-              <h4>Premium Gaming</h4>
-              <p>Access to top gaming platforms</p>
+              <h4>Premium Exchange Solutions</h4>
+              <p>All Premium Exchange, Admin & White Label services available.</p>
             </div>
             <div className={styles.featureCard}>
-              <FaShieldAlt className={styles.featureIcon} />
-              <h4>100% Secure</h4>
-              <p>Bank-level security for all transactions</p>
+              <FaGlobe className={styles.featureIcon} />
+              <h4>International Virtual SIM & Bank</h4>
+              <p>Global virtual SIM cards and international banking support.</p>
             </div>
             <div className={styles.featureCard}>
-              <FaRocket className={styles.featureIcon} />
-              <h4>Instant Deposits</h4>
-              <p>Fast and reliable payment processing</p>
+              <FaBolt className={styles.featureIcon} />
+              <h4>Instant Panel Refill</h4>
+              <p>Quick and seamless instant panel refill anytime.</p>
             </div>
             <div className={styles.featureCard}>
-              <FaGift className={styles.featureIcon} />
-              <h4>Daily Bonuses</h4>
-              <p>Exclusive rewards and promotions</p>
+              <FaBullhorn className={styles.featureIcon} />
+              <h4>Digital Marketing Posters</h4>
+              <p>Professional match posters and marketing creatives.</p>
             </div>
             <div className={styles.featureCard}>
-              <FaClock className={styles.featureIcon} />
-              <h4>24/7 Support</h4>
-              <p>Round-the-clock customer service</p>
+              <FaTools className={styles.featureIcon} />
+              <h4>Advanced Technical Services</h4>
+              <p>Complete technical solutions for smooth platform operation.</p>
+            </div>
+            <div className={styles.featureCard}>
+              <FaHeadset className={styles.featureIcon} />
+              <h4>24/7 Technical Support</h4>
+              <p>Round-the-clock support from our expert technical team and account managers.</p>
             </div>
           </div>
         </div>

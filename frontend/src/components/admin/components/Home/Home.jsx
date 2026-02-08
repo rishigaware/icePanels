@@ -25,13 +25,13 @@ const Home = () => {
 
         {/* Social Media Icons */}
         <div className={styles.socialIcons}>
-          <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.instagram.com/the_panel_247?igsh=YTlpdDIwMnY4anUw" target="_blank" rel="noopener noreferrer">
             <i className="fab fa-instagram"></i>
           </a>
-          <a href="https://wa.me" target="_blank" rel="noopener noreferrer">
+          <a href="https://wa.me/447785775252" target="_blank" rel="noopener noreferrer">
             <i className="fab fa-whatsapp"></i>
           </a>
-          <a href="https://t.me" target="_blank" rel="noopener noreferrer">
+          <a href="https://t.me/The247panel" target="_blank" rel="noopener noreferrer">
             <i className="fab fa-telegram"></i>
           </a>
           <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
