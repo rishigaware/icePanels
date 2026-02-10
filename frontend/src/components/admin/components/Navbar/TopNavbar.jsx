@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "./TopNavbar.module.css";
 import DepositPopup from "./DepositPopup"; // Import the DepositPopup component
 // import logo from '../../../../assets/logo.png'
-import newlogo from '../../../../assets/newlogo.png'
+import newlogo from '../../../../assets/SP.png'
 
 export default function TopNavbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

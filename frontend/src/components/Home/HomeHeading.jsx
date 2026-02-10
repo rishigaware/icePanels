@@ -6,7 +6,7 @@ import { BiMoneyWithdraw } from "react-icons/bi";
 import { FaBalanceScale, FaCrown, FaGlobe, FaBolt, FaBullhorn, FaTools, FaHeadset, FaStar, FaChartLine, FaUsers, FaCoins, FaWhatsapp, FaTelegramPlane, FaCreditCard, FaSimCard, FaAd, FaLaptop, FaBriefcase } from "react-icons/fa";
 import { FaPlus, FaArrowRight } from "react-icons/fa";
 // import logo from '../../assets/logo.png';
-import newlogo from '../../assets/newlogo.png';
+import newlogo from '../../assets/SP.png';
 import { useUser } from "../../context/UserContext";
 
 const HomeHeading = () => {

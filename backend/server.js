@@ -39,7 +39,10 @@ const allowedOrigins = process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split
   'http://localhost:5174',
   'http://127.0.0.1:3000',
   'http://127.0.0.1:5173',
-  'https://the247panel.vercel.app/'
+  'https://the247panel.vercel.app/',
+  'https://saipunt.info',
+  'https://www.saipunt.info',
+  'https://saipuntinfo.vercel.app'
 ];
 
 console.log('🔧 CORS Configuration loaded:');
@@ -64,8 +67,14 @@ console.log('🔧 Allowed origins:', allowedOrigins);
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow all origins
-      callback(null, true);
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
     },
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,

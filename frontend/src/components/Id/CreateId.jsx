@@ -394,8 +394,6 @@ const CreateId = () => {
           coinRate: coinRate,
           minimumCoins: minimumCoins,
           refundable: refundable,
-          minimumCoins: minimumCoins,
-          refundable: refundable,
           accountType: "admin", // Defaulting to admin since field is removed
           currency: currency,
           status: "Pending"
@@ -415,8 +413,6 @@ const CreateId = () => {
           coinAmount: parseFloat(coinAmount), // This is now the coins entered
           convertedCoins: convertedCoins, // This is now the rupees equivalent
           coinRate: coinRate,
-          minimumCoins: minimumCoins,
-          refundable: refundable,
           minimumCoins: minimumCoins,
           refundable: refundable,
           accountType: "admin", // Defaulting to admin since field is removed

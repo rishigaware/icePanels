@@ -34,7 +34,7 @@ const Home = () => {
 
         {/* Social Media Icons */}
         <div className={styles.socialIcons}>
-          <a href="https://www.instagram.com/the_panel_247?igsh=YTlpdDIwMnY4anUw" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.instagram.com/invites/contact/?igsh=x2tqbkpegs5b&utm_content=10vuc3u2" target="_blank" rel="noopener noreferrer">
             <i className="fab fa-instagram"></i>
           </a>
           <a href="https://wa.me/447785775252" target="_blank" rel="noopener noreferrer">

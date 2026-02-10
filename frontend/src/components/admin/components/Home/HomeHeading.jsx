@@ -7,7 +7,7 @@ import { FaCrown, FaGlobe, FaBolt, FaBullhorn, FaTools, FaHeadset, FaStar, FaClo
 import { FaPlus } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
 // import logo from '../../assets/logo.png'
-import newlogo from '../../assets/newlogo.png'
+import newlogo from '../../../../assets/SP.png'
 import LoginPopup from '../Login/LoginPopup';
 import WithdrawalPopup from './WithdrawalPopup';
 

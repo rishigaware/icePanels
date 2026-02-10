@@ -4,8 +4,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./TopNavbar.module.css";
 import DepositPopup from "./DepositPopup"; // Import the DepositPopup component
-import logo from '../../assets/logo.png'
-import newlogo from '../../assets/newlogo.png'
+// import logo from '../../assets/logo.png'
+import newlogo from '../../assets/SP.png'
 import { useUser } from "../../context/UserContext";
 
 export default function TopNavbar() {
