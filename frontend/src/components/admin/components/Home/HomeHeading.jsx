@@ -33,13 +33,13 @@ const HomeHeading = () => {
     };
 
     const handleDepositClick = () => {
-        // Redirect to deposit page
-        navigate('/admin/deposit');
+        // Redirect to users page
+        navigate('/admin/users');
     };
 
     const handleWithdrawalClick = () => {
-        // Open withdrawal popup
-        setIsWithdrawalModalOpen(true);
+        // Redirect to users page
+        navigate('/admin/users');
     };
 
   return (

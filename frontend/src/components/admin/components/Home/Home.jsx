@@ -28,10 +28,10 @@ const Home = () => {
           <a href="https://www.instagram.com/invites/contact/?igsh=x2tqbkpegs5b&utm_content=10vuc3u2" target="_blank" rel="noopener noreferrer">
             <i className="fab fa-instagram"></i>
           </a>
-          <a href="https://wa.me/447785775252" target="_blank" rel="noopener noreferrer">
+          <a href="https://wa.link/25zyx8" target="_blank" rel="noopener noreferrer">
             <i className="fab fa-whatsapp"></i>
           </a>
-          <a href="https://t.me/The247panel" target="_blank" rel="noopener noreferrer">
+          <a href="https://t.me/Saipuntofficialupdate" target="_blank" rel="noopener noreferrer">
             <i className="fab fa-telegram"></i>
           </a>
           <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
