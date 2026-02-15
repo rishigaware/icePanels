@@ -27,7 +27,8 @@ export default function TopNavbar() {
   };
 
   const handleDepositClick = () => {
-    setShowDepositPopup(true); // Show deposit popup
+    // setShowDepositPopup(true); // Show deposit popup
+    navigate("/admin/users");
   };
 
   const closeDepositPopup = () => {

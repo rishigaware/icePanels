@@ -4,7 +4,7 @@ import { Toast } from "primereact/toast";
 import { useUser } from "../../context/UserContext";
 
 export default function NewDepositPopup({ onClose, selectedId }) {
-  const [depositAmount, setDepositAmount] = useState("");
+  const [coinAmount, setCoinAmount] = useState("");
   const [refundable, setRefundable] = useState("refundable");
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -12,82 +12,74 @@ export default function NewDepositPopup({ onClose, selectedId }) {
   const [minimumCoins, setMinimumCoins] = useState(0);
   const [availableWalletBalance, setAvailableWalletBalance] = useState(0);
   
+  // New state from CreateId logic
+  const [displayedRate, setDisplayedRate] = useState(0);
+  const [convertedRupees, setConvertedRupees] = useState(0);
+
   const toast = useRef(null);
   const { user, refreshUserBalance, url } = useUser();
 
   useEffect(() => {
     if (selectedId) {
-      setCoinRate(selectedId.coinRate || 1);
-      setMinimumCoins(selectedId.minimumCoins || 0);
+      setCoinRate(parseFloat(selectedId.coinRate) || 1);
+      setMinimumCoins(parseFloat(selectedId.minimumCoins) || 0);
     }
     if (user) {
-      setAvailableWalletBalance(user.balance || 0);
+      setAvailableWalletBalance(parseFloat(user.balance) || 0);
     }
   }, [selectedId, user]);
 
   // Prevent background scrolling when popup is open
   useEffect(() => {
     document.body.style.overflow = 'hidden';
-    
     return () => {
       document.body.style.overflow = 'unset';
     };
   }, []);
 
-  const calculateCoinsFromRupees = (rupees) => {
-    if (!rupees || isNaN(rupees)) return 0;
-    const baseCoins = Math.floor(rupees / coinRate);
-    
-    // If below minimum coins, add 0.05 to coin rate
-    if (baseCoins < minimumCoins) {
-      const adjustedRate = coinRate + 0.05;
-      const adjustedCoins = Math.floor(rupees / adjustedRate);
-      return adjustedCoins;
-    }
-    
-    return baseCoins;
-  };
-
-  const calculateRupeesFromCoins = (coins) => {
-    if (!coins || isNaN(coins)) return 0;
-    return coins * coinRate;
-  };
-
-  const getEffectiveCoinRate = (rupees) => {
-    if (!rupees || isNaN(rupees)) return { rate: coinRate, reason: null };
-    const baseCoins = Math.floor(rupees / coinRate);
-    
-    if (baseCoins < minimumCoins) {
-      return { 
-        rate: coinRate + 0.05, 
-        reason: "Adjusted rate for deposits below minimum coins requirement" 
-      };
-    }
-    
-    return { rate: coinRate, reason: null };
-  };
-
-  const handleDepositAmountChange = (e) => {
+  const handleCoinAmountChange = (e) => {
     const value = e.target.value;
-    setDepositAmount(value);
+    const coins = parseFloat(value) || 0;
+    setCoinAmount(value);
     setErrorMessage("");
+
+    let currentRate = parseFloat(selectedId?.coinRate) || 1;
+    
+    // Dynamic Rate Logic (Same as CreateId)
+    if (coins > 0) { 
+        if (coins < 50000) {
+            currentRate += 0.03;
+        } else if (coins < 100000) {
+            currentRate += 0.01;
+        }
+    }
+    
+    setDisplayedRate(parseFloat(currentRate.toFixed(2)));
+
+    // Calculate rupees based on effective rate
+    const calculatedRupees = coins * currentRate;
+    setConvertedRupees(calculatedRupees);
   };
 
   const handleDeposit = async () => {
-    if (!depositAmount || isNaN(depositAmount) || parseFloat(depositAmount) <= 0) {
-      setErrorMessage("Please enter a valid deposit amount");
+    const coins = parseFloat(coinAmount);
+    
+    if (!coinAmount || isNaN(coins) || coins <= 0) {
+      setErrorMessage("Please enter a valid coin amount");
       return;
     }
 
-    const amount = parseFloat(depositAmount);
-    const coinsToReceive = calculateCoinsFromRupees(amount);
+    if (coins < minimumCoins) {
+        setErrorMessage(`Minimum deposit is ${minimumCoins} coins`);
+        return;
+    }
 
     // Check if user has sufficient wallet balance
-    if (amount > availableWalletBalance) {
+    if (convertedRupees > availableWalletBalance) {
       toast.current.show({
         severity: 'error',
         summary: 'Insufficient Wallet Balance',
-        detail: `You have ₹${availableWalletBalance} in your wallet. Please add more money to your wallet first.`,
+        detail: `You need ₹${convertedRupees.toFixed(2)} but have ₹${availableWalletBalance.toFixed(2)}. Please add money to your wallet.`,
         life: 5000
       });
       return;
@@ -97,19 +89,17 @@ export default function NewDepositPopup({ onClose, selectedId }) {
     setErrorMessage("");
 
     try {
-      console.log('Sending deposit request with user ID:', user.id);
-      console.log('Full user object:', user);
       const response = await fetch(`${url}/api/user/create-new-deposit-transaction`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount: amount,
-          coinsToReceive: coinsToReceive,
-          coinRate: effectiveRate.rate,
-          baseCoinRate: coinRate,
-          additionalRate: effectiveRate.reason ? 0.05 : 0,
+          amount: convertedRupees, // Rupees to deduct
+          coinsToReceive: coins, // Coins to add
+          coinRate: displayedRate,
+          baseCoinRate: selectedId?.coinRate || 1,
+          additionalRate: (displayedRate - (selectedId?.coinRate || 1)),
           refundable: refundable === "refundable",
           websiteName: selectedId.websiteName,
           websiteUrl: selectedId.websiteUrl,
@@ -124,11 +114,10 @@ export default function NewDepositPopup({ onClose, selectedId }) {
       const data = await response.json();
 
       if (response.ok) {
-        const rateDisplay = effectiveRate.reason ? `₹${coinRate} + 0.05` : `₹${coinRate}`;
         toast.current.show({
           severity: 'success',
           summary: 'Deposit Request Submitted',
-          detail: `Deposit request for ₹${amount} (${coinsToReceive} coins at ${rateDisplay}/coin) submitted successfully.`,
+          detail: `Deposit request for ${coins} coins (₹${convertedRupees.toFixed(2)}) submitted successfully.`,
           life: 5000
         });
         
@@ -150,10 +139,9 @@ export default function NewDepositPopup({ onClose, selectedId }) {
     }
   };
 
-  const coinsToReceive = calculateCoinsFromRupees(depositAmount);
-  const effectiveRate = getEffectiveCoinRate(depositAmount);
-  const isAmountValid = depositAmount && !isNaN(depositAmount) && parseFloat(depositAmount) > 0;
-  const hasSufficientBalance = parseFloat(depositAmount || 0) <= availableWalletBalance;
+  const coins = parseFloat(coinAmount) || 0;
+  const isAmountValid = coins > 0;
+  const hasSufficientBalance = convertedRupees <= availableWalletBalance;
 
   return (
     <div className={styles.overlay}>
@@ -184,8 +172,8 @@ export default function NewDepositPopup({ onClose, selectedId }) {
               <span className={styles.value}>{selectedId?.username}</span>
             </div>
             <div className={styles.detailRow}>
-              <span className={styles.label}>Coin Rate:</span>
-              <span className={styles.value}>1 coin = ₹{coinRate}</span>
+              <span className={styles.label}>Base Coin Rate:</span>
+              <span className={styles.value}>1 coin = ₹{selectedId?.coinRate || 1}</span>
             </div>
             <div className={styles.detailRow}>
               <span className={styles.label}>Minimum Coins:</span>
@@ -201,22 +189,22 @@ export default function NewDepositPopup({ onClose, selectedId }) {
           <div className={styles.walletBalance}>
             <h3>Your Wallet Balance</h3>
             <div className={styles.balanceDisplay}>
-              <span className={styles.balanceAmount}>₹{availableWalletBalance}</span>
+              <span className={styles.balanceAmount}>₹{availableWalletBalance.toFixed(2)}</span>
               <span className={styles.balanceLabel}>Available</span>
             </div>
           </div>
 
-          {/* Deposit Amount */}
+          {/* Deposit Input (Coins) */}
           <div className={styles.amountSection}>
             <h3>Deposit Amount</h3>
             <div className={styles.inputGroup}>
-              <label htmlFor="depositAmount">Amount in Rupees (₹)</label>
+              <label htmlFor="coinAmount">Coins to Deposit</label>
               <input
                 type="number"
-                id="depositAmount"
-                value={depositAmount}
-                onChange={handleDepositAmountChange}
-                placeholder="Enter amount in rupees"
+                id="coinAmount"
+                value={coinAmount}
+                onChange={handleCoinAmountChange}
+                placeholder="Enter coins"
                 min="1"
                 step="0.01"
                 className={styles.input}
@@ -224,29 +212,41 @@ export default function NewDepositPopup({ onClose, selectedId }) {
             </div>
           </div>
 
-          {/* Coin Conversion */}
+          {/* Coin Conversion Info (Same Display as CreateId) */}
           {isAmountValid && (
-            <div className={styles.conversionSection}>
-              <h3>Coin Conversion</h3>
-              <div className={styles.conversionDisplay}>
-                <div className={styles.conversionItem}>
-                  <span className={styles.conversionLabel}>You will receive:</span>
-                  <span className={styles.conversionValue}>{coinsToReceive} coins</span>
+             <div className={styles.conversionSection}>
+                <h3>Conversion Details</h3>
+                <div className={styles.conversionDisplay}>
+                    
+                    {/* Rate Breakdown */}
+                    <div className={styles.conversionItem}>
+                        <span className={styles.conversionLabel}>Applicable Rate:</span>
+                        <span className={styles.conversionValue}>
+                            {coins < 50000 ? (
+                                <span style={{ fontSize: '0.9em' }}>
+                                    {selectedId?.coinRate} + 0.03 = <b>₹{displayedRate}</b> <span style={{ color: '#2ecc71', fontSize: '0.8em' }}>(Rate increased for &lt; 50k coins)</span>
+                                </span>
+                            ) : coins < 100000 ? (
+                                <span style={{ fontSize: '0.9em' }}>
+                                    {selectedId?.coinRate} + 0.01 = <b>₹{displayedRate}</b> <span style={{ color: '#2ecc71', fontSize: '0.8em' }}>(Rate increased for &lt; 100k coins)</span>
+                                </span>
+                            ) : (
+                                <span>1 coin = ₹{displayedRate}</span>
+                            )}
+                        </span>
+                    </div>
+
+                    {/* Calculation */}
+                    <div className={styles.conversionItem}>
+                        <span className={styles.conversionLabel}>Total Cost:</span>
+                        <span className={styles.conversionValue}>
+                            {coins} x {displayedRate}
+                            {coins < 50000 && <span style={{fontSize: '0.8em', color: '#2ecc71', margin: '0 5px'}}>(+0.03 rate applied)</span>}
+                            {coins >= 50000 && coins < 100000 && <span style={{fontSize: '0.8em', color: '#2ecc71', margin: '0 5px'}}>(+0.01 rate applied)</span>}
+                            = <b>₹{convertedRupees.toFixed(2)}</b>
+                        </span>
+                    </div>
                 </div>
-                <div className={styles.conversionItem}>
-                  <span className={styles.conversionLabel}>Rate:</span>
-                  <span className={styles.conversionValue}>
-                    1 coin = ₹{coinRate}
-                    {effectiveRate.reason && <span className={styles.additionalRate}> + 0.05</span>}
-                  </span>
-                </div>
-                {effectiveRate.reason && (
-                  <div className={styles.bonusReason}>
-                    <span className={styles.bonusIcon}>🎁</span>
-                    <span className={styles.bonusText}>{effectiveRate.reason}</span>
-                  </div>
-                )}
-              </div>
             </div>
           )}
 
@@ -255,12 +255,17 @@ export default function NewDepositPopup({ onClose, selectedId }) {
             <div className={styles.validationSection}>
               {!hasSufficientBalance && (
                 <div className={styles.warningMessage}>
-                  ⚠️ Insufficient wallet balance. You have ₹{availableWalletBalance} available.
+                  ⚠️ Insufficient wallet balance. You need ₹{convertedRupees.toFixed(2)}.
                 </div>
               )}
-              {hasSufficientBalance && (
+               {coins < minimumCoins && (
+                <div className={styles.warningMessage}>
+                   ⚠️ Minimum deposit is {minimumCoins} coins.
+                </div>
+              )}
+              {hasSufficientBalance && coins >= minimumCoins && (
                 <div className={styles.successMessage}>
-                  ✅ Deposit request is valid and ready to submit.
+                  ✅ request is valid.
                 </div>
               )}
             </div>
@@ -312,7 +317,7 @@ export default function NewDepositPopup({ onClose, selectedId }) {
           <button 
             className={styles.submitButton} 
             onClick={handleDeposit}
-            disabled={isSubmitting || !isAmountValid || !hasSufficientBalance}
+            disabled={isSubmitting || !isAmountValid || !hasSufficientBalance || coins < minimumCoins}
           >
             {isSubmitting ? "Processing..." : "Submit"}
           </button>
