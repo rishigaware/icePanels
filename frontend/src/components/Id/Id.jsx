@@ -9,7 +9,7 @@ import { useUser } from "../../context/UserContext";
 
 const Id = () => {
   const { user } = useUser(); // Access the user from context
-  const [activeSection, setActiveSection] = useState("createId");
+  const [activeSection, setActiveSection] = useState("myIds");
   const [myIds, setMyIds] = useState([]);
   const [newIdInputs, setNewIdInputs] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal visibility
