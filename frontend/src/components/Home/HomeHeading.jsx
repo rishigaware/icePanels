@@ -429,24 +429,6 @@ const HomeHeading = () => {
                 <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
                 <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
             </div>
-            <div className={styles.logosSlide}>
-                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
-                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
-                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
-                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
-                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
-                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
-                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
-                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
-                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
-                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
-                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
-                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
-                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
-                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
-                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
-                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
-            </div>
           </div>
         </div>
 
@@ -456,42 +438,24 @@ const HomeHeading = () => {
             <h3>Responsible Gaming</h3>
           </div>
           <div className={`${styles.logosContainer} ${styles.responsibleGamingContainer}`}>
-            <div className={styles.logosSlide}>
-                <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
-            </div>
-            <div className={styles.logosSlide}>
-                <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
-                <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
-            </div>
+        <div className={styles.logosSlide}>
+            <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
+            <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
+            <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
+            <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
+            <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
+            <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
+            <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
+            <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
+            <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
+            <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
+            <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
+            <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
+            <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
+            <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
+            <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
+            <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
+        </div>
           </div>
         </div>
         
