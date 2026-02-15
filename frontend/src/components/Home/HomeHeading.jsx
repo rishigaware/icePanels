@@ -1,12 +1,21 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './HomeHeading.module.css'; // Import the CSS module
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { PiHandDepositDuotone } from "react-icons/pi";
 import { BiMoneyWithdraw } from "react-icons/bi";
-import { FaBalanceScale, FaCrown, FaGlobe, FaBolt, FaBullhorn, FaTools, FaHeadset, FaStar, FaChartLine, FaUsers, FaCoins, FaWhatsapp, FaTelegramPlane, FaCreditCard, FaSimCard, FaAd, FaLaptop, FaBriefcase } from "react-icons/fa";
+import { FaBalanceScale, FaCrown, FaGlobe, FaBolt, FaBullhorn, FaTools, FaHeadset, FaStar, FaChartLine, FaUsers, FaCoins, FaWhatsapp, FaTelegramPlane, FaCreditCard, FaSimCard, FaAd, FaLaptop, FaBriefcase, FaBell } from "react-icons/fa";
 import { FaPlus, FaArrowRight } from "react-icons/fa";
 // import logo from '../../assets/logo.png';
 import newlogo from '../../assets/SP.png';
+import certRng from '../../assets/certification_rng_verified.png';
+import certSsl from '../../assets/certification_ssl_secure.png';
+import resp18 from '../../assets/responsible_gaming_18_plus.png';
+import respPlaySafe from '../../assets/responsible_gaming_play_safe.png';
+// New Responsible Gaming Logos
+import rg1 from '../../assets/images/responsibleGaming/PHOTO-2026-02-15-10-30-06.jpg';
+import rg2 from '../../assets/images/responsibleGaming/PHOTO-2026-02-15-10-30-37.jpg';
+import rg3 from '../../assets/images/responsibleGaming/PHOTO-2026-02-15-10-32-08.jpg';
+import rg4 from '../../assets/images/responsibleGaming/PHOTO-2026-02-15-10-32-54.jpg';
 import { useUser } from "../../context/UserContext";
 
 const HomeHeading = () => {
@@ -25,6 +34,9 @@ const HomeHeading = () => {
     setUser(null); // Clear user context
     localStorage.removeItem('user'); // Remove user from localStorage
   };
+
+  const [slidingText] = useState("🚀 Welcome to The247Panel - Your Ultimate Gaming & Betting Platform! 🎮💰 • 🎯 Multiple Gaming Websites • 💎 Premium Features • 🔥 24/7 Support • ⚡ Instant Deposits & Withdrawals • 🏆 Best Odds Guaranteed • 🎲 Live Casino Games • 🎰 Slot Machines • 🃏 Card Games • 🏈 Sports Betting • 🎪 Live Events • 💰 Daily Bonuses • 🎁 Special Promotions • 🔐 Secure & Safe • 📱 Mobile Friendly • 🌟 VIP Membership • 🎊 Join Now & Win Big! 🎊");
+
 
   // Fetch balance on component mount and whenever the user changes
   useEffect(() => {
@@ -103,14 +115,46 @@ const HomeHeading = () => {
         </div>
       </div>
         {/* Sliding Text Section */}
-        {/* Sliding Text Section */}
-        <div className={styles.slidingTextSection}>
-          <div className={styles.slidingTextContainer}>
-            <div className={styles.slidingText}>
-              🚀 Welcome to The247Panel - Your Ultimate Gaming & Betting Platform! 🎮💰 • 🎯 Multiple Gaming Websites • 💎 Premium Features • 🔥 24/7 Support • ⚡ Instant Deposits & Withdrawals • 🏆 Best Odds Guaranteed • 🎲 Live Casino Games • 🎰 Slot Machines • 🃏 Card Games • 🏈 Sports Betting • 🎪 Live Events • 💰 Daily Bonuses • 🎁 Special Promotions • 🔐 Secure & Safe • 📱 Mobile Friendly • 🌟 VIP Membership • 🎊 Join Now & Win Big! 🎊
-            </div>
+      <div className={styles.slidingTextSection} style={{ display: 'flex', alignItems: 'center' }}>
+<FaBell
+  style={{
+    fontSize: "24px",
+    color: "#FF3B30",            // alert red
+    marginRight: "10px",
+    backgroundColor: "#ff7a00",  // orange background
+    borderRadius: "50%",
+    padding: "6px",
+    display: "inline-block",
+    animation: "bellZoom 1.1s ease-in-out infinite",
+    boxShadow: "0 0 12px rgba(255,59,48,0.9)"
+  }}
+/>
+
+<style>
+{`
+@keyframes bellZoom {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255,59,48,0.7);
+  }
+  50% {
+    transform: scale(1.35);
+    box-shadow: 0 0 20px rgba(255,59,48,1);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255,59,48,0.7);
+  }
+}
+`}
+</style>
+<div className={styles.slidingTextContainer} style={{ flex: 1, overflow: 'hidden' }}>
+          <div className={styles.slidingText}>
+             <span>{slidingText} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+             <span>{slidingText} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
           </div>
         </div>
+      </div>
         {/* Create Admin Panel Section */}
         <div 
             className={styles.createId} 
@@ -332,6 +376,97 @@ const HomeHeading = () => {
         <div className={styles.copyrightSection}>
           <p>© 2019 The247Panel. All rights reserved.</p>
         </div>
+
+        {/* Certifications Section */}
+        <div className={styles.logosSection}>
+          <div className={styles.sectionHeader}>
+            <h3>Certifications</h3>
+          </div>
+          <div className={styles.logosContainer}>
+            <div className={styles.logosSlide}>
+                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
+                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
+                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
+                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
+                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
+                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
+                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
+                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
+                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
+                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
+                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
+                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
+                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
+                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
+                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
+                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
+            </div>
+            <div className={styles.logosSlide}>
+                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
+                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
+                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
+                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
+                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
+                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
+                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
+                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
+                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
+                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
+                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
+                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
+                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
+                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
+                <img src={certRng} alt="RNG Verified" className={styles.logoImage} />
+                <img src={certSsl} alt="SSL Secure" className={styles.logoImage} />
+            </div>
+          </div>
+        </div>
+
+        {/* Responsible Gaming Section */}
+        <div className={styles.logosSection}>
+          <div className={`${styles.sectionHeader} ${styles.responsibleGamingHeader}`}>
+            <h3>Responsible Gaming</h3>
+          </div>
+          <div className={`${styles.logosContainer} ${styles.responsibleGamingContainer}`}>
+            <div className={styles.logosSlide}>
+                <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
+            </div>
+            <div className={styles.logosSlide}>
+                <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg1} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg2} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg3} alt="Responsible Gaming" className={styles.logoImage} />
+                <img src={rg4} alt="Responsible Gaming" className={styles.logoImage} />
+            </div>
+          </div>
+        </div>
+        
     </div>
   );
 };

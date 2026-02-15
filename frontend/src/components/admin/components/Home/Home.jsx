@@ -8,7 +8,7 @@ const Home = () => {
     <>
       <HomeHeading />
 
-      <div className={styles.carouselContainer}>
+      {/* <div className={styles.carouselContainer}> */}
         {/* Horizontal Image Carousel */}
         {/* <ImageCarousel 
           type="horizontal" 
@@ -38,7 +38,6 @@ const Home = () => {
             <i className="fab fa-facebook"></i>
           </a>
         </div>    
-      </div>
     </>
   );
 };

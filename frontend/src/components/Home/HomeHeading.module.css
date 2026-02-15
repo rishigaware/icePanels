@@ -311,10 +311,16 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.2);
   animation: slideInUp 1s ease-out 0.8s both;
   overflow: hidden;
+  padding-left: 15px;
+  /* Add padding for icon */
+  display: flex !important;
+  /* Ensure flex layout */
+  align-items: center;
 }
 
 .slidingTextContainer {
   width: 100%;
+  /* Or flex: 1 */
   height: 100%;
   display: flex;
   align-items: center;
@@ -331,16 +337,17 @@ body {
   animation: slideText 60s linear infinite;
   display: flex;
   align-items: center;
-  gap: 10px;
+  width: max-content;
+  /* Allow content to overflow for seamless loop */
 }
 
 @keyframes slideText {
   0% {
-    transform: translateX(100%);
+    transform: translateX(0);
   }
 
   100% {
-    transform: translateX(-100%);
+    transform: translateX(-50%);
   }
 }
 
@@ -2853,4 +2860,461 @@ body {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   margin-top: 40px;
   background: rgba(0, 0, 0, 0.2);
+}
+
+/* Sliding Logos Section */
+.logosSection {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  padding: 5px 0;
+  height: 10vh;
+  /* Set fixed height */
+  /* Reduced padding from 25px/35px to 5px */
+  background: rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+}
+
+.sectionHeader {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #ff6b6b, #ffa500);
+  padding: 0 30px;
+  /* Increased padding */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%);
+  width: 250px;
+  /* Increased base width */
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.responsibleGamingHeader {
+  background: linear-gradient(135deg, #4ecdc4, #2bcbba);
+  width: 350px;
+  /* Increased base width */
+}
+
+.sectionHeader h3 {
+  color: white;
+  font-size: 1.2rem;
+  /* Increased font size */
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.logosContainer {
+  display: flex !important;
+  align-items: center;
+  width: max-content;
+  margin-left: 220px;
+  /* Increased base offset */
+}
+
+.responsibleGamingContainer {
+  margin-left: 320px;
+  /* Increased base offset */
+}
+
+.logosSlide {
+  display: flex;
+  align-items: center;
+  animation: slideLogos 35s linear infinite;
+  /* Animation applied here */
+}
+
+.logoImage {
+  height: 60px;
+  /* Increased height */
+  margin: 0 20px;
+  /* Reduced margin to 20px */
+  object-fit: contain;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+  /* Animation removed */
+}
+
+.logoImage:hover {
+  opacity: 1;
+}
+
+@keyframes slideLogos {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* Responsive Styles for Sliding Logos */
+
+/* Large Tablets and Small Desktops */
+@media (max-width: 1024px) {
+  .logosSection {
+    padding: 20px 0 30px 0;
+  }
+
+  .sectionHeader {
+    width: 220px;
+    padding: 0 20px;
+  }
+
+  .responsibleGamingHeader {
+    width: 300px;
+  }
+
+  .sectionHeader h3 {
+    font-size: 1.1rem;
+  }
+
+  .logosContainer {
+    margin-left: 200px;
+  }
+
+  .responsibleGamingContainer {
+    margin-left: 280px;
+  }
+
+  .logoImage {
+    height: 50px;
+    margin: 0 15px;
+    /* Reduced margin */
+  }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+  .logosSection {
+    padding: 18px 0 25px 0;
+  }
+
+  .sectionHeader {
+    width: 180px;
+    padding: 0 15px;
+  }
+
+  .responsibleGamingHeader {
+    width: 250px;
+  }
+
+  .sectionHeader h3 {
+    font-size: 1rem;
+    letter-spacing: 1px;
+  }
+
+  .logosContainer {
+    margin-left: 160px;
+  }
+
+  .responsibleGamingContainer {
+    margin-left: 230px;
+  }
+
+  .logoImage {
+    height: 45px;
+    margin: 0 12px;
+    /* Reduced margin */
+  }
+}
+
+/* Mobile Devices */
+@media (max-width: 640px) {
+  .logosSection {
+    padding: 15px 0 20px 0;
+    margin-bottom: 20px;
+  }
+
+  .sectionHeader {
+    width: 150px;
+    padding: 0 10px;
+    clip-path: polygon(0 0, 100% 0, 90% 100%, 0% 100%);
+    /* Adjusted clip-path */
+  }
+
+  .responsibleGamingHeader {
+    width: 200px;
+  }
+
+  .sectionHeader h3 {
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+  }
+
+  .logosContainer {
+    margin-left: 140px;
+  }
+
+  .responsibleGamingContainer {
+    margin-left: 190px;
+  }
+
+  .logoImage {
+    height: 35px;
+    margin: 0 10px;
+    /* Reduced margin */
+  }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 480px) {
+  .logosSection {
+    padding: 12px 0 18px 0;
+    margin-bottom: 15px;
+  }
+
+  .sectionHeader {
+    width: 120px;
+    padding: 0 8px;
+  }
+
+  .responsibleGamingHeader {
+    width: 160px;
+  }
+
+  .sectionHeader h3 {
+    font-size: 0.75rem;
+  }
+
+  .logosContainer {
+    margin-left: 115px;
+  }
+
+  .responsibleGamingContainer {
+    margin-left: 155px;
+  }
+
+  .logoImage {
+    height: 30px;
+    margin: 0 8px;
+    /* Reduced margin */
+  }
+}
+
+/* Extra Small Mobile Devices */
+@media (max-width: 360px) {
+  .logosSection {
+    padding: 10px 0 15px 0;
+  }
+
+  .sectionHeader {
+    width: 100px;
+  }
+
+  .responsibleGamingHeader {
+    width: 140px;
+  }
+
+  .sectionHeader h3 {
+    font-size: 0.65rem;
+  }
+
+  .logosContainer {
+    margin-left: 95px;
+  }
+
+  .responsibleGamingContainer {
+    margin-left: 135px;
+  }
+
+  .logoImage {
+    height: 25px;
+    margin: 0 5px;
+    /* Reduced margin */
+  }
+}
+
+.logoImage:hover {
+  opacity: 1;
+}
+
+@keyframes slideLogos {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* Responsive Styles for Sliding Logos */
+
+/* Large Tablets and Small Desktops */
+@media (max-width: 1024px) {
+  .logosSection {
+    padding: 20px 0 30px 0;
+  }
+
+  .sectionHeader {
+    width: 220px;
+    padding: 0 20px;
+  }
+
+  .responsibleGamingHeader {
+    width: 300px;
+  }
+
+  .sectionHeader h3 {
+    font-size: 1.1rem;
+  }
+
+  .logosContainer {
+    margin-left: 200px;
+  }
+
+  .responsibleGamingContainer {
+    margin-left: 280px;
+  }
+
+  .logoImage {
+    height: 50px;
+    margin: 0 30px;
+  }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+  .logosSection {
+    padding: 18px 0 25px 0;
+  }
+
+  .sectionHeader {
+    width: 180px;
+    padding: 0 15px;
+  }
+
+  .responsibleGamingHeader {
+    width: 250px;
+  }
+
+  .sectionHeader h3 {
+    font-size: 1rem;
+    letter-spacing: 1px;
+  }
+
+  .logosContainer {
+    margin-left: 160px;
+  }
+
+  .responsibleGamingContainer {
+    margin-left: 230px;
+  }
+
+  .logoImage {
+    height: 45px;
+    margin: 0 25px;
+  }
+}
+
+/* Mobile Devices */
+@media (max-width: 640px) {
+  .logosSection {
+    padding: 15px 0 20px 0;
+    margin-bottom: 20px;
+  }
+
+  .sectionHeader {
+    width: 150px;
+    padding: 0 10px;
+    clip-path: polygon(0 0, 100% 0, 90% 100%, 0% 100%);
+    /* Adjusted clip-path */
+  }
+
+  .responsibleGamingHeader {
+    width: 200px;
+  }
+
+  .sectionHeader h3 {
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+  }
+
+  .logosContainer {
+    margin-left: 140px;
+  }
+
+  .responsibleGamingContainer {
+    margin-left: 190px;
+  }
+
+  .logoImage {
+    height: 35px;
+    margin: 0 20px;
+  }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 480px) {
+  .logosSection {
+    padding: 12px 0 18px 0;
+    margin-bottom: 15px;
+  }
+
+  .sectionHeader {
+    width: 120px;
+    padding: 0 8px;
+  }
+
+  .responsibleGamingHeader {
+    width: 160px;
+  }
+
+  .sectionHeader h3 {
+    font-size: 0.75rem;
+  }
+
+  .logosContainer {
+    margin-left: 115px;
+  }
+
+  .responsibleGamingContainer {
+    margin-left: 155px;
+  }
+
+  .logoImage {
+    height: 30px;
+    margin: 0 15px;
+  }
+}
+
+/* Extra Small Mobile Devices */
+@media (max-width: 360px) {
+  .logosSection {
+    padding: 10px 0 15px 0;
+  }
+
+  .sectionHeader {
+    width: 100px;
+  }
+
+  .responsibleGamingHeader {
+    width: 140px;
+  }
+
+  .sectionHeader h3 {
+    font-size: 0.65rem;
+  }
+
+  .logosContainer {
+    margin-left: 95px;
+  }
+
+  .responsibleGamingContainer {
+    margin-left: 135px;
+  }
+
+  .logoImage {
+    height: 25px;
+    margin: 0 10px;
+  }
 }
