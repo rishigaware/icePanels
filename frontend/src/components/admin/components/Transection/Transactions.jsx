@@ -273,7 +273,11 @@ const Transactions = () => {
               <div className={styles.column}><strong>Created At:</strong> {new Date(txn.createdAt).toLocaleString()}</div>
               
               <div className={`${styles.column} ${styles.status} ${styles[txn.status] || styles.defaultStatus}`}>
-                <strong>Status:</strong> {txn.status}
+                <strong>Status:</strong> {
+                  txn.status === 'Accepted' && (txn.transactionType === 'withdrawal' || txn.transactionType === 'deposit') 
+                    ? 'Completed' 
+                    : txn.status
+                }
               </div>
 
               <div className={styles.column}>

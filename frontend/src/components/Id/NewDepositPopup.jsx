@@ -204,6 +204,7 @@ export default function NewDepositPopup({ onClose, selectedId }) {
                 id="coinAmount"
                 value={coinAmount}
                 onChange={handleCoinAmountChange}
+                onWheel={(e) => e.target.blur()}
                 placeholder="Enter coins"
                 min="1"
                 step="0.01"

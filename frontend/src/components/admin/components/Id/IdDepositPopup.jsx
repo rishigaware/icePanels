@@ -228,10 +228,11 @@ export default function IdDepositPopup ({ onClose, walletBalance = 0, setWalletB
                 type="number"
                 className={styles.input}
                 value={depositAmount}
-                onChange={handleInputChange} // Use the updated handler
+                onChange={handleInputChange}
+                onWheel={(e) => e.target.blur()}
                 placeholder="Enter deposit amount"
-                min="0" // Prevent negative number entry
-                step="0.01" // Allow decimal values
+                min="0"
+                step="0.01"
               />
             </div>
 

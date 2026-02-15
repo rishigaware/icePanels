@@ -64,30 +64,30 @@
 
 .requestsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
   margin-top: 20px;
 }
 
 .requestCard {
   background: white;
-  border-radius: 15px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   transition: all 0.3s ease;
   border: 1px solid #e9ecef;
 }
 
 .requestCard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
 .cardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  padding: 12px 15px;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   border-bottom: 1px solid #dee2e6;
 }
@@ -95,13 +95,13 @@
 .websiteInfo {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
 }
 
 .websiteLogo {
-  width: 50px;
-  height: 50px;
-  border-radius: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
   object-fit: cover;
   border: 2px solid #dee2e6;
 }
@@ -120,9 +120,9 @@
 }
 
 .statusBadge {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -144,14 +144,14 @@
 }
 
 .cardBody {
-  padding: 20px;
+  padding: 12px 15px;
 }
 
 .userInfo,
 .coinInfo,
 .additionalInfo,
 .dateInfo {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .userInfo:last-child,
@@ -226,54 +226,58 @@
 }
 
 .cardActions {
-  padding: 20px;
+  padding: 12px 15px;
   background: #f8f9fa;
   border-top: 1px solid #dee2e6;
   display: flex;
-  justify-content: space-between;
+  justify-content: stretch;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
 }
 
 .viewButton {
   background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 0.9rem;
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  min-width: 75px;
+  justify-content: center;
+  flex: 1;
 }
 
 .viewButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 3px 10px rgba(0, 123, 255, 0.3);
 }
 
 .actionButtons {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
 .acceptButton,
 .rejectButton {
-  padding: 10px 20px;
+  padding: 7px 14px;
   border: none;
-  border-radius: 8px;
-  font-size: 0.9rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-width: 100px;
+  gap: 6px;
+  min-width: 75px;
   justify-content: center;
+  flex: 1;
 }
 
 .acceptButton {
@@ -283,7 +287,7 @@
 
 .acceptButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+  box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
 }
 
 .rejectButton {
@@ -293,7 +297,7 @@
 
 .rejectButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+  box-shadow: 0 3px 10px rgba(220, 53, 69, 0.3);
 }
 
 .acceptButton:disabled,
@@ -330,6 +334,7 @@
     opacity: 0;
     backdrop-filter: blur(0px);
   }
+
   to {
     opacity: 1;
     backdrop-filter: blur(8px);
@@ -352,6 +357,7 @@
     transform: translateY(-50px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -607,5 +613,537 @@
   .rejectButton {
     padding: 8px 16px;
     font-size: 0.8rem;
+  }
+}
+
+/* Serial Badge */
+.serialBadge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+  z-index: 10;
+}
+
+.requestCard {
+  position: relative;
+}
+
+/* Website Name and URL */
+.websiteName {
+  margin: 0 0 3px 0;
+  color: #495057;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.websiteUrl {
+  color: #007bff;
+  font-size: 0.75rem;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.websiteUrl:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+/* Info Items */
+.infoItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  flex: 1;
+}
+
+.infoIcon {
+  color: #667eea;
+  font-size: 1rem;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.infoLabel {
+  display: block;
+  font-size: 0.7rem;
+  color: #6c757d;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 3px;
+}
+
+.infoValue {
+  display: block;
+  font-size: 0.85rem;
+  color: #495057;
+  font-weight: 600;
+}
+
+.infoRow {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.infoRow:last-child {
+  margin-bottom: 0;
+}
+
+/* Pagination Container */
+.paginationContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  margin-top: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.paginationInfo {
+  font-size: 0.9rem;
+  color: #495057;
+  font-weight: 500;
+}
+
+.paginationControls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.paginationButton {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.paginationButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.paginationButton:disabled {
+  background: #dee2e6;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.pageInfo {
+  font-size: 0.9rem;
+  color: #495057;
+  font-weight: 600;
+  padding: 0 10px;
+}
+
+.rowsPerPageContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rowsPerPageContainer label {
+  font-size: 0.9rem;
+  color: #495057;
+  font-weight: 500;
+}
+
+.rowsPerPageSelect {
+  padding: 6px 12px;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #495057;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.rowsPerPageSelect:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/* Responsive Pagination */
+@media (max-width: 768px) {
+  .paginationContainer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .paginationInfo {
+    text-align: center;
+    order: -1;
+  }
+
+  .paginationControls {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .rowsPerPageContainer {
+    justify-content: center;
+  }
+
+  .paginationButton {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+
+  .pageInfo {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .infoRow {
+    flex-direction: column;
+  }
+
+  .infoItem {
+    width: 100%;
+  }
+
+  .serialBadge {
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    font-size: 0.75rem;
+  }
+}
+
+/* ===== RESPONSIVE TABLE & CARD VIEWS ===== */
+
+/* Table View Styles - Show on tablets and larger */
+.tableView {
+  display: block;
+}
+
+.cardView {
+  display: none;
+}
+
+.requestsTable {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.requestsTable thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.requestsTable th {
+  padding: 14px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.requestsTable tbody tr {
+  border-bottom: 1px solid #e9ecef;
+  transition: background-color 0.2s ease;
+}
+
+.requestsTable tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.requestsTable tbody tr:last-child {
+  border-bottom: none;
+}
+
+.requestsTable td {
+  padding: 12px;
+  font-size: 0.85rem;
+  vertical-align: middle;
+}
+
+/* Serial Number Cell */
+.serialCell {
+  text-align: center;
+  width: 50px;
+}
+
+.serialNumber {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+/* Website Cell */
+.websiteCell {
+  min-width: 200px;
+}
+
+.tableLogo {
+  width: 35px;
+  height: 35px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 2px solid #dee2e6;
+  margin-right: 10px;
+}
+
+.tableSiteName {
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.9rem;
+  margin-bottom: 2px;
+}
+
+.tableSiteUrl {
+  color: #007bff;
+  font-size: 0.75rem;
+  text-decoration: none;
+  display: block;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tableSiteUrl:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+/* User Info */
+.tableUserInfo {
+  font-size: 0.85rem;
+}
+
+.tableUserInfo strong {
+  color: #495057;
+}
+
+.tableSubtext {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 2px;
+}
+
+/* Coin Info */
+.tableCoinInfo {
+  text-align: left;
+}
+
+.tableAmount {
+  color: #28a745;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+.tableCoins {
+  font-size: 0.75rem;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Date Info */
+.tableDateInfo {
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+/* Table Actions */
+.tableActions {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.tableViewBtn,
+.tableAcceptBtn,
+.tableRejectBtn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+}
+
+.tableViewBtn {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+}
+
+.tableViewBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0, 123, 255, 0.3);
+}
+
+.tableAcceptBtn {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+}
+
+.tableAcceptBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(40, 167, 69, 0.3);
+}
+
+.tableRejectBtn {
+  background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+  color: white;
+}
+
+.tableRejectBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(220, 53, 69, 0.3);
+}
+
+.tableViewBtn:disabled,
+.tableAcceptBtn:disabled,
+.tableRejectBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== MOBILE VIEW - Ultra Compact Cards ===== */
+@media (max-width: 768px) {
+  .tableView {
+    display: none;
+  }
+
+  .cardView {
+    display: block;
+  }
+
+  /* Ultra-compact mobile cards */
+  .requestCard {
+    margin-bottom: 12px;
+  }
+
+  .cardHeader {
+    padding: 8px 10px;
+  }
+
+  .websiteLogo {
+    width: 32px;
+    height: 32px;
+  }
+
+  .websiteName {
+    font-size: 0.85rem;
+    margin-bottom: 2px;
+  }
+
+  .websiteUrl {
+    font-size: 0.7rem;
+  }
+
+  .statusBadge {
+    padding: 3px 8px;
+    font-size: 0.65rem;
+  }
+
+  .serialBadge {
+    top: 8px !important;
+    right: 8px !important;
+    padding: 3px 8px !important;
+    font-size: 0.7rem !important;
+  }
+
+  .cardBody {
+    padding: 8px 10px !important;
+  }
+
+  .infoRow {
+    gap: 8px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .infoItem {
+    padding: 6px !important;
+  }
+
+  .infoIcon {
+    font-size: 0.85rem !important;
+  }
+
+  .infoLabel {
+    font-size: 0.65rem !important;
+    margin-bottom: 2px !important;
+  }
+
+  .infoValue {
+    font-size: 0.75rem !important;
+  }
+
+  .cardActions {
+    padding: 8px 10px !important;
+    gap: 6px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .viewButton,
+  .acceptButton,
+  .rejectButton {
+    padding: 5px 10px !important;
+    font-size: 0.7rem !important;
+    gap: 4px !important;
+    min-width: 60px !important;
+    flex: 1 1 0 !important;
+  }
+}
+
+/* ===== TABLET ADJUSTMENTS ===== */
+@media (min-width: 769px) and (max-width: 1024px) {
+
+  .requestsTable th,
+  .requestsTable td {
+    padding: 10px 8px;
+    font-size: 0.8rem;
+  }
+
+  .tableLogo {
+    width: 30px;
+    height: 30px;
+  }
+
+  .tableSiteName {
+    font-size: 0.85rem;
+  }
+
+  .tableSiteUrl {
+    font-size: 0.7rem;
   }
 }

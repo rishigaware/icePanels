@@ -5,23 +5,7 @@ import { Toast } from 'primereact/toast';
 import { PulseLoader } from 'react-spinners';
 import { FaCheck, FaTimes, FaEye, FaCoins, FaUser, FaGlobe, FaClock, FaRupeeSign } from 'react-icons/fa';
 import TopNavbar from '../Navbar/TopNavbar';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Chip,
-  IconButton,
-  Tooltip,
-  Avatar,
-  Typography,
-  Box,
-  Button
-} from '@mui/material';
-import { Visibility, Check, Close } from '@mui/icons-material';
+import { Chip } from '@mui/material';
 
 const IdRequests = () => {
   const { url } = useUser();
@@ -32,6 +16,10 @@ const IdRequests = () => {
   const [showModal, setShowModal] = useState(false);
   const [adminNotes, setAdminNotes] = useState('');
   const [actionLoading, setActionLoading] = useState(null);
+  
+  // Pagination state
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     fetchIdRequests();
@@ -144,9 +132,8 @@ const IdRequests = () => {
     );
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    return new Date(dateString).toLocaleString('en-IN', {
+  const formatDate = (timestamp) => {
+    return new Date(timestamp).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -154,6 +141,22 @@ const IdRequests = () => {
       minute: '2-digit'
     });
   };
+
+  // Pagination handlers
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  // Paginated data
+  const paginatedRequests = idRequests.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   if (isLoading) {
     return (
@@ -179,145 +182,314 @@ const IdRequests = () => {
           <p>There are currently no ID creation requests to review.</p>
         </div>
       ) : (
-        <TableContainer 
-          component={Paper} 
-          elevation={3} 
-          sx={{ 
-            borderRadius: '12px', 
-            overflow: 'auto',
-            maxWidth: '100%',
-            // Enable horizontal scrolling on mobile
-            '&::-webkit-scrollbar': {
-              height: '8px',
-            },
-            '&::-webkit-scrollbar-track': {
-              backgroundColor: '#f1f1f1',
-            },
-            '&::-webkit-scrollbar-thumb': {
-              backgroundColor: '#888',
-              borderRadius: '4px',
-            },
-            '&::-webkit-scrollbar-thumb:hover': {
-              backgroundColor: '#555',
-            },
-          }}
-        >
-          <Table 
-            sx={{ 
-              minWidth: { xs: '100%', sm: 650 }, // Remove minWidth on mobile
-              width: '100%'
-            }} 
-            aria-label="id requests table"
-            stickyHeader // Make header sticky on scroll
-          >
-            <TableHead sx={{ backgroundColor: '#f8f9fa' }}>
-              <TableRow>
-                <TableCell sx={{ minWidth: { xs: '150px', sm: 'auto' } }}><strong>Website</strong></TableCell>
-                <TableCell sx={{ minWidth: { xs: '120px', sm: 'auto' } }}><strong>User Info</strong></TableCell>
-                <TableCell sx={{ minWidth: { xs: '120px', sm: 'auto' } }}><strong>Coins / Amount</strong></TableCell>
-                <TableCell sx={{ minWidth: { xs: '100px', sm: 'auto' } }}><strong>Status</strong></TableCell>
-                <TableCell sx={{ minWidth: { xs: '150px', sm: 'auto' } }}><strong>Date</strong></TableCell>
-                <TableCell align="center" sx={{ minWidth: { xs: '120px', sm: 'auto' } }}><strong>Actions</strong></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {idRequests.map((request) => (
-                <TableRow
-                  key={request.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { backgroundColor: '#f5f5f5' } }}
-                >
-                  <TableCell>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                       <Avatar 
-                          src={`${url}/${request.imgUrl}`} 
+        <>
+          {/* Table View for Tablets and Desktops */}
+          <div className={styles.tableView}>
+            <table className={styles.requestsTable}>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Website</th>
+                  <th>User Info</th>
+                  <th>Amount / Coins</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedRequests.map((request, index) => (
+                  <tr key={request.id}>
+                    <td className={styles.serialCell}>
+                      <span className={styles.serialNumber}>
+                        {page * rowsPerPage + index + 1}
+                      </span>
+                    </td>
+                    <td className={styles.websiteCell}>
+                      <div className={styles.websiteInfo}>
+                        <img
+                          src={`${url}/${request.imgUrl}`}
                           alt={request.websiteName}
-                          variant="rounded"
-                          sx={{ width: 40, height: 40 }}
+                          className={styles.tableLogo}
                         />
-                        <Box>
-                          <Typography variant="body2" fontWeight="bold">{request.websiteName}</Typography>
-                          <Typography 
-                            variant="caption" 
-                            color="textSecondary" 
-                            component="div" 
-                            sx={{ 
-                              maxWidth: { xs: 150, sm: 200 }, 
-                              overflow: 'hidden', 
-                              textOverflow: 'ellipsis', 
-                              whiteSpace: 'nowrap' 
-                            }}
+                        <div>
+                          <div className={styles.tableSiteName}>{request.websiteName}</div>
+                          <a 
+                            href={request.websiteUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className={styles.tableSiteUrl}
                           >
                             {request.websiteUrl}
-                          </Typography>
-                        </Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2"><strong>User:</strong> {request.username}</Typography>
-                    <Typography variant="caption" color="textSecondary">By: {request.createdBy}</Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Box>
-                      <Typography variant="body2" color="success.main" fontWeight="bold">
-                         ₹{request.convertedCoins}
-                      </Typography>
-                      <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        <FaCoins style={{ color: '#ffd700' }} /> {request.coinAmount} Coins
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    {getStatusChip(request.status)}
-                  </TableCell>
-                  <TableCell>
-                     <Typography variant="body2" sx={{ whiteSpace: 'nowrap' }}>{formatDate(request.createdAt)}</Typography>
-                     {request.processedAt && (
-                       <Typography variant="caption" color="textSecondary" sx={{ whiteSpace: 'nowrap' }}>Proc: {formatDate(request.processedAt)}</Typography>
-                     )}
-                  </TableCell>
-                  <TableCell align="center">
-                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, flexWrap: 'wrap' }}>
-                      <Tooltip title="View Details">
-                        <IconButton 
-                          color="primary" 
-                          size="small" 
+                          </a>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div className={styles.tableUserInfo}>
+                        <div><strong>User:</strong> {request.username}</div>
+                        <div className={styles.tableSubtext}>By: {request.createdBy}</div>
+                      </div>
+                    </td>
+                    <td>
+                      <div className={styles.tableCoinInfo}>
+                        <div className={styles.tableAmount}>₹{request.convertedCoins}</div>
+                        <div className={styles.tableCoins}>
+                          <FaCoins style={{ color: '#ffd700' }} /> {request.coinAmount}
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      {getStatusChip(request.status)}
+                    </td>
+                    <td>
+                      <div className={styles.tableDateInfo}>
+                        <div>{formatDate(request.createdAt)}</div>
+                        {request.processedAt && (
+                          <div className={styles.tableSubtext}>
+                            Proc: {formatDate(request.processedAt)}
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td>
+                      <div className={styles.tableActions}>
+                        <button
+                          className={styles.tableViewBtn}
                           onClick={() => handleViewDetails(request)}
+                          title="View Details"
                         >
-                          <Visibility />
-                        </IconButton>
-                      </Tooltip>
-                      
-                      {request.status === 'Pending' && (
-                        <>
-                          <Tooltip title="Accept">
-                             <IconButton 
-                                color="success" 
-                                size="small"
-                                onClick={() => handleUpdateStatus(request.id, 'Accepted')}
-                                disabled={actionLoading === request.id}
-                              >
-                                {actionLoading === request.id ? <PulseLoader size={4} color="green" /> : <Check />}
-                              </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Reject">
-                              <IconButton 
-                                color="error" 
-                                size="small"
-                                onClick={() => handleUpdateStatus(request.id, 'Rejected')}
-                                disabled={actionLoading === request.id}
-                              >
-                                {actionLoading === request.id ? <PulseLoader size={4} color="red" /> : <Close />}
-                              </IconButton>
-                          </Tooltip>
-                        </>
+                          <FaEye />
+                        </button>
+                        {request.status === 'Pending' && (
+                          <>
+                            <button
+                              className={styles.tableAcceptBtn}
+                              onClick={() => handleUpdateStatus(request.id, 'Accepted')}
+                              disabled={actionLoading === request.id}
+                              title="Accept"
+                            >
+                              {actionLoading === request.id ? (
+                                <PulseLoader size={6} color="#ffffff" />
+                              ) : (
+                                <FaCheck />
+                              )}
+                            </button>
+                            <button
+                              className={styles.tableRejectBtn}
+                              onClick={() => handleUpdateStatus(request.id, 'Rejected')}
+                              disabled={actionLoading === request.id}
+                              title="Reject"
+                            >
+                              {actionLoading === request.id ? (
+                                <PulseLoader size={6} color="#ffffff" />
+                              ) : (
+                                <FaTimes />
+                              )}
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Card View for Mobile */}
+          <div className={styles.cardView}>
+            <div className={styles.requestsGrid}>
+              {paginatedRequests.map((request, index) => (
+                <div key={request.id} className={styles.requestCard}>
+                  {/* Serial Number Badge */}
+                  <div className={styles.serialBadge}>
+                    #{page * rowsPerPage + index + 1}
+                  </div>
+
+                  {/* Card Header */}
+                  <div className={styles.cardHeader}>
+                    <div className={styles.websiteInfo}>
+                      <img
+                        src={`${url}/${request.imgUrl}`}
+                        alt={request.websiteName}
+                        className={styles.websiteLogo}
+                      />
+                      <div>
+                        <h3 className={styles.websiteName}>{request.websiteName}</h3>
+                        <a 
+                          href={request.websiteUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className={styles.websiteUrl}
+                        >
+                          {request.websiteUrl}
+                        </a>
+                      </div>
+                    </div>
+                    {getStatusChip(request.status)}
+                  </div>
+
+                  {/* Card Body */}
+                  <div className={styles.cardBody}>
+                    <div className={styles.infoRow}>
+                      <div className={styles.infoItem}>
+                        <FaUser className={styles.infoIcon} />
+                        <div>
+                          <span className={styles.infoLabel}>Username</span>
+                          <span className={styles.infoValue}>{request.username}</span>
+                        </div>
+                      </div>
+                      <div className={styles.infoItem}>
+                        <FaUser className={styles.infoIcon} />
+                        <div>
+                          <span className={styles.infoLabel}>Created By</span>
+                          <span className={styles.infoValue}>{request.createdBy}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className={styles.infoRow}>
+                      <div className={styles.infoItem}>
+                        <FaRupeeSign className={styles.infoIcon} />
+                        <div>
+                          <span className={styles.infoLabel}>Amount</span>
+                          <span className={styles.infoValue} style={{ color: '#28a745', fontWeight: 'bold' }}>
+                            ₹{request.convertedCoins}
+                          </span>
+                        </div>
+                      </div>
+                      <div className={styles.infoItem}>
+                        <FaCoins className={styles.infoIcon} style={{ color: '#ffd700' }} />
+                        <div>
+                          <span className={styles.infoLabel}>Coins</span>
+                          <span className={styles.infoValue}>{request.coinAmount}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className={styles.infoRow}>
+                      <div className={styles.infoItem}>
+                        <FaClock className={styles.infoIcon} />
+                        <div>
+                          <span className={styles.infoLabel}>Created</span>
+                          <span className={styles.infoValue}>{formatDate(request.createdAt)}</span>
+                        </div>
+                      </div>
+                      {request.processedAt && (
+                        <div className={styles.infoItem}>
+                          <FaClock className={styles.infoIcon} />
+                          <div>
+                            <span className={styles.infoLabel}>Processed</span>
+                            <span className={styles.infoValue}>{formatDate(request.processedAt)}</span>
+                          </div>
+                        </div>
                       )}
-                    </Box>
-                  </TableCell>
-                </TableRow>
+                    </div>
+                  </div>
+
+                  {/* Card Actions */}
+                  <div className={styles.cardActions}>
+                    <button
+                      className={styles.viewButton}
+                      onClick={() => handleViewDetails(request)}
+                    >
+                      <FaEye /> View
+                    </button>
+                    
+                    {request.status === 'Pending' && (
+                      <>
+                        <button
+                          className={styles.acceptButton}
+                          onClick={() => handleUpdateStatus(request.id, 'Accepted')}
+                          disabled={actionLoading === request.id}
+                        >
+                          {actionLoading === request.id ? (
+                            <PulseLoader size={8} color="#ffffff" />
+                          ) : (
+                            <>
+                              <FaCheck /> Accept
+                            </>
+                          )}
+                        </button>
+                        <button
+                          className={styles.rejectButton}
+                          onClick={() => handleUpdateStatus(request.id, 'Rejected')}
+                          disabled={actionLoading === request.id}
+                        >
+                          {actionLoading === request.id ? (
+                            <PulseLoader size={8} color="#ffffff" />
+                          ) : (
+                            <>
+                              <FaTimes /> Reject
+                            </>
+                          )}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
               ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+            </div>
+          </div>
+
+          {/* Pagination Controls */}
+          <div className={styles.paginationContainer}>
+            <div className={styles.paginationInfo}>
+              Showing {page * rowsPerPage + 1} to {Math.min((page + 1) * rowsPerPage, idRequests.length)} of {idRequests.length} requests
+            </div>
+            <div className={styles.paginationControls}>
+              <button
+                className={styles.paginationButton}
+                onClick={() => setPage(0)}
+                disabled={page === 0}
+              >
+                First
+              </button>
+              <button
+                className={styles.paginationButton}
+                onClick={() => setPage(page - 1)}
+                disabled={page === 0}
+              >
+                Previous
+              </button>
+              <span className={styles.pageInfo}>
+                Page {page + 1} of {Math.ceil(idRequests.length / rowsPerPage)}
+              </span>
+              <button
+                className={styles.paginationButton}
+                onClick={() => setPage(page + 1)}
+                disabled={page >= Math.ceil(idRequests.length / rowsPerPage) - 1}
+              >
+                Next
+              </button>
+              <button
+                className={styles.paginationButton}
+                onClick={() => setPage(Math.ceil(idRequests.length / rowsPerPage) - 1)}
+                disabled={page >= Math.ceil(idRequests.length / rowsPerPage) - 1}
+              >
+                Last
+              </button>
+            </div>
+            <div className={styles.rowsPerPageContainer}>
+              <label htmlFor="rowsPerPage">Rows per page:</label>
+              <select
+                id="rowsPerPage"
+                value={rowsPerPage}
+                onChange={(e) => {
+                  setRowsPerPage(parseInt(e.target.value, 10));
+                  setPage(0);
+                }}
+                className={styles.rowsPerPageSelect}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+              </select>
+            </div>
+          </div>
+        </>
       )}
 
       {/* Modal for detailed view and actions */}

@@ -1,15 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
-import styles from "./NewWithdrawalPopup.module.css";
+import styles from "./WalletWithdrawalPopup.module.css";
 import { Toast } from "primereact/toast";
 import { useUser } from "../../context/UserContext";
 
-export default function NewWithdrawalPopup({
-  onClose,
-  selectedId,
-}) {
+export default function WalletWithdrawalPopup({ onClose }) {
   const [withdrawalAmount, setWithdrawalAmount] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [coinRate, setCoinRate] = useState(1);
   const [withdrawalMethod, setWithdrawalMethod] = useState("upi");
   const [withdrawalDetails, setWithdrawalDetails] = useState({
     upiId: "",
@@ -23,35 +19,15 @@ export default function NewWithdrawalPopup({
   const toast = useRef(null);
   const { user, url, refreshUserBalance } = useUser();
 
-  // Set coin rate from ID data
-  useEffect(() => {
-    if (selectedId && selectedId.coinRate) {
-      setCoinRate(parseFloat(selectedId.coinRate) || 1);
-    }
-  }, [selectedId]);
-
   // Prevent background scrolling when popup is open
   useEffect(() => {
-    // Prevent background scrolling
     document.body.style.overflow = 'hidden';
-    
-    // Cleanup function to restore scrolling when component unmounts
     return () => {
       document.body.style.overflow = 'unset';
     };
   }, []);
 
-  // Calculate conversion
-  const calculateCoinsNeeded = (rupees) => {
-    return Math.ceil(rupees / coinRate);
-  };
-
-  const calculateRupeesFromCoins = (coins) => {
-    return coins * coinRate;
-  };
-
-  const availableCoins = selectedId?.balance || 0;
-  const maxWithdrawalRupees = calculateRupeesFromCoins(availableCoins);
+  const availableBalance = user?.balance || 0;
 
   // Input Change Handler
   const handleInputChange = (e) => {
@@ -77,7 +53,7 @@ export default function NewWithdrawalPopup({
   };
 
   // Withdrawal details change handler
-  const handleDetailsChange = (field, value) => {
+ const handleDetailsChange = (field, value) => {
     setWithdrawalDetails(prev => ({
       ...prev,
       [field]: value
@@ -91,9 +67,9 @@ export default function NewWithdrawalPopup({
       return false;
     }
 
-    const coinsNeeded = calculateCoinsNeeded(parseFloat(withdrawalAmount));
-    if (coinsNeeded > availableCoins) {
-      setErrorMessage(`Insufficient coins. You have ${availableCoins} coins available. Maximum withdrawal: ₹${maxWithdrawalRupees.toFixed(2)}`);
+    const amount = parseFloat(withdrawalAmount);
+    if (amount > availableBalance) {
+      setErrorMessage(`Insufficient balance. You have ₹${availableBalance} available. Maximum withdrawal: ₹${availableBalance.toFixed(2)}`);
       return false;
     }
 
@@ -123,32 +99,34 @@ export default function NewWithdrawalPopup({
     setIsSubmitting(true);
 
     try {
-      const coinsNeeded = calculateCoinsNeeded(parseFloat(withdrawalAmount));
+      const amount = parseFloat(withdrawalAmount);
       
-      const formData = new FormData();
-      formData.append("amount", withdrawalAmount);
-      formData.append("coinsNeeded", coinsNeeded);
-      formData.append("coinRate", coinRate);
-      formData.append("withdrawalMethod", withdrawalMethod);
-      formData.append("withdrawalDetails", JSON.stringify(withdrawalDetails));
-      formData.append("createdAt", new Date().toISOString());
-      formData.append("createdBy", user.id);
-      formData.append("websiteName", selectedId.websiteName);
-      formData.append("websiteUrl", selectedId.websiteUrl);
-      formData.append("username", selectedId.username);
-      formData.append("status", selectedId.status);
-      formData.append("id", selectedId.id);
+      const requestData = {
+        userId: user.id,
+        amount: amount,
+        withdrawalMethod: withdrawalMethod,
+        withdrawalDetails: JSON.stringify(withdrawalDetails),
+        transactionType: "wallet_withdrawal",
+        status: "Pending",
+        description: `Wallet withdrawal request for ₹${amount}`,
+        createdAt: new Date().toISOString(),
+        createdBy: user.username, // Backend expects username
+      };
 
       const response = await fetch(
-        `${url}/api/user/create-withdrawal-transaction`,
+        `${url}/api/user/create-wallet-withdrawal`,
         {
           method: "POST",
-          body: formData,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to process withdrawal. Please try again.");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to process withdrawal. Please try again.");
       }
 
       await refreshUserBalance();
@@ -156,17 +134,19 @@ export default function NewWithdrawalPopup({
       toast.current.show({
         severity: "success",
         summary: "Withdrawal Request Submitted",
-        detail: `Withdrawal request for ₹${withdrawalAmount} (${coinsNeeded} coins) has been submitted successfully.`,
+        detail: `Withdrawal request for ₹${amount} has been submitted successfully.`,
         life: 3000,
       });
 
-      onClose();
+      setTimeout(() => {
+        onClose();
+      }, 1500);
     } catch (error) {
       console.error("Error during withdrawal:", error);
       toast.current.show({
         severity: "error",
         summary: "Error",
-        detail: "Something went wrong. Please try again.",
+        detail: error.message || "Something went wrong. Please try again.",
         life: 3000,
       });
     } finally {
@@ -185,19 +165,10 @@ export default function NewWithdrawalPopup({
 
         {/* Header */}
         <div className={styles.header}>
-          <img
-            src={`${url}/${selectedId.imgUrl}`}
-            alt="Website"
-            className={styles.websiteImage}
-          />
-          <div className={styles.websiteInfo}>
-            <h3>{selectedId.websiteName}</h3>
-            <p className={styles.username}>Username: {selectedId.username}</p>
-            <p className={styles.coinBalance}>
-              Available Coins: <strong>{availableCoins} coins</strong>
-            </p>
-            <p className={styles.coinRate}>
-              Coin Rate: <strong>1 coin = ₹{coinRate}</strong>
+          <div className={styles.walletInfo}>
+            <h3>Wallet Withdrawal</h3>
+            <p className={styles.walletBalance}>
+              Available Balance: <strong>₹{availableBalance.toFixed(2)}</strong>
             </p>
           </div>
         </div>
@@ -224,8 +195,8 @@ export default function NewWithdrawalPopup({
           
           {withdrawalAmount && (
             <div className={styles.conversionInfo}>
-              <p>Coins Required: <strong>{calculateCoinsNeeded(parseFloat(withdrawalAmount))} coins</strong></p>
-              <p>Maximum Withdrawal: <strong>₹{maxWithdrawalRupees.toFixed(2)}</strong></p>
+              <p>Withdrawal Amount: <strong>₹{parseFloat(withdrawalAmount).toFixed(2)}</strong></p>
+              <p>Maximum Withdrawal: <strong>₹{availableBalance.toFixed(2)}</strong></p>
             </div>
           )}
         </div>

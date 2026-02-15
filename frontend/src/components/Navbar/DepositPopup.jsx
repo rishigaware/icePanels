@@ -359,10 +359,11 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
                 type="number"
                 className={styles.input}
                 value={depositAmount}
-                onChange={handleInputChange} // Use the updated handler
+                onChange={handleInputChange}
+                onWheel={(e) => e.target.blur()}
                 placeholder="Enter deposit amount"
-                min="0" // Prevent negative number entry
-                step="0.01" // Allow decimal values
+                min="0"
+                step="0.01"
               />
             </div>
 
@@ -448,6 +449,7 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
                       className={styles.input}
                       value={withdrawalAmount}
                       onChange={(e) => setWithdrawalAmount(e.target.value)}
+                      onWheel={(e) => e.target.blur()}
                       placeholder="Enter withdrawal amount"
                       min="0"
                       step="0.01"

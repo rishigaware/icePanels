@@ -9,7 +9,7 @@ const upload = require('../config/multerConfig'); // Import multer configuration
 router.post('/signup', userController.addUser);   // Add a new user (Signup)
 router.post('/update-accountdetails', userController.updateAccountDetails);   // Add a new user (Signup)
 router.post('/update-profile', userController.updateProfileController);   // Add a new user (Signup)
-router.post('/create-transaction',upload.single('image'), userController.createTransaction);
+router.post('/create-transaction', upload.single('image'), userController.createTransaction);
 router.post('/create-transaction-id', userController.createTransactionById);
 router.post('/create-withdrawal-transaction', upload.none(), userController.createWithdrawalTransactionBy);
 router.post('/create-wallet-withdrawal', userController.createWalletWithdrawal);
@@ -17,6 +17,7 @@ router.post('/create-new-deposit-transaction', userController.createNewDepositTr
 router.post('/create-id', userController.createId); // Add a new website record
 router.post('/create-id-request', userController.createIdRequest); // Create ID request with coin conversion
 router.post('/close-id', userController.closeId); // Close an ID
+router.post('/request-close-id', userController.closeId); // Request to close an ID (same as close-id)
 router.get('/id-transactions', userController.getIdTransactions); // Get transactions for specific ID
 router.post('/request-password-change', userController.requestPasswordChange); // Request password change
 

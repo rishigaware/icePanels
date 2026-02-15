@@ -142,6 +142,7 @@ export default function IdDepositPopup({ onClose, walletBalance = 0, setWalletBa
               className={styles.input}
               value={depositAmount}
               onChange={handleInputChange}
+              onWheel={(e) => e.target.blur()}
               placeholder="Enter deposit amount"
               min="0"
               step="0.01"

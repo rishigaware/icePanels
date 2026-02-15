@@ -5,6 +5,7 @@ const Website = require('../models/Website');
 const WebsiteId = require('../models/WebsiteId');
 const IdRequest = require('../models/IdRequest');
 const CloseRequest = require('../models/CloseRequest');
+const ClosedId = require('../models/ClosedId');
 const PasswordChangeRequest = require('../models/PasswordChangeRequest');
 const AdminAccount = require('../models/AdminAccount');
 const bcrypt = require('bcrypt');
@@ -511,18 +512,32 @@ exports.getAllIds = async (req, res) => {
       return res.status(400).json({ error: "User ID is required" });
     }
 
-    const ids = await WebsiteId.find({ createdBy: userId });
+    // Fetch active IDs
+    const activeIds = await WebsiteId.find({ createdBy: userId });
 
-    if (ids.length === 0) {
+    // Fetch closed IDs
+    const closedIds = await ClosedId.find({ createdBy: userId });
+
+    // Combine both active and closed IDs
+    const allIds = [
+      ...activeIds.map((doc) => ({
+        id: doc._id,
+        ...doc.toObject(),
+        type: 'active'
+      })),
+      ...closedIds.map((doc) => ({
+        id: doc._id,
+        ...doc.toObject(),
+        status: 'Closed', // Ensure status is set to Closed
+        type: 'closed'
+      }))
+    ];
+
+    if (allIds.length === 0) {
       return res.status(404).json({ message: "No IDs found for this user" });
     }
 
-    const formattedIds = ids.map((doc) => ({
-      id: doc._id,
-      ...doc.toObject(),
-    }));
-
-    res.status(200).json(formattedIds);
+    res.status(200).json(allIds);
   } catch (error) {
     console.error("Error fetching IDs:", error);
     res.status(500).json({ error: "Internal Server Error" });

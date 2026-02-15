@@ -1323,6 +1323,7 @@ exports.updateIdRequestStatus = async (req, res) => {
         websiteName: requestDoc.websiteName,
         websiteUrl: requestDoc.websiteUrl,
         username: requestDoc.username,
+        password: requestDoc.password || '', // Include password from request
         imgUrl: requestDoc.imgUrl,
         createdBy: requestDoc.createdBy,
         coinAmount: requestDoc.coinAmount,
@@ -1636,25 +1637,56 @@ exports.approveWithdrawalRequest = async (req, res) => {
       return res.status(400).json({ message: 'Invalid transaction type' });
     }
 
-    // Update transaction status
-    transaction.status = 'Accepted';
-    transaction.acceptedAt = new Date().toISOString();
-    transaction.processedBy = req.user?.id || 'admin';
-    await transaction.save();
-
     // Update ID balance
     if (transaction.idDocumentId) {
       const idDoc = await WebsiteId.findById(transaction.idDocumentId);
 
       if (idDoc) {
-        const currentBalance = idDoc.balance || 0;
-        const coinsToDeduct = transaction.coinsToDeduct;
+        const currentBalance = parseFloat(idDoc.balance) || 0;
+
+        // Validate and parse coinsToDeduct
+        const coinsToDeduct = parseFloat(transaction.coinsToDeduct) || parseFloat(transaction.coinsNeeded) || parseFloat(transaction.amount) || 0;
+
+        if (coinsToDeduct === 0) {
+          console.warn('Warning: coinsToDeduct is 0 or invalid:', transaction.coinsToDeduct);
+        }
+
+        // Check if balance is sufficient
+        if (currentBalance < coinsToDeduct) {
+          // Insufficient balance - update status and return error
+          transaction.status = 'Insufficient Balance';
+          transaction.processedBy = req.user?.id || 'admin';
+          transaction.processedAt = new Date().toISOString();
+          await transaction.save();
+
+          console.log(`Insufficient balance for withdrawal:`);
+          console.log(`- Required: ${coinsToDeduct} coins`);
+          console.log(`- Available: ${currentBalance} coins`);
+
+          return res.status(400).json({
+            message: 'Insufficient balance',
+            error: `Required: ${coinsToDeduct} coins, Available: ${currentBalance} coins`
+          });
+        }
+
+        // Balance is sufficient - proceed with deduction
         const newIdBalance = currentBalance - coinsToDeduct;
+
+        console.log(`Updating ID balance for withdrawal:`);
+        console.log(`- Current balance: ${currentBalance} coins`);
+        console.log(`- Coins to deduct: ${coinsToDeduct} coins`);
+        console.log(`- New balance: ${newIdBalance} coins`);
 
         idDoc.balance = newIdBalance;
         await idDoc.save();
       }
     }
+
+    // Update transaction status to Accepted (only if balance was sufficient)
+    transaction.status = 'Accepted';
+    transaction.acceptedAt = new Date().toISOString();
+    transaction.processedBy = req.user?.id || 'admin';
+    await transaction.save();
 
     res.status(200).json({
       message: 'Withdrawal request approved successfully',
@@ -1747,7 +1779,7 @@ exports.approveCloseIdRequest = async (req, res) => {
     await closeRequest.save();
 
     // Update ID status to Closed
-    const idDoc = await WebsiteId.findById(closeRequest.idDocumentId);
+    const idDoc = await WebsiteId.findById(closeRequest.originalId);
 
     if (idDoc) {
       idDoc.status = 'Closed';
@@ -1756,6 +1788,7 @@ exports.approveCloseIdRequest = async (req, res) => {
       // Create a record in closedIds collection
       const closedId = new ClosedId({
         ...idDoc.toObject(),
+        originalId: closeRequest.originalId, // Add the required originalId field
         closedAt: new Date().toISOString(),
         closedBy: req.user?.id || 'admin',
         closeRequestId: requestId
@@ -1764,7 +1797,7 @@ exports.approveCloseIdRequest = async (req, res) => {
       await closedId.save();
 
       // Delete the original ID
-      await WebsiteId.findByIdAndDelete(closeRequest.idDocumentId);
+      await WebsiteId.findByIdAndDelete(closeRequest.originalId);
     }
 
     res.status(200).json({

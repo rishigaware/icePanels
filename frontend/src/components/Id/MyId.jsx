@@ -6,7 +6,7 @@ import { PulseLoader } from "react-spinners";
 import { PiHandDepositDuotone } from "react-icons/pi";
 import { BiMoneyWithdraw } from "react-icons/bi";
 import { FiEdit3, FiMoreVertical, FiX } from "react-icons/fi";
-import { AiOutlineTransaction } from "react-icons/ai";
+import { AiOutlineTransaction, AiOutlineInfoCircle } from "react-icons/ai";
 import NewDepositPopup from "./NewDepositPopup";
 import NewWithdrawalPopup from "./NewWithdrawalPopup";
 import ViewTransactionModal from "./ViewTransactionModal";
@@ -94,7 +94,8 @@ const MyId = () => {
   //   return () => clearInterval(interval);
   // }, [safeUser?.id]);
   
-  const handleIdClick = (item) => {
+  // Handle info icon click to show ID details
+  const handleInfoClick = (item) => {
     setSelectedId(item);
     setChangePasswordPopup(true);
   };
@@ -200,34 +201,44 @@ const MyId = () => {
     setShowChangePasswordModal(true);
   };
 
-  // Handle close ID
+  // Handle close ID with confirmation
   const handleCloseId = async (id) => {
     if (!user) {
       toast.current.show({ severity: 'error', summary: 'Error', detail: 'User not logged in', life: 3000 });
       return;
     }
+    
+    // Show confirmation dialog
+    const confirmed = window.confirm('Are you sure you want to close this ID? This action will send a close request to the admin.');
+    if (!confirmed) {
+      return;
+    }
+    
     try {
-      const response = await fetch(`${url}/api/user/close-id`, {
+      const response = await fetch(`${url}/api/user/request-close-id`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: id, createdBy: user.id }),
       });
       const data = await response.json();
       if (response.ok) {
-        toast.current.show({ severity: 'success', summary: 'Success', detail: 'ID closed successfully', life: 3000 });
+        toast.current.show({ severity: 'success', summary: 'Request Sent', detail: 'Close ID request sent to admin successfully', life: 3000 });
         setNeedRefetch(true);
       } else {
-        throw new Error(data.message || 'Failed to close ID');
+        throw new Error(data.message || 'Failed to send close ID request');
       }
     } catch (error) {
-      console.error('Error closing ID:', error);
-      toast.current.show({ severity: 'error', summary: 'Error', detail: error.message || 'Failed to close ID', life: 3000 });
+      console.error('Error sending close ID request:', error);
+      toast.current.show({ severity: 'error', summary: 'Error', detail: error.message || 'Failed to send close ID request', life: 3000 });
     }
   };
 
   const handleMobileAction = (action, item) => {
     setMobilePopupOpen(null);
     switch (action) {
+      case 'info':
+        handleInfoClick(item);
+        break;
       case 'deposit':
         handleDepositClick(item);
         break;
@@ -290,7 +301,7 @@ const MyId = () => {
       ) : (
         currentIds.map((item) => (
           <div key={item.id} className={`${styles.idCard} ${item.type === 'request' ? styles.requestCard : ''}`}>
-            <div className={styles.logo} onClick={() => item.type === 'active' ? handleIdClick(item) : null}>
+            <div className={styles.logo}>
               <img
                 src={`${safeUrl}/${item.imgUrl || ''}`}
                 alt={`${item.websiteName || 'Website'} logo`}
@@ -318,29 +329,44 @@ const MyId = () => {
                 </>
               ) : (
                 <>
-                  <p className={styles.idBalance}><strong>Last UpdatedBalance : </strong>{item.balance || 0} coins</p>
-                  {item.coinRate && <p className={styles.coinRate}><strong>Rate : </strong>1 coin = ₹{item.coinRate}</p>}
+                  <p className={styles.idBalance}><strong>Last Updated Balance : </strong>{item.balance || 0} coins</p>
+                  <p className={styles.coinRate}><strong>Rate : </strong>1 coin = ₹{item.coinRate}</p>
+                  {/* Show status chip if ID is closed or close requested */}
+                  {(item.status === 'Closed' || item.status === 'Close Requested') && (
+                    <div className={styles.statusChipContainer}>
+                      <span className={`${styles.statusChip} ${item.status === 'Closed' ? styles.closedChip : styles.closeRequestedChip}`}>
+                        {item.status}
+                      </span>
+                    </div>
+                  )}
                 </>
               )}
             </div>
-            <div className={styles.iconContainer}>
-              {item.type === 'request' ? (
-                <div className={styles.desktopIcons}>
-                  <div className={styles.iconWrapper}>
-                    <span className={`${styles.requestStatusIcon} ${styles.pendingIcon}`} title="Request Status">
-                      ⏳
-                    </span>
-                    <p className={styles.iconLabel}>Pending Approval</p>
-                  </div>
-                  <div className={styles.iconWrapper}>
-                    <span className={`${styles.requestStatusIcon} ${styles.infoIcon}`} title="Request Details">
-                      ℹ️
-                    </span>
-                    <p className={styles.iconLabel}>Request Details</p>
-                  </div>
+            {item.type === 'request' ? (
+              <div className={styles.iconContainer}>
+                <div className={styles.requestOptions}>
+                  <p className={styles.requestInfo}>Waiting for approval...</p>
                 </div>
-              ) : (
+              </div>
+            ) : item.status === 'Closed' ? (
+              <div className={styles.iconContainer}>
+                <div className={styles.closedIdMessage}>
+                  <p className={styles.closedInfo}>This ID is closed</p>
+                </div>
+              </div>
+            ) : item.status === 'Close Requested' ? (
+              <div className={styles.iconContainer}>
+                <div className={styles.closeRequestedMessage}>
+                  <p className={styles.closeRequestedInfo}>Close request pending admin approval</p>
+                </div>
+              </div>
+            ) : (
+              <div className={styles.iconContainer}>
                 <div className={styles.desktopIcons}>
+                  <div className={styles.iconWrapper}>
+                    <AiOutlineInfoCircle className={`${styles.icon} ${styles.infoIcon}`} title="ID Details" onClick={() => handleInfoClick(item)} />
+                    <p className={styles.iconLabel}>ID Details</p>
+                  </div>
                   <div className={styles.iconWrapper}>
                     <PiHandDepositDuotone className={`${styles.icon} ${styles.depositIcon}`} title="Deposit" onClick={() => handleDepositClick(item)} />
                     <p className={styles.iconLabel}>Deposit</p>
@@ -362,36 +388,40 @@ const MyId = () => {
                     <p className={styles.iconLabel}>Close ID</p>
                   </div>
                 </div>
-              )}
 
-              <div className={styles.mobileMenu}>
-                <FiMoreVertical className={styles.threeDotsIcon} onClick={(e) => handleMobileMenuToggle(item.id, e)} />
-                {mobilePopupOpen === item.id && (
-                  <div className={styles.mobilePopup}>
-                    <div className={styles.mobilePopupItem} onClick={() => handleMobileAction('deposit', item)}>
-                      <PiHandDepositDuotone className={`${styles.mobileIcon} ${styles.depositIcon}`} />
-                      <span>Deposit</span>
+                <div className={styles.mobileMenu}>
+                  <FiMoreVertical className={styles.threeDotsIcon} onClick={(e) => handleMobileMenuToggle(item.id, e)} />
+                  {mobilePopupOpen === item.id && (
+                    <div className={styles.mobilePopup}>
+                      <div className={styles.mobilePopupItem} onClick={() => handleMobileAction('info', item)}>
+                        <AiOutlineInfoCircle className={`${styles.mobileIcon} ${styles.infoIcon}`} />
+                        <span>ID Details</span>
+                      </div>
+                      <div className={styles.mobilePopupItem} onClick={() => handleMobileAction('deposit', item)}>
+                        <PiHandDepositDuotone className={`${styles.mobileIcon} ${styles.depositIcon}`} />
+                        <span>Deposit</span>
+                      </div>
+                      <div className={styles.mobilePopupItem} onClick={() => handleMobileAction('withdrawal', item)}>
+                        <BiMoneyWithdraw className={`${styles.mobileIcon} ${styles.withdrawalIcon}`} />
+                        <span>Withdrawal</span>
+                      </div>
+                      <div className={styles.mobilePopupItem} onClick={() => handleMobileAction('changePassword', item)}>
+                        <FiEdit3 className={`${styles.mobileIcon} ${styles.editIcon}`} />
+                        <span>Change Password</span>
+                      </div>
+                      <div className={styles.mobilePopupItem} onClick={() => handleMobileAction('viewTransaction', item)}>
+                        <AiOutlineTransaction className={`${styles.mobileIcon} ${styles.transactionIcon}`} />
+                        <span>View Transaction</span>
+                      </div>
+                      <div className={styles.mobilePopupItem} onClick={() => handleMobileAction('closeId', item)}>
+                        <FiX className={`${styles.mobileIcon} ${styles.closeIcon}`} />
+                        <span>Close ID</span>
+                      </div>
                     </div>
-                    <div className={styles.mobilePopupItem} onClick={() => handleMobileAction('withdrawal', item)}>
-                      <BiMoneyWithdraw className={`${styles.mobileIcon} ${styles.withdrawalIcon}`} />
-                      <span>Withdrawal</span>
-                    </div>
-                    <div className={styles.mobilePopupItem} onClick={() => handleMobileAction('changePassword', item)}>
-                      <FiEdit3 className={`${styles.mobileIcon} ${styles.editIcon}`} />
-                      <span>Change Password</span>
-                    </div>
-                    <div className={styles.mobilePopupItem} onClick={() => handleMobileAction('viewTransaction', item)}>
-                      <AiOutlineTransaction className={`${styles.mobileIcon} ${styles.transactionIcon}`} />
-                      <span>View Transaction</span>
-                    </div>
-                    <div className={styles.mobilePopupItem} onClick={() => handleMobileAction('closeId', item)}>
-                      <FiX className={`${styles.mobileIcon} ${styles.closeIcon}`} />
-                      <span>Close ID</span>
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         ))
       )}
@@ -418,13 +448,13 @@ const MyId = () => {
             </div>
             <div className={styles.popupBody}>
               <p><strong>Username:</strong> {selectedId.username}</p>
-              <p><strong>Password:</strong> {selectedId.password}</p>
+              <p><strong>Password:</strong> {selectedId.password || 'Not set'}</p>
               <p><strong>Balance:</strong> {selectedId.balance || 0} coins</p>
               {selectedId.coinRate && <p><strong>Coin Rate:</strong> 1 coin = ₹{selectedId.coinRate}</p>}
               <p className={styles.popStatusText}><strong>Status :&nbsp;</strong>
                 <span className={selectedId.popStatus === "Requested" ? styles.popStatusRequested : selectedId.status === "Created" ? styles.popStatusCreated : selectedId.status === "Username Exists" ? styles.popStatusUsernameExist : styles.popStatusActive}>{selectedId.status}</span>
               </p>
-              <p><strong>Created At:</strong> {formatDate(selectedId.createdAt._seconds)}</p>
+              <p><strong>Created At:</strong> {selectedId.createdAt?._seconds ? formatDate(selectedId.createdAt._seconds) : (selectedId.createdAt ? new Date(selectedId.createdAt).toLocaleString() : 'N/A')}</p>
             </div>
           </div>
         </div>

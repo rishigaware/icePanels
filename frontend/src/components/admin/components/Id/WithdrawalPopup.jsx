@@ -128,6 +128,7 @@ export default function WithdrawalPopup({
             className={styles.input}
             value={withdrawalAmount}
             onChange={handleInputChange}
+            onWheel={(e) => e.target.blur()}
             placeholder="Enter withdrawal amount"
             min="0"
             step="0.01"

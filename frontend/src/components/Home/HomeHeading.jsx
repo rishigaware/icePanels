@@ -17,10 +17,14 @@ import rg2 from '../../assets/images/responsibleGaming/PHOTO-2026-02-15-10-30-37
 import rg3 from '../../assets/images/responsibleGaming/PHOTO-2026-02-15-10-32-08.jpg';
 import rg4 from '../../assets/images/responsibleGaming/PHOTO-2026-02-15-10-32-54.jpg';
 import { useUser } from "../../context/UserContext";
+import DepositPopup from '../Navbar/DepositPopup'; // Import the DepositPopup component
+import WalletWithdrawalPopup from './WalletWithdrawalPopup'; // Import the WalletWithdrawalPopup component
 
 const HomeHeading = () => {
   const navigate = useNavigate(); // Initialize the navigate function
   const { user, setUser, refreshUserBalance } = useUser();
+  const [showDepositPopup, setShowDepositPopup] = useState(false); // State to toggle deposit popup
+  const [showWithdrawalPopup, setShowWithdrawalPopup] = useState(false); // State to toggle withdrawal popup
 
   const handleLogin = () => {
     navigate('/login');
@@ -33,6 +37,30 @@ const HomeHeading = () => {
   const handleLogout = () => {
     setUser(null); // Clear user context
     localStorage.removeItem('user'); // Remove user from localStorage
+  };
+
+  const handleDepositClick = () => {
+    if (!user) {
+      navigate('/login'); // Redirect to login if not logged in
+      return;
+    }
+    setShowDepositPopup(true); // Show deposit popup only if logged in
+  };
+
+  const closeDepositPopup = () => {
+    setShowDepositPopup(false); // Close deposit popup
+  };
+
+  const handleWithdrawalClick = () => {
+    if (!user) {
+      navigate('/login'); // Redirect to login if not logged in
+      return;
+    }
+    setShowWithdrawalPopup(true); // Show withdrawal popup
+  };
+
+  const closeWithdrawalPopup = () => {
+    setShowWithdrawalPopup(false); // Close withdrawal popup
   };
 
   const [slidingText] = useState("🚀 Welcome to The247Panel - Your Ultimate Gaming & Betting Platform! 🎮💰 • 🎯 Multiple Gaming Websites • 💎 Premium Features • 🔥 24/7 Support • ⚡ Instant Deposits & Withdrawals • 🏆 Best Odds Guaranteed • 🎲 Live Casino Games • 🎰 Slot Machines • 🃏 Card Games • 🏈 Sports Betting • 🎪 Live Events • 💰 Daily Bonuses • 🎁 Special Promotions • 🔐 Secure & Safe • 📱 Mobile Friendly • 🌟 VIP Membership • 🎊 Join Now & Win Big! 🎊");
@@ -80,7 +108,7 @@ const HomeHeading = () => {
 
       <div className={styles.top}>
         <div className={styles.topSquare}>
-          <div className={styles.first}>
+          <div className={styles.first} onClick={handleDepositClick} style={{ cursor: 'pointer' }}>
             <PiHandDepositDuotone />
             <h3 className={styles.deposit}>Deposit</h3>
           </div>
@@ -108,7 +136,7 @@ const HomeHeading = () => {
             <h3 className={styles.balance}>Wallet Balance</h3>
           </div>
 
-          <div className={styles.third}>
+          <div className={styles.third} onClick={handleWithdrawalClick} style={{ cursor: 'pointer' }}>
             <h3 className={styles.withdraw}>Withdraw</h3>
             <BiMoneyWithdraw />
           </div>
@@ -467,6 +495,15 @@ const HomeHeading = () => {
           </div>
         </div>
         
+        {/* Deposit Popup */}
+        {showDepositPopup && (
+          <DepositPopup onClose={closeDepositPopup} />
+        )}
+        
+        {/* Withdrawal Popup */}
+        {showWithdrawalPopup && (
+          <WalletWithdrawalPopup onClose={closeWithdrawalPopup} />
+        )}
     </div>
   );
 };

@@ -409,6 +409,11 @@
 }
 
 /* ===== ICON COLORS ===== */
+.infoIcon {
+  color: #06b6d4;
+  /* Cyan */
+}
+
 .depositIcon {
   color: #10b981;
   /* Green */
@@ -806,4 +811,58 @@
 .refreshButton:active {
   transform: rotate(180deg) scale(0.95);
   box-shadow: none;
+}
+
+/* Status Chip Styles */
+.statusChipContainer {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.statusChip {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.closedChip {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.closeRequestedChip {
+  background: linear-gradient(135deg, #ffa500 0%, #ff8800 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(255, 165, 0, 0.3);
+}
+
+/* Closed/Close Requested Message Styles */
+.closedIdMessage,
+.closeRequestedMessage,
+.requestOptions {
+  text-align: center;
+  padding: 15px;
+}
+
+.closedInfo {
+  color: #ef4444;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.closeRequestedInfo {
+  color: #ffa500;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.requestInfo {
+  color: #ffa500;
+  font-weight: 600;
+  font-size: 1rem;
 }

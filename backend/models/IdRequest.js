@@ -13,6 +13,10 @@ const idRequestSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    password: {
+        type: String,
+        default: '',
+    },
     imgUrl: {
         type: String,
         required: true,
