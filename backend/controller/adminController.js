@@ -272,18 +272,44 @@ exports.updateIdStatus = async (req, res) => {
 
 // Controller function to fetch all transactions
 // Controller function to fetch all transactions
+// Controller function to fetch all transactions
 exports.getAllTransactions = async (req, res) => {
   try {
-    const transactions = await Transaction.find();
+    const transactions = await Transaction.find().sort({ createdAt: -1 });
 
     if (transactions.length === 0) {
       return res.status(404).json({ message: 'No transactions found.' });
     }
 
-    const formattedTransactions = transactions.map(doc => ({
-      id: doc._id,
-      ...doc.toObject(),
-    }));
+    // Fetch all users to map names
+    const users = await User.find({}, 'username name');
+    const userMap = {};
+    users.forEach(user => {
+      userMap[user._id.toString()] = user.name;
+      if (user.username) userMap[user.username] = user.name;
+    });
+
+    console.log('User Map created with', Object.keys(userMap).length, 'entries');
+
+    const formattedTransactions = transactions.map(doc => {
+      const docObj = doc.toObject();
+      let userName = 'Unknown';
+
+      // Debug log for the first few transactions to check createdBy format
+      // if (docObj.amount === 48900) console.log('Transaction 48900 createdBy:', doc.createdBy, 'Type:', typeof doc.createdBy);
+
+      if (userMap[doc.createdBy]) {
+        userName = userMap[doc.createdBy];
+      } else if (mongoose.Types.ObjectId.isValid(doc.createdBy) && userMap[doc.createdBy.toString()]) {
+        userName = userMap[doc.createdBy.toString()];
+      }
+
+      return {
+        id: doc._id,
+        ...docObj,
+        userDetails: { name: userName }
+      };
+    });
 
     res.status(200).json(formattedTransactions);
   } catch (error) {
@@ -293,56 +319,64 @@ exports.getAllTransactions = async (req, res) => {
 };
 
 // Controller to accept a transaction
-// Controller to accept a transaction
 exports.acceptTransaction = async (req, res) => {
   const txnId = req.params.txnId;
+  console.log('Accepting transaction:', txnId);
 
   try {
     const transaction = await Transaction.findById(txnId);
 
     if (!transaction) {
+      console.log('Transaction not found');
       return res.status(404).json({ message: 'Transaction not found' });
+    }
+
+    if (transaction.status === 'Completed' || transaction.status === 'Accepted') {
+      console.log('Transaction already completed');
+      return res.status(400).json({ message: 'Transaction already completed' });
     }
 
     transaction.status = 'Completed';
     transaction.acceptedAt = new Date().toISOString();
     await transaction.save();
 
+    // Determine if it is a withdrawal or a deposit
+    const isWithdrawal = transaction.paymentMethod === 'Withdraw From Wallet' ||
+      transaction.transactionType === 'withdrawal' ||
+      transaction.transactionType === 'wallet_withdrawal';
+
+    console.log('Transaction Type:', isWithdrawal ? 'Withdrawal' : 'Deposit', 'Created By:', transaction.createdBy);
+
     // Update user balance based on transaction type
-    if (transaction.paymentMethod === 'Bank Account' || transaction.paymentMethod === 'UPI' || transaction.paymentMethod === 'Card') {
-      // This is a deposit transaction - add to user balance
-      let user;
-      if (mongoose.Types.ObjectId.isValid(transaction.createdBy)) {
-        user = await User.findById(transaction.createdBy);
+    let user;
+    if (mongoose.Types.ObjectId.isValid(transaction.createdBy)) {
+      console.log('Searching user by ID:', transaction.createdBy);
+      user = await User.findById(transaction.createdBy);
+    }
+
+    if (!user) {
+      console.log('Searching user by username:', transaction.createdBy);
+      user = await User.findOne({ username: transaction.createdBy });
+    }
+
+    if (user) {
+      const currentBalance = user.balance || 0;
+      let newBalance = currentBalance;
+
+      if (!isWithdrawal) {
+        // It's a deposit (Bank, UPI, Card, GPay, etc.)
+        newBalance = currentBalance + parseFloat(transaction.amount);
+        console.log(`Deposit: Added ${transaction.amount} to user ${user.username} (${user._id}). Old: ${currentBalance}, New: ${newBalance}`);
       } else {
-        user = await User.findOne({ username: transaction.createdBy });
+        // It's a withdrawal
+        newBalance = Math.max(0, currentBalance - parseFloat(transaction.amount)); // Ensure balance doesn't go negative
+        console.log(`Withdrawal: Deducted ${transaction.amount} from user ${user.username}. Old: ${currentBalance}, New: ${newBalance}`);
       }
 
-      if (user) {
-        const currentBalance = user.balance || 0;
-        const newBalance = currentBalance + parseFloat(transaction.amount);
-
-        user.balance = newBalance;
-        await user.save();
-        console.log(`Updated user ${transaction.createdBy} balance from ${currentBalance} to ${newBalance}`);
-      }
-    } else if (transaction.paymentMethod === 'Withdraw From Wallet') {
-      // This is a withdrawal transaction - subtract from user balance
-      let user;
-      if (mongoose.Types.ObjectId.isValid(transaction.createdBy)) {
-        user = await User.findById(transaction.createdBy);
-      } else {
-        user = await User.findOne({ username: transaction.createdBy });
-      }
-
-      if (user) {
-        const currentBalance = user.balance || 0;
-        const newBalance = Math.max(0, currentBalance - parseFloat(transaction.amount)); // Ensure balance doesn't go negative
-
-        user.balance = newBalance;
-        await user.save();
-        console.log(`Updated user ${transaction.createdBy} balance from ${currentBalance} to ${newBalance}`);
-      }
+      user.balance = newBalance;
+      await user.save();
+    } else {
+      console.log('User not found for transaction createdBy:', transaction.createdBy);
     }
 
     res.status(200).json({ message: 'Transaction accepted', transactionId: txnId, status: 'Completed' });
@@ -1252,9 +1286,9 @@ exports.updateIdRequestStatus = async (req, res) => {
       await transaction.save();
     }
 
-    // If accepted, create the actual ID and update user balance
+    // If accepted, create the actual ID and deduct balance from user
     if (status === 'Accepted') {
-      // Deduct amount from user balance
+      // Deduct amount from user balance NOW (when admin accepts)
       let user;
       if (mongoose.Types.ObjectId.isValid(requestDoc.createdBy)) {
         user = await User.findById(requestDoc.createdBy);
@@ -1263,9 +1297,25 @@ exports.updateIdRequestStatus = async (req, res) => {
       }
 
       if (user) {
-        const newBalance = (user.balance || 0) - requestDoc.coinAmount;
+        const currentBalance = user.balance || 0;
+        const amountToDeduct = parseFloat(requestDoc.convertedCoins);
+
+        // Check if user still has sufficient balance
+        if (currentBalance < amountToDeduct) {
+          return res.status(400).json({
+            message: 'User has insufficient balance to complete this request.',
+            currentBalance: currentBalance,
+            requiredAmount: amountToDeduct
+          });
+        }
+
+        const newBalance = currentBalance - amountToDeduct;
         user.balance = newBalance;
         await user.save();
+
+        console.log(`Deducted ₹${amountToDeduct} from user ${user.username}. Old balance: ₹${currentBalance}, New balance: ₹${newBalance}`);
+      } else {
+        return res.status(404).json({ message: 'User not found for balance deduction.' });
       }
 
       // Create the actual ID
@@ -1285,13 +1335,18 @@ exports.updateIdRequestStatus = async (req, res) => {
         status: 'Active',
         createdAt: processedAt,
         idRequestId: requestId,
-        balance: 0 // Initialize balance to 0 for new ID
+        balance: parseFloat(requestDoc.coinAmount) // Initialize balance with the coin amount requested
       });
 
       await newId.save();
 
       // Delete the ID request after successful approval to avoid duplication
       await IdRequest.findByIdAndDelete(requestId);
+    } else if (status === 'Rejected') {
+      // If rejected, no balance deduction occurs (since we removed it from createIdRequest)
+      // Just delete the request
+      await IdRequest.findByIdAndDelete(requestId);
+      console.log(`ID request ${requestId} rejected. No balance was deducted.`);
     }
 
     res.status(200).json({
@@ -1421,7 +1476,7 @@ exports.approveDepositRequest = async (req, res) => {
     transaction.processedBy = req.user?.id || 'admin';
     await transaction.save();
 
-    // Update user balance
+    // Deduct user balance when deposit is approved
     let user;
     if (mongoose.Types.ObjectId.isValid(transaction.createdBy)) {
       user = await User.findById(transaction.createdBy);
@@ -1430,9 +1485,25 @@ exports.approveDepositRequest = async (req, res) => {
     }
 
     if (user) {
-      const newBalance = (user.balance || 0) - transaction.amount;
+      const currentBalance = user.balance || 0;
+      const amountToDeduct = transaction.amount;
+
+      // Check if user has sufficient balance
+      if (currentBalance < amountToDeduct) {
+        return res.status(400).json({
+          message: 'User has insufficient balance for this deposit request.',
+          currentBalance: currentBalance,
+          requiredAmount: amountToDeduct
+        });
+      }
+
+      const newBalance = currentBalance - amountToDeduct;
       user.balance = newBalance;
       await user.save();
+
+      console.log(`Deducted ₹${amountToDeduct} from user ${user.username}. Old balance: ₹${currentBalance}, New balance: ₹${newBalance}`);
+    } else {
+      return res.status(404).json({ message: 'User not found for balance deduction.' });
     }
 
     // Update ID balance
@@ -1440,8 +1511,15 @@ exports.approveDepositRequest = async (req, res) => {
       const idDoc = await WebsiteId.findById(transaction.idDocumentId);
 
       if (idDoc) {
-        const currentBalance = idDoc.balance || 0;
-        const coinsToAdd = transaction.coinsToReceive;
+        const currentBalance = parseFloat(idDoc.balance) || 0;
+
+        // Validate and parse coinsToReceive
+        const coinsToAdd = parseFloat(transaction.coinsToReceive) || 0;
+
+        if (coinsToAdd === 0) {
+          console.warn('Warning: coinsToReceive is 0 or invalid:', transaction.coinsToReceive);
+        }
+
         const newIdBalance = currentBalance + coinsToAdd;
 
         console.log(`Updating ID balance for ${transaction.idDocumentId}:`);
@@ -1450,6 +1528,11 @@ exports.approveDepositRequest = async (req, res) => {
         console.log(`- New balance: ${newIdBalance} coins`);
         console.log(`- Deposit amount: ₹${transaction.amount}`);
         console.log(`- Coin rate: ₹${transaction.coinRate} per coin`);
+
+        // Validate the new balance before saving
+        if (isNaN(newIdBalance)) {
+          throw new Error(`Invalid balance calculation: currentBalance=${currentBalance}, coinsToAdd=${coinsToAdd}`);
+        }
 
         idDoc.balance = newIdBalance;
         await idDoc.save();
@@ -1505,6 +1588,8 @@ exports.rejectDepositRequest = async (req, res) => {
     transaction.rejectedAt = new Date().toISOString();
     transaction.processedBy = req.user?.id || 'admin';
     await transaction.save();
+
+    // No refund needed since balance was never deducted on request creation
 
     res.status(200).json({
       message: 'Deposit request rejected successfully',

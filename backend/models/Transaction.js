@@ -40,6 +40,7 @@ const transactionSchema = new mongoose.Schema({
     },
     // Additional fields for withdrawal/ID creation
     coinsNeeded: Number,
+    coinsToReceive: Number, // For deposit requests - number of coins user will receive
     coinRate: Number,
     withdrawalMethod: String,
     withdrawalDetails: mongoose.Schema.Types.Mixed,

@@ -343,7 +343,8 @@ const Users = () => {
         user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.phoneNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.email?.toLowerCase().includes(searchQuery.toLowerCase())
+        user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.id?.toLowerCase().includes(searchQuery.toLowerCase()) // Search by user ID
     );
 
     // Pagination logic
@@ -475,7 +476,7 @@ const Users = () => {
                         setSearchQuery(e.target.value);
                         setCurrentPage(1); // Reset to first page when searching
                     }}
-                    placeholder="Search by name, username, phone, or email..."
+                    placeholder="Search by name, username, phone, email, or ID..."
                     className={styles.searchInput}
                 />
             </div>
@@ -598,7 +599,7 @@ const Users = () => {
                             <p><strong>Email:</strong> {selectedUser.email || 'N/A'}</p>
                             <p><strong>Username:</strong> {selectedUser.username || 'N/A'}</p>
                             <p><strong>Phone Number:</strong> {selectedUser.phoneNumber || 'N/A'}</p>
-                            <p><strong>Current Balance:</strong> ₹{selectedUser.balance || '0'}</p>
+                            <p><strong>Last Updated Balance:</strong> ₹{selectedUser.balance || '0'}</p>
                             
                             {/* Payment Details Section */}
                             <div className={styles.paymentDetailsSection}>

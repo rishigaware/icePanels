@@ -4,6 +4,24 @@ import { useUser } from '../../../../context/UserContext';
 import { Toast } from 'primereact/toast';
 import { PulseLoader } from 'react-spinners';
 import { FaCheck, FaTimes, FaEye, FaCoins, FaUser, FaGlobe, FaClock, FaRupeeSign } from 'react-icons/fa';
+import TopNavbar from '../Navbar/TopNavbar';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Chip,
+  IconButton,
+  Tooltip,
+  Avatar,
+  Typography,
+  Box,
+  Button
+} from '@mui/material';
+import { Visibility, Check, Close } from '@mui/icons-material';
 
 const IdRequests = () => {
   const { url } = useUser();
@@ -110,23 +128,24 @@ const IdRequests = () => {
     }
   };
 
-  const getStatusBadge = (status) => {
-    const statusStyles = {
-      'Pending': { className: styles.pendingBadge, text: 'Pending' },
-      'Accepted': { className: styles.acceptedBadge, text: 'Accepted' },
-      'Rejected': { className: styles.rejectedBadge, text: 'Rejected' }
-    };
-    
-    const statusStyle = statusStyles[status] || statusStyles['Pending'];
-    
+  const getStatusChip = (status) => {
+    let color = 'default';
+    if (status === 'Accepted') color = 'success';
+    if (status === 'Rejected') color = 'error';
+    if (status === 'Pending') color = 'warning';
+
     return (
-      <span className={`${styles.statusBadge} ${statusStyle.className}`}>
-        {statusStyle.text}
-      </span>
+      <Chip 
+        label={status} 
+        color={color} 
+        size="small" 
+        variant={status === 'Pending' ? 'outlined' : 'filled'}
+      />
     );
   };
 
   const formatDate = (dateString) => {
+    if (!dateString) return '-';
     return new Date(dateString).toLocaleString('en-IN', {
       year: 'numeric',
       month: 'short',
@@ -147,7 +166,8 @@ const IdRequests = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
+      <TopNavbar />
+      <div className={styles.header} style={{ marginTop: '20px', marginBottom: '20px' }}>
         <h1 className={styles.title}>ID Creation Requests</h1>
         <p className={styles.subtitle}>Manage user ID creation requests with coin conversion</p>
       </div>
@@ -159,139 +179,145 @@ const IdRequests = () => {
           <p>There are currently no ID creation requests to review.</p>
         </div>
       ) : (
-        <div className={styles.requestsGrid}>
-          {idRequests.map((request) => (
-            <div key={request.id} className={styles.requestCard}>
-              <div className={styles.cardHeader}>
-                <div className={styles.websiteInfo}>
-                  <img
-                    src={`${url}/${request.imgUrl}`}
-                    alt={request.websiteName}
-                    className={styles.websiteLogo}
-                  />
-                  <div className={styles.websiteDetails}>
-                    <h3 className={styles.websiteName}>{request.websiteName}</h3>
-                    <p className={styles.websiteUrl}>{request.websiteUrl}</p>
-                  </div>
-                </div>
-                {getStatusBadge(request.status)}
-              </div>
-
-              <div className={styles.cardBody}>
-                <div className={styles.userInfo}>
-                  <div className={styles.infoRow}>
-                    <FaUser className={styles.icon} />
-                    <span className={styles.label}>Username:</span>
-                    <span className={styles.value}>{request.username}</span>
-                  </div>
-                  <div className={styles.infoRow}>
-                    <FaUser className={styles.icon} />
-                    <span className={styles.label}>Created By:</span>
-                    <span className={styles.value}>{request.createdBy}</span>
-                  </div>
-                </div>
-
-                <div className={styles.coinInfo}>
-                  <div className={styles.infoRow}>
-                    <FaRupeeSign className={styles.icon} />
-                    <span className={styles.label}>Amount:</span>
-                    <span className={styles.value}>₹{request.coinAmount}</span>
-                  </div>
-                  <div className={styles.infoRow}>
-                    <FaCoins className={styles.icon} />
-                    <span className={styles.label}>Coins:</span>
-                    <span className={styles.value}>{request.convertedCoins}</span>
-                  </div>
-                  <div className={styles.infoRow}>
-                    <span className={styles.label}>Rate:</span>
-                    <span className={styles.value}>1₹ = {request.coinRate} coins</span>
-                  </div>
-                </div>
-
-                <div className={styles.additionalInfo}>
-                  <div className={styles.infoRow}>
-                    <span className={styles.label}>Account Type:</span>
-                    <span className={styles.value}>{request.accountType}</span>
-                  </div>
-                  <div className={styles.infoRow}>
-                    <span className={styles.label}>Currency:</span>
-                    <span className={styles.value}>{request.currency}</span>
-                  </div>
-                  <div className={styles.infoRow}>
-                    <span className={styles.label}>Refundable:</span>
-                    <span className={`${styles.value} ${request.refundable ? styles.refundableYes : styles.refundableNo}`}>
-                      {request.refundable ? 'Yes' : 'No'}
-                    </span>
-                  </div>
-                </div>
-
-                <div className={styles.dateInfo}>
-                  <div className={styles.infoRow}>
-                    <FaClock className={styles.icon} />
-                    <span className={styles.label}>Requested:</span>
-                    <span className={styles.value}>{formatDate(request.createdAt)}</span>
-                  </div>
-                  {request.processedAt && (
-                    <div className={styles.infoRow}>
-                      <FaClock className={styles.icon} />
-                      <span className={styles.label}>Processed:</span>
-                      <span className={styles.value}>{formatDate(request.processedAt)}</span>
-                    </div>
-                  )}
-                </div>
-
-                {request.adminNotes && (
-                  <div className={styles.adminNotes}>
-                    <span className={styles.label}>Admin Notes:</span>
-                    <p className={styles.notesText}>{request.adminNotes}</p>
-                  </div>
-                )}
-              </div>
-
-              <div className={styles.cardActions}>
-                <button
-                  onClick={() => handleViewDetails(request)}
-                  className={styles.viewButton}
+        <TableContainer 
+          component={Paper} 
+          elevation={3} 
+          sx={{ 
+            borderRadius: '12px', 
+            overflow: 'auto',
+            maxWidth: '100%',
+            // Enable horizontal scrolling on mobile
+            '&::-webkit-scrollbar': {
+              height: '8px',
+            },
+            '&::-webkit-scrollbar-track': {
+              backgroundColor: '#f1f1f1',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: '#888',
+              borderRadius: '4px',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              backgroundColor: '#555',
+            },
+          }}
+        >
+          <Table 
+            sx={{ 
+              minWidth: { xs: '100%', sm: 650 }, // Remove minWidth on mobile
+              width: '100%'
+            }} 
+            aria-label="id requests table"
+            stickyHeader // Make header sticky on scroll
+          >
+            <TableHead sx={{ backgroundColor: '#f8f9fa' }}>
+              <TableRow>
+                <TableCell sx={{ minWidth: { xs: '150px', sm: 'auto' } }}><strong>Website</strong></TableCell>
+                <TableCell sx={{ minWidth: { xs: '120px', sm: 'auto' } }}><strong>User Info</strong></TableCell>
+                <TableCell sx={{ minWidth: { xs: '120px', sm: 'auto' } }}><strong>Coins / Amount</strong></TableCell>
+                <TableCell sx={{ minWidth: { xs: '100px', sm: 'auto' } }}><strong>Status</strong></TableCell>
+                <TableCell sx={{ minWidth: { xs: '150px', sm: 'auto' } }}><strong>Date</strong></TableCell>
+                <TableCell align="center" sx={{ minWidth: { xs: '120px', sm: 'auto' } }}><strong>Actions</strong></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {idRequests.map((request) => (
+                <TableRow
+                  key={request.id}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { backgroundColor: '#f5f5f5' } }}
                 >
-                  <FaEye className={styles.buttonIcon} />
-                  View Details
-                </button>
-                {request.status === 'Pending' && (
-                  <div className={styles.actionButtons}>
-                    <button
-                      onClick={() => handleUpdateStatus(request.id, 'Accepted')}
-                      className={styles.acceptButton}
-                      disabled={actionLoading === request.id}
-                    >
-                      {actionLoading === request.id ? (
-                        <PulseLoader color="#ffffff" size={8} />
-                      ) : (
+                  <TableCell>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                       <Avatar 
+                          src={`${url}/${request.imgUrl}`} 
+                          alt={request.websiteName}
+                          variant="rounded"
+                          sx={{ width: 40, height: 40 }}
+                        />
+                        <Box>
+                          <Typography variant="body2" fontWeight="bold">{request.websiteName}</Typography>
+                          <Typography 
+                            variant="caption" 
+                            color="textSecondary" 
+                            component="div" 
+                            sx={{ 
+                              maxWidth: { xs: 150, sm: 200 }, 
+                              overflow: 'hidden', 
+                              textOverflow: 'ellipsis', 
+                              whiteSpace: 'nowrap' 
+                            }}
+                          >
+                            {request.websiteUrl}
+                          </Typography>
+                        </Box>
+                    </Box>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="body2"><strong>User:</strong> {request.username}</Typography>
+                    <Typography variant="caption" color="textSecondary">By: {request.createdBy}</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Box>
+                      <Typography variant="body2" color="success.main" fontWeight="bold">
+                         ₹{request.convertedCoins}
+                      </Typography>
+                      <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <FaCoins style={{ color: '#ffd700' }} /> {request.coinAmount} Coins
+                      </Typography>
+                    </Box>
+                  </TableCell>
+                  <TableCell>
+                    {getStatusChip(request.status)}
+                  </TableCell>
+                  <TableCell>
+                     <Typography variant="body2" sx={{ whiteSpace: 'nowrap' }}>{formatDate(request.createdAt)}</Typography>
+                     {request.processedAt && (
+                       <Typography variant="caption" color="textSecondary" sx={{ whiteSpace: 'nowrap' }}>Proc: {formatDate(request.processedAt)}</Typography>
+                     )}
+                  </TableCell>
+                  <TableCell align="center">
+                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, flexWrap: 'wrap' }}>
+                      <Tooltip title="View Details">
+                        <IconButton 
+                          color="primary" 
+                          size="small" 
+                          onClick={() => handleViewDetails(request)}
+                        >
+                          <Visibility />
+                        </IconButton>
+                      </Tooltip>
+                      
+                      {request.status === 'Pending' && (
                         <>
-                          <FaCheck className={styles.buttonIcon} />
-                          Accept
+                          <Tooltip title="Accept">
+                             <IconButton 
+                                color="success" 
+                                size="small"
+                                onClick={() => handleUpdateStatus(request.id, 'Accepted')}
+                                disabled={actionLoading === request.id}
+                              >
+                                {actionLoading === request.id ? <PulseLoader size={4} color="green" /> : <Check />}
+                              </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Reject">
+                              <IconButton 
+                                color="error" 
+                                size="small"
+                                onClick={() => handleUpdateStatus(request.id, 'Rejected')}
+                                disabled={actionLoading === request.id}
+                              >
+                                {actionLoading === request.id ? <PulseLoader size={4} color="red" /> : <Close />}
+                              </IconButton>
+                          </Tooltip>
                         </>
                       )}
-                    </button>
-                    <button
-                      onClick={() => handleUpdateStatus(request.id, 'Rejected')}
-                      className={styles.rejectButton}
-                      disabled={actionLoading === request.id}
-                    >
-                      {actionLoading === request.id ? (
-                        <PulseLoader color="#ffffff" size={8} />
-                      ) : (
-                        <>
-                          <FaTimes className={styles.buttonIcon} />
-                          Reject
-                        </>
-                      )}
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       )}
 
       {/* Modal for detailed view and actions */}
@@ -329,8 +355,8 @@ const IdRequests = () => {
 
               <div className={styles.detailSection}>
                 <h3>Coin Conversion Details</h3>
-                <p><strong>Amount:</strong> ₹{selectedRequest.coinAmount}</p>
-                <p><strong>Coins to Receive:</strong> {selectedRequest.convertedCoins}</p>
+                <p><strong>Amount:</strong> ₹{selectedRequest.convertedCoins}</p>
+                <p><strong>Coins to Receive:</strong> {selectedRequest.coinAmount}</p>
                 <p><strong>Coin Rate:</strong> 1₹ = {selectedRequest.coinRate} coins</p>
                 <p><strong>Minimum Required:</strong> {selectedRequest.minimumCoins} coins</p>
                 <p><strong>Refundable:</strong> {selectedRequest.refundable ? 'Yes' : 'No'}</p>

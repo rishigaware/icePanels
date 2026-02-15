@@ -260,21 +260,31 @@ const Transactions = () => {
               <div className={styles.column}><strong>User Id:</strong> {txn.createdBy}</div>
               <div className={styles.column}>
                 <strong>Description:</strong>
-                <span className={styles.highlightedDescription}>{txn.description}</span>
+                <span className={styles.highlightedDescription}>
+                  {txn.description}
+                  {txn.userDetails?.name && (txn.description === 'Payment For Deposite' || txn.transactionType === 'deposit') && (
+                    <span style={{ fontWeight: 'bold', marginLeft: '5px' }}>
+                      - [{txn.userDetails.name}]
+                    </span>
+                  )}
+                </span>
               </div>              
               <div className={styles.column}><strong>Payment Method:</strong> {txn.paymentMethod}</div>
               <div className={styles.column}><strong>Created At:</strong> {new Date(txn.createdAt).toLocaleString()}</div>
+              
               <div className={`${styles.column} ${styles.status} ${styles[txn.status] || styles.defaultStatus}`}>
                 <strong>Status:</strong> {txn.status}
               </div>
-              <div className={`${styles.column} ${styles.amountField}`}>
+
+              <div className={styles.column}>
                 <div className={styles.amountValue}>
                   <strong>Amount:</strong> ₹{txn.amount}
                 </div>
-                
-                {/* Action Buttons - Accept and Reject (Hidden for deposit/withdrawal transactions) */}
-                {!(txn.transactionType === 'deposit' || txn.transactionType === 'withdrawal' || 
-                   txn.description?.includes('Deposit Request') || txn.description?.includes('Withdrawal Request')) ? (
+              </div>
+
+              <div className={styles.column}>
+                {/* Action Buttons */}
+                {txn.status === 'Pending' && !(txn.transactionType === 'deposit' || txn.description?.includes('ID Creation Request') || txn.paymentMethod === 'ID Creation Request' || txn.transactionType === 'withdrawal' || txn.transactionType === 'close_id' || txn.transactionType === 'password_change') ? (
                   <div className={styles.actions}>
                     <button
                       className={styles.acceptButton}
@@ -290,11 +300,19 @@ const Transactions = () => {
                     </button>
                   </div>
                 ) : (
-                  <div className={styles.actions}>
-                    <span className={styles.autoProcessedNote}>
-                      Auto-processed via My IDs
-                    </span>
-                  </div>
+                  (txn.description?.includes('ID Creation Request') || txn.paymentMethod === 'ID Creation Request') ? (
+                    <div className={styles.actions}>
+                      <span className={styles.autoProcessedNote}>
+                        Auto-processed via My IDs
+                      </span>
+                    </div>
+                  ) : (
+                    <div className={styles.actions}>
+                      <span className={styles.processedText}>
+                        {txn.status === 'Pending' ? 'Pending Action' : `Processed (${txn.status})`}
+                      </span>
+                    </div>
+                  )
                 )}
               </div>
               <div className={styles.column}>

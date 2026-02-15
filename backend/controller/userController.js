@@ -600,10 +600,8 @@ exports.createIdRequest = async (req, res) => {
 
     await idRequest.save();
 
-    // Deduct the balance from the user's wallet
-    await User.findByIdAndUpdate(createdBy, {
-      $inc: { balance: -parseFloat(convertedCoins) }
-    });
+    // NOTE: Balance will be deducted when admin accepts the request
+    // Do NOT deduct balance here to prevent loss if request is rejected
 
     const transactionData = {
       description: `ID Creation Request - ${websiteName} (${username}) - ${parseFloat(coinAmount)} coins`,
@@ -611,7 +609,7 @@ exports.createIdRequest = async (req, res) => {
       paymentMethod: "ID Creation Request",
       createdAt: createdAt.toISOString(),
       acceptedAt: "Not updated",
-      status: "Success", // Transaction is successful as balance is deducted
+      status: "Pending", // Transaction is pending admin approval
       amount: parseFloat(convertedCoins), // Store the deducted amount (Rupees)
       createdBy: createdBy,
       idRequestId: idRequest._id.toString(),
@@ -623,7 +621,7 @@ exports.createIdRequest = async (req, res) => {
       refundable: Boolean(refundable),
       accountType: accountType || 'admin',
       currency: currency || 'INR',
-      transactionType: 'id_creation_deduction' // Mark as a deduction transaction
+      transactionType: 'id_creation_request' // Mark as a request transaction, deduction happens on approval
     };
 
     const transaction = new Transaction(transactionData);
@@ -730,41 +728,11 @@ exports.getIdTransactions = async (req, res) => {
       return dateB - dateA;
     });
 
-    // Enhanced filtering to find all transactions related to this ID
+    // Filter transactions that are ONLY related to this specific ID
+    // Use strict matching on idDocumentId to ensure we only show transactions for THIS ID
     const relatedTransactions = allTransactions.filter(transaction => {
-      const description = transaction.description || '';
-      const transactionWebsiteName = transaction.websiteName || '';
-      const transactionWebsiteUrl = transaction.websiteUrl || '';
-      const transactionUsername = transaction.username || '';
-
-      // Check multiple criteria for ID-related transactions
-      return (
-        // Direct ID matches
-        transaction.idDocumentId === id ||
-        transaction.websiteId === id ||
-
-        // Website name matches
-        (websiteName && transactionWebsiteName.toLowerCase().includes(websiteName.toLowerCase())) ||
-        (websiteName && description.toLowerCase().includes(websiteName.toLowerCase())) ||
-
-        // Website URL matches
-        (websiteUrl && transactionWebsiteUrl.toLowerCase().includes(websiteUrl.toLowerCase())) ||
-        (websiteUrl && description.toLowerCase().includes(websiteUrl.toLowerCase())) ||
-
-        // Username matches
-        (username && transactionUsername.toLowerCase().includes(username.toLowerCase())) ||
-        (username && description.toLowerCase().includes(username.toLowerCase())) ||
-
-        // Description contains ID or website info
-        description.toLowerCase().includes(id.toLowerCase()) ||
-
-        // Check for deposit/withdrawal transactions that might be related
-        (transaction.paymentMethod && (
-          transaction.paymentMethod.toLowerCase().includes('deposit') ||
-          transaction.paymentMethod.toLowerCase().includes('withdrawal') ||
-          transaction.paymentMethod.toLowerCase().includes('withdraw')
-        ))
-      );
+      // Only match transactions that have the exact idDocumentId
+      return transaction.idDocumentId === id;
     });
 
     // Add ID information to each transaction for better context

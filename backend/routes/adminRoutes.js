@@ -14,7 +14,7 @@ router.get('/get-balance/:adminId', adminController.getAdminBalance);
 
 router.post('/signup', adminController.addAdmin);    // Add a new admin
 router.patch('/update-transaction', adminController.updateTransaction); // Update transaction
-router.patch('/update-id', adminController.updateIdStatus); // Update website status to Accepted
+router.patch('/update-id-status', adminController.updateIdStatus); // Update website status to Accepted
 
 router.post('/update-accountdetails', adminController.updateAccountDetails);   // Add a new user (Signup)
 router.get('/get-accountdetails', adminController.getAccountDetails); // Add a new website record
@@ -54,7 +54,7 @@ router.patch('/reject-transaction/:txnId', adminController.rejectTransaction);
 router.patch('/update-user-balance/:id', adminController.updateUserBalance);
 
 
-router.delete('/delete-website/:id',adminController.deleteWebsite);
+router.delete('/delete-website/:id', adminController.deleteWebsite);
 router.delete('/delete-one/topcarousel', adminController.deleteOneTopCarousel);
 router.delete('/delete-one/middlecarousel', adminController.deleteOneMiddleCarousel);
 router.delete('/delete-one/bottomcarousel', adminController.deleteOneBottomCarousel);

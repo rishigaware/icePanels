@@ -180,7 +180,7 @@ export default function NewDepositPopup({ onClose, selectedId }) {
               <span className={styles.value}>{minimumCoins} coins</span>
             </div>
             <div className={styles.detailRow}>
-              <span className={styles.label}>Current Balance:</span>
+              <span className={styles.label}>Last Updated Balance:</span>
               <span className={styles.value}>{selectedId?.balance || 0} coins</span>
             </div>
           </div>

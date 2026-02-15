@@ -305,6 +305,28 @@ const handleReject = async (item) => {
         throw new Error(errorData.message || "Failed to update ID");
       }
 
+      // Update local state to reflect changes immediately
+      setSelectedId(prev => ({
+        ...prev,
+        username: editFormData.username.trim(),
+        password: editFormData.password.trim(),
+        comment: editFormData.comment.trim()
+      }));
+
+      // Update the main list as well without refetching if possible, but refetch is safer
+      setMyIds(prevIds => 
+        prevIds.map(id => 
+          id.id === selectedId.id 
+            ? { 
+                ...id, 
+                username: editFormData.username.trim(),
+                password: editFormData.password.trim(),
+                comment: editFormData.comment.trim() 
+              } 
+            : id
+        )
+      );
+
       toast.current.show({
         severity: "success",
         summary: "ID Updated",
@@ -327,8 +349,27 @@ const handleReject = async (item) => {
   };
 
   const formatDate = (timestamp) => {
-    const date = new Date(timestamp * 1000);
-    return date.toLocaleString();
+    if (!timestamp) return 'N/A';
+    
+    try {
+      // Handle Firestore Timestamp (has _seconds)
+      if (timestamp._seconds) {
+        return new Date(timestamp._seconds * 1000).toLocaleString();
+      }
+      
+      // Handle standard date string or number
+      const date = new Date(timestamp);
+      
+      // Check if date is valid
+      if (isNaN(date.getTime())) {
+        return 'Invalid Date';
+      }
+      
+      return date.toLocaleString();
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return 'Error Date';
+    }
   };
 
   const handlePasswordChange = async () => {
@@ -957,7 +998,7 @@ const handleReject = async (item) => {
                   <div className={styles.infoRow}>
                     <label>Created At:</label>
                     <span className={styles.infoValue}>
-                {formatDate(selectedId.createdAt._seconds)}
+                {formatDate(selectedId.createdAt)}
                     </span>
             </div>
 
