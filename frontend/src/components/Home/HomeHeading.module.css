@@ -328,7 +328,7 @@ body {
   font-weight: 600;
   color: white;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-  animation: slideText 15s linear infinite;
+  animation: slideText 60s linear infinite;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -661,7 +661,7 @@ body {
 
   .slidingText {
     font-size: 15px;
-    animation: slideText 13s linear infinite;
+    animation: slideText 60s linear infinite;
   }
 
   .createId {
@@ -2005,7 +2005,7 @@ body {
 
   .slidingText {
     font-size: 14px;
-    animation: slideText 12s linear infinite;
+    animation: slideText 60s linear infinite;
   }
 
   .createId {
@@ -2060,7 +2060,7 @@ body {
 
   .slidingText {
     font-size: 10px;
-    animation: slideText 7s linear infinite;
+    animation: slideText 60s linear infinite;
     line-height: 1.1;
     white-space: nowrap;
   }

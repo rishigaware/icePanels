@@ -5,7 +5,7 @@ import { BiMoneyWithdraw } from "react-icons/bi";
 import { useNavigate } from 'react-router-dom';
 import { FaCrown, FaGlobe, FaBolt, FaBullhorn, FaTools, FaHeadset, FaStar, FaClock, FaChartLine, FaWhatsapp, FaTelegramPlane, FaCreditCard, FaSimCard, FaAd, FaLaptop, FaBriefcase } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa";
-import { FaArrowRight } from "react-icons/fa";
+import { FaArrowRight, FaEdit, FaSave, FaTimes } from "react-icons/fa";
 // import logo from '../../assets/logo.png'
 import newlogo from '../../../../assets/SP.png'
 import LoginPopup from '../Login/LoginPopup';
@@ -19,6 +19,22 @@ const HomeHeading = () => {
     const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal visibility
     const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] = useState(false); // State to control withdrawal modal
     const { user,setUser } = useUser();
+    
+    // Sliding Text State
+    const [slidingText, setSlidingText] = useState("🚀 Welcome to The247Panel - Your Ultimate Gaming & Betting Platform! 🎮💰 • 🎯 Multiple Gaming Websites • 💎 Premium Features • 🔥 24/7 Support • ⚡ Instant Deposits & Withdrawals • 🏆 Best Odds Guaranteed • 🎲 Live Casino Games • 🎰 Slot Machines • 🃏 Card Games • 🏈 Sports Betting • 🎪 Live Events • 💰 Daily Bonuses • 🎁 Special Promotions • 🔐 Secure & Safe • 📱 Mobile Friendly • 🌟 VIP Membership • 🎊 Join Now & Win Big! 🎊");
+    const [isEditingText, setIsEditingText] = useState(false);
+    const [tempText, setTempText] = useState("");
+
+    const handleEditText = () => {
+        setTempText(slidingText);
+        setIsEditingText(true);
+    };
+
+    const handleSaveText = () => {
+        setSlidingText(tempText);
+        setIsEditingText(false);
+        // localStorage.setItem('slidingText', tempText); // Optional: Persist locally
+    };
 
     const closeModal = () => setIsModalOpen(false);
     const closeWithdrawalModal = () => setIsWithdrawalModalOpen(false);
@@ -112,7 +128,62 @@ const HomeHeading = () => {
             
             </div>
             </div>
- {/* Create Admin Panel Section */}
+                {/* Sliding Text Section */}
+            <div className={styles.slidingTextSection} style={{ position: 'relative' }}>
+              <div className={styles.slidingTextContainer}>
+                {isEditingText ? (
+                    <div style={{ width: '100%', padding: '0 50px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <input 
+                            type="text" 
+                            value={tempText} 
+                            onChange={(e) => setTempText(e.target.value)}
+                            style={{ 
+                                width: '100%', 
+                                padding: '5px 10px', 
+                                borderRadius: '5px', 
+                                border: 'none', 
+                                outline: 'none',
+                                color: '#333'
+                            }}
+                            autoFocus
+                        />
+                         <button onClick={handleSaveText} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}><FaSave size={20} /></button>
+                         <button onClick={() => setIsEditingText(false)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}><FaTimes size={20} /></button>
+                    </div>
+                ) : (
+                    <>
+                        <div className={styles.slidingText}>
+                          {slidingText}
+                        </div>
+                        <button 
+                            onClick={handleEditText}
+                            style={{
+                                position: 'absolute',
+                                right: '10px',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                background: 'rgba(0,0,0,0.5)',
+                                border: 'none',
+                                color: 'white',
+                                borderRadius: '50%',
+                                width: '30px',
+                                height: '30px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                zIndex: 10
+                            }}
+                        >
+                          <span style={{fontSize: '10px'}}>Edit</span>
+                            <FaEdit />
+                        </button>
+                    </>
+                )}
+              </div>
+            </div>
+
+         {/* Create Admin Panel Section */}
             <div className={styles.createId}>
               <div className={styles.leftSide}>
                 <span className={styles.createIdEmoji}>🚀</span>
@@ -258,37 +329,70 @@ const HomeHeading = () => {
             <div className={styles.stepItem}>
               <div className={styles.stepNumber}>1</div>
               <div className={styles.stepContent}>
-                <h3>Sign Up</h3>
-                <p>Create your account in seconds with just your mobile number</p>
+                <h3>Open Google</h3>
+                <p>Search "the best panel provider" using link <b>SAIPUNT.INFO</b></p>
+              </div>
+              <div className={styles.stepIcon}>🔍</div>
+            </div>
+            <div className={styles.stepArrow}>→</div>
+            
+            <div className={styles.stepItem}>
+              <div className={styles.stepNumber}>2</div>
+              <div className={styles.stepContent}>
+                <h3>Register</h3>
+                <p>Register yourself with your mobile number and Gmail</p>
               </div>
               <div className={styles.stepIcon}>📱</div>
             </div>
             <div className={styles.stepArrow}>→</div>
-            <div className={styles.stepItem}>
-              <div className={styles.stepNumber}>2</div>
-              <div className={styles.stepContent}>
-                <h3>Deposit</h3>
-                <p>Add money to your wallet using UPI, cards, or net banking</p>
-              </div>
-              <div className={styles.stepIcon}>💰</div>
-            </div>
-            <div className={styles.stepArrow}>→</div>
+
             <div className={styles.stepItem}>
               <div className={styles.stepNumber}>3</div>
               <div className={styles.stepContent}>
-                <h3>Buy Your Panel</h3>
-                <p>Access to all top websites</p>
+                <h3>Create Panel</h3>
+                <p>Click on Panels {'>'} Create self any Panel</p>
               </div>
-              <div className={styles.stepIcon}><FaBriefcase /></div>
+              <div className={styles.stepIcon}>💻</div>
             </div>
             <div className={styles.stepArrow}>→</div>
+
             <div className={styles.stepItem}>
               <div className={styles.stepNumber}>4</div>
               <div className={styles.stepContent}>
-                <h3>Refill & Withdrawal</h3>
-                <p>Any panel refill, anytime withdrawal</p>
+                <h3>Select Panel</h3>
+                <p>Select the panel that you want & Click on Create</p>
               </div>
-              <div className={styles.stepIcon}>🏦</div>
+              <div className={styles.stepIcon}>�</div>
+            </div>
+            <div className={styles.stepArrow}>→</div>
+
+            <div className={styles.stepItem}>
+              <div className={styles.stepNumber}>5</div>
+              <div className={styles.stepContent}>
+                <h3>Fill Details</h3>
+                <p>Fill required details then select coins and rate</p>
+              </div>
+              <div className={styles.stepIcon}>📝</div>
+            </div>
+            <div className={styles.stepArrow}>→</div>
+
+            <div className={styles.stepItem}>
+              <div className={styles.stepNumber}>6</div>
+              <div className={styles.stepContent}>
+                <h3>Buy Now</h3>
+                <p>Click on Buy now (You will get the Payment option)</p>
+              </div>
+              <div className={styles.stepIcon}>🛒</div>
+            </div>
+            <div className={styles.stepArrow}>→</div>
+
+            <div className={styles.stepItem}>
+              <div className={styles.stepNumber}>7</div>
+              <div className={styles.stepContent}>
+                <h3>Payment & Submit</h3>
+                <p>Make payment, Upload Screenshot and Click on Submit. You will get your Panel detail on SAIPUNT home page</p>
+              </div>
+              <div className={styles.stepIcon}>✅</div>
             </div>
           </div>
         </div>

@@ -103,13 +103,14 @@ const HomeHeading = () => {
         </div>
       </div>
         {/* Sliding Text Section */}
-        {/* <div className={styles.slidingTextSection}>
+        {/* Sliding Text Section */}
+        <div className={styles.slidingTextSection}>
           <div className={styles.slidingTextContainer}>
             <div className={styles.slidingText}>
               🚀 Welcome to The247Panel - Your Ultimate Gaming & Betting Platform! 🎮💰 • 🎯 Multiple Gaming Websites • 💎 Premium Features • 🔥 24/7 Support • ⚡ Instant Deposits & Withdrawals • 🏆 Best Odds Guaranteed • 🎲 Live Casino Games • 🎰 Slot Machines • 🃏 Card Games • 🏈 Sports Betting • 🎪 Live Events • 💰 Daily Bonuses • 🎁 Special Promotions • 🔐 Secure & Safe • 📱 Mobile Friendly • 🌟 VIP Membership • 🎊 Join Now & Win Big! 🎊
             </div>
           </div>
-        </div> */}
+        </div>
         {/* Create Admin Panel Section */}
         <div 
             className={styles.createId} 
@@ -258,37 +259,70 @@ const HomeHeading = () => {
             <div className={styles.stepItem}>
               <div className={styles.stepNumber}>1</div>
               <div className={styles.stepContent}>
-                <h3>Sign Up</h3>
-                <p>Create your account in seconds with just your mobile number</p>
+                <h3>Open Google</h3>
+                <p>Search "the best panel provider" using link <b>SAIPUNT.INFO</b></p>
+              </div>
+              <div className={styles.stepIcon}>🔍</div>
+            </div>
+            <div className={styles.stepArrow}>→</div>
+            
+            <div className={styles.stepItem}>
+              <div className={styles.stepNumber}>2</div>
+              <div className={styles.stepContent}>
+                <h3>Register</h3>
+                <p>Register yourself with your mobile number and Gmail</p>
               </div>
               <div className={styles.stepIcon}>📱</div>
             </div>
             <div className={styles.stepArrow}>→</div>
-            <div className={styles.stepItem}>
-              <div className={styles.stepNumber}>2</div>
-              <div className={styles.stepContent}>
-                <h3>Deposit</h3>
-                <p>Add money to your wallet using UPI, cards, or net banking</p>
-              </div>
-              <div className={styles.stepIcon}>💰</div>
-            </div>
-            <div className={styles.stepArrow}>→</div>
+
             <div className={styles.stepItem}>
               <div className={styles.stepNumber}>3</div>
               <div className={styles.stepContent}>
-                <h3>Buy Your Panel</h3>
-                <p>Access to all top websites</p>
+                <h3>Create Panel</h3>
+                <p>Click on Panels {'>'} Create self any Panel</p>
               </div>
-              <div className={styles.stepIcon}><FaBriefcase /></div>
+              <div className={styles.stepIcon}>💻</div>
             </div>
             <div className={styles.stepArrow}>→</div>
+
             <div className={styles.stepItem}>
               <div className={styles.stepNumber}>4</div>
               <div className={styles.stepContent}>
-                <h3>Refill & Withdrawal</h3>
-                <p>Any panel refill, anytime withdrawal</p>
+                <h3>Select Panel</h3>
+                <p>Select the panel that you want & Click on Create</p>
               </div>
-              <div className={styles.stepIcon}>🏦</div>
+              <div className={styles.stepIcon}>👆</div>
+            </div>
+            <div className={styles.stepArrow}>→</div>
+
+            <div className={styles.stepItem}>
+              <div className={styles.stepNumber}>5</div>
+              <div className={styles.stepContent}>
+                <h3>Fill Details</h3>
+                <p>Fill required details then select coins and rate</p>
+              </div>
+              <div className={styles.stepIcon}>📝</div>
+            </div>
+            <div className={styles.stepArrow}>→</div>
+
+            <div className={styles.stepItem}>
+              <div className={styles.stepNumber}>6</div>
+              <div className={styles.stepContent}>
+                <h3>Buy Now</h3>
+                <p>Click on Buy now (You will get the Payment option)</p>
+              </div>
+              <div className={styles.stepIcon}>🛒</div>
+            </div>
+            <div className={styles.stepArrow}>→</div>
+
+            <div className={styles.stepItem}>
+              <div className={styles.stepNumber}>7</div>
+              <div className={styles.stepContent}>
+                <h3>Payment & Submit</h3>
+                <p>Make payment, Upload Screenshot and Click on Submit. You will get your Panel detail on SAIPUNT home page</p>
+              </div>
+              <div className={styles.stepIcon}>✅</div>
             </div>
           </div>
         </div>

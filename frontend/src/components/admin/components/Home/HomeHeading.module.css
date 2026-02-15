@@ -17,22 +17,22 @@ body {
 }
 
 .navbar {
-    height: 60px;
-    overflow: hidden;
-    width: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1001;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    animation: slideInDown 0.8s ease-out;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
+  height: 60px;
+  overflow: hidden;
+  width: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1001;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  animation: slideInDown 0.8s ease-out;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
 }
 
 @keyframes slideInDown {
@@ -40,112 +40,121 @@ body {
     transform: translateY(-100%);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
   }
-  }
-  
-  .top {
-    height: 20vh;
-    width: 100vw;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    animation: slideInDown 0.8s ease-out 0.2s both;
-    overflow: hidden;
-    margin-top: 60px; /* Account for fixed navbar */
-  }
+}
 
-  .top::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-      radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-    pointer-events: none;
-  }
-  
-  .topSquare {
-    width: 80%;
-    height: 60%;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    animation: fadeInUp 1s ease-out 0.4s both;
-    position: relative;
-    z-index: 1;
-  }
-  .first {
-    height: 100px;
-    width: 70px;
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    flex-direction: column;
-    text-align: center;
-    padding-top: 5px;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    animation: slideInLeft 0.8s ease-out 0.6s both;
-  }
+.top {
+  height: 20vh;
+  width: 100vw;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  animation: slideInDown 0.8s ease-out 0.2s both;
+  overflow: hidden;
+  margin-top: 60px;
+  /* Account for fixed navbar */
+}
 
-  .first::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: left 0.5s ease;
-  }
+.top::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
 
-  .first:hover::before {
-    left: 100%;
-  }
+.topSquare {
+  width: 80%;
+  height: 60%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  animation: fadeInUp 1s ease-out 0.4s both;
+  position: relative;
+  z-index: 1;
+}
 
-  .first:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-  }
-  
-  .deposit {
-    color: #fff; /* Ensure h3 color is white */
-    margin: 0; /* Remove default margins for better alignment */
-    font-size: 10px; /* Adjust font size if needed */
-  }
-  
-  .first svg {
-    font-size: 45px; /* Stretch the logo */
-    color: #fff; /* Ensure the logo matches the text color */
-    margin-top: auto; /* Push the icon below the h3 */
-  }
-  
-  /* .second {
+.first {
+  height: 100px;
+  width: 70px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  flex-direction: column;
+  text-align: center;
+  padding-top: 5px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  animation: slideInLeft 0.8s ease-out 0.6s both;
+}
+
+.first::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.first:hover::before {
+  left: 100%;
+}
+
+.first:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.deposit {
+  color: #fff;
+  /* Ensure h3 color is white */
+  margin: 0;
+  /* Remove default margins for better alignment */
+  font-size: 10px;
+  /* Adjust font size if needed */
+}
+
+.first svg {
+  font-size: 45px;
+  /* Stretch the logo */
+  color: #fff;
+  /* Ensure the logo matches the text color */
+  margin-top: auto;
+  /* Push the icon below the h3 */
+}
+
+/* .second {
     height: 150px;
     width: 150px;
     border-radius: 10px;
@@ -155,350 +164,375 @@ body {
     align-items: center;
     justify-content: center;
   } */
-  
-  .second {
-    height: 150px;
-    width: 150px;
-    border-radius: 15px;
-    background: linear-gradient(135deg, #131313 0%, #2a2a2a 100%);
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 10px;
-    position: relative;
-    z-index: 999;
-    overflow: visible;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    animation: pulse 2s ease-in-out infinite 0.8s;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+
+.second {
+  height: 150px;
+  width: 150px;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #131313 0%, #2a2a2a 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px;
+  position: relative;
+  z-index: 999;
+  overflow: visible;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  animation: pulse 2s ease-in-out infinite 0.8s;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.second:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.second::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
+  border-radius: 17px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.second:hover::before {
+  opacity: 1;
+}
+
+.logo {
+  position: relative;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+}
+
+
+
+.balance {
+  color: #8ed9ff;
+  margin: 0;
+  font-size: 8px;
+  /* Adjust size */
+}
+
+.balanceIcon {
+  font-size: 5px;
+  color: #1fee49;
+}
+
+.balanceAmount {
+  margin-top: 0;
+  font-size: 12px;
+  color: #fff;
+}
+
+
+
+.third {
+  height: 100px;
+  width: 70px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  color: #5abaff;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  flex-direction: column;
+  text-align: center;
+  padding-top: 5px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  animation: slideInRight 0.8s ease-out 0.6s both;
+}
+
+.third::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: right 0.5s ease;
+}
+
+.third:hover::before {
+  right: 100%;
+}
+
+.third:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.withdraw {
+  color: #fff;
+  /* Ensure h3 color is white */
+  margin: 0;
+  /* Remove default margins for better alignment */
+  font-size: 10px;
+  /* Adjust font size if needed */
+}
+
+.third svg {
+  font-size: 40px;
+  /* Stretch the logo */
+  color: #fff;
+  /* Ensure the logo matches the text color */
+  margin-top: 0;
+  /* Push the icon below the h3 */
+}
+
+/* Sliding Text Section */
+.slidingTextSection {
+  width: 97vw;
+  height: 40px;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 50%, #ff6b6b 100%);
+  border-radius: 20px;
+  position: static;
+  margin: 20px auto;
+  box-shadow: 0 8px 32px rgba(255, 107, 107, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: slideInUp 1s ease-out 0.8s both;
+  overflow: hidden;
+}
+
+.slidingTextContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.slidingText {
+  white-space: nowrap;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  animation: slideText 60s linear infinite;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@keyframes slideText {
+  0% {
+    transform: translateX(100%);
   }
 
-  .second:hover {
-    transform: scale(1.05);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Create Admin Panel Section */
+.createId {
+  width: 90%;
+  max-width: 1000px;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  border-radius: 30px;
+  position: relative;
+  margin: 20px auto 30px auto;
+  z-index: 999;
+  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  animation: slideInUp 1s ease-out 1.2s both;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.createId:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(102, 126, 234, 0.6);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.createId::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.createId:hover::before {
+  left: 100%;
+}
+
+.leftSide {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rightSide {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.createIdIcon {
+  color: white;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.createIdEmoji {
+  font-size: 20px;
+  animation: bounce 2s ease-in-out infinite;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.createId:hover .createIdEmoji {
+  transform: scale(1.2);
+}
+
+.createId:hover .createIdIcon {
+  transform: scale(1.1);
+}
+
+.createIdText {
+  font-size: 18px;
+  color: white;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+}
+
+.createId:hover .createIdText {
+  transform: scale(1.05);
+}
+
+@keyframes bounce {
+
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
   }
 
-  .second::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
-    border-radius: 17px;
-    z-index: -1;
+  40% {
+    transform: translateY(-3px);
+  }
+
+  60% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes slideInUp {
+  from {
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transform: translateY(30px);
   }
 
-  .second:hover::before {
+  to {
     opacity: 1;
+    transform: translateY(0);
   }
-  
-  .logo {
-    position: relative;
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: auto;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
   }
 
-  
-  
-  .balance {
-    color: #8ed9ff;
-    margin: 0;
-    font-size: 8px; /* Adjust size */
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
-  
-  .balanceIcon {
-    font-size: 5px;
-    color: #1fee49;
-  }
-  
-  .balanceAmount {
-    margin-top: 0;
-    font-size: 12px;
-    color: #fff;
-  }
-  
-  
-  
-  .third {
-    height: 100px;
-    width: 70px;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-    color: #5abaff;
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    flex-direction: column;
-    text-align: center;
-    padding-top: 5px;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    animation: slideInRight 0.8s ease-out 0.6s both;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
   }
 
-  .third::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: right 0.5s ease;
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
 
-  .third:hover::before {
-    right: 100%;
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
   }
 
-  .third:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-  }
-  
-  .withdraw {
-    color: #fff; /* Ensure h3 color is white */
-    margin: 0; /* Remove default margins for better alignment */
-    font-size: 10px; /* Adjust font size if needed */
-  }
-  
-  .third svg {
-    font-size: 40px; /* Stretch the logo */
-    color: #fff; /* Ensure the logo matches the text color */
-    margin-top: 0; /* Push the icon below the h3 */
-  }
-  
-  /* Sliding Text Section */
-  .slidingTextSection {
-    width: 97vw;
-    height: 40px;
-    background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 50%, #ff6b6b 100%);
-    border-radius: 20px;
-    position: static;
-    margin: 20px auto;
-    box-shadow: 0 8px 32px rgba(255, 107, 107, 0.3);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    animation: slideInUp 1s ease-out 0.8s both;
-    overflow: hidden;
-  }
-
-  .slidingTextContainer {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .slidingText {
-    white-space: nowrap;
-    font-size: 16px;
-    font-weight: 600;
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    animation: slideText 15s linear infinite;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  @keyframes slideText {
-    0% {
-      transform: translateX(100%);
-    }
-    100% {
-      transform: translateX(-100%);
-    }
-  }
-
-  /* Create Admin Panel Section */
-  .createId {
-    width: 90%;
-    max-width: 1000px;
-    height: 60px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 30px;
-    border-radius: 30px;
-    position: relative;
-    margin: 20px auto 30px auto;
-    z-index: 999;
-    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
-    backdrop-filter: blur(15px);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    animation: slideInUp 1s ease-out 1.2s both;
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
-  }
-
-  .createId:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 20px 50px rgba(102, 126, 234, 0.6);
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-    border-color: rgba(255, 255, 255, 0.3);
-  }
-
-  .createId::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: left 0.5s ease;
-  }
-
-  .createId:hover::before {
-    left: 100%;
-  }
-  
-  .leftSide {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .rightSide {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .createIdIcon {
-    color: white;
-    transition: all 0.3s ease;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-  }
-
-  .createIdEmoji {
-    font-size: 20px;
-    animation: bounce 2s ease-in-out infinite;
-    transition: all 0.3s ease;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-  }
-
-  .createId:hover .createIdEmoji {
-    transform: scale(1.2);
-  }
-
-  .createId:hover .createIdIcon {
-    transform: scale(1.1);
-  }
-  
-  .createIdText {
-    font-size: 18px;
-    color: white;
-    font-weight: 700;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
-    transition: all 0.3s ease;
-    letter-spacing: 0.5px;
-  }
-
-  .createId:hover .createIdText {
+  50% {
     transform: scale(1.05);
   }
+}
 
-  @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
-      transform: translateY(0);
-    }
-    40% {
-      transform: translateY(-3px);
-    }
-    60% {
-      transform: translateY(-2px);
-    }
-  }
+.createIdArrow {
+  color: white;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
 
-  @keyframes slideInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+.arrow {
+  color: #fff;
+  /* Ensures the right arrow is white */
+  transition: transform 0.3s ease;
+  /* Adds smooth transition on hover */
+}
 
-  @keyframes slideInLeft {
-    from {
-      opacity: 0;
-      transform: translateX(-50px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
+.arrow:hover {
+  transform: translateX(5px);
+  /* Moves the arrow slightly to the right on hover */
+}
 
-  @keyframes slideInRight {
-    from {
-      opacity: 0;
-      transform: translateX(50px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes pulse {
-    0%, 100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.05);
-    }
-  }
-  
-  .createIdArrow {
-    color: white;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-  }
-  
-  .arrow {
-    color: #fff; /* Ensures the right arrow is white */
-    transition: transform 0.3s ease; /* Adds smooth transition on hover */
-  }
-  
-  .arrow:hover {
-    transform: translateX(5px); /* Moves the arrow slightly to the right on hover */
-  }
-  
-  /* .buttonlogin {
+/* .buttonlogin {
     right: 0;
     background-color: #ccdffa;
     color: #1e3d9c;
@@ -534,15 +568,19 @@ body {
   } */
 
 .balanceContainer {
-  display: flex;               /* Use flexbox to align items horizontally */
-  align-items: center;         /* Vertically center the items */
-  gap: 5px;                    /* Optional: Add some space between the icon and the text */
+  display: flex;
+  /* Use flexbox to align items horizontally */
+  align-items: center;
+  /* Vertically center the items */
+  gap: 5px;
+  /* Optional: Add some space between the icon and the text */
   color: #1fee49;
   font-size: 2px;
 }
 
 .balanceAmount {
-  margin: 0;                   /* Remove any default margins */
+  margin: 0;
+  /* Remove any default margins */
   font-size: 15px;
   color: #e4f6ff;
 }
@@ -623,7 +661,7 @@ body {
 
   .slidingText {
     font-size: 15px;
-    animation: slideText 13s linear infinite;
+    animation: slideText 60s linear infinite;
   }
 
   .createId {
@@ -661,12 +699,16 @@ body {
     border-radius: 15px;
   }
 
-  .first, .second, .third {
+  .first,
+  .second,
+  .third {
     height: 90px;
     font-size: 12px;
   }
 
-  .deposit, .withdraw, .balance {
+  .deposit,
+  .withdraw,
+  .balance {
     font-size: 12px;
   }
 
@@ -687,7 +729,7 @@ body {
 
   .slidingText {
     font-size: 14px;
-    animation: slideText 12s linear infinite;
+    animation: slideText 60s linear infinite;
   }
 
   .createId {
@@ -712,7 +754,7 @@ body {
     font-size: 12px;
     border-radius: 20px;
   }
-  
+
   .balanceContainer {
     font-size: 1.5rem;
   }
@@ -721,7 +763,9 @@ body {
     font-size: 14px;
   }
 
-  .first, .second, .third {
+  .first,
+  .second,
+  .third {
     height: auto;
     width: auto;
   }
@@ -745,12 +789,16 @@ body {
     border-radius: 12px;
   }
 
-  .first, .second, .third {
+  .first,
+  .second,
+  .third {
     height: 85px;
     font-size: 11px;
   }
 
-  .deposit, .withdraw, .balance {
+  .deposit,
+  .withdraw,
+  .balance {
     font-size: 11px;
   }
 
@@ -772,7 +820,7 @@ body {
 
   .slidingText {
     font-size: 11px;
-    animation: slideText 8s linear infinite;
+    animation: slideText 60s linear infinite;
     line-height: 1.2;
     white-space: nowrap;
   }
@@ -829,7 +877,7 @@ body {
 
   .slidingText {
     font-size: 10px;
-    animation: slideText 7s linear infinite;
+    animation: slideText 60s linear infinite;
     line-height: 1.1;
     white-space: nowrap;
   }
@@ -869,7 +917,9 @@ body {
     border-radius: 12px;
   }
 
-  .first, .second, .third {
+  .first,
+  .second,
+  .third {
     height: 75px;
     font-size: 10px;
   }
@@ -882,7 +932,9 @@ body {
     font-size: 11px;
   }
 
-  .deposit, .withdraw, .balance {
+  .deposit,
+  .withdraw,
+  .balance {
     font-size: 10px;
   }
 }
@@ -1046,6 +1098,7 @@ body {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1053,12 +1106,19 @@ body {
 }
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
+
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
     transform: translateY(0);
   }
+
   40% {
     transform: translateY(-10px);
   }
+
   60% {
     transform: translateY(-5px);
   }
@@ -1068,9 +1128,11 @@ body {
   0% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.1);
   }
+
   100% {
     transform: scale(1);
   }
@@ -1081,6 +1143,7 @@ body {
     opacity: 0;
     transform: scale(0.5);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -1088,18 +1151,46 @@ body {
 }
 
 /* Staggered animation delays for feature cards */
-.featureCard:nth-child(1) { animation-delay: 0.1s; }
-.featureCard:nth-child(2) { animation-delay: 0.2s; }
-.featureCard:nth-child(3) { animation-delay: 0.3s; }
-.featureCard:nth-child(4) { animation-delay: 0.4s; }
-.featureCard:nth-child(5) { animation-delay: 0.5s; }
-.featureCard:nth-child(6) { animation-delay: 0.6s; }
+.featureCard:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.featureCard:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.featureCard:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.featureCard:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.featureCard:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+.featureCard:nth-child(6) {
+  animation-delay: 0.6s;
+}
 
 /* Staggered animation delays for stat items */
-.statItem:nth-child(1) { animation-delay: 0.1s; }
-.statItem:nth-child(2) { animation-delay: 0.2s; }
-.statItem:nth-child(3) { animation-delay: 0.3s; }
-.statItem:nth-child(4) { animation-delay: 0.4s; }
+.statItem:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.statItem:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.statItem:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.statItem:nth-child(4) {
+  animation-delay: 0.4s;
+}
 
 /* Enhanced Mobile Responsiveness */
 
@@ -1109,21 +1200,21 @@ body {
     margin: 25px 0;
     padding: 0 15px;
   }
-  
+
   .featuresGrid {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 18px;
   }
-  
+
   .featureCard {
     padding: 22px 18px;
   }
-  
+
   .statsSection {
     margin: 35px 0;
     padding: 0 15px;
   }
-  
+
   .statsContainer {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 20px;
@@ -1136,116 +1227,116 @@ body {
     margin: 20px 0;
     padding: 0 12px;
   }
-  
+
   .featuresGrid {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 15px;
   }
-  
+
   .featureCard {
     padding: 20px 15px;
   }
-  
+
   .featureIcon {
     font-size: 2rem;
   }
-  
+
   .featureCard h4 {
     font-size: 1rem;
   }
-  
+
   .featureCard p {
     font-size: 0.8rem;
   }
-  
+
   .statsSection {
     margin: 30px 0;
     padding: 0 12px;
   }
-  
+
   .statsContainer {
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
   }
-  
+
   .statItem {
     padding: 20px 15px;
   }
-  
+
   .statIcon {
     font-size: 1.5rem;
   }
-  
+
   .statNumber {
     font-size: 2rem;
   }
-  
+
   .statLabel {
     font-size: 0.8rem;
   }
-  
+
   .gamingPlatformsSection {
     margin: 40px 0;
     padding: 0 15px;
   }
-  
+
   .platformsGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
   }
-  
+
   .platformCard {
     padding: 20px 15px;
     border-radius: 12px;
   }
-  
+
   .platformIcon {
     font-size: 2.2rem;
     margin-bottom: 8px;
   }
-  
+
   .platformCard h3 {
     font-size: 1.1rem;
     margin-bottom: 6px;
   }
-  
+
   .platformCard p {
     font-size: 0.85rem;
     margin-bottom: 10px;
   }
-  
+
   .testimonialsSection {
     margin: 40px 0;
     padding: 0 15px;
   }
-  
+
   .testimonialsContainer {
     grid-template-columns: 1fr;
     gap: 20px;
   }
-  
+
   .testimonialCard {
     padding: 20px 15px;
     border-radius: 12px;
   }
-  
+
   .howItWorksSection {
     margin: 40px 0;
     padding: 0 15px;
   }
-  
+
   .stepsContainer {
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .stepItem {
     width: 100%;
     min-width: unset;
     padding: 20px 15px;
     border-radius: 12px;
   }
-  
+
   .stepArrow {
     display: none;
   }
@@ -1257,122 +1348,122 @@ body {
     margin: 18px 0;
     padding: 0 10px;
   }
-  
+
   .featuresGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
-  
+
   .featureCard {
     padding: 18px 12px;
   }
-  
+
   .featureIcon {
     font-size: 1.8rem;
     margin-bottom: 12px;
   }
-  
+
   .featureCard h4 {
     font-size: 0.9rem;
     margin-bottom: 8px;
   }
-  
+
   .featureCard p {
     font-size: 0.75rem;
     line-height: 1.3;
   }
-  
+
   .statsSection {
     margin: 25px 0;
     padding: 0 10px;
   }
-  
+
   .statsContainer {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
-  
+
   .statItem {
     padding: 18px 12px;
   }
-  
+
   .statIcon {
     font-size: 1.4rem;
     margin-bottom: 12px;
   }
-  
+
   .statNumber {
     font-size: 1.8rem;
     margin-bottom: 6px;
   }
-  
+
   .statLabel {
     font-size: 0.75rem;
     letter-spacing: 0.5px;
   }
-  
+
   .gamingPlatformsSection {
     margin: 35px 0;
     padding: 0 12px;
   }
-  
+
   .platformsGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
-  
+
   .platformCard {
     padding: 18px 12px;
     border-radius: 10px;
   }
-  
+
   .platformIcon {
     font-size: 2rem;
     margin-bottom: 6px;
   }
-  
+
   .platformCard h3 {
     font-size: 1rem;
     margin-bottom: 5px;
   }
-  
+
   .platformCard p {
     font-size: 0.8rem;
     margin-bottom: 8px;
   }
-  
+
   .testimonialsSection {
     margin: 35px 0;
     padding: 0 12px;
   }
-  
+
   .testimonialsContainer {
     grid-template-columns: 1fr;
     gap: 15px;
   }
-  
+
   .testimonialCard {
     padding: 18px 12px;
     border-radius: 10px;
   }
-  
+
   .howItWorksSection {
     margin: 35px 0;
     padding: 0 12px;
   }
-  
+
   .stepsContainer {
     flex-direction: column;
     gap: 12px;
   }
-  
+
   .stepItem {
     width: 100%;
     min-width: unset;
     padding: 18px 12px;
     border-radius: 10px;
   }
-  
+
   .stepArrow {
     display: none;
   }
@@ -1384,55 +1475,55 @@ body {
     margin: 15px 0;
     padding: 0 8px;
   }
-  
+
   .featuresGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
-  
+
   .featureCard {
     padding: 15px 10px;
   }
-  
+
   .featureIcon {
     font-size: 1.6rem;
     margin-bottom: 10px;
   }
-  
+
   .featureCard h4 {
     font-size: 0.85rem;
     margin-bottom: 6px;
   }
-  
+
   .featureCard p {
     font-size: 0.7rem;
     line-height: 1.2;
   }
-  
+
   .statsSection {
     margin: 20px 0;
     padding: 0 8px;
   }
-  
+
   .statsContainer {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
-  
+
   .statItem {
     padding: 15px 10px;
   }
-  
+
   .statIcon {
     font-size: 1.2rem;
     margin-bottom: 10px;
   }
-  
+
   .statNumber {
     font-size: 1.6rem;
     margin-bottom: 5px;
   }
-  
+
   .statLabel {
     font-size: 0.7rem;
     letter-spacing: 0.3px;
@@ -1445,55 +1536,55 @@ body {
     margin: 12px 0;
     padding: 0 6px;
   }
-  
+
   .featuresGrid {
     grid-template-columns: 1fr;
     gap: 8px;
   }
-  
+
   .featureCard {
     padding: 12px 8px;
   }
-  
+
   .featureIcon {
     font-size: 1.4rem;
     margin-bottom: 8px;
   }
-  
+
   .featureCard h4 {
     font-size: 0.8rem;
     margin-bottom: 5px;
   }
-  
+
   .featureCard p {
     font-size: 0.65rem;
     line-height: 1.1;
   }
-  
+
   .statsSection {
     margin: 18px 0;
     padding: 0 6px;
   }
-  
+
   .statsContainer {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
-  
+
   .statItem {
     padding: 12px 8px;
   }
-  
+
   .statIcon {
     font-size: 1rem;
     margin-bottom: 8px;
   }
-  
+
   .statNumber {
     font-size: 1.4rem;
     margin-bottom: 4px;
   }
-  
+
   .statLabel {
     font-size: 0.65rem;
     letter-spacing: 0.2px;
@@ -1506,55 +1597,55 @@ body {
     margin: 10px 0;
     padding: 0 4px;
   }
-  
+
   .featuresGrid {
     grid-template-columns: 1fr;
     gap: 6px;
   }
-  
+
   .featureCard {
     padding: 10px 6px;
   }
-  
+
   .featureIcon {
     font-size: 1.2rem;
     margin-bottom: 6px;
   }
-  
+
   .featureCard h4 {
     font-size: 0.75rem;
     margin-bottom: 4px;
   }
-  
+
   .featureCard p {
     font-size: 0.6rem;
     line-height: 1;
   }
-  
+
   .statsSection {
     margin: 15px 0;
     padding: 0 4px;
   }
-  
+
   .statsContainer {
     grid-template-columns: 1fr;
     gap: 6px;
   }
-  
+
   .statItem {
     padding: 10px 6px;
   }
-  
+
   .statIcon {
     font-size: 0.9rem;
     margin-bottom: 6px;
   }
-  
+
   .statNumber {
     font-size: 1.2rem;
     margin-bottom: 3px;
   }
-  
+
   .statLabel {
     font-size: 0.6rem;
     letter-spacing: 0.1px;
@@ -1563,37 +1654,41 @@ body {
 
 /* Mobile Touch Optimizations */
 @media (max-width: 768px) {
+
   .featureCard,
   .statItem {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
   }
-  
+
   .featureCard:hover,
   .statItem:hover {
     transform: none;
   }
-  
+
   .featureCard:active,
   .statItem:active {
     transform: scale(0.98);
   }
-  
+
   .createId {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
   }
-  
+
   .createId:active {
     transform: scale(0.98);
   }
-  
-  .first, .second, .third {
+
+  .first,
+  .second,
+  .third {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
   }
-  
-  .first:active, .third:active {
+
+  .first:active,
+  .third:active {
     transform: scale(0.95);
   }
 }
@@ -1603,16 +1698,16 @@ body {
   .featuresSection {
     margin: 15px 0;
   }
-  
+
   .statsSection {
     margin: 20px 0;
   }
-  
+
   .featuresGrid {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
   }
-  
+
   .statsContainer {
     grid-template-columns: repeat(4, 1fr);
     gap: 8px;
@@ -1978,6 +2073,7 @@ body {
   0% {
     transform: translateX(-100%);
   }
+
   100% {
     transform: translateX(100%);
   }
@@ -1991,21 +2087,21 @@ body {
     font-size: 2.2rem;
     margin-bottom: 35px;
   }
-  
+
   .platformsGrid {
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 22px;
   }
-  
+
   .testimonialsContainer {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 25px;
   }
-  
+
   .stepsContainer {
     gap: 18px;
   }
-  
+
   .stepItem {
     min-width: 180px;
   }
@@ -2017,61 +2113,61 @@ body {
     font-size: 2rem;
     margin-bottom: 30px;
   }
-  
+
   .platformsGrid {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
   }
-  
+
   .platformCard {
     padding: 25px 20px;
   }
-  
+
   .platformIcon {
     font-size: 2.5rem;
   }
-  
+
   .platformCard h3 {
     font-size: 1.2rem;
   }
-  
+
   .testimonialsContainer {
     grid-template-columns: 1fr;
     gap: 20px;
   }
-  
+
   .testimonialCard {
     padding: 25px;
   }
-  
+
   .stepsContainer {
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .stepItem {
     min-width: auto;
     width: 100%;
   }
-  
+
   .stepArrow {
     transform: rotate(90deg);
   }
-  
+
   .bannerContent {
     flex-direction: column;
     text-align: center;
     padding: 30px 20px;
   }
-  
+
   .bannerLeft h2 {
     font-size: 2rem;
   }
-  
+
   .bannerLeft p {
     font-size: 1rem;
   }
-  
+
   .bannerIcon {
     font-size: 3rem;
     margin-top: 20px;
@@ -2084,12 +2180,12 @@ body {
     font-size: 1.8rem;
     margin-bottom: 25px;
   }
-  
+
   .sectionTitle::after {
     width: 60px;
     height: 3px;
   }
-  
+
   .gamingPlatformsSection,
   .testimonialsSection,
   .howItWorksSection,
@@ -2097,118 +2193,118 @@ body {
     margin: 40px 0;
     padding: 0 15px;
   }
-  
+
   .platformsGrid {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 15px;
   }
-  
+
   .platformCard {
     padding: 20px 15px;
   }
-  
+
   .platformIcon {
     font-size: 2.2rem;
     margin-bottom: 15px;
   }
-  
+
   .platformCard h3 {
     font-size: 1.1rem;
     margin-bottom: 8px;
   }
-  
+
   .platformCard p {
     font-size: 0.9rem;
     margin-bottom: 12px;
   }
-  
+
   .platformBadge {
     top: 12px;
     right: 12px;
     padding: 4px 10px;
     font-size: 0.7rem;
   }
-  
+
   .testimonialsSection {
     padding: 40px 15px;
   }
-  
+
   .testimonialCard {
     padding: 20px;
   }
-  
+
   .quoteIcon {
     font-size: 2.5rem;
     top: 8px;
     left: 15px;
   }
-  
+
   .testimonialContent p {
     font-size: 1rem;
     margin: 15px 0 20px 0;
   }
-  
+
   .authorAvatar {
     width: 45px;
     height: 45px;
     font-size: 1.1rem;
   }
-  
+
   .authorInfo h4 {
     font-size: 1rem;
   }
-  
+
   .authorInfo span {
     font-size: 0.8rem;
   }
-  
+
   .stepItem {
     padding: 25px 20px;
   }
-  
+
   .stepNumber {
     width: 28px;
     height: 28px;
     font-size: 1rem;
   }
-  
+
   .stepContent h3 {
     font-size: 1.2rem;
     margin: 18px 0 8px 0;
   }
-  
+
   .stepContent p {
     font-size: 0.9rem;
   }
-  
+
   .stepIcon {
     font-size: 2.2rem;
     margin-top: 12px;
   }
-  
+
   .stepArrow {
     font-size: 1.8rem;
   }
-  
+
   .bannerContent {
     padding: 25px 15px;
   }
-  
+
   .bannerLeft h2 {
     font-size: 1.8rem;
     margin-bottom: 12px;
   }
-  
+
   .bannerLeft p {
     font-size: 0.95rem;
     margin-bottom: 20px;
   }
-  
+
   .bannerButton {
     padding: 12px 25px;
     font-size: 1rem;
   }
-  
+
   .bannerIcon {
     font-size: 2.5rem;
     margin-top: 15px;
@@ -2221,12 +2317,12 @@ body {
     font-size: 1.6rem;
     margin-bottom: 20px;
   }
-  
+
   .sectionTitle::after {
     width: 50px;
     height: 2px;
   }
-  
+
   .gamingPlatformsSection,
   .testimonialsSection,
   .howItWorksSection,
@@ -2234,118 +2330,118 @@ body {
     margin: 30px 0;
     padding: 0 10px;
   }
-  
+
   .platformsGrid {
     grid-template-columns: 1fr;
     gap: 12px;
   }
-  
+
   .platformCard {
     padding: 18px 12px;
   }
-  
+
   .platformIcon {
     font-size: 2rem;
     margin-bottom: 12px;
   }
-  
+
   .platformCard h3 {
     font-size: 1rem;
     margin-bottom: 6px;
   }
-  
+
   .platformCard p {
     font-size: 0.85rem;
     margin-bottom: 10px;
   }
-  
+
   .platformBadge {
     top: 10px;
     right: 10px;
     padding: 3px 8px;
     font-size: 0.65rem;
   }
-  
+
   .testimonialsSection {
     padding: 30px 10px;
   }
-  
+
   .testimonialCard {
     padding: 18px;
   }
-  
+
   .quoteIcon {
     font-size: 2rem;
     top: 6px;
     left: 12px;
   }
-  
+
   .testimonialContent p {
     font-size: 0.95rem;
     margin: 12px 0 18px 0;
   }
-  
+
   .authorAvatar {
     width: 40px;
     height: 40px;
     font-size: 1rem;
   }
-  
+
   .authorInfo h4 {
     font-size: 0.95rem;
   }
-  
+
   .authorInfo span {
     font-size: 0.75rem;
   }
-  
+
   .stepItem {
     padding: 20px 15px;
   }
-  
+
   .stepNumber {
     width: 25px;
     height: 25px;
     font-size: 0.9rem;
   }
-  
+
   .stepContent h3 {
     font-size: 1.1rem;
     margin: 15px 0 6px 0;
   }
-  
+
   .stepContent p {
     font-size: 0.85rem;
   }
-  
+
   .stepIcon {
     font-size: 2rem;
     margin-top: 10px;
   }
-  
+
   .stepArrow {
     font-size: 1.6rem;
   }
-  
+
   .bannerContent {
     padding: 20px 12px;
   }
-  
+
   .bannerLeft h2 {
     font-size: 1.6rem;
     margin-bottom: 10px;
   }
-  
+
   .bannerLeft p {
     font-size: 0.9rem;
     margin-bottom: 18px;
   }
-  
+
   .bannerButton {
     padding: 10px 20px;
     font-size: 0.95rem;
   }
-  
+
   .bannerIcon {
     font-size: 2.2rem;
     margin-top: 12px;
@@ -2358,12 +2454,12 @@ body {
     font-size: 1.4rem;
     margin-bottom: 18px;
   }
-  
+
   .sectionTitle::after {
     width: 40px;
     height: 2px;
   }
-  
+
   .gamingPlatformsSection,
   .testimonialsSection,
   .howItWorksSection,
@@ -2371,113 +2467,113 @@ body {
     margin: 25px 0;
     padding: 0 8px;
   }
-  
+
   .platformCard {
     padding: 15px 10px;
   }
-  
+
   .platformIcon {
     font-size: 1.8rem;
     margin-bottom: 10px;
   }
-  
+
   .platformCard h3 {
     font-size: 0.95rem;
     margin-bottom: 5px;
   }
-  
+
   .platformCard p {
     font-size: 0.8rem;
     margin-bottom: 8px;
   }
-  
+
   .platformBadge {
     top: 8px;
     right: 8px;
     padding: 2px 6px;
     font-size: 0.6rem;
   }
-  
+
   .testimonialsSection {
     padding: 25px 8px;
   }
-  
+
   .testimonialCard {
     padding: 15px;
   }
-  
+
   .quoteIcon {
     font-size: 1.8rem;
     top: 5px;
     left: 10px;
   }
-  
+
   .testimonialContent p {
     font-size: 0.9rem;
     margin: 10px 0 15px 0;
   }
-  
+
   .authorAvatar {
     width: 35px;
     height: 35px;
     font-size: 0.9rem;
   }
-  
+
   .authorInfo h4 {
     font-size: 0.9rem;
   }
-  
+
   .authorInfo span {
     font-size: 0.7rem;
   }
-  
+
   .stepItem {
     padding: 18px 12px;
   }
-  
+
   .stepNumber {
     width: 22px;
     height: 22px;
     font-size: 0.8rem;
   }
-  
+
   .stepContent h3 {
     font-size: 1rem;
     margin: 12px 0 5px 0;
   }
-  
+
   .stepContent p {
     font-size: 0.8rem;
   }
-  
+
   .stepIcon {
     font-size: 1.8rem;
     margin-top: 8px;
   }
-  
+
   .stepArrow {
     font-size: 1.4rem;
   }
-  
+
   .bannerContent {
     padding: 18px 10px;
   }
-  
+
   .bannerLeft h2 {
     font-size: 1.4rem;
     margin-bottom: 8px;
   }
-  
+
   .bannerLeft p {
     font-size: 0.85rem;
     margin-bottom: 15px;
   }
-  
+
   .bannerButton {
     padding: 8px 18px;
     font-size: 0.9rem;
   }
-  
+
   .bannerIcon {
     font-size: 2rem;
     margin-top: 10px;
@@ -2490,12 +2586,12 @@ body {
     font-size: 1.2rem;
     margin-bottom: 15px;
   }
-  
+
   .sectionTitle::after {
     width: 35px;
     height: 1px;
   }
-  
+
   .gamingPlatformsSection,
   .testimonialsSection,
   .howItWorksSection,
@@ -2503,119 +2599,119 @@ body {
     margin: 20px 0;
     padding: 0 5px;
   }
-  
+
   /* Ensure carousels have proper spacing on very small screens */
   .carouselContainer {
     margin: 15px 0;
     padding: 0 3px;
   }
-  
+
   .platformCard {
     padding: 12px 8px;
   }
-  
+
   .platformIcon {
     font-size: 1.6rem;
     margin-bottom: 8px;
   }
-  
+
   .platformCard h3 {
     font-size: 0.9rem;
     margin-bottom: 4px;
   }
-  
+
   .platformCard p {
     font-size: 0.75rem;
     margin-bottom: 6px;
   }
-  
+
   .platformBadge {
     top: 6px;
     right: 6px;
     padding: 2px 5px;
     font-size: 0.55rem;
   }
-  
+
   .testimonialsSection {
     padding: 20px 5px;
   }
-  
+
   .testimonialCard {
     padding: 12px;
   }
-  
+
   .quoteIcon {
     font-size: 1.6rem;
     top: 4px;
     left: 8px;
   }
-  
+
   .testimonialContent p {
     font-size: 0.85rem;
     margin: 8px 0 12px 0;
   }
-  
+
   .authorAvatar {
     width: 30px;
     height: 30px;
     font-size: 0.8rem;
   }
-  
+
   .authorInfo h4 {
     font-size: 0.85rem;
   }
-  
+
   .authorInfo span {
     font-size: 0.65rem;
   }
-  
+
   .stepItem {
     padding: 15px 10px;
   }
-  
+
   .stepNumber {
     width: 20px;
     height: 20px;
     font-size: 0.75rem;
   }
-  
+
   .stepContent h3 {
     font-size: 0.95rem;
     margin: 10px 0 4px 0;
   }
-  
+
   .stepContent p {
     font-size: 0.75rem;
   }
-  
+
   .stepIcon {
     font-size: 1.6rem;
     margin-top: 6px;
   }
-  
+
   .stepArrow {
     font-size: 1.2rem;
   }
-  
+
   .bannerContent {
     padding: 15px 8px;
   }
-  
+
   .bannerLeft h2 {
     font-size: 1.2rem;
     margin-bottom: 6px;
   }
-  
+
   .bannerLeft p {
     font-size: 0.8rem;
     margin-bottom: 12px;
   }
-  
+
   .bannerButton {
     padding: 6px 15px;
     font-size: 0.85rem;
   }
-  
+
   .bannerIcon {
     font-size: 1.8rem;
     margin-top: 8px;
