@@ -7,7 +7,7 @@ const carouselSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['top', 'middle', 'bottom', 'topCard', 'bottomCard', 'homeBanner'],
+        enum: ['top', 'middle', 'bottom', 'topCard', 'bottomCard', 'homeBanner', 'squareBanner'],
         required: true,
     },
 }, { timestamps: true });

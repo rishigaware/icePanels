@@ -40,6 +40,7 @@ import DepositPopup from "../Navbar/DepositPopup"; // Import the DepositPopup co
 import styles from "./HomeHeading.module.css"; // Import the CSS module
 import WalletWithdrawalPopup from "./WalletWithdrawalPopup"; // Import the WalletWithdrawalPopup component
 import HomeBannerCarousel from "./HomeBannerCarousel";
+import SquareBannerCarousel from "./SquareBannerCarousel";
 
 const HomeHeading = () => {
   const navigate = useNavigate(); // Initialize the navigate function
@@ -390,6 +391,9 @@ const HomeHeading = () => {
           </div>
         </div>
       </div>
+
+      {/* Square Banner Carousel - before How It Works */}
+      <SquareBannerCarousel canManage={false} />
 
       {/* How It Works Section */}
       <div className={styles.howItWorksSection}>

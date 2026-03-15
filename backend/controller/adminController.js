@@ -1908,41 +1908,31 @@ exports.rejectPasswordChangeRequest = async (req, res) => {
 
 // GET all home banner images
 exports.getHomeBannerImages = async (req, res) => {
-  console.log('GET /api/admin/home-banner called');
   try {
-    console.log('Searching for Carousel images with type: homeBanner');
     const images = await Carousel.find({ type: 'homeBanner' }).sort({ createdAt: -1 });
-    console.log(`Found ${images.length} images`);
-    const formatted = images.map(img => {
-      console.log('Formatting image:', img._id);
-      return {
-        id: img._id,
-        imagePath: img.imagePath,
-        createdAt: img.createdAt,
-      };
-    });
-    console.log('Successfully formatted images');
+    const formatted = images.map(img => ({
+      id: img._id,
+      imagePath: img.imagePath,
+      createdAt: img.createdAt,
+    }));
     res.status(200).json(formatted);
   } catch (error) {
-    console.error('Error fetching home banner images:', error.message, error.stack);
+    console.error('Error fetching home banner images:', error.message);
     res.status(500).json({ message: 'Error fetching home banner images', error: error.message });
   }
 };
 
 // POST upload a new home banner image
 exports.addHomeBannerImage = async (req, res) => {
-  console.log('POST /api/admin/home-banner called');
   try {
     if (!req.file) {
-      console.warn('Post home banner: No file in request');
       return res.status(400).json({ message: 'No image file uploaded' });
     }
     const newImage = new Carousel({
-      imagePath: req.file.path, // Cloudinary URL
+      imagePath: req.file.path,
       type: 'homeBanner',
     });
     await newImage.save();
-    console.log('Home banner image saved to DB:', newImage._id);
     res.status(201).json({
       message: 'Home banner image uploaded successfully',
       image: {
@@ -1952,7 +1942,7 @@ exports.addHomeBannerImage = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Error uploading home banner image:', error.message, error.stack);
+    console.error('Error uploading home banner image:', error.message);
     res.status(500).json({ message: 'Error uploading home banner image', error: error.message });
   }
 };
@@ -1988,3 +1978,77 @@ exports.deleteHomeBannerImage = async (req, res) => {
     res.status(500).json({ message: 'Error deleting home banner image', error: error.message });
   }
 };
+
+// --- SQUARE BANNER CAROUSEL ---
+
+exports.getSquareBannerImages = async (req, res) => {
+  console.log('GET /api/admin/square-banner called');
+  try {
+    const images = await Carousel.find({ type: 'squareBanner' }).sort({ createdAt: -1 });
+    const formatted = images.map(img => ({
+      id: img._id,
+      imagePath: img.imagePath,
+      createdAt: img.createdAt,
+    }));
+    res.status(200).json(formatted);
+  } catch (error) {
+    console.error('Error fetching square banner images:', error.message, error.stack);
+    res.status(500).json({ message: 'Error fetching square banner images', error: error.message });
+  }
+};
+
+exports.addSquareBannerImage = async (req, res) => {
+  console.log('POST /api/admin/square-banner called');
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No image file uploaded' });
+    }
+    const newImage = new Carousel({
+      imagePath: req.file.path,
+      type: 'squareBanner',
+    });
+    await newImage.save();
+    res.status(201).json({
+      message: 'Square banner image uploaded successfully',
+      image: {
+        id: newImage._id,
+        imagePath: newImage.imagePath,
+        createdAt: newImage.createdAt,
+      },
+    });
+  } catch (error) {
+    console.error('Error uploading square banner image:', error.message, error.stack);
+    res.status(500).json({ message: 'Error uploading square banner image', error: error.message });
+  }
+};
+
+exports.deleteSquareBannerImage = async (req, res) => {
+  const { id } = req.params;
+  console.log('DELETE /api/admin/square-banner called for id:', id);
+  try {
+    const image = await Carousel.findById(id);
+    if (!image || image.type !== 'squareBanner') {
+      return res.status(404).json({ message: 'Square banner image not found' });
+    }
+    // Cloudinary cleanup
+    const urlParts = image.imagePath.split('/');
+    const uploadIndex = urlParts.indexOf('upload');
+    if (uploadIndex !== -1) {
+      const afterUpload = urlParts.slice(uploadIndex + 1);
+      const filtered = afterUpload[0]?.match(/^v\d+$/) ? afterUpload.slice(1) : afterUpload;
+      const publicIdWithExt = filtered.join('/');
+      const publicId = publicIdWithExt.replace(/\.[^/.]+$/, '');
+      try {
+        await cloudinary.uploader.destroy(publicId);
+      } catch (cloudErr) {
+        console.warn('Cloudinary delete warning:', cloudErr.message);
+      }
+    }
+    await Carousel.findByIdAndDelete(id);
+    res.status(200).json({ message: 'Square banner image deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting square banner image:', error.message, error.stack);
+    res.status(500).json({ message: 'Error deleting square banner image', error: error.message });
+  }
+};
+

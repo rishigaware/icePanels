@@ -38,7 +38,8 @@ import { useUser } from "../../../../context/UserContext";
 import styles from "./HomeHeading.module.css"; // Import the CSS module'
 import LoginPopup from "../Login/LoginPopup";
 import WithdrawalPopup from "./WithdrawalPopup";
-import HomeBannerCarousel from "../../../../components/Home/HomeBannerCarousel";
+import HomeBannerCarousel from "../../../Home/HomeBannerCarousel";
+import SquareBannerCarousel from "../../../Home/SquareBannerCarousel";
 
 const HomeHeading = () => {
   const navigate = useNavigate();
@@ -441,6 +442,9 @@ const HomeHeading = () => {
           </div>
         </div>
       </div>
+
+      {/* Square Banner Carousel - before How It Works */}
+      <SquareBannerCarousel canManage={true} />
 
       {/* How It Works Section */}
       <div className={styles.howItWorksSection}>

@@ -86,12 +86,6 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/images', imageRoutes);
 
-// Global Error Handler
-app.use((err, req, res, next) => {
-  console.error('🔥 Global Error Handler:', err.message, err.stack);
-  res.status(500).json({ message: 'Internal Server Error', error: err.message });
-});
-
 // Handling dynamic port for Vercel or fallback to local port 5000
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

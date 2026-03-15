@@ -106,4 +106,9 @@ router.get('/home-banner', adminController.getHomeBannerImages);
 router.post('/home-banner', uploadCorousel.single('image'), adminController.addHomeBannerImage);
 router.delete('/home-banner/:id', adminController.deleteHomeBannerImage);
 
+// Square Banner Carousel
+router.get('/square-banner', adminController.getSquareBannerImages);
+router.post('/square-banner', uploadCorousel.single('image'), adminController.addSquareBannerImage);
+router.delete('/square-banner/:id', adminController.deleteSquareBannerImage);
+
 module.exports = router;
