@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import styles from "./NewWithdrawalPopup.module.css";
 import { Toast } from "primereact/toast";
 import { useUser } from "../../context/UserContext";
+import { getImageUrl } from "../../utils/imageUrl";
 
 export default function NewWithdrawalPopup({
   onClose,
@@ -186,7 +187,7 @@ export default function NewWithdrawalPopup({
         {/* Header */}
         <div className={styles.header}>
           <img
-            src={`${url}/${selectedId.imgUrl}`}
+            src={getImageUrl(selectedId.imgUrl, url)}
             alt="Website"
             className={styles.websiteImage}
           />

@@ -7,6 +7,7 @@ import LoginPopup from '../Login/LoginPopup';
 import { FaCheck, FaTrash } from 'react-icons/fa'; // Import icons from react-icons
 import { useUser } from "../../../../context/UserContext";
 import { Toast } from "primereact/toast";
+import { getImageUrl } from "../../../../utils/imageUrl";
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
@@ -208,7 +209,7 @@ const Transactions = () => {
 
   // Handle image click to open modal
   const handleImageClick = (imagePath) => {
-    setSelectedImage(`${url}/${imagePath}`);
+    setSelectedImage(getImageUrl(imagePath, url));
     setIsModalOpen(false);
   };
 
@@ -322,7 +323,7 @@ const Transactions = () => {
               <div className={styles.column}>
                 {txn.imagePath && (
                   <img
-                    src={`${url}/${txn.imagePath.replace(/\\/g, '/').replace('backend/', '')}`} // Normalize path
+                    src={getImageUrl(txn.imagePath, url)}
                     alt="Transaction"
                     className={styles.transactionImage}
                     onClick={() => handleImageClick(txn.imagePath)} // Open modal on click

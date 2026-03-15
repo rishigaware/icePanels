@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./MyId.module.css";
 import { useUser } from "../../../../context/UserContext";
+import { getImageUrl } from "../../../../utils/imageUrl";
 import { useNavigate } from 'react-router-dom';
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
 import { FiEdit3, FiSave, FiEye, FiEyeOff } from "react-icons/fi";
@@ -745,7 +746,7 @@ const handleReject = async (item) => {
                 <div className={styles.logo}>
                   {isWebsiteId ? (
               <img
-                src={`${safeUrl}/${item.imgUrl || ''}`}
+                src={getImageUrl(item.imgUrl, safeUrl)}
                 alt={`${item.websiteName || 'Website'} logo`}
               />
                   ) : (
@@ -937,7 +938,7 @@ const handleReject = async (item) => {
             
             <div className={styles.popupHeader}>
               <img
-                src={`${safeUrl}/${selectedId.imgUrl || ''}`}
+                src={getImageUrl(selectedId.imgUrl, safeUrl)}
                 alt={`${selectedId.websiteName || 'Website'} logo`}
                 className={styles.popupLogo}
               />

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styles from './ChangePasswordModal.module.css';
 import { useUser } from '../../context/UserContext';
+import { getImageUrl } from '../../utils/imageUrl';
 import { Toast } from 'primereact/toast';
 import { useRef } from 'react';
 
@@ -121,7 +122,7 @@ const ChangePasswordModal = ({ isOpen, onClose, idData }) => {
         <div className={styles.modalHeader}>
           <div className={styles.headerInfo}>
             <img
-              src={`${url}/${idData?.imgUrl}`}
+              src={getImageUrl(idData?.imgUrl, url)}
               alt={`${idData?.websiteName} logo`}
               className={styles.websiteLogo}
             />

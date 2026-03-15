@@ -101,4 +101,9 @@ router.patch('/reject-password-change/:requestId', adminController.rejectPasswor
 router.get('/id-requests', adminController.getAllIdRequests);
 router.patch('/update-id-request-status', hybridAdminController.updateIdRequestStatus);
 
+// Home Banner Carousel
+router.get('/home-banner', adminController.getHomeBannerImages);
+router.post('/home-banner', uploadCorousel.single('image'), adminController.addHomeBannerImage);
+router.delete('/home-banner/:id', adminController.deleteHomeBannerImage);
+
 module.exports = router;

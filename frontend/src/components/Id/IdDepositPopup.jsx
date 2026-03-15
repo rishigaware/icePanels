@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Toast } from "primereact/toast";
 import styles from "./IdDepositPopup.module.css";
 import { useUser } from "../../context/UserContext";
+import { getImageUrl } from "../../utils/imageUrl";
 
 export default function IdDepositPopup({ onClose, walletBalance = 0, setWalletBalance, selectedId }) {
   const { user, setUser, url, refreshUserBalance } = useUser();
@@ -114,7 +115,7 @@ export default function IdDepositPopup({ onClose, walletBalance = 0, setWalletBa
 
         <div className={styles.initialView}>
           <img
-            src={`${url}/${selectedId.imgUrl}`}
+            src={getImageUrl(selectedId.imgUrl, url)}
             alt="Deposit Icon"
             className={styles.depositImage}
           />

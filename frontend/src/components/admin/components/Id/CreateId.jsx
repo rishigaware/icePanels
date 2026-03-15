@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./CreateId.module.css"; 
-import { useUser } from "../../../../context/UserContext"; 
+import { useUser } from '../../../../context/UserContext';
+import { getImageUrl } from '../../../../utils/imageUrl'; 
 import { FileUpload } from "primereact/fileupload";
 import { PulseLoader } from "react-spinners";
 import { Toast } from "primereact/toast";
@@ -785,7 +786,7 @@ const CreateId = () => {
                 <div key={website.id || index} className={styles.websiteCard}>
                   <div className={styles.websiteInfo}>
                     <img
-                      src={`${url}/${website.logo}`}
+                      src={getImageUrl(website.logo, url)}
                       alt={website.name || website.website || 'Website Logo'}
                       className={styles.websiteLogo}
                     />

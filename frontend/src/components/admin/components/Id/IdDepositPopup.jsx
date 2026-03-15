@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { FaCopy } from "react-icons/fa"; // Importing FontAwesome copy icon
 // import styles from "./IdDepositPopup.module.css";
 import { useUser } from "../../../../context/UserContext";
+import { getImageUrl } from "../../../../utils/imageUrl";
 import { FileUpload } from "primereact/fileupload";
 import { Toast } from "primereact/toast";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
@@ -197,7 +198,7 @@ export default function IdDepositPopup ({ onClose, walletBalance = 0, setWalletB
         {!isDetailedView ? (
           <div className={styles.initialView}>
             <img
-                src={`${url}/${selectedId.imgUrl}`} // Fix: Properly construct image URL
+                src={getImageUrl(selectedId.imgUrl, url)} // Cloudinary-safe URL
                 alt="Deposit Icon"           // Add a descriptive alt text
                 className={styles.depositImage}
             />

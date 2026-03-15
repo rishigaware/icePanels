@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import styles from "./MyId.module.css";
 import { useUser } from "../../context/UserContext";
+import { getImageUrl } from "../../utils/imageUrl";
 
 import { PulseLoader } from "react-spinners";
 import { PiHandDepositDuotone } from "react-icons/pi";
@@ -303,7 +304,7 @@ const MyId = () => {
           <div key={item.id} className={`${styles.idCard} ${item.type === 'request' ? styles.requestCard : ''}`}>
             <div className={styles.logo}>
               <img
-                src={`${safeUrl}/${item.imgUrl || ''}`}
+                src={getImageUrl(item.imgUrl, safeUrl)}
                 alt={`${item.websiteName || 'Website'} logo`}
               />
               {item.type === 'request' && (
@@ -442,7 +443,7 @@ const MyId = () => {
           <div className={styles.popupContent}>
             <button onClick={handleClosePopup} className={styles.closeButton}>&times;</button>
             <div className={styles.popupHeader}>
-              <img src={`${url}/${selectedId.imgUrl}`} alt={`${selectedId.websiteName} logo`} className={styles.popupLogo} />
+              <img src={getImageUrl(selectedId.imgUrl, url)} alt={`${selectedId.websiteName} logo`} className={styles.popupLogo} />
               <h2>{selectedId.websiteName}</h2>
               <p>{selectedId.websiteUrl}</p>
             </div>

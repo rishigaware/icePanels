@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import styles from "./WithdrawalPopup.module.css"; // Import CSS
 import { Toast } from "primereact/toast"; // Import Toast component
 import { useUser } from "../../../../context/UserContext";
+import { getImageUrl } from "../../../../utils/imageUrl";
 
 export default function WithdrawalPopup({
   onClose,
@@ -99,7 +100,7 @@ export default function WithdrawalPopup({
         {/* Image and User Info */}
         <div className={styles.initialView}>
           <img
-            src={`${url}/${selectedId.imgUrl}`}
+            src={getImageUrl(selectedId.imgUrl, url)}
             alt="User"
             className={styles.depositImage}
           />

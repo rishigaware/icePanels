@@ -14,6 +14,7 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
 const mongoose = require('mongoose');
+const { cloudinary } = require('../config/cloudinaryConfig');
 
 
 // Fetch all admins
@@ -1902,3 +1903,77 @@ exports.rejectPasswordChangeRequest = async (req, res) => {
   }
 };
 
+
+// ===== HOME BANNER CAROUSEL =====
+
+// GET all home banner images
+exports.getHomeBannerImages = async (req, res) => {
+  try {
+    const images = await Carousel.find({ type: 'homeBanner' }).sort({ createdAt: -1 });
+    const formatted = images.map(img => ({
+      id: img._id,
+      imagePath: img.imagePath,
+      createdAt: img.createdAt,
+    }));
+    res.status(200).json(formatted);
+  } catch (error) {
+    console.error('Error fetching home banner images:', error);
+    res.status(500).json({ message: 'Error fetching home banner images', error: error.message });
+  }
+};
+
+// POST upload a new home banner image
+exports.addHomeBannerImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No image file uploaded' });
+    }
+    const newImage = new Carousel({
+      imagePath: req.file.path, // Cloudinary URL
+      type: 'homeBanner',
+    });
+    await newImage.save();
+    res.status(201).json({
+      message: 'Home banner image uploaded successfully',
+      image: {
+        id: newImage._id,
+        imagePath: newImage.imagePath,
+        createdAt: newImage.createdAt,
+      },
+    });
+  } catch (error) {
+    console.error('Error uploading home banner image:', error);
+    res.status(500).json({ message: 'Error uploading home banner image', error: error.message });
+  }
+};
+
+// DELETE a home banner image (removes from MongoDB + Cloudinary)
+exports.deleteHomeBannerImage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const image = await Carousel.findById(id);
+    if (!image || image.type !== 'homeBanner') {
+      return res.status(404).json({ message: 'Home banner image not found' });
+    }
+    // Extract Cloudinary public_id from the URL
+    const urlParts = image.imagePath.split('/');
+    const uploadIndex = urlParts.indexOf('upload');
+    if (uploadIndex !== -1) {
+      const afterUpload = urlParts.slice(uploadIndex + 1);
+      // Skip optional version segment (e.g., v1234567890)
+      const filtered = afterUpload[0]?.match(/^v\d+$/) ? afterUpload.slice(1) : afterUpload;
+      const publicIdWithExt = filtered.join('/');
+      const publicId = publicIdWithExt.replace(/\.[^/.]+$/, '');
+      try {
+        await cloudinary.uploader.destroy(publicId);
+      } catch (cloudErr) {
+        console.warn('Cloudinary delete warning:', cloudErr.message);
+      }
+    }
+    await Carousel.findByIdAndDelete(id);
+    res.status(200).json({ message: 'Home banner image deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting home banner image:', error);
+    res.status(500).json({ message: 'Error deleting home banner image', error: error.message });
+  }
+};

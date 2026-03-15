@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './ViewTransactionModal.module.css';
 import { useUser } from '../../context/UserContext';
+import { getImageUrl } from '../../utils/imageUrl';
 import { Toast } from 'primereact/toast';
 import { useRef } from 'react';
 
@@ -111,7 +112,7 @@ const ViewTransactionModal = ({ isOpen, onClose, idData }) => {
         <div className={styles.modalHeader}>
           <div className={styles.headerInfo}>
             <img
-              src={`${url}/${idData?.imgUrl}`}
+              src={getImageUrl(idData?.imgUrl, url)}
               alt={`${idData?.websiteName} logo`}
               className={styles.websiteLogo}
             />

@@ -38,6 +38,7 @@ import { useUser } from "../../../../context/UserContext";
 import styles from "./HomeHeading.module.css"; // Import the CSS module'
 import LoginPopup from "../Login/LoginPopup";
 import WithdrawalPopup from "./WithdrawalPopup";
+import HomeBannerCarousel from "../../../../components/Home/HomeBannerCarousel";
 
 const HomeHeading = () => {
   const navigate = useNavigate();
@@ -351,6 +352,9 @@ const HomeHeading = () => {
           </div>
         </div>
       </div>
+
+      {/* Home Banner Carousel - admin can manage */}
+      <HomeBannerCarousel canManage={true} />
 
       {/* Services Section */}
       <div className={styles.gamingPlatformsSection}>

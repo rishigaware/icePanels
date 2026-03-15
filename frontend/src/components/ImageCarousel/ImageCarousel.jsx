@@ -5,6 +5,7 @@ import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import { useUser } from "../../context/UserContext";
+import { getImageUrl } from "../../utils/imageUrl";
 import styles from "./ImageCarousel.module.css";
 
 // Import react-slick for multi-item carousels
@@ -498,7 +499,7 @@ const ImageCarousel = ({ type, carouselId, canManage = false }) => {
               {images.map((image, index) => (
                 <div key={image.id} className={styles.imageContainer}>
                   <img
-                    src={`${url}/${image.imagePath}`}
+                    src={getImageUrl(image.imagePath, url)}
                     alt={`${type} carousel ${index + 1}`}
                     className={getImageClass()}
                     onError={(e) => {
@@ -523,7 +524,7 @@ const ImageCarousel = ({ type, carouselId, canManage = false }) => {
                 <div key={image.id} className={styles.squareCardWrapper}>
                   <div className={styles.squareCardContainer}>
                     <img
-                      src={`${url}/${image.imagePath}`}
+                      src={getImageUrl(image.imagePath, url)}
                       alt={`${type} carousel ${index + 1}`}
                       className={styles.squareCardImage}
                       onError={(e) => {

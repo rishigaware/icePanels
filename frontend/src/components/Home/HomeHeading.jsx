@@ -39,6 +39,7 @@ import { useUser } from "../../context/UserContext";
 import DepositPopup from "../Navbar/DepositPopup"; // Import the DepositPopup component
 import styles from "./HomeHeading.module.css"; // Import the CSS module
 import WalletWithdrawalPopup from "./WalletWithdrawalPopup"; // Import the WalletWithdrawalPopup component
+import HomeBannerCarousel from "./HomeBannerCarousel";
 
 const HomeHeading = () => {
   const navigate = useNavigate(); // Initialize the navigate function
@@ -300,6 +301,9 @@ const HomeHeading = () => {
           </div>
         </div>
       </div>
+
+      {/* Home Banner Carousel - before Our Premium Services */}
+      <HomeBannerCarousel canManage={false} />
 
       {/* Services Section */}
       <div className={styles.gamingPlatformsSection}>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './IdRequests.module.css';
 import { useUser } from '../../../../context/UserContext';
+import { getImageUrl } from '../../../../utils/imageUrl';
 import { Toast } from 'primereact/toast';
 import { PulseLoader } from 'react-spinners';
 import { FaCheck, FaTimes, FaEye, FaCoins, FaUser, FaGlobe, FaClock, FaRupeeSign } from 'react-icons/fa';
@@ -208,7 +209,7 @@ const IdRequests = () => {
                     <td className={styles.websiteCell}>
                       <div className={styles.websiteInfo}>
                         <img
-                          src={`${url}/${request.imgUrl}`}
+                          src={getImageUrl(request.imgUrl, url)}
                           alt={request.websiteName}
                           className={styles.tableLogo}
                         />
@@ -311,7 +312,7 @@ const IdRequests = () => {
                   <div className={styles.cardHeader}>
                     <div className={styles.websiteInfo}>
                       <img
-                        src={`${url}/${request.imgUrl}`}
+                        src={getImageUrl(request.imgUrl, url)}
                         alt={request.websiteName}
                         className={styles.websiteLogo}
                       />
@@ -508,7 +509,7 @@ const IdRequests = () => {
                 <h3>Website Information</h3>
                 <div className={styles.websiteInfo}>
                   <img
-                    src={`${url}/${selectedRequest.imgUrl}`}
+                    src={getImageUrl(selectedRequest.imgUrl, url)}
                     alt={selectedRequest.websiteName}
                     className={styles.websiteLogo}
                   />
