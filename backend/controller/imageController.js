@@ -1,8 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 const multer = require('multer');
 const ImageCarousel = require('../models/ImageCarousel');
-const fs = require('fs');
-const path = require('path');
 const { cloudinary, CloudinaryStorage } = require('../config/cloudinaryConfig');
 
 // Cloudinary storage for image carousel uploads
@@ -97,14 +95,30 @@ const deleteImage = async (req, res) => {
       return res.status(400).json({ message: 'CarouselId and type are required.' });
     }
 
-    const image = await ImageCarousel.findByIdAndDelete(imageId);
+    const image = await ImageCarousel.findById(imageId);
 
     if (!image) {
       return res.status(404).json({ message: 'Image not found.' });
     }
 
-    // Note: Cloudinary file lifecycle is managed via Cloudinary dashboard.
-    // The MongoDB record has been removed above.
+    // Cloudinary cleanup
+    if (image.imagePath) {
+      const urlParts = image.imagePath.split('/');
+      const uploadIndex = urlParts.indexOf('upload');
+      if (uploadIndex !== -1) {
+        const afterUpload = urlParts.slice(uploadIndex + 1);
+        const filtered = afterUpload[0]?.match(/^v\d+$/) ? afterUpload.slice(1) : afterUpload;
+        const publicIdWithExt = filtered.join('/');
+        const publicId = publicIdWithExt.replace(/\.[^/.]+$/, '');
+        try {
+          await cloudinary.uploader.destroy(publicId);
+        } catch (cloudErr) {
+          console.warn('Cloudinary delete warning:', cloudErr.message);
+        }
+      }
+    }
+
+    await ImageCarousel.findByIdAndDelete(imageId);
 
     res.status(200).json({
       message: 'Image deleted successfully.',

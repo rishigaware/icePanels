@@ -12,6 +12,15 @@ const storage = new CloudinaryStorage({
 });
 
 // Create multer instance for single file upload
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  }
+});
 
 module.exports = upload;

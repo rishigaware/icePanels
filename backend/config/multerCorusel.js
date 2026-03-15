@@ -12,6 +12,15 @@ const storage = new CloudinaryStorage({
 });
 
 // Initialize Multer with the Cloudinary storage configuration
-const uploadCarousel = multer({ storage });
+const uploadCarousel = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  }
+});
 
 module.exports = uploadCarousel;

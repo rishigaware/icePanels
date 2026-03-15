@@ -7,7 +7,7 @@ const logoStorage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: 'the247panel/logos',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'gif'],
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
     resource_type: 'image',
   },
 });
@@ -16,13 +16,11 @@ const logoStorage = new CloudinaryStorage({
 const uploadLogo = multer({
   storage: logoStorage,
   fileFilter: (req, file, cb) => {
-    const filetypes = /jpeg|jpg|png|gif/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
-    if (mimetype && extname) {
-      return cb(null, true); // Accept the file
+    // Broad match for any image type
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
     } else {
-      cb(new Error('Error: Images Only!')); // Reject if it's not an image
+      cb(new Error('Error: Images Only!'));
     }
   },
 }).single('logo'); // Ensure the field name in the form is 'logo'

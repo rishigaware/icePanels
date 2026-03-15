@@ -10,9 +10,6 @@ const IdRequest = require('../models/IdRequest');
 const CloseRequest = require('../models/CloseRequest');
 const PasswordChangeRequest = require('../models/PasswordChangeRequest');
 const ClosedId = require('../models/ClosedId');
-const path = require('path');
-const { v4: uuidv4 } = require('uuid');
-const fs = require('fs');
 const mongoose = require('mongoose');
 const { cloudinary } = require('../config/cloudinaryConfig');
 
@@ -680,14 +677,31 @@ exports.getAllWebsites = async (req, res) => {
 exports.deleteWebsite = async (req, res) => {
   try {
     const websiteId = req.params.id;
-
-    const website = await Website.findByIdAndDelete(websiteId);
+    const website = await Website.findById(websiteId);
 
     if (!website) {
       return res.status(404).json({ message: 'Website not found.' });
     }
 
-    res.status(200).json({ message: 'Website deleted successfully.' });
+    // Cloudinary cleanup for logo
+    if (website.logo) {
+      const urlParts = website.logo.split('/');
+      const uploadIndex = urlParts.indexOf('upload');
+      if (uploadIndex !== -1) {
+        const afterUpload = urlParts.slice(uploadIndex + 1);
+        const filtered = afterUpload[0]?.match(/^v\d+$/) ? afterUpload.slice(1) : afterUpload;
+        const publicIdWithExt = filtered.join('/');
+        const publicId = publicIdWithExt.replace(/\.[^/.]+$/, '');
+        try {
+          await cloudinary.uploader.destroy(publicId);
+        } catch (cloudErr) {
+          console.warn('Cloudinary delete warning:', cloudErr.message);
+        }
+      }
+    }
+
+    await Website.findByIdAndDelete(websiteId);
+    res.status(200).json({ message: 'Website and logo deleted successfully.' });
   } catch (error) {
     console.error('Error deleting website:', error);
     res.status(500).json({ message: 'Server error. Please try again later.' });
@@ -930,14 +944,23 @@ exports.deleteOneTopCarousel = async (req, res) => {
       return res.status(404).json({ error: 'No records found in the topCarousel collection' });
     }
 
-    await Carousel.findByIdAndDelete(firstRecord._id);
-
-    const filePath = firstRecord.imagePath;
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    // Cloudinary cleanup
+    const urlParts = firstRecord.imagePath.split('/');
+    const uploadIndex = urlParts.indexOf('upload');
+    if (uploadIndex !== -1) {
+      const afterUpload = urlParts.slice(uploadIndex + 1);
+      const filtered = afterUpload[0]?.match(/^v\d+$/) ? afterUpload.slice(1) : afterUpload;
+      const publicIdWithExt = filtered.join('/');
+      const publicId = publicIdWithExt.replace(/\.[^/.]+$/, '');
+      try {
+        await cloudinary.uploader.destroy(publicId);
+      } catch (cloudErr) {
+        console.warn('Cloudinary delete warning:', cloudErr.message);
+      }
     }
 
-    res.status(200).json({ message: 'First record deleted successfully from the database and locally' });
+    await Carousel.findByIdAndDelete(firstRecord._id);
+    res.status(200).json({ message: 'First record deleted successfully from the database and Cloudinary' });
   } catch (error) {
     console.error('Error deleting first record:', error);
     res.status(500).json({ error: 'Failed to delete the first record' });
@@ -952,14 +975,23 @@ exports.deleteOneMiddleCarousel = async (req, res) => {
       return res.status(404).json({ error: 'No records found in the middleCarousel collection' });
     }
 
-    await Carousel.findByIdAndDelete(firstRecord._id);
-
-    const filePath = firstRecord.imagePath;
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    // Cloudinary cleanup
+    const urlParts = firstRecord.imagePath.split('/');
+    const uploadIndex = urlParts.indexOf('upload');
+    if (uploadIndex !== -1) {
+      const afterUpload = urlParts.slice(uploadIndex + 1);
+      const filtered = afterUpload[0]?.match(/^v\d+$/) ? afterUpload.slice(1) : afterUpload;
+      const publicIdWithExt = filtered.join('/');
+      const publicId = publicIdWithExt.replace(/\.[^/.]+$/, '');
+      try {
+        await cloudinary.uploader.destroy(publicId);
+      } catch (cloudErr) {
+        console.warn('Cloudinary delete warning:', cloudErr.message);
+      }
     }
 
-    res.status(200).json({ message: 'First record deleted successfully from the database and locally' });
+    await Carousel.findByIdAndDelete(firstRecord._id);
+    res.status(200).json({ message: 'First record deleted successfully from the database and Cloudinary' });
   } catch (error) {
     console.error('Error deleting first record:', error);
     res.status(500).json({ error: 'Failed to delete the first record' });
@@ -974,14 +1006,23 @@ exports.deleteOneBottomCarousel = async (req, res) => {
       return res.status(404).json({ error: 'No records found in the bottomCarousel collection' });
     }
 
-    await Carousel.findByIdAndDelete(firstRecord._id);
-
-    const filePath = firstRecord.imagePath;
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    // Cloudinary cleanup
+    const urlParts = firstRecord.imagePath.split('/');
+    const uploadIndex = urlParts.indexOf('upload');
+    if (uploadIndex !== -1) {
+      const afterUpload = urlParts.slice(uploadIndex + 1);
+      const filtered = afterUpload[0]?.match(/^v\d+$/) ? afterUpload.slice(1) : afterUpload;
+      const publicIdWithExt = filtered.join('/');
+      const publicId = publicIdWithExt.replace(/\.[^/.]+$/, '');
+      try {
+        await cloudinary.uploader.destroy(publicId);
+      } catch (cloudErr) {
+        console.warn('Cloudinary delete warning:', cloudErr.message);
+      }
     }
 
-    res.status(200).json({ message: 'First record deleted successfully from the database and locally' });
+    await Carousel.findByIdAndDelete(firstRecord._id);
+    res.status(200).json({ message: 'First record deleted successfully from the database and Cloudinary' });
   } catch (error) {
     console.error('Error deleting first record:', error);
     res.status(500).json({ error: 'Failed to delete the first record' });
@@ -996,14 +1037,23 @@ exports.deleteOneTopCardCarousel = async (req, res) => {
       return res.status(404).json({ error: 'No records found in the topCardCarousel collection' });
     }
 
-    await Carousel.findByIdAndDelete(firstRecord._id);
-
-    const filePath = firstRecord.imagePath;
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    // Cloudinary cleanup
+    const urlParts = firstRecord.imagePath.split('/');
+    const uploadIndex = urlParts.indexOf('upload');
+    if (uploadIndex !== -1) {
+      const afterUpload = urlParts.slice(uploadIndex + 1);
+      const filtered = afterUpload[0]?.match(/^v\d+$/) ? afterUpload.slice(1) : afterUpload;
+      const publicIdWithExt = filtered.join('/');
+      const publicId = publicIdWithExt.replace(/\.[^/.]+$/, '');
+      try {
+        await cloudinary.uploader.destroy(publicId);
+      } catch (cloudErr) {
+        console.warn('Cloudinary delete warning:', cloudErr.message);
+      }
     }
 
-    res.status(200).json({ message: 'First record deleted successfully from the database and locally' });
+    await Carousel.findByIdAndDelete(firstRecord._id);
+    res.status(200).json({ message: 'First record deleted successfully from the database and Cloudinary' });
   } catch (error) {
     console.error('Error deleting first record:', error);
     res.status(500).json({ error: 'Failed to delete the first record' });
@@ -1018,14 +1068,23 @@ exports.deleteOneBottomCardCarousel = async (req, res) => {
       return res.status(404).json({ error: 'No records found in the bottomCardCarousel collection' });
     }
 
-    await Carousel.findByIdAndDelete(firstRecord._id);
-
-    const filePath = firstRecord.imagePath;
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    // Cloudinary cleanup
+    const urlParts = firstRecord.imagePath.split('/');
+    const uploadIndex = urlParts.indexOf('upload');
+    if (uploadIndex !== -1) {
+      const afterUpload = urlParts.slice(uploadIndex + 1);
+      const filtered = afterUpload[0]?.match(/^v\d+$/) ? afterUpload.slice(1) : afterUpload;
+      const publicIdWithExt = filtered.join('/');
+      const publicId = publicIdWithExt.replace(/\.[^/.]+$/, '');
+      try {
+        await cloudinary.uploader.destroy(publicId);
+      } catch (cloudErr) {
+        console.warn('Cloudinary delete warning:', cloudErr.message);
+      }
     }
 
-    res.status(200).json({ message: 'First record deleted successfully from the database and locally' });
+    await Carousel.findByIdAndDelete(firstRecord._id);
+    res.status(200).json({ message: 'First record deleted successfully from the database and Cloudinary' });
   } catch (error) {
     console.error('Error deleting first record:', error);
     res.status(500).json({ error: 'Failed to delete the first record' });
