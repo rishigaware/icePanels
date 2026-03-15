@@ -1,21 +1,20 @@
 const multer = require('multer');
 const path = require('path');
+const { cloudinary, CloudinaryStorage } = require('./cloudinaryConfig');
 
-// Set up storage configuration for multer (logo files)
-const logoStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/logo'); // Directory for logo files
-  },
-  filename: (req, file, cb) => {
-    // Use the original filename (without any modifications)
-    cb(null, file.originalname); // Save with the original filename
+// Cloudinary storage for website logo files
+const logoStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'the247panel/logos',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif'],
+    resource_type: 'image',
   },
 });
 
 // Create multer instance for single file upload (logo)
 const uploadLogo = multer({
   storage: logoStorage,
-  limits: { fileSize: 1000000 }, // Limit to 1MB for logo files
   fileFilter: (req, file, cb) => {
     const filetypes = /jpeg|jpg|png|gif/;
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());

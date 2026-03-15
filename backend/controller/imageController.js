@@ -1,22 +1,22 @@
 const { v4: uuidv4 } = require('uuid');
-const path = require('path');
 const multer = require('multer');
 const ImageCarousel = require('../models/ImageCarousel');
 const fs = require('fs');
+const path = require('path');
+const { cloudinary, CloudinaryStorage } = require('../config/cloudinaryConfig');
 
-// Multer configuration for image uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/images/');
+// Cloudinary storage for image carousel uploads
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'the247panel/images',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+    resource_type: 'image',
   },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
 });
 
 const upload = multer({
-  storage: storage,
+  storage,
   limits: {
     fileSize: 10 * 1024 * 1024 // 10MB limit
   },
@@ -65,7 +65,7 @@ const uploadImage = async (req, res) => {
       return res.status(400).json({ message: 'Type and carouselId are required.' });
     }
 
-    const imagePath = path.join('uploads', 'images', req.file.filename);
+    const imagePath = req.file.path; // Cloudinary URL
 
     const newImage = new ImageCarousel({
       imagePath,
@@ -103,13 +103,8 @@ const deleteImage = async (req, res) => {
       return res.status(404).json({ message: 'Image not found.' });
     }
 
-    // Delete the actual file from the filesystem
-    if (image.imagePath) {
-      const filePath = path.join(__dirname, '..', image.imagePath);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-    }
+    // Note: Cloudinary file lifecycle is managed via Cloudinary dashboard.
+    // The MongoDB record has been removed above.
 
     res.status(200).json({
       message: 'Image deleted successfully.',

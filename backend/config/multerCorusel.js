@@ -1,22 +1,17 @@
 const multer = require('multer');
-const fs = require('fs');
-const path = require('path');
+const { cloudinary, CloudinaryStorage } = require('./cloudinaryConfig');
 
-// Define the storage destination and filename
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const dir = path.join(__dirname,"..", 'uploads', 'carousel');
-    // Create the directory if it doesn't exist
-    fs.existsSync(dir) || fs.mkdirSync(dir, { recursive: true });
-    cb(null, dir);
+// Cloudinary storage for carousel/banner images
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'the247panel/carousel',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+    resource_type: 'image',
   },
-  filename: function (req, file, cb) {
-    // Use the original filename
-    cb(null, file.originalname);
-  }
 });
 
-// Initialize Multer with the storage configuration
-const uploadCarousel = multer({ storage: storage });
+// Initialize Multer with the Cloudinary storage configuration
+const uploadCarousel = multer({ storage });
 
 module.exports = uploadCarousel;

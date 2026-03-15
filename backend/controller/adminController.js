@@ -182,7 +182,7 @@ exports.addWebsite = async (req, res) => {
   try {
     let logoPath = '';
     if (req.file) {
-      logoPath = `uploads/logo/${req.file.filename}`;
+      logoPath = req.file.path; // Cloudinary URL
     }
 
     const newWebsite = new Website({
@@ -638,7 +638,7 @@ exports.updateWebsite = async (req, res) => {
     if (category !== undefined) website.category = category;
 
     if (req.file) {
-      website.logo = `uploads/logo/${req.file.filename}`;
+      website.logo = req.file.path; // Cloudinary URL
     }
 
     await website.save();
@@ -800,7 +800,7 @@ exports.addTopCorousel = async (req, res) => {
       return res.status(400).json({ message: 'Image file is required.' });
     }
 
-    const imagePath = path.join('uploads', 'carousel', req.file.filename);
+    const imagePath = req.file.path; // Cloudinary URL
 
     const newCarouselImage = new Carousel({
       imagePath,
@@ -825,7 +825,7 @@ exports.addMiddleCorousel = async (req, res) => {
       return res.status(400).json({ message: 'Image file is required.' });
     }
 
-    const imagePath = path.join('uploads', 'carousel', req.file.filename);
+    const imagePath = req.file.path; // Cloudinary URL
 
     const newCarouselImage = new Carousel({
       imagePath,
@@ -850,7 +850,7 @@ exports.addBottomCorousel = async (req, res) => {
       return res.status(400).json({ message: 'Image file is required.' });
     }
 
-    const imagePath = path.join('uploads', 'carousel', req.file.filename);
+    const imagePath = req.file.path; // Cloudinary URL
 
     const newCarouselImage = new Carousel({
       imagePath,
@@ -875,7 +875,7 @@ exports.addTopMiddleCorousel = async (req, res) => {
       return res.status(400).json({ message: 'Image file is required.' });
     }
 
-    const imagePath = path.join('uploads', 'carousel', req.file.filename);
+    const imagePath = req.file.path; // Cloudinary URL
 
     const newCarouselImage = new Carousel({
       imagePath,
@@ -900,7 +900,7 @@ exports.addBottomMiddleCorousel = async (req, res) => {
       return res.status(400).json({ message: 'Image file is required.' });
     }
 
-    const imagePath = path.join('uploads', 'carousel', req.file.filename);
+    const imagePath = req.file.path; // Cloudinary URL
 
     const newCarouselImage = new Carousel({
       imagePath,

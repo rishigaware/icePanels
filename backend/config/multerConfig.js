@@ -1,20 +1,17 @@
 const multer = require('multer');
-const path = require('path');
+const { cloudinary, CloudinaryStorage } = require('./cloudinaryConfig');
 
-// Set up storage configuration for multer
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/userDeposit'); // Directory where files will be stored
-    },
-    filename: (req, file, cb) => {
-        const fileExtension = path.extname(file.originalname); // Get file extension
-        cb(null, Date.now() + fileExtension); // Unique filename based on timestamp
-    },
+// Cloudinary storage for user deposit proof images
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'the247panel/userDeposit',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+    resource_type: 'image',
+  },
 });
 
 // Create multer instance for single file upload
-const upload = multer({ storage: storage });
-
-
+const upload = multer({ storage });
 
 module.exports = upload;
