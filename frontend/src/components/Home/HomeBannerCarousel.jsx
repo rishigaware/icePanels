@@ -13,13 +13,15 @@ const HomeBannerCarousel = ({ canManage = false }) => {
   const [images, setImages] = useState([]);
   const [current, setCurrent] = useState(0);
   const [uploading, setUploading] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Don't block render
+  const [fetchError, setFetchError] = useState(false);
   const fileInputRef = useRef(null);
   const timerRef = useRef(null);
 
   // ── Fetch ────────────────────────────────────────────────────────────────
   const fetchImages = useCallback(async () => {
     try {
+      setFetchError(false);
       const res = await fetch(`${url}/api/admin/home-banner`);
       if (!res.ok) throw new Error('Failed to fetch');
       const data = await res.json();
@@ -27,8 +29,7 @@ const HomeBannerCarousel = ({ canManage = false }) => {
       setCurrent(0);
     } catch (e) {
       console.error('HomeBannerCarousel fetch error:', e);
-    } finally {
-      setLoading(false);
+      setFetchError(true);
     }
   }, [url]);
 
@@ -87,7 +88,6 @@ const HomeBannerCarousel = ({ canManage = false }) => {
   };
 
   // ── Render ────────────────────────────────────────────────────────────────
-  if (loading) return null;
   if (!canManage && images.length === 0) return null;
 
   return (
@@ -116,7 +116,10 @@ const HomeBannerCarousel = ({ canManage = false }) => {
       {images.length === 0 ? (
         canManage ? (
           <div className={styles.emptyState}>
-            <p>No banner images yet. Click <strong>"+ Add Banner"</strong> to add one.</p>
+            {fetchError
+              ? <p>⚠️ Could not load images. Restart the backend server, then refresh.</p>
+              : <p>No banner images yet. Click <strong>"+ Add Banner"</strong> to add one.</p>
+            }
           </div>
         ) : null
       ) : (
