@@ -1908,24 +1908,33 @@ exports.rejectPasswordChangeRequest = async (req, res) => {
 
 // GET all home banner images
 exports.getHomeBannerImages = async (req, res) => {
+  console.log('GET /api/admin/home-banner called');
   try {
+    console.log('Searching for Carousel images with type: homeBanner');
     const images = await Carousel.find({ type: 'homeBanner' }).sort({ createdAt: -1 });
-    const formatted = images.map(img => ({
-      id: img._id,
-      imagePath: img.imagePath,
-      createdAt: img.createdAt,
-    }));
+    console.log(`Found ${images.length} images`);
+    const formatted = images.map(img => {
+      console.log('Formatting image:', img._id);
+      return {
+        id: img._id,
+        imagePath: img.imagePath,
+        createdAt: img.createdAt,
+      };
+    });
+    console.log('Successfully formatted images');
     res.status(200).json(formatted);
   } catch (error) {
-    console.error('Error fetching home banner images:', error);
+    console.error('Error fetching home banner images:', error.message, error.stack);
     res.status(500).json({ message: 'Error fetching home banner images', error: error.message });
   }
 };
 
 // POST upload a new home banner image
 exports.addHomeBannerImage = async (req, res) => {
+  console.log('POST /api/admin/home-banner called');
   try {
     if (!req.file) {
+      console.warn('Post home banner: No file in request');
       return res.status(400).json({ message: 'No image file uploaded' });
     }
     const newImage = new Carousel({
@@ -1933,6 +1942,7 @@ exports.addHomeBannerImage = async (req, res) => {
       type: 'homeBanner',
     });
     await newImage.save();
+    console.log('Home banner image saved to DB:', newImage._id);
     res.status(201).json({
       message: 'Home banner image uploaded successfully',
       image: {
@@ -1942,15 +1952,16 @@ exports.addHomeBannerImage = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Error uploading home banner image:', error);
+    console.error('Error uploading home banner image:', error.message, error.stack);
     res.status(500).json({ message: 'Error uploading home banner image', error: error.message });
   }
 };
 
 // DELETE a home banner image (removes from MongoDB + Cloudinary)
 exports.deleteHomeBannerImage = async (req, res) => {
+  const { id } = req.params;
+  console.log('DELETE /api/admin/home-banner called for id:', id);
   try {
-    const { id } = req.params;
     const image = await Carousel.findById(id);
     if (!image || image.type !== 'homeBanner') {
       return res.status(404).json({ message: 'Home banner image not found' });
@@ -1973,7 +1984,7 @@ exports.deleteHomeBannerImage = async (req, res) => {
     await Carousel.findByIdAndDelete(id);
     res.status(200).json({ message: 'Home banner image deleted successfully' });
   } catch (error) {
-    console.error('Error deleting home banner image:', error);
+    console.error('Error deleting home banner image:', error.message, error.stack);
     res.status(500).json({ message: 'Error deleting home banner image', error: error.message });
   }
 };
