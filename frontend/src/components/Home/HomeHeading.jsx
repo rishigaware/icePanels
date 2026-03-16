@@ -34,7 +34,7 @@ import certSsl from "../../assets/certification_ssl_secure.png";
 // import logo from '../../assets/logo.png';
 import resp18 from "../../assets/responsible_gaming_18_plus.png";
 import respPlaySafe from "../../assets/responsible_gaming_play_safe.png";
-import newlogo from "../../assets/SP.png";
+import newlogo from "../../assets/logo.png";
 import { useUser } from "../../context/UserContext";
 import DepositPopup from "../Navbar/DepositPopup"; // Import the DepositPopup component
 import styles from "./HomeHeading.module.css"; // Import the CSS module
@@ -100,15 +100,9 @@ const HomeHeading = () => {
     <div className={styles.mainContainer}>
       <div className={styles.navbar}>
         <img
-          src={newlogo}
+          src="/logo.png"
           alt="Logo"
-          style={{
-            float: "left",
-            height: "85%",
-            marginTop: "2px", // Adjust as needed
-            marginLeft: "4px",
-            objectFit: "contain", // Ensures the image scales well inside the container
-          }}
+          className={styles.navbarLogo}
         />
         <div style={{ float: "right" }}>
           {user ? (
@@ -137,16 +131,9 @@ const HomeHeading = () => {
           <div className={styles.second}>
             <div className={styles.logo}>
               <img
-                src={newlogo}
+                src="/logo.png"
                 alt="Logo"
-                style={{
-                  height: "60px",
-                  marginTop: "2px",
-                  marginLeft: "4px",
-                  objectFit: "contain",
-                  zIndex: 1000,
-                  position: "relative",
-                }}
+                className={styles.centerLogo}
               />
             </div>
 

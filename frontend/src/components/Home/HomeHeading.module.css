@@ -17,7 +17,7 @@ body {
 }
 
 .navbar {
-  height: 60px;
+  height: 75px;
   overflow: hidden;
   width: 100%;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -62,7 +62,7 @@ body {
   backdrop-filter: blur(10px);
   animation: slideInDown 0.8s ease-out 0.2s both;
   overflow: hidden;
-  margin-top: 60px;
+  margin-top: 75px;
   /* Account for fixed navbar */
 }
 
@@ -166,8 +166,8 @@ body {
   } */
 
 .second {
-  height: 150px;
-  width: 150px;
+  min-height: 150px;
+  height: auto;
   border-radius: 15px;
   background: linear-gradient(135deg, #131313 0%, #2a2a2a 100%);
   color: #fff;
@@ -175,7 +175,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
+  width: 160px; /* Controlled width to prevent expansion */
   padding: 10px;
   position: relative;
   z-index: 999;
@@ -218,6 +218,42 @@ body {
   height: auto;
 }
 
+.navbarLogo {
+  float: left;
+  height: 100%;
+  margin-top: 0px; 
+  margin-left: 4px;
+  object-fit: contain;
+}
+
+.centerLogo {
+  height: 85px; /* Reduced from 130px to prevent overlap */
+  max-width: 100%;
+  margin-top: 2px;
+  margin-left: 0;
+  object-fit: contain;
+  z-index: 1000;
+  position: relative;
+}
+
+@media screen and (max-width: 768px) {
+  .navbarLogo {
+    height: 80%;
+  }
+  .centerLogo {
+    height: 100px; /* Reduced from 120px */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .navbarLogo {
+    height: 70%;
+  }
+  .centerLogo {
+    height: 50px; /* Reduced from 55px */
+  }
+}
+
 
 
 .balance {
@@ -241,7 +277,8 @@ body {
 
 
 .third {
-  height: 100px;
+  min-height: 100px;
+  height: auto;
   width: 70px;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
@@ -711,7 +748,8 @@ body {
   .first,
   .second,
   .third {
-    height: 95px;
+    min-height: 95px;
+    height: auto;
     font-size: 13px;
   }
 
@@ -743,16 +781,16 @@ body {
   }
 
   .topSquare {
-    width: 90%;
-    height: 70%;
+    width: 92%;
+    height: 140px; /* Fixed height for stability */
     border-radius: 15px;
   }
 
   .first,
   .second,
   .third {
-    height: 90px;
-    font-size: 12px;
+    height: 100px;
+    font-size: 11px;
   }
 
   .deposit,
@@ -823,16 +861,20 @@ body {
   }
 
   .topSquare {
-    width: 94%;
-    height: 60%;
-    border-radius: 10px;
+    width: 95%;
+    height: 100px;
+    border-radius: 12px;
   }
 
   .first,
   .second,
   .third {
-    height: 70px;
-    font-size: 10px;
+    height: 80px;
+    font-size: 11px;
+  }
+  
+  .second {
+    width: 45%; /* Give more space to the logo container */
   }
 
   .deposit,

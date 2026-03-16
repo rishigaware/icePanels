@@ -17,7 +17,7 @@ body {
 }
 
 .navbar {
-  height: 60px;
+  height: 75px;
   overflow: hidden;
   width: 100%;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -62,7 +62,7 @@ body {
   backdrop-filter: blur(10px);
   animation: slideInDown 0.8s ease-out 0.2s both;
   overflow: hidden;
-  margin-top: 60px;
+  margin-top: 90px;
   /* Account for fixed navbar */
 }
 
@@ -81,7 +81,8 @@ body {
 
 .topSquare {
   width: 80%;
-  height: 60%;
+  height: auto;
+  min-height: 60%;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -97,7 +98,8 @@ body {
 }
 
 .first {
-  height: 100px;
+  min-height: 100px;
+  height: auto;
   width: 70px;
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
@@ -166,8 +168,8 @@ body {
   } */
 
 .second {
-  height: 150px;
-  width: 150px;
+  min-height: 150px;
+  height: auto;
   border-radius: 15px;
   background: linear-gradient(135deg, #131313 0%, #2a2a2a 100%);
   color: #fff;
@@ -175,7 +177,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
+  width: 160px; /* Controlled width */
   padding: 10px;
   position: relative;
   z-index: 999;
@@ -218,6 +220,42 @@ body {
   height: auto;
 }
 
+.navbarLogo {
+  float: left;
+  height: 100%;
+  margin-top: 0px; 
+  margin-left: 4px;
+  object-fit: contain;
+}
+
+.centerLogo {
+  height: 85px; /* Reduced to 85px */
+  max-width: 100%;
+  margin-top: 2px;
+  margin-left: 0;
+  object-fit: contain;
+  z-index: 1000;
+  position: relative;
+}
+
+@media screen and (max-width: 768px) {
+  .navbarLogo {
+    height: 80%;
+  }
+  .centerLogo {
+    height: 100px; /* Reduced from 120px */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .navbarLogo {
+    height: 70%;
+  }
+  .centerLogo {
+    height: 50px; /* Reduced from 55px */
+  }
+}
+
 
 
 .balance {
@@ -241,7 +279,8 @@ body {
 
 
 .third {
-  height: 100px;
+  min-height: 100px;
+  height: auto;
   width: 70px;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
@@ -709,7 +748,8 @@ body {
   .first,
   .second,
   .third {
-    height: 90px;
+    min-height: 90px;
+    height: auto;
     font-size: 12px;
   }
 
@@ -786,21 +826,27 @@ body {
   }
 
   .top {
-    height: 16vh;
-    margin-top: 45px;
+    height: auto;
+    min-height: 120px;
+    margin-top: 90px;
+    padding: 10px 0;
   }
 
   .topSquare {
-    width: 92%;
-    height: 75%;
-    border-radius: 12px;
+    width: 94%;
+    height: 140px;
+    border-radius: 15px;
   }
 
   .first,
   .second,
   .third {
-    height: 85px;
+    height: 110px;
     font-size: 11px;
+  }
+  
+  .second {
+    width: 45%;
   }
 
   .deposit,
@@ -914,8 +960,10 @@ body {
   }
 
   .top {
-    height: 14vh;
-    margin-top: 40px;
+    height: auto;
+    min-height: 120px;
+    margin-top: 80px;
+    padding: 10px 0;
   }
 
   .topSquare {

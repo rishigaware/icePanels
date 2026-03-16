@@ -12,7 +12,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 24px;
-  height: 70px;
+  height: 75px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -20,7 +20,7 @@
 .logo {
   display: flex;
   align-items: center;
-  height: 45px;
+  height: 60px; /* Reduced from 65px */
   transition: transform 0.3s ease;
 }
 
@@ -104,12 +104,12 @@
 @media (max-width: 768px) {
   .navbar {
     padding: 10px 20px;
-    height: 65px;
+    height: 75px;
     background: rgba(50, 103, 210, 0.7);
   }
   
   .logo {
-    height: 40px;
+    height: 55px; /* Reduced from 65px */
   }
   
   .navLinks {
@@ -138,12 +138,12 @@
 @media (max-width: 480px) {
   .navbar {
     padding: 8px 16px;
-    height: 60px;
+    height: 65px;
     background: rgba(50, 103, 210, 0.6);
   }
   
   .logo {
-    height: 35px;
+    height: 45px; /* Reduced from 55px */
   }
   
   .navLinks {
@@ -173,12 +173,12 @@
 @media (max-width: 360px) {
   .navbar {
     padding: 6px 12px;
-    height: 55px;
+    height: 60px;
     background: rgba(50, 103, 210, 0.5);
   }
   
   .logo {
-    height: 30px;
+    height: 40px; /* Reduced from 50px */
   }
   
   .navLinks {

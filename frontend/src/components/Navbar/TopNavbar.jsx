@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "./TopNavbar.module.css";
 import DepositPopup from "./DepositPopup"; // Import the DepositPopup component
 // import logo from '../../assets/logo.png'
-import newlogo from '../../assets/SP.png'
+import newlogo from '../../assets/logo.png'
 import { useUser } from "../../context/UserContext";
 
 export default function TopNavbar() {
@@ -50,7 +50,7 @@ export default function TopNavbar() {
       {/* Logo Section */}
       <div className={styles.logo}>
           <img
-            src={newlogo}
+            src="/logo.png"
             alt="Logo"
             className={styles.logoImage}
             />
