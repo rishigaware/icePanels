@@ -29,53 +29,12 @@ app.use(express.json());
 //   })
 // );
 
-// CORS configuration
-const allowedOrigins = process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : [
-  'https://www.the247panel.shop',
-  'https://the247panel.shop',
-  'https://the247panel.vercel.app',
-  'http://localhost:3000',
-  'http://localhost:5173',
-  'http://localhost:5174',
-  'http://127.0.0.1:3000',
-  'http://127.0.0.1:5173',
-  'https://the247panel.vercel.app/',
-  'https://saipunt.info',
-  'https://www.saipunt.info',
-  'https://saipuntinfo.vercel.app'
-];
-
-console.log('🔧 CORS Configuration loaded:');
-console.log('🔧 Allowed origins:', allowedOrigins);
-
-// app.use(
-//   cors({
-//     origin: (origin, callback) => {
-//       // If the origin is not provided (e.g., for server-to-server requests), allow it
-//       if (!origin || allowedOrigins.includes(origin)) {
-//         callback(null, true);  // Allow the origin
-//       } else {
-//         callback(new Error('Not allowed by CORS'));  // Reject the origin
-//       }
-//     },
-//     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-//     credentials: true,
-//   })
-// );
+app.get('/health', (req, res) => res.status(200).send('OK'));
 
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-        return callback(new Error(msg), false);
-      }
-      return callback(null, true);
-    },
+    origin: true, // Dynamically allow any origin (required for credentials: true)
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,
   })
