@@ -281,6 +281,10 @@ const HomeHeading = () => {
           />
         </div>
       </div>
+
+       {/* Home Banner Carousel - admin can manage */}
+      <HomeBannerCarousel canManage={true} />
+
       {/* Animated Features Section */}
       <div className={styles.featuresSection}>
         <div className={styles.featuresGrid}>
@@ -325,6 +329,10 @@ const HomeHeading = () => {
         </div>
       </div>
 
+      {/* Square Banner Carousel - before How It Works */}
+      <SquareBannerCarousel canManage={true} />
+
+
       {/* Animated Stats Section */}
       <div className={styles.statsSection}>
         <div className={styles.statsContainer}>
@@ -341,9 +349,7 @@ const HomeHeading = () => {
         </div>
       </div>
 
-      {/* Home Banner Carousel - admin can manage */}
-      <HomeBannerCarousel canManage={true} />
-
+     
       {/* Services Section */}
       <div className={styles.gamingPlatformsSection}>
         <h2 className={styles.sectionTitle}>🚀 Our Premium Services</h2>
@@ -430,9 +436,7 @@ const HomeHeading = () => {
         </div>
       </div>
 
-      {/* Square Banner Carousel - before How It Works */}
-      <SquareBannerCarousel canManage={true} />
-
+      
       {/* How It Works Section */}
       <div className={styles.howItWorksSection}>
         <h2 className={styles.sectionTitle}>🚀 How It Works</h2>
