@@ -446,7 +446,7 @@ const HomeHeading = () => {
             <div className={styles.stepContent}>
               <h3>Open Google</h3>
               <p>
-                Search "the best panel provider" using link <b>SAIPUNT.INFO</b>
+                Search "the best panel provider" using link <b>IcePanels.info</b>
               </p>
             </div>
             <div className={styles.stepIcon}>🔍</div>
