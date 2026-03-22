@@ -15,19 +15,52 @@ export default function NewDepositPopup({ onClose, selectedId }) {
   // New state from CreateId logic
   const [displayedRate, setDisplayedRate] = useState(0);
   const [convertedRupees, setConvertedRupees] = useState(0);
+  const [actualWebsiteRate, setActualWebsiteRate] = useState(0);
 
   const toast = useRef(null);
   const { user, refreshUserBalance, url } = useUser();
 
   useEffect(() => {
+    const fetchActualRate = async () => {
+      if (selectedId && url) {
+        try {
+          const response = await fetch(`${url}/api/admin/get-websites`);
+          const data = await response.json();
+          if (response.ok) {
+            const website = data.find(w => 
+              (w.website && w.website.toLowerCase().trim() === selectedId.websiteName.toLowerCase().trim()) || 
+              (w.name && w.name.toLowerCase().trim() === selectedId.websiteName.toLowerCase().trim())
+            );
+            if (website) {
+              const baseRate = parseFloat(website.coinRate) || 1;
+              setActualWebsiteRate(baseRate);
+              setCoinRate(baseRate);
+              // Initialize displayed rate with base rate
+              setDisplayedRate(baseRate);
+            } else {
+              setActualWebsiteRate(parseFloat(selectedId.coinRate) || 1);
+              setCoinRate(parseFloat(selectedId.coinRate) || 1);
+              setDisplayedRate(parseFloat(selectedId.coinRate) || 1);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching actual rate:", error);
+          setActualWebsiteRate(parseFloat(selectedId.coinRate) || 1);
+          setCoinRate(parseFloat(selectedId.coinRate) || 1);
+          setDisplayedRate(parseFloat(selectedId.coinRate) || 1);
+        }
+      }
+    };
+
+    fetchActualRate();
+
     if (selectedId) {
-      setCoinRate(parseFloat(selectedId.coinRate) || 1);
       setMinimumCoins(parseFloat(selectedId.minimumCoins) || 0);
     }
     if (user) {
       setAvailableWalletBalance(parseFloat(user.balance) || 0);
     }
-  }, [selectedId, user]);
+  }, [selectedId, user, url]);
 
   // Prevent background scrolling when popup is open
   useEffect(() => {
@@ -43,7 +76,7 @@ export default function NewDepositPopup({ onClose, selectedId }) {
     setCoinAmount(value);
     setErrorMessage("");
 
-    let currentRate = parseFloat(selectedId?.coinRate) || 1;
+    let currentRate = actualWebsiteRate || parseFloat(selectedId?.coinRate) || 1;
     
     // Dynamic Rate Logic (Same as CreateId)
     if (coins > 0) { 
@@ -94,12 +127,12 @@ export default function NewDepositPopup({ onClose, selectedId }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
+ body: JSON.stringify({
           amount: convertedRupees, // Rupees to deduct
           coinsToReceive: coins, // Coins to add
           coinRate: displayedRate,
-          baseCoinRate: selectedId?.coinRate || 1,
-          additionalRate: (displayedRate - (selectedId?.coinRate || 1)),
+          baseCoinRate: actualWebsiteRate || (selectedId?.coinRate || 1),
+          additionalRate: (displayedRate - (actualWebsiteRate || (selectedId?.coinRate || 1))),
           refundable: refundable === "refundable",
           websiteName: selectedId.websiteName,
           websiteUrl: selectedId.websiteUrl,
@@ -173,7 +206,7 @@ export default function NewDepositPopup({ onClose, selectedId }) {
             </div>
             <div className={styles.detailRow}>
               <span className={styles.label}>Base Coin Rate:</span>
-              <span className={styles.value}>1 coin = ₹{selectedId?.coinRate || 1}</span>
+              <span className={styles.value}>1 coin = ₹{actualWebsiteRate || selectedId?.coinRate || 1}</span>
             </div>
             <div className={styles.detailRow}>
               <span className={styles.label}>Minimum Coins:</span>
@@ -225,11 +258,11 @@ export default function NewDepositPopup({ onClose, selectedId }) {
                         <span className={styles.conversionValue}>
                             {coins < 50000 ? (
                                 <span style={{ fontSize: '0.9em' }}>
-                                    {selectedId?.coinRate} + 0.03 = <b>₹{displayedRate}</b> <span style={{ color: '#2ecc71', fontSize: '0.8em' }}>(Rate increased for &lt; 50k coins)</span>
+                                    {actualWebsiteRate || selectedId?.coinRate} + 0.03 = <b>₹{displayedRate}</b> <span style={{ color: 'var(--success-color)', fontSize: '0.8em' }}>(Rate increased for &lt; 50k coins)</span>
                                 </span>
                             ) : coins < 100000 ? (
                                 <span style={{ fontSize: '0.9em' }}>
-                                    {selectedId?.coinRate} + 0.01 = <b>₹{displayedRate}</b> <span style={{ color: '#2ecc71', fontSize: '0.8em' }}>(Rate increased for &lt; 100k coins)</span>
+                                    {actualWebsiteRate || selectedId?.coinRate} + 0.01 = <b>₹{displayedRate}</b> <span style={{ color: 'var(--success-color)', fontSize: '0.8em' }}>(Rate increased for &lt; 100k coins)</span>
                                 </span>
                             ) : (
                                 <span>1 coin = ₹{displayedRate}</span>
@@ -242,8 +275,8 @@ export default function NewDepositPopup({ onClose, selectedId }) {
                         <span className={styles.conversionLabel}>Total Cost:</span>
                         <span className={styles.conversionValue}>
                             {coins} x {displayedRate}
-                            {coins < 50000 && <span style={{fontSize: '0.8em', color: '#2ecc71', margin: '0 5px'}}>(+0.03 rate applied)</span>}
-                            {coins >= 50000 && coins < 100000 && <span style={{fontSize: '0.8em', color: '#2ecc71', margin: '0 5px'}}>(+0.01 rate applied)</span>}
+                            {coins < 50000 && <span style={{fontSize: '0.8em', color: 'var(--success-color)', margin: '0 5px'}}>(+0.03 rate applied)</span>}
+                            {coins >= 50000 && coins < 100000 && <span style={{fontSize: '0.8em', color: 'var(--success-color)', margin: '0 5px'}}>(+0.01 rate applied)</span>}
                             = <b>₹{convertedRupees.toFixed(2)}</b>
                         </span>
                     </div>

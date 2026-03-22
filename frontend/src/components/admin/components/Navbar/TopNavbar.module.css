@@ -4,9 +4,9 @@
   position: fixed;
   top: 0;
   left: 0;
-  background: rgba(50, 103, 210, 0.8);
+  background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(10px);
-  box-shadow: 0 2px 15px rgba(50, 103, 210, 0.2);
+  box-shadow: 0 2px 15px rgba(255, 204, 0, 0.2);
   z-index: 1000;
   display: flex;
   justify-content: space-between;
@@ -69,14 +69,14 @@
 .balanceAmount {
   font-size: 14px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-white);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 /* Navigation Button */
 .navButton {
-  background: rgba(50, 103, 210, 0.8);
-  color: #ffffff;
+  background: rgba(0, 0, 0, 0.8);
+  color: var(--text-white);
   border: 2px solid rgba(255, 255, 255, 0.3);
   padding: 10px 20px;
   font-size: 13px;
@@ -86,7 +86,7 @@
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  box-shadow: 0 3px 12px rgba(50, 103, 210, 0.25);
+  box-shadow: 0 3px 12px rgba(255, 204, 0, 0.25);
   min-width: 100px;
   display: flex;
   align-items: center;
@@ -97,7 +97,7 @@
 
 .navButton:active {
   transform: translateY(0);
-  box-shadow: 0 3px 12px rgba(50, 103, 210, 0.25);
+  box-shadow: 0 3px 12px rgba(255, 204, 0, 0.25);
 }
 
 /* Responsive Design */
@@ -105,7 +105,7 @@
   .navbar {
     padding: 10px 20px;
     height: 75px;
-    background: rgba(50, 103, 210, 0.7);
+    background: rgba(0, 0, 0, 0.7);
   }
   
   .logo {
@@ -139,7 +139,7 @@
   .navbar {
     padding: 8px 16px;
     height: 65px;
-    background: rgba(50, 103, 210, 0.6);
+    background: rgba(0, 0, 0, 0.6);
   }
   
   .logo {
@@ -174,7 +174,7 @@
   .navbar {
     padding: 6px 12px;
     height: 60px;
-    background: rgba(50, 103, 210, 0.5);
+    background: rgba(0, 0, 0, 0.5);
   }
   
   .logo {
@@ -219,7 +219,7 @@
 @media print {
   .navbar {
     position: static;
-    background: #ffffff;
+    background: var(--glass-bg);
     box-shadow: none;
     border-bottom: 1px solid #ddd;
   }

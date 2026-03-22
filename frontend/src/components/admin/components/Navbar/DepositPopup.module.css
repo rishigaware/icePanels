@@ -16,7 +16,8 @@
   }
   
   .popup {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  background: #111111 !important;
+  border: 1px solid rgba(255, 204, 0, 0.3);
   border-radius: 20px;
   width: 100%;
   max-width: 500px;
@@ -63,7 +64,7 @@
 
 .closeButton:hover {
   background: #dc3545;
-  color: white;
+  color: var(--text-white);
   transform: scale(1.1);
   }
   
@@ -73,7 +74,7 @@
   color: #2c3e50;
   font-size: 24px;
   font-weight: 700;
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, #3b70d9 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -85,10 +86,10 @@
   margin: 25px auto;
   padding: 30px 25px;
   text-align: center;
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, #3b70d9 100%);
   border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(50, 103, 210, 0.3);
-  color: white;
+  box-shadow: 0 8px 25px rgba(255, 204, 0, 0.3);
+  color: var(--text-white);
   position: relative;
   overflow: hidden;
 }
@@ -107,7 +108,7 @@
 .amount {
   font-size: 2.5rem;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--text-white);
   margin-bottom: 15px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   position: relative;
@@ -149,14 +150,14 @@
   border-radius: 12px;
   outline: none;
   transition: all 0.3s ease;
-  background: #ffffff;
+  background: var(--glass-bg);
   color: #2c3e50;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .input:focus {
-  border-color: #3267d2;
-  box-shadow: 0 0 0 4px rgba(50, 103, 210, 0.1);
+  border-color: var(--link-color);
+  box-shadow: 0 0 0 4px rgba(255, 204, 0, 0.1);
   transform: translateY(-2px);
 }
 
@@ -184,7 +185,7 @@
   margin: 25px auto;
   padding: 18px 30px;
   background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: white;
+  color: var(--text-white);
   border: none;
   border-radius: 15px;
   cursor: pointer;
@@ -224,7 +225,7 @@
   margin: 25px auto;
   padding: 18px 30px;
   background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: white;
+  color: var(--text-white);
   border: none;
   border-radius: 15px;
   cursor: pointer;
@@ -267,7 +268,7 @@
   background: #f8f9fa;
   border: 2px solid #e9ecef;
   text-align: center;
-  color: #6c757d;
+  color: var(--text-secondary);
   border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
@@ -277,15 +278,15 @@
 
 .tabButton:hover {
   background: #e9ecef;
-  border-color: #3267d2;
-  color: #3267d2;
+  border-color: var(--link-color);
+  color: var(--link-color);
 }
 
 .activeTab {
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
-  color: white;
-  border-color: #3267d2;
-  box-shadow: 0 4px 15px rgba(50, 103, 210, 0.3);
+  background: linear-gradient(135deg, var(--primary-color) 0%, #3b70d9 100%);
+  color: var(--text-white);
+  border-color: var(--link-color);
+  box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3);
 }
 
 /* Tab Content */
@@ -298,7 +299,7 @@
 .depositFunds h2,
 .bankDetails h2,
 .upiDetails h2 {
-  color: #3267d2;
+  color: var(--link-color);
   font-size: 20px;
   margin-bottom: 15px;
   text-align: center;
@@ -307,7 +308,7 @@
 .depositFunds p {
   text-align: center;
   line-height: 1.6;
-  color: #6c757d;
+  color: var(--text-secondary);
 }
 
 /* Copy Container */
@@ -325,7 +326,7 @@
 
 .copyContainer:hover {
   background: #e9ecef;
-  border-color: #3267d2;
+  border-color: var(--link-color);
   transform: translateX(5px);
 }
 
@@ -336,28 +337,28 @@
 
 .copyIcon {
   cursor: pointer;
-  color: #3267d2;
+  color: var(--link-color);
   font-size: 18px;
   padding: 8px;
   border-radius: 6px;
   transition: all 0.3s ease;
-  background: rgba(50, 103, 210, 0.1);
+  background: rgba(255, 204, 0, 0.1);
 }
 
 .copyIcon:hover {
-  color: #ffffff;
-  background: #3267d2;
+  color: var(--text-white);
+  background: var(--primary-color);
   transform: scale(1.1);
 }
 
 /* Amount Display */
 .amountDisplay {
-  color: #3267d2;
+  color: var(--link-color);
   font-size: 20px;
   font-weight: 700;
   margin: 20px 0;
   text-align: center;
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, #3b70d9 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -392,7 +393,7 @@
   font-size: 14px;
   border: 2px solid #e9ecef;
   border-radius: 10px;
-  background: #ffffff;
+  background: var(--glass-bg);
   color: #2c3e50;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -400,8 +401,8 @@
 }
 
 .dropdown:focus {
-  border-color: #3267d2;
-  box-shadow: 0 0 0 3px rgba(50, 103, 210, 0.1);
+  border-color: var(--link-color);
+  box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.1);
 }
 
 .dropdown option {
@@ -915,7 +916,7 @@
   }
   
   .balanceContainer {
-    box-shadow: 0 4px 15px rgba(50, 103, 210, 0.2);
+    box-shadow: 0 4px 15px rgba(255, 204, 0, 0.2);
   }
 }
 

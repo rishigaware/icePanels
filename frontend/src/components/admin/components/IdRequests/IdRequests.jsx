@@ -162,7 +162,7 @@ const IdRequests = () => {
   if (isLoading) {
     return (
       <div className={styles.loadingContainer}>
-        <PulseLoader color="#4592ef" loading={isLoading} size={15} />
+        <PulseLoader color="var(--primary-color)" loading={isLoading} size={15} />
         <p>Loading ID requests...</p>
       </div>
     );
@@ -236,7 +236,7 @@ const IdRequests = () => {
                       <div className={styles.tableCoinInfo}>
                         <div className={styles.tableAmount}>₹{request.convertedCoins}</div>
                         <div className={styles.tableCoins}>
-                          <FaCoins style={{ color: '#ffd700' }} /> {request.coinAmount}
+                          <FaCoins style={{ color: 'var(--warning-color)' }} /> {request.coinAmount}
                         </div>
                       </div>
                     </td>
@@ -271,7 +271,7 @@ const IdRequests = () => {
                               title="Accept"
                             >
                               {actionLoading === request.id ? (
-                                <PulseLoader size={6} color="#ffffff" />
+                                <PulseLoader size={6} color="#000000" />
                               ) : (
                                 <FaCheck />
                               )}
@@ -361,7 +361,7 @@ const IdRequests = () => {
                         </div>
                       </div>
                       <div className={styles.infoItem}>
-                        <FaCoins className={styles.infoIcon} style={{ color: '#ffd700' }} />
+                        <FaCoins className={styles.infoIcon} style={{ color: 'var(--warning-color)' }} />
                         <div>
                           <span className={styles.infoLabel}>Coins</span>
                           <span className={styles.infoValue}>{request.coinAmount}</span>
@@ -406,7 +406,7 @@ const IdRequests = () => {
                           disabled={actionLoading === request.id}
                         >
                           {actionLoading === request.id ? (
-                            <PulseLoader size={8} color="#ffffff" />
+                            <PulseLoader size={8} color="#000000" />
                           ) : (
                             <>
                               <FaCheck /> Accept
@@ -555,7 +555,7 @@ const IdRequests = () => {
                   disabled={actionLoading === selectedRequest.id}
                 >
                   {actionLoading === selectedRequest.id ? (
-                    <PulseLoader color="#ffffff" size={8} />
+                    <PulseLoader color="#000000" size={8} />
                   ) : (
                     <>
                       <FaCheck className={styles.buttonIcon} />

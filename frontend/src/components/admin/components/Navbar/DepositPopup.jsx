@@ -7,7 +7,7 @@ import LoginPopup from '../Login/LoginPopup';
 
 import { FileUpload } from "primereact/fileupload";
 import { Toast } from "primereact/toast";
-import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/themes/lara-dark-amber/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
@@ -211,7 +211,7 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
 
               {/* Wallet Balance */}
               <p className={styles.wallet}>
-                <strong>Wallet Balance : ₹ {user?.balance || 0}</strong>
+                <strong>Wallet Balance : ₹ {(parseFloat(user?.balance) || 0).toFixed(2)}</strong>
               </p>
             </div>
 

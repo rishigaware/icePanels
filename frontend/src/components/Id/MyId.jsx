@@ -263,7 +263,7 @@ const MyId = () => {
   if (loading) {
     return (
       <div className={styles.loading}>
-        <PulseLoader color="#4592ef" loading={loading} size={15} />
+        <PulseLoader color="var(--primary-color)" loading={loading} size={15} />
       </div>
     );
   }
@@ -315,11 +315,9 @@ const MyId = () => {
             </div>
             <div className={styles.details}>
               <p className={styles.websiteName}>{item.websiteName || 'N/A'}</p>
-              <span>
-                <a href={item.websiteUrl || '#'} target="_blank" rel="noopener noreferrer" className={styles.websiteLink}>
-                  {item.websiteUrl || 'N/A'}
-                </a>
-              </span>
+              <a href={item.websiteUrl || '#'} target="_blank" rel="noopener noreferrer" className={styles.websiteLink}>
+                {item.websiteUrl || 'N/A'}
+              </a>
               <p className={styles.userId}><strong>username : </strong>{item.username || 'N/A'}</p>
               {item.type === 'request' ? (
                 <>
@@ -441,11 +439,15 @@ const MyId = () => {
       {selectedId && changePasswordPopup && (
         <div className={styles.popup}>
           <div className={styles.popupContent}>
-            <button onClick={handleClosePopup} className={styles.closeButton}>&times;</button>
+            <button onClick={handleClosePopup} className={styles.closeButton}>
+              <FiX />
+            </button>
             <div className={styles.popupHeader}>
               <img src={getImageUrl(selectedId.imgUrl, url)} alt={`${selectedId.websiteName} logo`} className={styles.popupLogo} />
-              <h2>{selectedId.websiteName}</h2>
-              <p>{selectedId.websiteUrl}</p>
+              <div className={styles.headerText}>
+                <h2>{selectedId.websiteName}</h2>
+                <p>{selectedId.websiteUrl}</p>
+              </div>
             </div>
             <div className={styles.popupBody}>
               <p><strong>Username:</strong> {selectedId.username}</p>

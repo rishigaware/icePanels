@@ -1,36 +1,35 @@
-/* Overlay */
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.85); /* Reduced transparency */
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   padding: 20px;
-  overflow: hidden; /* Prevent background scrolling */
+  overflow: hidden;
 }
 
 /* Popup Container */
 .popup {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: 20px;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  background: #111111 !important;
+  border: 1px solid rgba(255, 204, 0, 0.3); /* Premium gold border */
+  border-radius: 15px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
   width: 100%;
-  max-width: 500px;
+  max-width: 480px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  overflow: hidden; /* Ensure content inside popup is contained */
-  touch-action: manipulation; /* Prevent background scroll on touch devices */
+  overflow: hidden;
+  touch-action: manipulation;
   margin: 0 auto;
+  animation: modalPop 0.3s ease-out;
 }
 
 /* Close Button */
@@ -38,26 +37,25 @@
   position: absolute;
   top: 15px;
   right: 15px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--primary-color); /* Solid Yellow */
+  color: #000 !important; /* Black icon */
   border: none;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 24px;
+  width: 28px;
+  height: 28px;
+  font-size: 18px;
   font-weight: bold;
-  color: #666;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  z-index: 10;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .closeButton:hover {
-  background: rgba(255, 255, 255, 1);
-  color: #333;
+  background: #ffffff;
   transform: scale(1.1);
 }
 
@@ -73,8 +71,8 @@
   margin: 0 0 8px 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1f2937;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: var(--primary-color);
+  background: var(--main-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -82,7 +80,7 @@
 
 .subtitle {
   margin: 0;
-  color: #6b7280;
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
@@ -118,16 +116,16 @@
 .websiteDetails {
   margin: 20px 0;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 204, 0, 0.2);
 }
 
 .websiteDetails h3 {
   margin: 0 0 15px 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--text-primary);
 }
 
 .detailRow {
@@ -146,23 +144,23 @@
 
 .label {
   font-weight: 500;
-  color: #6b7280;
-  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem; /* Reduced */
 }
 
 .value {
   font-weight: 600;
-  color: #1f2937;
-  font-size: 0.9rem;
+  color: var(--text-primary);
+  font-size: 0.85rem; /* Reduced */
 }
 
 /* Wallet Balance */
 .walletBalance {
   margin: 20px 0;
   padding: 20px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: var(--success-gradient);
   border-radius: 12px;
-  color: white;
+  color: var(--text-white);
   text-align: center;
 }
 
@@ -198,7 +196,7 @@
   margin: 0 0 15px 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--text-primary);
 }
 
 .inputGroup {
@@ -209,7 +207,7 @@
 .inputGroup label {
   margin-bottom: 8px;
   font-weight: 500;
-  color: #374151;
+  color: var(--text-primary);
   font-size: 0.9rem;
 }
 
@@ -220,12 +218,12 @@
   font-size: 1rem;
   transition: all 0.3s ease;
   background: rgba(255, 255, 255, 0.9);
-  color: #1f2937;
+  color: var(--text-primary);
 }
 
 .input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -233,16 +231,16 @@
 .conversionSection {
   margin: 20px 0;
   padding: 20px;
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
-  border: 1px solid rgba(102, 126, 234, 0.2);
+  border: 1px solid rgba(255, 204, 0, 0.2);
 }
 
 .conversionSection h3 {
   margin: 0 0 15px 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--text-primary);
 }
 
 .conversionDisplay {
@@ -260,13 +258,13 @@
 
 .conversionLabel {
   font-weight: 500;
-  color: #6b7280;
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
 .conversionValue {
   font-weight: 600;
-  color: #667eea;
+  color: var(--primary-color);
   font-size: 1rem;
 }
 
@@ -307,7 +305,7 @@
   background: rgba(245, 158, 11, 0.1);
   border: 1px solid rgba(245, 158, 11, 0.3);
   border-radius: 8px;
-  color: #92400e;
+  color: var(--warning-color);
   font-size: 0.9rem;
   margin-bottom: 10px;
 }
@@ -317,7 +315,7 @@
   background: rgba(16, 185, 129, 0.1);
   border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: 8px;
-  color: #065f46;
+  color: var(--success-color);
   font-size: 0.9rem;
 }
 
@@ -330,7 +328,7 @@
   margin: 0 0 15px 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--text-primary);
 }
 
 .radioGroup {
@@ -351,14 +349,14 @@
 }
 
 .radioLabel:hover {
-  border-color: #667eea;
-  background: rgba(102, 126, 234, 0.05);
+  border-color: var(--primary-color);
+  background: var(--main-gradient);
 }
 
 .radioInput {
   margin-right: 12px;
   margin-top: 2px;
-  accent-color: #667eea;
+  accent-color: var(--primary-color);
 }
 
 .radioText {
@@ -368,13 +366,13 @@
 }
 
 .radioText strong {
-  color: #1f2937;
+  color: var(--text-primary);
   font-weight: 600;
   font-size: 0.95rem;
 }
 
 .radioText small {
-  color: #6b7280;
+  color: var(--text-secondary);
   font-size: 0.8rem;
 }
 
@@ -384,7 +382,7 @@
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 8px;
-  color: #dc2626;
+  color: var(--error-color);
   font-size: 0.9rem;
   margin: 20px 0;
 }
@@ -399,8 +397,8 @@
 .submitButton {
   width: 100%;
   padding: 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: var(--main-gradient);
+  color: var(--text-white);
   border: none;
   border-radius: 12px;
   font-size: 1rem;

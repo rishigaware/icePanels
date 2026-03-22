@@ -5,7 +5,7 @@ import { getImageUrl } from "../../utils/imageUrl";
 import { FileUpload } from "primereact/fileupload";
 import { PulseLoader } from "react-spinners";
 import { Toast } from "primereact/toast";
-import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/themes/lara-dark-amber/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import { FaUser, FaMoneyBillWave, FaCoins } from "react-icons/fa";
@@ -478,7 +478,7 @@ const CreateId = () => {
     <div className={styles.container}>
       {isLoading && (
         <div className={styles.loading}>
-          <PulseLoader color="#4592ef" loading={isLoading} size={15} />
+          <PulseLoader color="var(--primary-color)" loading={isLoading} size={15} />
         </div>
       )}
 
@@ -661,11 +661,11 @@ const CreateId = () => {
                    <span className={styles.coinValue}>
                      {coinAmount > 0 && coinAmount < 50000 ? (
                        <span style={{ fontSize: '0.9em' }}>
-                         {selectedWebsite?.coinRate} + 0.03 = <b>₹{coinRate}</b> <span style={{ color: '#2ecc71', fontSize: '0.8em' }}>(Rate increased for &lt; 50k coins)</span>
+                         {selectedWebsite?.coinRate} + 0.03 = <b>₹{coinRate}</b> <span style={{ color: 'var(--success-color)', fontSize: '0.8em' }}>(Rate increased for &lt; 50k coins)</span>
                        </span>
                      ) : coinAmount >= 50000 && coinAmount < 100000 ? (
                        <span style={{ fontSize: '0.9em' }}>
-                         {selectedWebsite?.coinRate} + 0.01 = <b>₹{coinRate}</b> <span style={{ color: '#2ecc71', fontSize: '0.8em' }}>(Rate increased for &lt; 100k coins)</span>
+                         {selectedWebsite?.coinRate} + 0.01 = <b>₹{coinRate}</b> <span style={{ color: 'var(--success-color)', fontSize: '0.8em' }}>(Rate increased for &lt; 100k coins)</span>
                        </span>
                      ) : (
                        <span>1 coin = ₹{coinRate}</span>
@@ -721,8 +721,8 @@ const CreateId = () => {
                      <span className={styles.coinLabel}>Conversion:</span>
                      <span className={styles.coinValue}>
                        {coinAmount} x {coinRate}
-                       {coinAmount < 50000 && <span style={{fontSize: '0.8em', color: '#2ecc71', margin: '0 5px'}}>(+0.03 rate applied for &lt; 50k)</span>}
-                       {coinAmount >= 50000 && coinAmount < 100000 && <span style={{fontSize: '0.8em', color: '#2ecc71', margin: '0 5px'}}>(+0.01 rate applied for &lt; 100k)</span>}
+                       {coinAmount < 50000 && <span style={{fontSize: '0.8em', color: 'var(--success-color)', margin: '0 5px'}}>(+0.03 rate applied for &lt; 50k)</span>}
+                       {coinAmount >= 50000 && coinAmount < 100000 && <span style={{fontSize: '0.8em', color: 'var(--success-color)', margin: '0 5px'}}>(+0.01 rate applied for &lt; 100k)</span>}
                        = <b>₹{convertedCoins.toFixed(2)}</b>
                      </span>
                    </div>
@@ -738,7 +738,7 @@ const CreateId = () => {
                     className={styles.checkbox}
                   />
                    <span className={styles.checkboxText}>
-                     Refundable (Coins can be withdrawn as ₹{convertedCoins.toFixed(2) || 0})
+                      Refundable (Coins can be withdrawn as ₹{(convertedCoins || 0).toFixed(2)})
                    </span>
                  </label>
                </div>
@@ -746,7 +746,7 @@ const CreateId = () => {
                {refundable && (
                  <div className={styles.refundMessage}>
                    <p className={styles.refundText}>
-                     ✓ Refund Policy: Your coins can be withdrawn as ₹{convertedCoins.toFixed(2) || 0} at any time
+                      ✓ Refund Policy: Your coins can be withdrawn as ₹{(convertedCoins || 0).toFixed(2)} at any time
                    </p>
                  </div>
                )}

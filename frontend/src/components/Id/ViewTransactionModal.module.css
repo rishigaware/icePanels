@@ -1,12 +1,11 @@
-/* View Transaction Modal - Modern Responsive Design */
 .modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 100%);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.85); /* Reduced transparency */
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,21 +27,18 @@
 }
 
 .modalContent {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  background: #111111; /* Dark theme */
   width: 90%;
-  max-width: 800px;
-  max-height: 90vh;
-  border-radius: 20px;
-  box-shadow: 
-    0 20px 60px rgba(0, 0, 0, 0.15),
-    0 8px 25px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  max-width: 750px;
+  max-height: 92vh;
+  border-radius: 15px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 204, 0, 0.3);
   position: relative;
-  animation: modalSlideIn 0.4s ease-out;
+  animation: modalPop 0.3s ease-out;
 }
 
 @keyframes modalSlideIn {
@@ -63,7 +59,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color) 50%, var(--primary-color) 100%);
   border-radius: 20px 20px 0 0;
 }
 
@@ -74,7 +70,7 @@
   align-items: center;
   padding: 24px 32px;
   border-bottom: 2px solid #f1f5f9;
-  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  background: var(--glass-bg);
 }
 
 .headerInfo {
@@ -88,15 +84,15 @@
   height: 56px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border: 2px solid #ffffff;
+  border: 1px solid var(--glass-border);
 }
 
 .websiteInfo h2 {
   margin: 0;
   font-size: 1.4rem;
   font-weight: 700;
-  color: #1e293b;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  color: var(--text-primary);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -104,37 +100,37 @@
 
 .websiteUrl {
   margin: 4px 0;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 500;
 }
 
 .username {
   margin: 4px 0 0 0;
-  color: #475569;
+  color: var(--text-secondary);
   font-size: 0.85rem;
   font-weight: 600;
 }
 
 .closeButton {
-  background: #f1f5f9;
+  background: var(--primary-color); /* Solid Yellow */
+  color: #000 !important; /* Black icon */
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
-  color: #64748b;
+  font-size: 1.1rem;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 100;
 }
 
 .closeButton:hover {
-  background: #e2e8f0;
-  color: #374151;
+  background: #ffffff;
   transform: scale(1.1);
 }
 
@@ -149,7 +145,7 @@
   margin: 0 0 20px 0;
   font-size: 1.2rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   border-bottom: 2px solid #e2e8f0;
   padding-bottom: 8px;
 }
@@ -172,14 +168,14 @@
   align-items: center;
   text-align: center;
   padding: 8px;
-  background: #ffffff;
+  background: var(--glass-bg);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .summaryLabel {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--text-secondary);
   font-weight: 500;
   margin-bottom: 4px;
   text-transform: uppercase;
@@ -189,7 +185,7 @@
 .summaryValue {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 /* Loading State */
@@ -199,14 +195,14 @@
   align-items: center;
   justify-content: center;
   padding: 40px 20px;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .spinner {
   width: 32px;
   height: 32px;
   border: 3px solid #e2e8f0;
-  border-top: 3px solid #3b82f6;
+  border-top: 3px solid var(--primary-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 16px;
@@ -225,8 +221,8 @@
 }
 
 .retryButton {
-  background: #3b82f6;
-  color: white;
+  background: var(--primary-color);
+  color: var(--text-white);
   border: none;
   padding: 8px 16px;
   border-radius: 6px;
@@ -237,7 +233,7 @@
 }
 
 .retryButton:hover {
-  background: #2563eb;
+  background: var(--primary-color);
   transform: translateY(-1px);
 }
 
@@ -245,7 +241,7 @@
 .noTransactions {
   text-align: center;
   padding: 40px 20px;
-  color: #64748b;
+  color: var(--text-secondary);
   background: #f8fafc;
   border-radius: 12px;
   border: 2px dashed #e2e8f0;
@@ -259,7 +255,7 @@
 }
 
 .transactionItem {
-  background: #ffffff;
+  background: var(--glass-bg);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -308,13 +304,13 @@
 
 .typePasswordChange {
   background: rgba(59, 130, 246, 0.1);
-  color: #2563eb;
+  color: var(--link-color);
   border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .typeDefault {
   background: rgba(107, 114, 128, 0.1);
-  color: #6b7280;
+  color: var(--text-secondary);
   border: 1px solid rgba(107, 114, 128, 0.3);
 }
 
@@ -347,12 +343,12 @@
 
 .statusDefault {
   background: rgba(107, 114, 128, 0.1);
-  color: #6b7280;
+  color: var(--text-secondary);
   border: 1px solid rgba(107, 114, 128, 0.3);
 }
 
 .transactionDate {
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.85rem;
   font-weight: 500;
 }
@@ -365,17 +361,17 @@
 
 .transactionDetails p {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 0.85rem; /* Reduced */
   line-height: 1.4;
 }
 
 .transactionDetails strong {
-  color: #374151;
+  color: var(--text-primary);
   font-weight: 600;
 }
 
 .description {
-  color: #1f2937;
+  color: var(--text-primary);
 }
 
 .amount {
@@ -384,7 +380,7 @@
 }
 
 .paymentMethod {
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 .reason {
@@ -392,7 +388,7 @@
 }
 
 .websiteName {
-  color: #3b82f6;
+  color: var(--link-color);
   font-weight: 600;
 }
 
@@ -402,7 +398,7 @@
 }
 
 .createdBy {
-  color: #6b7280;
+  color: var(--text-secondary);
   font-size: 0.85rem;
 }
 
@@ -429,8 +425,8 @@
 }
 
 .closeModalButton {
-  background: #3b82f6;
-  color: white;
+  background: var(--primary-color);
+  color: var(--text-white);
   border: none;
   padding: 10px 20px;
   border-radius: 8px;
@@ -442,7 +438,7 @@
 }
 
 .closeModalButton:hover {
-  background: #2563eb;
+  background: var(--primary-color);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }

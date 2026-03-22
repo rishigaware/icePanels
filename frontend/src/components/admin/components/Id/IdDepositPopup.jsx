@@ -5,7 +5,7 @@ import { useUser } from "../../../../context/UserContext";
 import { getImageUrl } from "../../../../utils/imageUrl";
 import { FileUpload } from "primereact/fileupload";
 import { Toast } from "primereact/toast";
-import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/themes/lara-dark-amber/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
@@ -216,7 +216,7 @@ export default function IdDepositPopup ({ onClose, walletBalance = 0, setWalletB
 
               {/* Wallet Balance */}
               <p className={styles.wallet}>
-                <strong>Wallet Balance : ₹ {user?.balance || 0}</strong>
+                <strong>Wallet Balance : ₹ {(parseFloat(user?.balance) || 0).toFixed(2)}</strong>
               </p>
             </div>
 

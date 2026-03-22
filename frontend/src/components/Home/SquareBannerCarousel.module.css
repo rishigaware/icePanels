@@ -23,8 +23,8 @@
 }
 
 .uploadBtn {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
+  background: var(--success-gradient);
+  color: var(--text-white);
   border: none;
   padding: 8px 16px;
   border-radius: 8px;
@@ -92,8 +92,8 @@
   position: absolute;
   top: 15px;
   right: 15px;
-  background: rgba(220, 38, 38, 0.9);
-  color: white;
+  background: var(--error-gradient);
+  color: var(--text-white);
   border: none;
   width: 34px;
   height: 34px;
@@ -108,7 +108,7 @@
 }
 
 .deleteBtn:hover {
-  background: #dc2626;
+  background: var(--error-gradient);
   transform: scale(1.1);
 }
 
@@ -117,7 +117,7 @@
   top: 50%;
   transform: translateY(-50%);
   background: rgba(0, 0, 0, 0.5);
-  color: white;
+  color: var(--text-white);
   border: none;
   width: 44px;
   height: 44px;
@@ -161,7 +161,7 @@
 }
 
 .dotActive {
-  background: #fff;
+  background: var(--glass-bg);
   width: 24px;
   border-radius: 5px;
 }
@@ -207,8 +207,8 @@
   position: absolute;
   top: 2px;
   right: 2px;
-  background: rgba(220, 38, 38, 0.8);
-  color: white;
+  background: var(--error-gradient);
+  color: var(--text-white);
   border: none;
   width: 20px;
   height: 20px;

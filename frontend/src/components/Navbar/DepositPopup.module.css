@@ -1,12 +1,11 @@
-/* Modern Responsive Deposit Popup Styles */
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.85); /* Reduced transparency */
+  backdrop-filter: blur(10px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -16,19 +15,32 @@
 }
 
 .popup {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  background: #111111 !important;
+  border: 1px solid rgba(255, 204, 0, 0.3); /* Premium gold border */
   border-radius: 20px;
-  width: 100%;
-  max-width: 500px;
+  width: 90%;
+  max-width: 480px;
   position: relative;
   margin: 0;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  overflow-y: auto;
-  max-height: 90vh;
-  animation: slideIn 0.3s ease-out;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  animation: modalPop 0.3s ease-out;
   z-index: 10000;
   transform: translateZ(0);
+  overflow: hidden; /* To keep close button sticky */
+}
+
+.scrollContent {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+@keyframes modalPop {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes slideIn {
@@ -46,39 +58,41 @@
 .closeButton {
   position: absolute;
   top: 15px;
-  right: 20px;
-  background: rgba(255, 255, 255, 0.9);
+  right: 15px;
+  background: var(--primary-color); /* Solid Yellow */
+  color: #000 !important; /* Black icon */
   border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #dc3545;
-  width: 40px;
-  height: 40px;
+  font-size: 1.2rem;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);
-  z-index: 10001;
+  z-index: 101; /* Higher than content */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
 }
 
 .closeButton:hover {
-  background: #dc3545;
-  color: white;
+  background: #ffffff;
   transform: scale(1.1);
 }
 
-.heading {
+.depositName {
   text-align: center;
   margin: 30px 20px 20px;
-  color: #2c3e50;
   font-size: 24px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
+  font-weight: 800;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, #ffffff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  text-shadow: 0 2px 10px rgba(255, 204, 0, 0.3);
 }
 
 /* Balance Container */
@@ -87,10 +101,11 @@
   margin: 25px auto;
   padding: 30px 25px;
   text-align: center;
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
+  background: var(--main-gradient);
+  border: 1px solid rgba(255, 204, 0, 0.4);
   border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(50, 103, 210, 0.3);
-  color: white;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+  color: var(--text-white);
   position: relative;
   overflow: hidden;
 }
@@ -109,7 +124,7 @@
 .amount {
   font-size: 2.5rem;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--text-white);
   margin-bottom: 15px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   position: relative;
@@ -151,14 +166,14 @@
   border-radius: 12px;
   outline: none;
   transition: all 0.3s ease;
-  background: #ffffff;
+  background: var(--glass-bg);
   color: #2c3e50;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .input:focus {
-  border-color: #3267d2;
-  box-shadow: 0 0 0 4px rgba(50, 103, 210, 0.1);
+  border-color: var(--link-color);
+  box-shadow: 0 0 0 4px rgba(255, 204, 0, 0.1);
   transform: translateY(-2px);
 }
 
@@ -185,15 +200,15 @@
   max-width: 300px;
   margin: 25px auto;
   padding: 18px 30px;
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: white;
+  background: var(--primary-color);
+  color: #000;
   border: none;
   border-radius: 15px;
   cursor: pointer;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 800;
   transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+  box-shadow: 0 6px 20px rgba(255, 204, 0, 0.3);
   text-transform: uppercase;
   letter-spacing: 1px;
   display: block;
@@ -225,15 +240,15 @@
   max-width: 300px;
   margin: 25px auto;
   padding: 18px 30px;
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: white;
+  background: var(--primary-color);
+  color: #000;
   border: none;
   border-radius: 15px;
   cursor: pointer;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 800;
   transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+  box-shadow: 0 6px 20px rgba(255, 204, 0, 0.3);
   text-transform: uppercase;
   letter-spacing: 1px;
   display: block;
@@ -266,10 +281,10 @@
   min-width: 120px;
   padding: 12px 16px;
   cursor: pointer;
-  background: #f8f9fa;
-  border: 2px solid #e9ecef;
+  background: rgba(255, 255, 255, 0.05); /* Darker tab */
+  border: 1px solid rgba(255, 255, 255, 0.1);
   text-align: center;
-  color: #6c757d;
+  color: var(--text-primary);
   border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
@@ -278,29 +293,29 @@
 }
 
 .tabButton:hover {
-  background: #e9ecef;
-  border-color: #3267d2;
-  color: #3267d2;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
 }
 
 .activeTab {
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
-  color: white;
-  border-color: #3267d2;
-  box-shadow: 0 4px 15px rgba(50, 103, 210, 0.3);
+  background: var(--primary-color);
+  color: #000;
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3);
 }
 
 /* Tab Content */
 .tabContent {
-  margin: 20px;
-  color: #2c3e50;
+  margin-top: 20px;
+  color: var(--text-primary);
   font-size: 15px;
 }
 
 .depositFunds h2,
 .bankDetails h2,
 .upiDetails h2 {
-  color: #3267d2;
+  color: var(--link-color);
   font-size: 20px;
   margin-bottom: 15px;
   text-align: center;
@@ -309,7 +324,7 @@
 .depositFunds p {
   text-align: center;
   line-height: 1.6;
-  color: #6c757d;
+  color: var(--text-secondary);
 }
 
 /* Copy Container */
@@ -317,17 +332,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f8f9fa;
+  background: rgba(255, 255, 255, 0.05);
   padding: 15px 20px;
   margin: 15px 0;
   border-radius: 10px;
-  border: 1px solid #e9ecef;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
 }
 
 .copyContainer:hover {
   background: #e9ecef;
-  border-color: #3267d2;
+  border-color: var(--link-color);
   transform: translateX(5px);
 }
 
@@ -338,40 +353,37 @@
 
 .copyIcon {
   cursor: pointer;
-  color: #3267d2;
+  color: var(--link-color);
   font-size: 18px;
   padding: 8px;
   border-radius: 6px;
   transition: all 0.3s ease;
-  background: rgba(50, 103, 210, 0.1);
+  background: rgba(255, 204, 0, 0.1);
 }
 
 .copyIcon:hover {
-  color: #ffffff;
-  background: #3267d2;
+  color: var(--text-white);
+  background: var(--primary-color);
   transform: scale(1.1);
 }
 
 /* Amount Display */
 .amountDisplay {
-  color: #3267d2;
+  color: var(--primary-color);
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 800;
   margin: 20px 0;
   text-align: center;
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  text-shadow: 0 2px 8px rgba(255, 204, 0, 0.3);
 }
 
 /* Upload Section */
 .uploadSection {
   margin: 25px 0;
   padding: 20px;
-  background: #f8f9fa;
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 12px;
-  border: 2px dashed #dee2e6;
+  border: 2px dashed rgba(255, 255, 255, 0.1);
   text-align: center;
 }
 
@@ -383,7 +395,7 @@
 .dropdownLabel {
   display: block;
   margin-bottom: 10px;
-  color: #2c3e50;
+  color: var(--text-primary);
   font-weight: 600;
   font-size: 16px;
 }
@@ -392,18 +404,18 @@
   width: 100%;
   padding: 12px 16px;
   font-size: 14px;
-  border: 2px solid #e9ecef;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  background: #ffffff;
-  color: #2c3e50;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
   cursor: pointer;
   transition: all 0.3s ease;
   outline: none;
 }
 
 .dropdown:focus {
-  border-color: #3267d2;
-  box-shadow: 0 0 0 3px rgba(50, 103, 210, 0.1);
+  border-color: var(--link-color);
+  box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.1);
 }
 
 .dropdown option {
@@ -918,7 +930,7 @@
   }
 
   .balanceContainer {
-    box-shadow: 0 4px 15px rgba(50, 103, 210, 0.2);
+    box-shadow: 0 4px 15px rgba(255, 204, 0, 0.2);
   }
 }
 

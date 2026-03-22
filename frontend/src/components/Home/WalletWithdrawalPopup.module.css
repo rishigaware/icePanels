@@ -65,7 +65,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color) 50%, var(--primary-color) 100%);
   border-radius: 20px 20px 0 0;
 }
 
@@ -83,7 +83,7 @@
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
-  color: #64748b;
+  color: var(--text-secondary);
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   z-index: 10;
@@ -91,7 +91,7 @@
 
 .closeButton:hover {
   background: #e2e8f0;
-  color: #374151;
+  color: var(--text-primary);
   transform: scale(1.1);
 }
 
@@ -145,8 +145,8 @@
   margin: 0 0 8px 0;
   font-size: 1.3rem;
   font-weight: 700;
-  color: #1e293b;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  color: var(--text-primary);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -154,7 +154,7 @@
 
 .username {
   margin: 4px 0;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 500;
 }
@@ -168,7 +168,7 @@
 
 .coinRate {
   margin: 4px 0 0 0;
-  color: #3b82f6;
+  color: var(--link-color);
   font-size: 0.85rem;
   font-weight: 600;
 }
@@ -183,7 +183,7 @@
   margin: 0 0 16px 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .inputGroup {
@@ -194,7 +194,7 @@
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: #374151;
+  color: var(--text-primary);
   font-size: 0.9rem;
 }
 
@@ -205,15 +205,15 @@
   border-radius: 10px;
   font-size: 1rem;
   font-weight: 600;
-  color: #1e293b;
-  background: #ffffff;
+  color: var(--text-primary);
+  background: var(--glass-bg);
   transition: all 0.3s ease;
   box-sizing: border-box;
 }
 
 .amountInput:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--link-color);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
@@ -241,7 +241,7 @@
   margin: 0 0 16px 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .methodButtons {
@@ -254,8 +254,8 @@
   padding: 12px 20px;
   border: 2px solid #e2e8f0;
   border-radius: 10px;
-  background: #ffffff;
-  color: #64748b;
+  background: var(--glass-bg);
+  color: var(--text-secondary);
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
@@ -263,15 +263,15 @@
 }
 
 .methodButton:hover {
-  border-color: #3b82f6;
-  color: #3b82f6;
+  border-color: var(--link-color);
+  color: var(--link-color);
   transform: translateY(-1px);
 }
 
 .methodButton.active {
-  background: #3b82f6;
-  border-color: #3b82f6;
-  color: #ffffff;
+  background: var(--primary-color);
+  border-color: var(--link-color);
+  color: var(--text-white);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
@@ -285,7 +285,7 @@
   margin: 0 0 16px 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .bankDetails {
@@ -300,15 +300,15 @@
   border: 2px solid #e2e8f0;
   border-radius: 10px;
   font-size: 0.9rem;
-  color: #1e293b;
-  background: #ffffff;
+  color: var(--text-primary);
+  background: var(--glass-bg);
   transition: all 0.3s ease;
   box-sizing: border-box;
 }
 
 .detailInput:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--link-color);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
@@ -329,8 +329,8 @@
 .submitButton {
   margin: 20px 32px 32px;
   padding: 14px 24px;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color) 100%);
+  color: var(--text-white);
   border: none;
   border-radius: 12px;
   font-size: 1rem;
@@ -342,7 +342,7 @@
 }
 
 .submitButton:hover:not(:disabled) {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
 }

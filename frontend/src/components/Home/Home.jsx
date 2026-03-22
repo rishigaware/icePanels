@@ -34,13 +34,16 @@ const Home = () => {
 
         {/* Social Media Icons */}
         <div className={styles.socialIcons}>
-          <a href="https://www.instagram.com/invites/contact/?igsh=x2tqbkpegs5b&utm_content=10vuc3u2" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.instagram.com/ice_panels?igsh=MTM3ZGc3NDhsZDYzMw==" target="_blank" rel="noopener noreferrer">
             <i className="fab fa-instagram"></i>
           </a>
           <a href="https://wa.me/6285857878389" target="_blank" rel="noopener noreferrer">
             <i className="fab fa-whatsapp"></i>
           </a>
-          <a href="https://t.me/Saipuntofficialupdate" target="_blank" rel="noopener noreferrer">
+          <a href="https://whatsapp.com/channel/0029VbC6sBZId7nLnyyDaE30" target="_blank" rel="noopener noreferrer">
+            <i className="fab fa-whatsapp"></i>
+          </a>
+          <a href="https://t.me/icepanelsdaily" target="_blank" rel="noopener noreferrer">
             <i className="fab fa-telegram"></i>
           </a>
           <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">

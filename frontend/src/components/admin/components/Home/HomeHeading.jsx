@@ -49,7 +49,7 @@ const HomeHeading = () => {
 
   // Sliding Text State
   const [slidingText, setSlidingText] = useState(
-    "#INDIA'S FIRST SELF ADMIN &  MASTER PANEL'S CREATE WEBSITE ( NO FRAUD / NO🎢RISK / NO MIDDLEMAN ) 🏁START IT'S MIN AVAILABLE 🏪24/7🧑‍💻TEAM SALPUNT.INFO🪩",
+    "#INDIA'S FIRST SELF ADMIN &  MASTER PANEL'S CREATE WEBSITE ( NO FRAUD / NO🎢RISK / NO MIDDLEMAN ) 🏁START IT'S MIN AVAILABLE 🏪24/7🧑‍💻TEAM IcePanels.info🪩",
   );
   const [isEditingText, setIsEditingText] = useState(false);
   const [tempText, setTempText] = useState("");
@@ -125,7 +125,7 @@ const HomeHeading = () => {
             </div>
             <div className={styles.balanceContainer}>
               <BiMoneyWithdraw size={20} />
-              <p className={styles.balanceAmount}>₹{user?.balance || 0}</p>
+              <p className={styles.balanceAmount}>₹{(parseFloat(user?.balance) || 0).toFixed(2)}</p>
             </div>
             <h3 className={styles.balance}>Wallet Balance</h3>
           </div>
@@ -355,7 +355,7 @@ const HomeHeading = () => {
         <h2 className={styles.sectionTitle}>🚀 Our Premium Services</h2>
         <div className={styles.platformsGrid}>
           <div className={styles.platformCard}>
-            <div className={styles.platformIcon} style={{ color: "#25D366" }}>
+            <div className={styles.platformIcon} style={{ color: "var(--whatsapp-color)" }}>
               <FaWhatsapp size={40} />
             </div>
             <h3>APIs</h3>
@@ -365,7 +365,7 @@ const HomeHeading = () => {
             <div className={styles.platformBadge}>Best</div>
           </div>
           <div className={styles.platformCard}>
-            <div className={styles.platformIcon} style={{ color: "#FFD700" }}>
+            <div className={styles.platformIcon} style={{ color: "var(--warning-color)" }}>
               <FaCreditCard size={40} />
             </div>
             <h3>Payments</h3>
@@ -375,7 +375,7 @@ const HomeHeading = () => {
             <div className={styles.platformBadge}>Secure</div>
           </div>
           <div className={styles.platformCard}>
-            <div className={styles.platformIcon} style={{ color: "#0088cc" }}>
+            <div className={styles.platformIcon} style={{ color: "var(--telegram-color)" }}>
               <FaSimCard size={40} />
             </div>
             <h3>SIM Services</h3>
@@ -385,7 +385,7 @@ const HomeHeading = () => {
             <div className={styles.platformBadge}>New</div>
           </div>
           <div className={styles.platformCard}>
-            <div className={styles.platformIcon} style={{ color: "#E1306C" }}>
+            <div className={styles.platformIcon} style={{ color: "var(--instagram-color)" }}>
               <FaLaptop size={40} />
             </div>
             <h3>Digital Marketing</h3>

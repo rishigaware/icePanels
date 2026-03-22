@@ -533,14 +533,15 @@ const handleReject = async (item) => {
           <p className={styles.websiteName} style={{ color: typeInfo.color }}>
             {typeInfo.label}
           </p>
-          <span>
-            <strong>Website:</strong> {request.websiteName || 'N/A'}
-          </span>
-          {request.websiteUrl && (
-            <span>
-              <strong>URL:</strong> {request.websiteUrl}
-            </span>
-          )}
+          <a
+            href={request.websiteUrl || '#'}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.websiteLink}
+            style={{ display: 'inline' }}
+          >
+            {request.websiteUrl || 'N/A'}
+          </a>
           <p className={styles.userId}>
             <strong>User ID:</strong> {request.createdBy || 'N/A'}
           </p>
@@ -679,7 +680,7 @@ const handleReject = async (item) => {
   if (loading) {
     return (
       <div className={styles.loading}>
-        <PulseLoader color="#4592ef" loading={loading} size={15} />
+        <PulseLoader color="var(--primary-color)" loading={loading} size={15} />
       </div>
     );
   }
@@ -709,7 +710,6 @@ const handleReject = async (item) => {
           Pending Requests ({pendingRequests.length})
         </button>
       </div>
-
       <input
         type="text"
         value={searchQuery}
@@ -758,7 +758,6 @@ const handleReject = async (item) => {
                   {isWebsiteId ? (
                     <>
               <p className={styles.websiteName}>{item.websiteName || 'N/A'}</p>
-              <span>
                 <a
                   href={item.websiteUrl || '#'}
                   target="_blank"
@@ -767,7 +766,6 @@ const handleReject = async (item) => {
                 >
                   {item.websiteUrl || 'N/A'}
                 </a>
-              </span>
                       {item.username && (
                         <p className={styles.userId}>
                           <strong>Username:</strong> {item.username}

@@ -1,5 +1,5 @@
 body {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--main-gradient);
   min-height: 100vh;
   padding-bottom: 15vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -16,7 +16,7 @@ body {
   align-items: center;
   flex-direction: column;
   overflow-y: auto;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  background: var(--main-gradient);
   position: relative;
   gap: 20px;
 }
@@ -129,10 +129,10 @@ body {
   /* Reduced bottom margin */
   padding: 10px;
   /* Reduced padding */
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--glass-bg);
   backdrop-filter: blur(10px);
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--glass-border);
   animation: fadeInUp 1s ease-out 0.5s both;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
@@ -148,9 +148,9 @@ body {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--glass-bg);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--glass-border);
 }
 
 .socialIcons a:nth-child(1) {

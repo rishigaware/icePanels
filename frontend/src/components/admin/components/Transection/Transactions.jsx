@@ -220,7 +220,7 @@ const Transactions = () => {
         <TopNavbar />
         <h3 className={styles.heading}><strong>Transaction History</strong></h3>
         <div className={styles.loading}>
-          <PulseLoader color="#4592ef" loading={loading} size={15} />
+          <PulseLoader color="var(--primary-color)" loading={loading} size={15} />
         </div>
       </div>
     );

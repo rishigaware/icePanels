@@ -5,11 +5,11 @@
   align-items: center;
   height: 100vh;
   width: 100vw; /* Full viewport width */
-  background: white; /* Changed background to white */
+  background: var(--glass-bg) !important; /* Changed background to white */
 }
 
 .loginForm {
-  background: white;
+  background: var(--glass-bg) !important;
   padding: 30px;
   border-radius: 15px;
   width: 80%; /* Card width set to 80% */
@@ -22,7 +22,7 @@
 .loginHeading {
   font-size: 1.8rem;
   font-weight: bold;
-  color: #007bff;
+  color: var(--link-color);
   margin-bottom: 20px;
   text-align: center;
 }
@@ -39,7 +39,7 @@
   font-size: 1rem;
   font-weight: bold;
   margin-bottom: 5px;
-  color: #005fc4;
+  color: var(--link-color);
   margin-left: 10px;
 }
 
@@ -48,14 +48,14 @@
   padding: 10px;
   font-size: 1rem;
   border: 1px solid #ccc;
-  color: #005fc4;
+  color: var(--link-color);
   border-radius: 8px;
   transition: border-color 0.3s;
   outline: none;
 }
 
 .formGroup input:focus {
-  border-color: #007bff;
+  border-color: var(--link-color);
 }
 
 /* Login Button */
@@ -65,8 +65,8 @@
   padding: 12px;
   font-size: 1rem;
   font-weight: bold;
-  color: white;
-  background: #007bff;
+  color: var(--text-white);
+  background: var(--primary-color);
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -75,7 +75,7 @@
 }
 
 .loginButton:hover {
-  background: #0056b3;
+  background: var(--secondary-color);
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
 }
 
@@ -83,11 +83,11 @@
 .signupLink {
   margin-top: 20px;
   text-align: center;
-  color: #0056b3;
+  color: var(--secondary-color);
 }
 
 .signupLink a {
-  color: #007bff;
+  color: var(--link-color);
   text-decoration: none;
 }
 

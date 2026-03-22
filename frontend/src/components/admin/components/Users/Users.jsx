@@ -338,6 +338,18 @@ const Users = () => {
         fetchUsers();
     }, []);
 
+    // Prevent background scroll when modals are open
+    useEffect(() => {
+        if (showAddUserModal || selectedUser) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [showAddUserModal, selectedUser]);
+
     // Filter users based on search query
     const filteredUsers = (users || []).filter((user) =>
         user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -416,7 +428,7 @@ const Users = () => {
             <div className={styles.container}>
                 <TopNavbar />
                 <div className={styles.loading}>
-                    <PulseLoader color="#3267d2" loading={loading} size={20} />
+                    <PulseLoader color="var(--primary-color)" loading={loading} size={20} />
                     <p>Loading users...</p>
                 </div>
             </div>
@@ -521,7 +533,7 @@ const Users = () => {
                                         <strong>Phone:</strong> {user.phoneNumber || 'N/A'}
                                     </p>
                                     <p>
-                                        <strong>Balance:</strong> ₹{user.balance || '0'}
+                                        <strong>Balance:</strong> ₹{(parseFloat(user.balance) || 0).toFixed(2)}
                                     </p>
                                 </div>
 
@@ -599,14 +611,14 @@ const Users = () => {
                             <p><strong>Email:</strong> {selectedUser.email || 'N/A'}</p>
                             <p><strong>Username:</strong> {selectedUser.username || 'N/A'}</p>
                             <p><strong>Phone Number:</strong> {selectedUser.phoneNumber || 'N/A'}</p>
-                            <p><strong>Last Updated Balance:</strong> ₹{selectedUser.balance || '0'}</p>
+                             <p><strong>Last Updated Balance:</strong> ₹{(parseFloat(selectedUser.balance) || 0).toFixed(2)}</p>
                             
                             {/* Payment Details Section */}
                             <div className={styles.paymentDetailsSection}>
                                 <h3>Payment Details</h3>
                                 {loadingPaymentDetails ? (
                                     <div className={styles.loadingPayment}>
-                                        <PulseLoader color="#4592ef" size={8} />
+                                        <PulseLoader color="var(--primary-color)" size={8} />
                                         <span style={{ marginLeft: '0.5rem' }}>Loading payment details...</span>
                                     </div>
                                 ) : userPaymentDetails ? (
@@ -671,7 +683,7 @@ const Users = () => {
                                 >
                                     {updatingPassword ? (
                                         <>
-                                            <PulseLoader color="#ffffff" size={8} />
+                                            <PulseLoader color="#000000" size={8} />
                                             <span style={{ marginLeft: '0.5rem' }}>Updating...</span>
                                         </>
                                     ) : (
@@ -796,8 +808,8 @@ const Users = () => {
                                 >
                                     {addingUser ? (
                                         <>
-                                            <PulseLoader color="#ffffff" size={8} />
-                                            <span style={{ marginLeft: '0.5rem' }}>Creating...</span>
+                                            <PulseLoader color="#000000" size={6} />
+                                            <span style={{ marginLeft: '0.4rem', fontSize: '0.15rem' }}>Creating...</span>
                                         </>
                                     ) : (
                                         'Create User'

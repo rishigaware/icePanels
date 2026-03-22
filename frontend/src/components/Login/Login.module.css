@@ -5,7 +5,7 @@
   align-items: center;
   min-height: 100vh;
   width: 100vw;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--main-gradient);
   padding: 1rem;
   box-sizing: border-box;
 }
@@ -30,7 +30,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
+  background: var(--main-gradient);
   border-radius: 20px 20px 0 0;
 }
 
@@ -47,7 +47,7 @@
 }
 
 .closeIcon:hover {
-  color: #ffffff;
+  color: var(--text-white);
   transform: scale(1.1);
 }
 
@@ -55,10 +55,10 @@
 .loginHeading {
   font-size: 2rem;
   font-weight: 700;
-  color: #60a5fa;
+  color: var(--link-color);
   margin-bottom: 2rem;
   text-align: center;
-  text-shadow: 0 2px 4px rgba(96, 165, 250, 0.3);
+  text-shadow: 0 2px 4px rgba(255, 204, 0, 0.3);
 }
 
 /* Form Group Styling */
@@ -73,7 +73,7 @@
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: #ffffff;
+  color: var(--text-white);
   transition: color 0.3s ease;
 }
 
@@ -82,7 +82,7 @@
   padding: 1rem 1.25rem;
   font-size: 1rem;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+  color: var(--text-white);
   border-radius: 12px;
   transition: all 0.3s ease;
   outline: none;
@@ -91,8 +91,8 @@
 }
 
 .formGroup input:focus {
-  border-color: #60a5fa;
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.1);
   transform: translateY(-1px);
 }
 
@@ -108,12 +108,12 @@
   padding: 1rem 1.5rem;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #ffffff;
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
+  color: var(--text-white);
+  background: var(--main-gradient);
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  box-shadow: 0 8px 25px rgba(50, 103, 210, 0.3);
+  box-shadow: 0 8px 25px rgba(255, 204, 0, 0.3);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -136,7 +136,7 @@
 
 .loginButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(50, 103, 210, 0.4);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
 }
 
 .loginButton:active {
@@ -151,7 +151,7 @@
 }
 
 .linkText {
-  color: #60a5fa;
+  color: var(--link-color);
   text-decoration: none;
   font-weight: 600;
   transition: all 0.3s ease;
@@ -166,7 +166,7 @@
   height: 2px;
   bottom: -2px;
   left: 50%;
-  background: #60a5fa;
+  background: var(--accent-color);
   transition: all 0.3s ease;
   transform: translateX(-50%);
 }
@@ -176,7 +176,7 @@
 }
 
 .linkText:hover {
-  color: #93c5fd;
+  color: var(--link-color);
 }
 
 /* Responsive Design */
@@ -297,7 +297,7 @@
 /* Print Styles */
 @media print {
   .loginContainer {
-    background: #ffffff;
+    background: var(--glass-bg);
   }
 
   .loginForm {
@@ -320,7 +320,7 @@
   .formGroup input {
     background: rgba(40, 40, 40, 0.8);
     border-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
+    color: var(--text-white);
   }
 
   .formGroup input::placeholder {
@@ -328,6 +328,6 @@
   }
 
   .formGroup label {
-    color: #ffffff;
+    color: var(--text-white);
   }
 }

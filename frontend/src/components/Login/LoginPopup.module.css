@@ -7,7 +7,7 @@
     left: 0;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--main-gradient);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -18,7 +18,8 @@
 
 /* Login Form Card - Exact match to main Login component */
 .modalContent {
-  background: rgba(30, 30, 30, 0.8);
+  background: #111111 !important;
+  border: 1px solid rgba(255, 204, 0, 0.4);
   backdrop-filter: blur(15px);
   padding: 2.5rem;
   border-radius: 20px;
@@ -37,7 +38,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
+  background: var(--main-gradient);
   border-radius: 20px 20px 0 0;
 }
 
@@ -56,10 +57,10 @@
 .loginHeading {
   font-size: 2rem;
   font-weight: 700;
-  color: #60a5fa;
+  color: var(--accent-color);
   margin-bottom: 2rem;
   text-align: center;
-  text-shadow: 0 2px 4px rgba(96, 165, 250, 0.3);
+  text-shadow: 0 2px 4px rgba(255, 204, 0, 0.3);
 }
 
 /* Form Group Styling - Exact match */
@@ -74,7 +75,7 @@
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: #ffffff;
+  color: var(--text-white);
   transition: color 0.3s ease;
 }
 
@@ -83,7 +84,7 @@
   padding: 1rem 1.25rem;
   font-size: 1rem;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+  color: var(--text-white);
   border-radius: 12px;
   transition: all 0.3s ease;
   outline: none;
@@ -92,8 +93,8 @@
 }
 
 .formGroup input:focus {
-  border-color: #60a5fa;
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.1);
   transform: translateY(-1px);
 }
 
@@ -109,12 +110,12 @@
   padding: 1rem 1.5rem;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #ffffff;
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
+  color: var(--text-white);
+  background: var(--main-gradient);
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  box-shadow: 0 8px 25px rgba(50, 103, 210, 0.3);
+  box-shadow: 0 8px 25px rgba(255, 204, 0, 0.3);
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -138,14 +139,15 @@
 }
 
 .cardButton:hover {
-  background: linear-gradient(135deg, #3b70d9 0%, #3267d2 100%);
+  background: var(--main-gradient);
+  filter: hue-rotate(15deg);
   transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(50, 103, 210, 0.4);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
 }
 
 .cardButton:active {
   transform: translateY(0);
-  box-shadow: 0 6px 20px rgba(50, 103, 210, 0.3);
+  box-shadow: 0 6px 20px rgba(255, 204, 0, 0.3);
 }
 
 /* Signup Link - Exact match */
@@ -159,7 +161,7 @@
 .signupTrigger {
   background: transparent;
   border: none;
-  color: #60a5fa;
+  color: var(--accent-color);
   cursor: pointer;
   padding: 0;
   font-size: 0.9rem;
@@ -169,8 +171,8 @@
 }
 
 .signupTrigger:hover {
-  color: #93c5fd;
-  text-shadow: 0 1px 2px rgba(147, 197, 253, 0.3);
+  color: var(--link-color);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.1);
 }
 
 /* Responsive Design - Exact match */
@@ -285,7 +287,7 @@
   .modalContent {
     box-shadow: none;
     border: 1px solid #ddd;
-    background: white;
+    background: var(--glass-bg);
     color: black;
   }
   

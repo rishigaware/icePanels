@@ -1,12 +1,11 @@
-/* New Withdrawal Popup - Modern Responsive Design */
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 100%);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.85); /* Reduced transparency */
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -29,22 +28,19 @@
 }
 
 .popup {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  background: #111111 !important;
   width: 90%;
-  max-width: 600px;
+  max-width: 550px;
   max-height: 90vh;
-  border-radius: 20px;
-  box-shadow: 
-    0 20px 60px rgba(0, 0, 0, 0.15),
-    0 8px 25px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border-radius: 15px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 204, 0, 0.3);
   position: relative;
-  animation: popupSlideIn 0.4s ease-out;
-  touch-action: manipulation; /* Prevent background scroll on touch devices */
+  animation: modalPop 0.3s ease-out;
+  touch-action: manipulation;
 }
 
 @keyframes popupSlideIn {
@@ -65,33 +61,32 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+  background: var(--main-gradient);
   border-radius: 20px 20px 0 0;
 }
 
 .closeButton {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  background: #f1f5f9;
+  top: 15px;
+  right: 15px;
+  background: var(--primary-color); /* Solid Yellow */
+  color: #000 !important; /* Black icon */
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
-  color: #64748b;
+  font-size: 1.1rem;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  z-index: 10;
+  z-index: 100;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .closeButton:hover {
-  background: #e2e8f0;
-  color: #374151;
+  background: #ffffff;
   transform: scale(1.1);
 }
 
@@ -129,7 +124,7 @@
   gap: 16px;
   padding: 24px 32px 20px;
   border-bottom: 2px solid #f1f5f9;
-  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  background: var(--glass-bg);
   flex-shrink: 0; /* Prevent header from shrinking */
 }
 
@@ -137,16 +132,16 @@
   width: 64px;
   height: 64px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border: 2px solid #ffffff;
+  object-fit: cover;
+  border: 2px solid rgba(255, 204, 0, 0.3);
 }
 
 .websiteInfo h3 {
   margin: 0 0 8px 0;
   font-size: 1.3rem;
   font-weight: 700;
-  color: #1e293b;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  color: var(--text-primary);
+  background: var(--main-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -154,7 +149,7 @@
 
 .username {
   margin: 4px 0;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 500;
 }
@@ -168,7 +163,7 @@
 
 .coinRate {
   margin: 4px 0 0 0;
-  color: #3b82f6;
+  color: var(--link-color);
   font-size: 0.85rem;
   font-weight: 600;
 }
@@ -183,7 +178,7 @@
   margin: 0 0 16px 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .inputGroup {
@@ -194,7 +189,7 @@
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: #374151;
+  color: var(--text-primary);
   font-size: 0.9rem;
 }
 
@@ -205,21 +200,21 @@
   border-radius: 10px;
   font-size: 1rem;
   font-weight: 600;
-  color: #1e293b;
-  background: #ffffff;
+  color: var(--text-primary);
+  background: var(--glass-bg);
   transition: all 0.3s ease;
   box-sizing: border-box;
 }
 
 .amountInput:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--link-color);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .conversionInfo {
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-  border: 1px solid #bae6fd;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 204, 0, 0.2);
   border-radius: 10px;
   padding: 12px 16px;
   margin-top: 12px;
@@ -241,7 +236,7 @@
   margin: 0 0 16px 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .methodButtons {
@@ -254,8 +249,8 @@
   padding: 12px 20px;
   border: 2px solid #e2e8f0;
   border-radius: 10px;
-  background: #ffffff;
-  color: #64748b;
+  background: var(--glass-bg);
+  color: var(--text-secondary);
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
@@ -263,15 +258,15 @@
 }
 
 .methodButton:hover {
-  border-color: #3b82f6;
-  color: #3b82f6;
+  border-color: var(--link-color);
+  color: var(--link-color);
   transform: translateY(-1px);
 }
 
 .methodButton.active {
-  background: #3b82f6;
-  border-color: #3b82f6;
-  color: #ffffff;
+  background: var(--primary-color);
+  border-color: var(--link-color);
+  color: var(--text-white);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
@@ -285,7 +280,7 @@
   margin: 0 0 16px 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .bankDetails {
@@ -300,15 +295,15 @@
   border: 2px solid #e2e8f0;
   border-radius: 10px;
   font-size: 0.9rem;
-  color: #1e293b;
-  background: #ffffff;
+  color: var(--text-primary);
+  background: var(--glass-bg);
   transition: all 0.3s ease;
   box-sizing: border-box;
 }
 
 .detailInput:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--link-color);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
@@ -329,8 +324,8 @@
 .submitButton {
   margin: 20px 32px 32px;
   padding: 14px 24px;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: #ffffff;
+  background: var(--main-gradient);
+  color: var(--text-white);
   border: none;
   border-radius: 12px;
   font-size: 1rem;
@@ -342,7 +337,7 @@
 }
 
 .submitButton:hover:not(:disabled) {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
 }

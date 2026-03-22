@@ -15,7 +15,7 @@
 
 /* Upload controls */
 .uploadControlsWrapper {
-  background: white;
+  background: var(--glass-bg);
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 25px;
@@ -47,7 +47,7 @@
 
 .uploadButton {
   background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
+  color: var(--text-white);
   padding: 12px 24px;
   border-radius: 8px;
   cursor: pointer;
@@ -67,7 +67,7 @@
 
 .selectedFile {
   background: rgba(255, 255, 255, 0.9);
-  color: #333;
+  color: var(--text-primary);
   padding: 8px 16px;
   border-radius: 6px;
   font-size: 14px;
@@ -80,7 +80,7 @@
 
 .uploadSubmitButton {
   background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  color: white;
+  color: var(--text-white);
   padding: 12px 24px;
   border: none;
   border-radius: 8px;
@@ -111,7 +111,7 @@
   align-items: center;
   justify-content: center;
   padding: 40px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .spinner {
@@ -226,7 +226,7 @@
   top: 8px;
   right: 8px;
   background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-  color: white;
+  color: var(--text-white);
   border: none;
   border-radius: 50%;
   width: 35px;
@@ -274,7 +274,7 @@
   left: 50%;
   transform: translateX(-50%) scale(1);
   background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-  color: white;
+  color: var(--text-white);
   border: none;
   border-radius: 50%;
   width: 40px;
@@ -312,7 +312,7 @@
 }
 
 .noImagesText {
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 16px;
   font-weight: 500;
   margin: 0;
@@ -369,7 +369,7 @@
   height: 40px;
   cursor: pointer;
   font-size: 18px;
-  color: #333;
+  color: var(--text-primary);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }

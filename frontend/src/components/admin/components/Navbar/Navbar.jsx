@@ -111,9 +111,9 @@ export default function Navbar() {
         '& .MuiBottomNavigationAction-root': {
           minWidth: { xs: '55px', sm: '65px', md: '75px' },
           padding: { xs: '5px 3px', sm: '7px 4px', md: '9px 5px' },
-          color: 'rgba(255, 255, 255, 0.8)',
+          color: 'rgba(255, 255, 255, 0.6)',
           '&.Mui-selected': {
-            color: '#ffffff',
+            color: 'var(--primary-color)',
             fontWeight: 700,
             transform: 'scale(1.1)',
             transition: 'all 0.3s ease'
@@ -122,7 +122,7 @@ export default function Navbar() {
         '& .MuiBottomNavigationAction-label': {
           fontSize: { xs: '0.65rem', sm: '0.75rem', md: '0.85rem' },
           fontWeight: 600,
-          color: 'rgba(255, 255, 255, 0.8)',
+          color: 'rgba(255, 255, 255, 0.6)',
           marginTop: '5px',
           display: 'block !important',
           opacity: '1 !important',
@@ -132,7 +132,7 @@ export default function Navbar() {
           transition: 'all 0.3s ease'
         },
         '& .Mui-selected .MuiBottomNavigationAction-label': {
-          color: '#ffffff !important',
+          color: 'var(--primary-color) !important',
           fontWeight: 700,
           opacity: '1 !important',
           visibility: 'visible !important',
@@ -142,11 +142,13 @@ export default function Navbar() {
         },
         '& .MuiBottomNavigationAction-icon': {
           fontSize: { xs: '1.4rem', sm: '1.6rem', md: '1.8rem' },
-          transition: 'all 0.3s ease'
+          transition: 'all 0.3s ease',
+          marginBottom: '2px'
         },
         '& .Mui-selected .MuiBottomNavigationAction-icon': {
           fontSize: { xs: '1.6rem', sm: '1.8rem', md: '2rem' },
-          transform: 'scale(1.1)'
+          transform: 'scale(1.1)',
+          color: 'var(--primary-color)'
         }
       }}
     >

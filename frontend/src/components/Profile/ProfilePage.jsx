@@ -275,7 +275,7 @@ const ProfilePage = () => {
           <div className={styles.balanceContent}>
             <div className={styles.balanceAmount}>
               <span className={styles.currency}>₹</span>
-              <span className={styles.amount}>{user?.balance || 0}</span>
+              <span className={styles.amount}>{(parseFloat(user?.balance) || 0).toFixed(2)}</span>
             </div>
             <p className={styles.balanceLabel}>Wallet Balance</p>
           </div>
@@ -289,7 +289,7 @@ const ProfilePage = () => {
         <div className={styles.card}>
           <div className={styles.cardHeader}>
             <div className={styles.cardIcon}>
-              <AccountCircleIcon sx={{ fontSize: 40, color: '#1f5fff' }} />
+              <AccountCircleIcon sx={{ fontSize: 40, color: 'var(--primary-color)' }} />
             </div>
             <h2 className={styles.cardTitle}>Profile Information</h2>
           </div>
@@ -349,7 +349,7 @@ const ProfilePage = () => {
                   />
                   <p style={{ 
                     fontSize: '11px', 
-                    color: '#6c757d', 
+                    color: 'var(--text-muted)', 
                     marginTop: '5px', 
                     fontStyle: 'italic' 
                   }}>
@@ -384,7 +384,7 @@ const ProfilePage = () => {
         <div className={styles.card}>
           <div className={styles.cardHeader}>
             <div className={styles.cardIcon}>
-              <AccountBalanceIcon sx={{ fontSize: 40, color: '#1f5fff' }} />
+              <AccountBalanceIcon sx={{ fontSize: 40, color: 'var(--primary-color)' }} />
             </div>
             <h2 className={styles.cardTitle}>Payment Details</h2>
           </div>

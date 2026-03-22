@@ -130,7 +130,7 @@ export default function IdDepositPopup({ onClose, walletBalance = 0, setWalletBa
             </div>
 
             <p className={styles.wallet}>
-              <strong>Wallet Balance : ₹ {user?.balance || 0}</strong>
+              <strong>Wallet Balance : ₹ {(parseFloat(user?.balance) || 0).toFixed(2)}</strong>
             </p>
           </div>
 

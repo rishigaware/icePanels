@@ -14,7 +14,7 @@
 }
 
 .popup {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--main-gradient);
   border-radius: 20px;
   padding: 30px;
   width: 90%;
@@ -36,7 +36,7 @@
 }
 
 .header h2 {
-  color: #ffffff;
+  color: var(--text-white);
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
@@ -45,7 +45,7 @@
 .closeButton {
   background: none;
   border: none;
-  color: #ffffff;
+  color: var(--text-white);
   font-size: 2rem;
   cursor: pointer;
   padding: 0;
@@ -72,7 +72,7 @@
 }
 
 .balanceInfo p {
-  color: #ffffff;
+  color: var(--text-white);
   margin: 0;
   font-size: 1rem;
 }
@@ -96,7 +96,7 @@
 }
 
 .formGroup label {
-  color: #ffffff;
+  color: var(--text-white);
   font-weight: 600;
   font-size: 0.9rem;
 }
@@ -107,7 +107,7 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  color: var(--text-white);
   font-size: 1rem;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
@@ -127,7 +127,7 @@
 
 .formGroup select option {
   background: #667eea;
-  color: #ffffff;
+  color: var(--text-white);
 }
 
 .error {
@@ -170,7 +170,7 @@
 
 .cancelButton {
   background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  color: var(--text-white);
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
@@ -181,7 +181,7 @@
 
 .submitButton {
   background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
-  color: #ffffff;
+  color: var(--text-white);
   border: 1px solid #4ade80;
 }
 

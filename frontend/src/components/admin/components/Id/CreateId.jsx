@@ -5,11 +5,11 @@ import { getImageUrl } from '../../../../utils/imageUrl';
 import { FileUpload } from "primereact/fileupload";
 import { PulseLoader } from "react-spinners";
 import { Toast } from "primereact/toast";
-import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/themes/lara-dark-amber/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import { MdDeleteForever } from "react-icons/md";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaEdit } from "react-icons/fa";
 import DepositPopup from "../Navbar/DepositPopup";
 
 const CreateId = () => {
@@ -126,6 +126,20 @@ const CreateId = () => {
     fetchWebsites();
     fetchCategoriesForDropdown();
   }, []);
+
+  // Lock body scroll when any modal is open
+  useEffect(() => {
+    if (showModal || showAddModal || showCategoryModal || showEditModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showModal, showAddModal, showCategoryModal, showEditModal]);
 
   // Debug selectedCategory changes
   useEffect(() => {
@@ -688,7 +702,7 @@ const CreateId = () => {
     <div className={styles.container}>
       {isLoading && (
         <div className={styles.loading}>
-          <PulseLoader color="#4592ef" loading={isLoading} size={15} />
+          <PulseLoader color="var(--primary-color)" loading={isLoading} size={15} />
         </div>
       )}
 
@@ -733,7 +747,7 @@ const CreateId = () => {
             />
             {isCategoriesLoading ? (
               <div className={styles.categoryLoading}>
-                <PulseLoader color="#007bff" size={10} />
+                <PulseLoader color="var(--primary-color)" size={10} />
                 <span>Loading categories...</span>
               </div>
             ) : (
@@ -767,7 +781,7 @@ const CreateId = () => {
        {/* Loader when data is fetching */}
         {isLoading ? (
           <div className={styles.loader}>
-            <PulseLoader color="#007bff" size={15} />
+            <PulseLoader color="var(--primary-color)" size={15} />
             <p>Loading websites...</p>
           </div>
         ) : (
@@ -785,13 +799,15 @@ const CreateId = () => {
               currentWebsites.map((website, index) => (
                 <div key={website.id || index} className={styles.websiteCard}>
                   <div className={styles.websiteInfo}>
-                    <img
-                      src={getImageUrl(website.logo, url)}
-                      alt={website.name || website.website || 'Website Logo'}
-                      className={styles.websiteLogo}
-                    />
-                    <div className={styles.websiteDetails}>
+                    <div className={styles.cardHeader}>
+                      <img
+                        src={getImageUrl(website.logo, url)}
+                        alt={website.name || website.website || 'Website Logo'}
+                        className={styles.websiteLogo}
+                      />
                       <h3>{website.name || website.website || 'Unnamed Website'}</h3>
+                    </div>
+                    <div className={styles.websiteDetails}>
                       <p>{website.url || 'No URL'}</p>
                       <span className={styles.categoryTag}>
                         {website.category || 'No Category'}
@@ -813,17 +829,12 @@ const CreateId = () => {
                       )}
                     </div>
                     <div className={styles.websiteActions}>
-                      {/* <button
-                        onClick={() => handleCreate(website.id)}
-                        className={styles.actionButton}
-                      >
-                        Create ID
-                      </button> */}
                       <button
                         onClick={() => openEditModal(website)}
                         className={styles.editButton}
+                        title="Edit Website"
                       >
-                        Edit
+                        <FaEdit />
                       </button>
                       <button
                         onClick={() => handleDelete(website)}
@@ -892,308 +903,318 @@ const CreateId = () => {
           </>
         )}
 
+
       {/* Create ID Modal */}
       {showModal && (
         <div className={styles.modal}>
           <div className={styles.modalContent}>
-            <h2>Create ID for {selectedWebsite?.website}</h2>
-            <div className={styles.inputGroup}>
-              <label>Username:</label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter username"
-                className={styles.inputField}
-              />
-            </div>
-            <div className={styles.inputGroup}>
-              <label>Password:</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
-                className={styles.inputField}
-              />
-            </div>
-
-            {errorMessage && <p className={styles.error}>{errorMessage}</p>}
-
-            {/* Action Buttons */}
-            <div className={styles.modalActions}>
-              <button 
-                onClick={handleSubmit} 
-                className={styles.submitButton}
-                disabled={isLoading || !username.trim() || !password.trim()}
-              >
-                {isLoading ? (
-                  <>
-                    <PulseLoader color="#ffffff" size={8} />
-                    Creating...
-                  </>
-                ) : (
-                  'Create ID'
-                )}
-              </button>
-              
-              <button onClick={handleCloseModal} className={styles.modalCloseButton}>
-                Cancel
+            <div className={styles.modalHeader}>
+              <h2 style={{ margin: 0 }}>Create ID for {selectedWebsite?.website}</h2>
+              <button onClick={handleCloseModal} className={styles.closeButton}>
+                <i className="pi pi-times"></i>
               </button>
             </div>
-           </div>
-         </div>
-      )}
+            <div className={styles.modalBody}>
+              <div className={styles.inputGroup}>
+                <label>Username:</label>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter username"
+                  className={styles.inputField}
+                />
+              </div>
+              <div className={styles.inputGroup}>
+                <label>Password:</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter password"
+                  className={styles.inputField}
+                />
+              </div>
 
-    {/* Add Website Modal */}
-    {showAddModal && (
-      <div className={styles.modal}>
-        <div className={styles.modalContent}>
-          <div className={styles.modalHeader}>
-            <h2><strong>Add Website</strong></h2>
-            <button
-              onClick={() => setShowAddModal(false)}
-              className={styles.closeButton}
-            >
-              ×
-            </button>
-          </div>
-          
-          <div className={styles.formContainer}>
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label htmlFor="websiteName">Website Name</label>
-                <input
-                  id="websiteName"
-                  type="text"
-                  placeholder="Enter website name"
-                  value={newWebsite.website}
-                  onChange={(e) =>
-                    setNewWebsite({ ...newWebsite, website: e.target.value })
-                  }
-                  className={styles.inputField}
-                  onFocus={handleFocus}
-                />
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label htmlFor="websiteUrl">Website URL</label>
-                <input
-                  id="websiteUrl"
-                  type="text"
-                  placeholder="Enter Website URL"
-                  value={newWebsite.url}
-                  onChange={(e) =>
-                    setNewWebsite({ ...newWebsite, url: e.target.value })
-                  }
-                  className={styles.inputField}
-                  onFocus={handleFocus}
-                />
-              </div>
-            </div>
-            
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label htmlFor="category">Category</label>
-                <select
-                  id="category"
-                  value={newWebsite.category}
-                  onChange={(e) =>
-                    setNewWebsite({ ...newWebsite, category: e.target.value })
-                  }
-                  className={styles.selectField}
-                  onFocus={handleFocus}
+              {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+
+              {/* Action Buttons */}
+              <div className={styles.modalActions}>
+                <button 
+                  onClick={handleSubmit} 
+                  className={styles.submitButton}
+                  disabled={isLoading || !username.trim() || !password.trim()}
                 >
-                  <option value="">Select Category</option>
-                  {categories.map((category, index) => (
-                    <option key={index} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
+                  {isLoading ? (
+                    <>
+                      <PulseLoader color="#ffffff" size={8} />
+                      Creating...
+                    </>
+                  ) : (
+                    'Create ID'
+                  )}
+                </button>
+                
+                <button onClick={handleCloseModal} className={styles.modalCloseButton}>
+                  Cancel
+                </button>
               </div>
-              
-              <div className={styles.formGroup}>
-                <label htmlFor="coinRate">Coin Rate</label>
-                <input
-                  id="coinRate"
-                  type="number"
-                  placeholder="Enter Coin Rate"
-                  value={newWebsite.coinRate}
-                  onChange={(e) =>
-                    setNewWebsite({ ...newWebsite, coinRate: e.target.value })
-                  }
-                  className={styles.inputField}
-                  onFocus={handleFocus}
-                />
-              </div>
-            </div>
-            
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label htmlFor="minimumCoins">Minimum Coins</label>
-                <input
-                  id="minimumCoins"
-                  type="number"
-                  placeholder="Enter Minimum Coins"
-                  value={newWebsite.minimumCoins}
-                  className={styles.inputField}
-                  onChange={(e) =>
-                    setNewWebsite({ ...newWebsite, minimumCoins: e.target.value })
-                  }
-                  onFocus={handleFocus}
-                />
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label htmlFor="websiteLogo">Website Logo</label>
-                <div className={styles.fileUploadContainer}>
-                  <FileUpload
-                    mode="basic"
-                    name="image"
-                    url="/api/upload"
-                    accept="image/*"
-                    maxFileSize={1000000}
-                    onSelect={onFileSelect}
-                    onFocus={handleFocus}
-                    className={styles.fileUpload}
-                  />
-                </div>
-              </div>
-            </div>
-            
-            {errorMessage && <p className={styles.error}>{errorMessage}</p>}
-            
-            <div className={styles.formActions}>
-              <button
-                onClick={handleAddWebsite}
-                disabled={isLoading}
-                className={styles.submitButton}
-              >
-                {isLoading ? "Adding..." : "Add Website"}
-              </button>
-              <button
-                onClick={() => setShowAddModal(false)}
-                className={styles.cancelButton}
-              >
-                Cancel
-              </button>
             </div>
           </div>
         </div>
-      </div>
-    )}
+      )}
+
+      {/* Add Website Modal */}
+      {showAddModal && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <div className={styles.modalHeader}>
+              <h2 style={{ margin: 0 }}>Add New Website</h2>
+              <button onClick={() => setShowAddModal(false)} className={styles.closeButton}>
+                <i className="pi pi-times"></i>
+              </button>
+            </div>
+            <div className={styles.modalBody}>
+              <div className={styles.formContainer}>
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="websiteName">Website Name</label>
+                    <input
+                      id="websiteName"
+                      type="text"
+                      placeholder="Enter website name"
+                      value={newWebsite.website}
+                      onChange={(e) =>
+                        setNewWebsite({ ...newWebsite, website: e.target.value })
+                      }
+                      className={styles.inputField}
+                      onFocus={handleFocus}
+                    />
+                  </div>
+                  
+                  <div className={styles.formGroup}>
+                    <label htmlFor="websiteUrl">Website URL</label>
+                    <input
+                      id="websiteUrl"
+                      type="text"
+                      placeholder="Enter Website URL"
+                      value={newWebsite.url}
+                      onChange={(e) =>
+                        setNewWebsite({ ...newWebsite, url: e.target.value })
+                      }
+                      className={styles.inputField}
+                      onFocus={handleFocus}
+                    />
+                  </div>
+                </div>
+                
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="category">Category</label>
+                    <select
+                      id="category"
+                      value={newWebsite.category}
+                      onChange={(e) =>
+                        setNewWebsite({ ...newWebsite, category: e.target.value })
+                      }
+                      className={styles.selectField}
+                      onFocus={handleFocus}
+                    >
+                      <option value="">Select Category</option>
+                      {categories.map((category, index) => (
+                        <option key={index} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div className={styles.formGroup}>
+                    <label htmlFor="coinRate">Coin Rate</label>
+                    <input
+                      id="coinRate"
+                      type="number"
+                      placeholder="Enter Coin Rate"
+                      value={newWebsite.coinRate}
+                      onChange={(e) =>
+                        setNewWebsite({ ...newWebsite, coinRate: e.target.value })
+                      }
+                      className={styles.inputField}
+                      onFocus={handleFocus}
+                    />
+                  </div>
+                </div>
+                
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="minimumCoins">Minimum Coins</label>
+                    <input
+                      id="minimumCoins"
+                      type="number"
+                      placeholder="Enter Minimum Coins"
+                      value={newWebsite.minimumCoins}
+                      className={styles.inputField}
+                      onChange={(e) =>
+                        setNewWebsite({ ...newWebsite, minimumCoins: e.target.value })
+                      }
+                      onFocus={handleFocus}
+                    />
+                  </div>
+                  
+                  <div className={styles.formGroup}>
+                    <label htmlFor="websiteLogo">Website Logo</label>
+                    <div className={styles.fileUploadContainer}>
+                      <FileUpload
+                        mode="basic"
+                        name="image"
+                        url="/api/upload"
+                        accept="image/*"
+                        maxFileSize={1000000}
+                        onSelect={onFileSelect}
+                        onFocus={handleFocus}
+                        className={styles.fileUpload}
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+                
+                <div className={styles.formActions}>
+                  <button
+                    onClick={handleAddWebsite}
+                    disabled={isLoading}
+                    className={styles.submitButton}
+                  >
+                    {isLoading ? "Adding..." : "Add Website"}
+                  </button>
+                  <button
+                    onClick={() => setShowAddModal(false)}
+                    className={styles.cancelButton}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Edit Website Modal */}
       {showEditModal && editingWebsite && (
         <div className={styles.modal}>
           <div className={styles.modalContent}>
             <div className={styles.modalHeader}>
-              <h2><strong>Edit Website</strong></h2>
-              <button onClick={closeEditModal} className={styles.closeButton}>×</button>
+              <h2 style={{ margin: 0 }}>Edit Website</h2>
+              <button onClick={closeEditModal} className={styles.closeButton}>
+                <i className="pi pi-times"></i>
+              </button>
             </div>
-            <div className={styles.formContainer}>
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label htmlFor="editWebsite">Website Name</label>
-                  <input
-                    id="editWebsite"
-                    type="text"
-                    placeholder="Enter website name"
-                    value={editingWebsite.website}
-                    onChange={(e) => setEditingWebsite({ ...editingWebsite, website: e.target.value })}
-                    className={styles.inputField}
-                    onFocus={() => setEditErrorMessage("")}
-                  />
-                </div>
-                <div className={styles.formGroup}>
-                  <label htmlFor="editUrl">Website URL</label>
-                  <input
-                    id="editUrl"
-                    type="text"
-                    placeholder="Enter Website URL"
-                    value={editingWebsite.url}
-                    onChange={(e) => setEditingWebsite({ ...editingWebsite, url: e.target.value })}
-                    className={styles.inputField}
-                    onFocus={() => setEditErrorMessage("")}
-                  />
-                </div>
-              </div>
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label htmlFor="editCategory">Category</label>
-                  <select
-                    id="editCategory"
-                    value={editingWebsite.category}
-                    onChange={(e) => setEditingWebsite({ ...editingWebsite, category: e.target.value })}
-                    className={styles.selectField}
-                  >
-                    <option value="">Select Category</option>
-                    {categories.map((category, index) => (
-                      <option key={index} value={category}>
-                        {category}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className={styles.formGroup}>
-                  <label htmlFor="editCoinRate">Coin Rate</label>
-                  <input
-                    id="editCoinRate"
-                    type="number"
-                    placeholder="Enter Coin Rate"
-                    value={editingWebsite.coinRate}
-                    onChange={(e) => setEditingWebsite({ ...editingWebsite, coinRate: e.target.value })}
-                    className={styles.inputField}
-                    onFocus={() => setEditErrorMessage("")}
-                  />
-                </div>
-              </div>
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label htmlFor="editMinimumCoins">Minimum Coins</label>
-                  <input
-                    id="editMinimumCoins"
-                    type="number"
-                    placeholder="Enter Minimum Coins"
-                    value={editingWebsite.minimumCoins}
-                    onChange={(e) => setEditingWebsite({ ...editingWebsite, minimumCoins: e.target.value })}
-                    className={styles.inputField}
-                    onFocus={() => setEditErrorMessage("")}
-                  />
-                </div>
-                <div className={styles.formGroup}>
-                  <label htmlFor="editLogo">Update Logo (Optional)</label>
-                  <div className={styles.fileUploadContainer}>
-                    <FileUpload
-                      mode="basic"
-                      name="editLogo"
-                      url="/api/upload"
-                      accept="image/*"
-                      maxFileSize={1000000}
-                      onSelect={onEditFileSelect}
-                      className={styles.fileUpload}
+            <div className={styles.modalBody}>
+              <div className={styles.formContainer}>
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="editWebsite">Website Name</label>
+                    <input
+                      id="editWebsite"
+                      type="text"
+                      placeholder="Enter website name"
+                      value={editingWebsite.website}
+                      onChange={(e) => setEditingWebsite({ ...editingWebsite, website: e.target.value })}
+                      className={styles.inputField}
+                      onFocus={() => setEditErrorMessage("")}
                     />
-                    {editingWebsite.logo && (
-                      <p className={styles.currentLogo}>
-                        Current: {editingWebsite.logo.split('/').pop()}
-                      </p>
-                    )}
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="editUrl">Website URL</label>
+                    <input
+                      id="editUrl"
+                      type="text"
+                      placeholder="Enter Website URL"
+                      value={editingWebsite.url}
+                      onChange={(e) => setEditingWebsite({ ...editingWebsite, url: e.target.value })}
+                      className={styles.inputField}
+                      onFocus={() => setEditErrorMessage("")}
+                    />
                   </div>
                 </div>
-              </div>
-              {editErrorMessage && <p className={styles.error}>{editErrorMessage}</p>}
-              <div className={styles.formActions}>
-                <button
-                  onClick={handleEditWebsite}
-                  disabled={isEditLoading}
-                  className={styles.submitButton}
-                >
-                  {isEditLoading ? "Updating..." : "Update Website"}
-                </button>
-                <button onClick={closeEditModal} className={styles.cancelButton}>
-                  Cancel
-                </button>
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="editCategory">Category</label>
+                    <select
+                      id="editCategory"
+                      value={editingWebsite.category}
+                      onChange={(e) => setEditingWebsite({ ...editingWebsite, category: e.target.value })}
+                      className={styles.selectField}
+                    >
+                      <option value="">Select Category</option>
+                      {categories.map((category, index) => (
+                        <option key={index} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="editCoinRate">Coin Rate</label>
+                    <input
+                      id="editCoinRate"
+                      type="number"
+                      placeholder="Enter Coin Rate"
+                      value={editingWebsite.coinRate}
+                      onChange={(e) => setEditingWebsite({ ...editingWebsite, coinRate: e.target.value })}
+                      className={styles.inputField}
+                      onFocus={() => setEditErrorMessage("")}
+                    />
+                  </div>
+                </div>
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="editMinimumCoins">Minimum Coins</label>
+                    <input
+                      id="editMinimumCoins"
+                      type="number"
+                      placeholder="Enter Minimum Coins"
+                      value={editingWebsite.minimumCoins}
+                      onChange={(e) => setEditingWebsite({ ...editingWebsite, minimumCoins: e.target.value })}
+                      className={styles.inputField}
+                      onFocus={() => setEditErrorMessage("")}
+                    />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="editLogo">Update Logo (Optional)</label>
+                    <div className={styles.fileUploadContainer}>
+                      <FileUpload
+                        mode="basic"
+                        name="editLogo"
+                        url="/api/upload"
+                        accept="image/*"
+                        maxFileSize={1000000}
+                        onSelect={onEditFileSelect}
+                        className={styles.fileUpload}
+                      />
+                      {editingWebsite.logo && (
+                        <p className={styles.currentLogo}>
+                          Current: {editingWebsite.logo.split('/').pop()}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                {editErrorMessage && <p className={styles.error}>{editErrorMessage}</p>}
+                <div className={styles.formActions}>
+                  <button
+                    onClick={handleEditWebsite}
+                    disabled={isEditLoading}
+                    className={styles.submitButton}
+                  >
+                    {isEditLoading ? "Updating..." : "Update Website"}
+                  </button>
+                  <button onClick={closeEditModal} className={styles.cancelButton}>
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -1205,63 +1226,64 @@ const CreateId = () => {
         <div className={styles.modal}>
           <div className={styles.modalContent}>
             <div className={styles.modalHeader}>
-              <h2><strong>Manage Categories</strong></h2>
+              <h2 style={{ margin: 0 }}>Manage Categories</h2>
               <button
                 onClick={() => setShowCategoryModal(false)}
                 className={styles.closeButton}
               >
-                ×
+                <i className="pi pi-times"></i>
               </button>
             </div>
-            
-            {/* Existing Categories Section */}
-            <div className={styles.categorySection}>
-              <h3>Existing Categories</h3>
-              {categories.length === 0 ? (
-                <p>No categories found. Add websites with categories to see them here.</p>
-              ) : (
-                <div className={styles.categoriesList}>
-                  {categories.map((category) => (
-                    <div key={category} className={styles.categoryItem}>
-                      <div className={styles.categoryInfo}>
-                        <strong>{category}</strong>
+            <div className={styles.modalBody}>
+              {/* Existing Categories Section */}
+              <div className={styles.categorySection}>
+                <h3>Existing Categories</h3>
+                {categories.length === 0 ? (
+                  <p>No categories found. Add websites with categories to see them here.</p>
+                ) : (
+                  <div className={styles.categoriesList}>
+                    {categories.map((category) => (
+                      <div key={category} className={styles.categoryItem}>
+                        <div className={styles.categoryInfo}>
+                          <strong>{category}</strong>
+                        </div>
+                        <button
+                          onClick={() => handleRemoveCategory(category)}
+                          className={styles.removeButton}
+                          title="Remove Category from all websites"
+                        >
+                          <FaTrash /> Remove
+                        </button>
                       </div>
-                      <button
-                        onClick={() => handleRemoveCategory(category)}
-                        className={styles.removeButton}
-                        title="Remove Category from all websites"
-                      >
-                        <FaTrash /> Remove
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-            {/* Add New Category Section */}
-            <div className={styles.addCategorySection}>
-              <h3>Add New Category</h3>
-              <input
-                type="text"
-                placeholder="Enter category name"
-                value={newCategory.name}
-                onChange={(e) => setNewCategory({ name: e.target.value })}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handleAddCategory();
-                  }
-                }}
-                className={styles.inputField}
-                onFocus={handleFocus}
-              />
-              <button
-                onClick={handleAddCategory}
-                className={styles.addCategoryButton}
-                disabled={isCategoryLoading}
-              >
-                {isCategoryLoading ? "Adding..." : "Add Category"}
-              </button>
+              {/* Add New Category Section */}
+              <div className={styles.addCategorySection}>
+                <h3>Add New Category</h3>
+                <input
+                  type="text"
+                  placeholder="Enter category name"
+                  value={newCategory.name}
+                  onChange={(e) => setNewCategory({ name: e.target.value })}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleAddCategory();
+                    }
+                  }}
+                  className={styles.inputField}
+                  onFocus={handleFocus}
+                />
+                <button
+                  onClick={handleAddCategory}
+                  className={styles.addCategoryButton}
+                  disabled={isCategoryLoading}
+                >
+                  {isCategoryLoading ? "Adding..." : "Add Category"}
+                </button>
+              </div>
             </div>
           </div>
         </div>

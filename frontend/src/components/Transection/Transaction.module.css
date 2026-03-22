@@ -1,7 +1,7 @@
 /* User Transaction Page - Modern Responsive Design */
 .transactionHistory {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f9f9f9 0%, #e8e8e8 100%);
+  background: var(--main-gradient);
   padding-top: 80px;
   padding-bottom: 100px;
   width: 100vw;
@@ -23,14 +23,14 @@
   font-weight: bold;
   margin-top: 10px;
   margin-bottom: 15px;
-  color: #3267d2;
+  color: var(--primary-color);
   text-align: center;
   width: 100%;
 }
 
 .refreshButton {
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
-  color: white;
+  background: var(--main-gradient);
+  color: var(--text-white);
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -38,12 +38,12 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(50, 103, 210, 0.2);
+  box-shadow: 0 2px 8px rgba(255, 204, 0, 0.2);
 }
 
 .refreshButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(50, 103, 210, 0.3);
+  box-shadow: 0 4px 12px rgba(255, 204, 0, 0.3);
 }
 
 .refreshButton:disabled {
@@ -64,11 +64,11 @@
 
 /* Transaction Item */
 .transactionItem {
-  background: #ffffff;
+  background: var(--glass-bg);
   border-radius: 8px;
   padding: 0.75rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--glass-border);
   transition: all 0.3s ease;
   display: grid;
   grid-template-columns: 1fr 2fr 1fr 1fr 1fr 0.5fr;
@@ -85,26 +85,26 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
+  background: var(--main-gradient);
 }
 
 .transactionItem:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(50, 103, 210, 0.12);
+  box-shadow: 0 4px 12px rgba(255, 204, 0, 0.12);
 }
 
 /* Column Styles */
 .column {
   padding: 0.25rem;
   font-size: 0.85rem;
-  color: #1a1a1a;
+  color: var(--text-primary);
   word-wrap: break-word;
   overflow-wrap: break-word;
   line-height: 1.2;
 }
 
 .column strong {
-  color: #3267d2;
+  color: var(--primary-color);
   font-weight: 600;
   display: block;
   margin-bottom: 0.15rem;
@@ -181,8 +181,8 @@
 
 .transactionImage:hover {
   transform: scale(1.1);
-  border-color: #3267d2;
-  box-shadow: 0 2px 8px rgba(50, 103, 210, 0.15);
+  border-color: var(--primary-color);
+  box-shadow: 0 2px 8px rgba(255, 204, 0, 0.15);
 }
 
 /* Image Modal */
@@ -213,9 +213,9 @@
 .noTransactions {
   text-align: center;
   padding: 1.5rem 1rem;
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 0.95rem;
-  background: #ffffff;
+  background: var(--glass-bg);
   border-radius: 10px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
   margin: 1.25rem auto;
@@ -233,7 +233,7 @@
 .transactionsCount {
   text-align: center;
   margin-bottom: 1rem;
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 1rem;
   font-weight: 500;
 }
@@ -251,8 +251,8 @@
 .paginationButton {
   padding: 0.75rem 1rem;
   border: 2px solid #e9ecef;
-  background: #ffffff;
-  color: #3267d2;
+  background: var(--glass-bg);
+  color: var(--primary-color);
   border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
@@ -262,9 +262,9 @@
 }
 
 .paginationButton:hover:not(:disabled) {
-  border-color: #3267d2;
-  background: #3267d2;
-  color: #ffffff;
+  border-color: var(--primary-color);
+  background: var(--primary-color);
+  color: var(--text-white);
   transform: translateY(-2px);
 }
 
@@ -275,13 +275,13 @@
 }
 
 .paginationButton.active {
-  background: #3267d2;
-  color: #ffffff;
-  border-color: #3267d2;
+  background: var(--primary-color);
+  color: var(--text-white);
+  border-color: var(--primary-color);
 }
 
 .paginationInfo {
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   margin: 0 1rem;
   text-align: center;
@@ -303,7 +303,7 @@
 
 .loading p {
   margin-top: 0.5rem;
-  color: #3267d2;
+  color: var(--primary-color);
   font-size: 0.9rem;
   font-weight: 500;
 }
@@ -317,9 +317,9 @@
 }
 
 .noRecords {
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 0.95rem;
-  background: #ffffff;
+  background: var(--glass-bg);
   padding: 1.25rem;
   border-radius: 10px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
@@ -616,14 +616,14 @@
   }
 
   .transactionItem:hover {
-    box-shadow: 0 2px 8px rgba(50, 103, 210, 0.06);
+    box-shadow: 0 2px 8px rgba(255, 204, 0, 0.06);
   }
 }
 
 /* Print Styles */
 @media print {
   .transactionHistory {
-    background: #ffffff;
+    background: var(--glass-bg);
     padding: 0;
   }
 

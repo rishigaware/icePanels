@@ -1,7 +1,7 @@
 /* Admin Transaction Page - Modern Responsive Design */
 .transactionHistory {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f9f9f9 0%, #e8e8e8 100%);
+  background: var(--main-gradient);
   padding-top: 80px;
   padding-bottom: 100px;
   width: 100vw;
@@ -14,10 +14,10 @@
   text-align: center;
   font-size: 1.8rem;
   font-weight: 700;
-  color: #3267d2;
+  color: var(--primary-color);
   margin: 0 0 1.25rem 0;
   padding: 0.5rem;
-  text-shadow: 0 2px 4px rgba(50, 103, 210, 0.1);
+  text-shadow: 0 2px 4px rgba(255, 204, 0, 0.1);
 }
 
 /* Transactions Container */
@@ -32,7 +32,7 @@
 
 /* Transaction Item */
 .transactionItem {
-  background: #ffffff;
+  background: var(--glass-bg) !important;
   border-radius: 8px;
   padding: 0.75rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -53,26 +53,26 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
+  background: var(--main-gradient);
 }
 
 .transactionItem:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(50, 103, 210, 0.12);
+  box-shadow: 0 4px 12px rgba(255, 204, 0, 0.12);
 }
 
 /* Column Styles */
 .column {
   padding: 0.25rem;
   font-size: 0.85rem;
-  color: #1a1a1a;
+  color: var(--text-primary);
   word-wrap: break-word;
   overflow-wrap: break-word;
   line-height: 1.2;
 }
 
 .column strong {
-  color: #3267d2;
+  color: var(--primary-color);
   font-weight: 600;
   display: block;
   margin-bottom: 0.15rem;
@@ -177,8 +177,8 @@
 
 .transactionImage:hover {
   transform: scale(1.1);
-  border-color: #3267d2;
-  box-shadow: 0 2px 8px rgba(50, 103, 210, 0.15);
+  border-color: var(--primary-color);
+  box-shadow: 0 2px 8px rgba(255, 204, 0, 0.15);
 }
 
 /* Action Buttons Container */
@@ -193,7 +193,7 @@
 /* Auto-processed Note */
 .autoProcessedNote {
   font-size: 0.75rem;
-  color: #6c757d;
+  color: var(--text-secondary);
   font-style: italic;
   background: rgba(108, 117, 125, 0.1);
   padding: 0.25rem 0.5rem;
@@ -218,14 +218,14 @@
 }
 
 .acceptButton {
-  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-  color: white;
+  background: var(--success-gradient);
+  color: var(--text-white);
   box-shadow: 0 1px 4px rgba(46, 204, 113, 0.25);
 }
 
 .deleteButton {
-  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-  color: white;
+  background: var(--error-gradient);
+  color: var(--text-white);
   box-shadow: 0 1px 4px rgba(231, 76, 60, 0.25);
 }
 
@@ -272,9 +272,9 @@
 .noTransactions {
   text-align: center;
   padding: 1.5rem 1rem;
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 0.95rem;
-  background: #ffffff;
+  background: var(--glass-bg) !important;
   border-radius: 10px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
   margin: 1.25rem auto;
@@ -292,7 +292,7 @@
 .transactionsCount {
   text-align: center;
   margin-bottom: 1rem;
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 1rem;
   font-weight: 500;
 }
@@ -310,8 +310,8 @@
 .paginationButton {
   padding: 0.75rem 1rem;
   border: 2px solid #e9ecef;
-  background: #ffffff;
-  color: #3267d2;
+  background: var(--glass-bg) !important;
+  color: var(--primary-color);
   border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
@@ -321,9 +321,9 @@
 }
 
 .paginationButton:hover:not(:disabled) {
-  border-color: #3267d2;
-  background: #3267d2;
-  color: #ffffff;
+  border-color: var(--primary-color);
+  background: var(--primary-color);
+  color: var(--text-white);
   transform: translateY(-2px);
 }
 
@@ -334,13 +334,13 @@
 }
 
 .paginationButton.active {
-  background: #3267d2;
-  color: #ffffff;
-  border-color: #3267d2;
+  background: var(--primary-color);
+  color: var(--text-white);
+  border-color: var(--primary-color);
 }
 
 .paginationInfo {
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   margin: 0 1rem;
   text-align: center;
@@ -363,7 +363,7 @@
 
 .loading p {
   margin-top: 0.5rem;
-  color: #3267d2;
+  color: var(--primary-color);
   font-size: 0.9rem;
   font-weight: 500;
 }
@@ -377,9 +377,9 @@
 }
 
 .noRecords {
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 0.95rem;
-  background: #ffffff;
+  background: var(--glass-bg) !important;
   padding: 1.25rem;
   border-radius: 10px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
@@ -663,7 +663,7 @@
   }
   
   .transactionItem:hover {
-    box-shadow: 0 2px 8px rgba(50, 103, 210, 0.06);
+    box-shadow: 0 2px 8px rgba(255, 204, 0, 0.06);
   }
   
   .transactionImage {
@@ -674,7 +674,7 @@
 /* Print Styles */
 @media print {
   .transactionHistory {
-    background: #ffffff;
+    background: var(--glass-bg) !important;
     padding: 0;
   }
   

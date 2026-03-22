@@ -24,7 +24,9 @@
   width: 100%;
   max-width: 500px;
   position: relative;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+  background: #111111 !important;
+  border: 1px solid rgba(255, 204, 0, 0.3);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.1);
   max-height: 90vh;
   overflow-y: auto;
@@ -37,7 +39,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
+  background: var(--main-gradient);
   border-radius: 20px 20px 0 0;
 }
 
@@ -47,8 +49,8 @@
   font-weight: 700;
   text-align: center;
   margin-bottom: 2rem;
-  color: #60a5fa;
-  text-shadow: 0 2px 4px rgba(96, 165, 250, 0.3);
+  color: var(--accent-color);
+  text-shadow: 0 2px 4px rgba(255, 204, 0, 0.3);
 }
 
 /* Modern Form Group */
@@ -62,7 +64,7 @@
 .label {
   margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text-white);
   font-size: 1rem;
   transition: color 0.3s ease;
 }
@@ -73,7 +75,7 @@
   font-size: 1rem;
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
-  color: #ffffff;
+  color: var(--text-white);
   background: rgba(40, 40, 40, 0.6);
   transition: all 0.3s ease;
   outline: none;
@@ -81,8 +83,8 @@
 }
 
 .input:focus {
-  border-color: #60a5fa;
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.1);
   transform: translateY(-1px);
 }
 
@@ -114,15 +116,15 @@
   margin-top: 1.5rem;
   margin-bottom: 1rem;
   padding: 1rem 1.5rem;
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%);
-  color: #ffffff;
+  background: var(--main-gradient);
+  color: var(--text-white);
   font-size: 1.1rem;
   font-weight: 600;
   border: none;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 25px rgba(50, 103, 210, 0.3);
+  box-shadow: 0 8px 25px rgba(255, 204, 0, 0.3);
   position: relative;
   overflow: hidden;
 }
@@ -144,7 +146,7 @@
 
 .submitButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(50, 103, 210, 0.4);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
 }
 
 .submitButton:active {
@@ -162,7 +164,7 @@
 .signupTrigger {
   background: transparent;
   border: none;
-  color: #60a5fa;
+  color: var(--accent-color);
   cursor: pointer;
   padding: 0.5rem 1rem;
   font-size: 1rem;
@@ -179,7 +181,7 @@
   height: 2px;
   bottom: 0;
   left: 50%;
-  background: #60a5fa;
+  background: var(--accent-color);
   transition: all 0.3s ease;
   transform: translateX(-50%);
 }
@@ -189,7 +191,7 @@
 }
 
 .signupTrigger:hover {
-  color: #93c5fd;
+  color: var(--link-color);
   background: rgba(96, 165, 250, 0.1);
 }
 
@@ -309,7 +311,7 @@
 /* Print Styles */
 @media print {
   .modalOverlay {
-    background: #ffffff;
+    background: var(--glass-bg);
   }
   
   .modalContent {
@@ -332,7 +334,7 @@
   .input {
     background: rgba(40, 40, 40, 0.8);
     border-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
+    color: var(--text-white);
   }
   
   .input::placeholder {
@@ -340,6 +342,6 @@
   }
   
   .label {
-    color: #ffffff;
+    color: var(--text-white);
   }
 }

@@ -2,7 +2,7 @@
 /* Admin Profile Page Specific Styles - High Specificity with Consistent Colors */
 .profilePage {
   min-height: 100vh !important;
-  background: linear-gradient(135deg, #f9f9f9 0%, #e8e8e8 100%) !important;
+  background: var(--main-gradient) !important;
   padding-top: 80px !important; /* Account for fixed top navbar */
   padding-bottom: 100px !important; /* Account for fixed bottom navbar */
   width: 100vw;
@@ -30,28 +30,29 @@
 /* Header Section */
 .heading {
   text-align: center;
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  color: #3267d2;
+  color: var(--primary-color);
   margin: 0 0 1.25rem 0;
   padding: 0.5rem;
-  text-shadow: 0 2px 4px rgba(50, 103, 210, 0.1);
+  text-shadow: 0 2px 4px rgba(255, 204, 0, 0.1);
 }
 
 /* Enhanced Wallet Balance Card */
 .balanceCard {
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%) !important;
+  background: linear-gradient(135deg, rgba(255, 204, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%) !important;
+  border: 1px solid rgba(255, 204, 0, 0.3) !important;
   border-radius: 20px !important;
-  padding: 25px !important;
+  padding: 30px !important;
   margin-bottom: 25px !important;
-  box-shadow: 0 20px 40px rgba(50, 103, 210, 0.2) !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
   position: relative !important;
   overflow: hidden !important;
   width: 100% !important;
-  height: auto !important;
+  backdrop-filter: blur(12px) !important;
   flex-direction: row !important;
   box-sizing: border-box !important;
 }
@@ -68,13 +69,16 @@
 }
 
 .balanceIcon {
-  background: rgba(255, 255, 255, 0.2) !important;
+  background: linear-gradient(135deg, var(--primary-color) 0%, #cc9900 100%) !important;
   border-radius: 50% !important;
-  padding: 12px !important;
-  backdrop-filter: blur(10px) !important;
+  padding: 15px !important;
   z-index: 1 !important;
   position: relative !important;
   flex-shrink: 0 !important;
+  box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .balanceContent {
@@ -93,17 +97,18 @@
 .currency {
   font-size: 18px !important;
   font-weight: 600 !important;
-  color: #ffffff !important;
+  color: var(--text-white) !important;
   margin-right: 5px !important;
 }
 
 .amount {
-  font-size: 32px !important;
-  font-weight: 700 !important;
-  color: #ffffff !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  font-size: 36px !important;
+  font-weight: 800 !important;
+  color: var(--primary-color) !important;
+  text-shadow: 0 2px 10px rgba(255, 204, 0, 0.2) !important;
   margin: 0 !important;
   line-height: 1 !important;
+  letter-spacing: -0.5px !important;
 }
 
 .balanceLabel {
@@ -114,19 +119,18 @@
 }
 
 .logoutButton {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border: 2px solid rgba(255, 255, 255, 0.3) !important;
-  color: #ffffff !important;
-  padding: 10px 18px !important;
-  border-radius: 25px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: var(--text-white) !important;
+  padding: 12px 24px !important;
+  border-radius: 12px !important;
   cursor: pointer !important;
   font-weight: 600 !important;
-  font-size: 13px !important;
+  font-size: 14px !important;
   display: flex !important;
   align-items: center !important;
-  gap: 8px !important;
-  transition: all 0.3s ease !important;
-  backdrop-filter: blur(10px) !important;
+  gap: 10px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   z-index: 1 !important;
   position: relative !important;
   flex-shrink: 0 !important;
@@ -142,7 +146,7 @@
 
 /* Enhanced Card Design */
 .card {
-  background: #ffffff !important;
+  background: var(--glass-bg) !important;
   border-radius: 18px !important;
   padding: 0 !important;
   margin-bottom: 20px !important;
@@ -162,7 +166,7 @@
 }
 
 .cardHeader {
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%) !important;
+  background: var(--main-gradient) !important;
   padding: 20px 25px !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
   display: flex !important;
@@ -183,9 +187,9 @@
 
 .cardTitle {
   margin: 0 !important;
-  font-size: 18px !important;
+  font-size: 16px !important;
   font-weight: 700 !important;
-  color: #ffffff !important;
+  color: var(--text-white) !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
   line-height: 1.2 !important;
 }
@@ -207,7 +211,7 @@
 
 .infoLabel {
   font-weight: 600 !important;
-  color: #3267d2 !important;
+  color: var(--link-color) !important;
   font-size: 11px !important;
   text-transform: uppercase !important;
   letter-spacing: 0.5px !important;
@@ -222,7 +226,7 @@
 
 .infoText {
   font-size: 13px !important;
-  color: #1a1a1a !important;
+  color: var(--text-primary) !important;
   font-weight: 500 !important;
   margin: 0 !important;
   padding: 8px 0 !important;
@@ -234,11 +238,11 @@
 .editInput {
   width: 100% !important;
   padding: 10px 14px !important;
-  border: 2px solid #e9ecef !important;
+  border: 1px solid rgba(255, 204, 0, 0.3) !important;
   border-radius: 8px !important;
   font-size: 13px !important;
-  color: #1a1a1a !important;
-  background: #f8f9fa !important;
+  color: var(--text-primary) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
   transition: all 0.3s ease !important;
   font-family: inherit !important;
   box-sizing: border-box !important;
@@ -248,19 +252,19 @@
 
 .editInput:focus {
   outline: none !important;
-  border-color: #3267d2 !important;
-  background: #ffffff !important;
-  box-shadow: 0 0 0 3px rgba(50, 103, 210, 0.1) !important;
+  border-color: var(--primary-color) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.1) !important;
 }
 
 .editInput::placeholder {
-  color: #adb5bd !important;
+  color: rgba(255, 255, 255, 0.3) !important;
 }
 
 .cardActions {
   padding: 20px 25px !important;
-  background: #f8f9fa !important;
-  border-top: 1px solid #e9ecef !important;
+  background: rgba(0, 0, 0, 0.2) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
   display: flex !important;
   gap: 12px !important;
   justify-content: flex-end !important;
@@ -268,8 +272,8 @@
 }
 
 .editButton {
-  background: linear-gradient(135deg, #3267d2 0%, #3b70d9 100%) !important;
-  color: #ffffff !important;
+  background: var(--main-gradient) !important;
+  color: var(--text-white) !important;
   border: none !important;
   padding: 10px 20px !important;
   border-radius: 20px !important;
@@ -280,41 +284,41 @@
   align-items: center !important;
   gap: 6px !important;
   transition: all 0.3s ease !important;
-  box-shadow: 0 3px 12px rgba(50, 103, 210, 0.3) !important;
+  box-shadow: 0 3px 12px rgba(255, 204, 0, 0.3) !important;
   white-space: nowrap !important;
 }
 
 .editButton:hover {
   transform: translateY(-2px) !important;
-  box-shadow: 0 6px 20px rgba(50, 103, 210, 0.4) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4) !important;
 }
 
 .saveButton {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
-  color: #ffffff !important;
+  background: var(--primary-color) !important;
+  color: #000000 !important;
   border: none !important;
   padding: 10px 20px !important;
   border-radius: 20px !important;
   cursor: pointer !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   font-size: 13px !important;
   display: flex !important;
   align-items: center !important;
   gap: 6px !important;
   transition: all 0.3s ease !important;
-  box-shadow: 0 3px 12px rgba(40, 167, 69, 0.3) !important;
+  box-shadow: 0 3px 12px rgba(255, 204, 0, 0.3) !important;
   white-space: nowrap !important;
 }
 
 .saveButton:hover {
   transform: translateY(-2px) !important;
-  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4) !important;
+  box-shadow: 0 6px 20px rgba(255, 204, 0, 0.4) !important;
 }
 
 .cancelButton {
-  background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
-  color: #ffffff !important;
-  border: none !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: var(--text-white) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
   padding: 10px 20px !important;
   border-radius: 20px !important;
   cursor: pointer !important;
@@ -324,13 +328,12 @@
   align-items: center !important;
   gap: 6px !important;
   transition: all 0.3s ease !important;
-  box-shadow: 0 3px 12px rgba(108, 117, 125, 0.3) !important;
   white-space: nowrap !important;
 }
 
 .cancelButton:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
   transform: translateY(-2px) !important;
-  box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4) !important;
 }
 
 /* ===== COMPREHENSIVE RESPONSIVE DESIGN ===== */
@@ -379,7 +382,7 @@
   }
   
   .cardTitle {
-    font-size: 20px !important;
+    font-size: 18px !important;
   }
   
   .infoLabel {
@@ -440,7 +443,7 @@
   }
   
   .cardTitle {
-    font-size: 18px !important;
+    font-size: 17px !important;
   }
   
   .infoLabel {
@@ -681,7 +684,7 @@
   }
   
   .cardTitle {
-    font-size: 17px !important;
+    font-size: 15px !important;
   }
   
   .cardContent {
@@ -792,7 +795,7 @@
   }
   
   .cardTitle {
-    font-size: 16px !important;
+    font-size: 14px !important;
   }
   
   .cardContent {
@@ -959,7 +962,7 @@
   }
   
   .balanceCard {
-    box-shadow: 0 8px 18px rgba(50, 103, 210, 0.08) !important;
+    box-shadow: 0 8px 18px rgba(255, 204, 0, 0.08) !important;
   }
   
   .editButton,

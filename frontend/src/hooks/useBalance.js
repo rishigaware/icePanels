@@ -19,10 +19,10 @@ export const useBalance = () => {
   // Function to refresh balance with loading state
   const refreshBalance = useCallback(async () => {
     if (!user?.id) return null;
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const newBalance = await refreshUserBalance();
       return newBalance;
@@ -46,7 +46,7 @@ export const useBalance = () => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
-      minimumFractionDigits: 0,
+      minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(balanceAmount);
   }, [balance]);

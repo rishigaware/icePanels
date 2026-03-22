@@ -128,7 +128,7 @@ export default function WithdrawalPopup({
             <strong>₹ {withdrawalAmount || "0.00"}</strong>
           </div>
           <p className={styles.wallet}>
-            <strong>Wallet Balance: ₹ {user?.balance || 0}</strong>
+            <strong>Wallet Balance: ₹ {(parseFloat(user?.balance) || 0).toFixed(2)}</strong>
           </p>
         </div>
 

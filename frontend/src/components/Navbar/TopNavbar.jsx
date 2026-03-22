@@ -60,7 +60,7 @@ export default function TopNavbar() {
       <div className={styles.navLinks}>
           <div className={styles.walletContainer}>
             <span className={styles.walletBalance}>Wallet : </span>
-            <span className={styles.balanceAmount}>₹{user?.balance || 0}</span>
+            <span className={styles.balanceAmount}>₹{(parseFloat(user?.balance) || 0).toFixed(2)}</span>
         </div>
 
         <button className={styles.navButton} onClick={handleDepositClick}>

@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaCopy } from "react-icons/fa"; // Importing FontAwesome copy icon
 import styles from "./DepositPopup.module.css";
+import { FiX } from "react-icons/fi";
 import { useUser } from "../../context/UserContext";
 import LoginPopup from '../Login/LoginPopup';
 
 
 import { FileUpload } from "primereact/fileupload";
 import { Toast } from "primereact/toast";
-import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/themes/lara-dark-amber/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
@@ -233,7 +234,7 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
       toast.current.show({
         severity: "error",
         summary: "Insufficient Balance",
-        detail: `You have ₹${user?.balance || 0} in your wallet. Cannot withdraw ₹${amount}.`,
+        detail: `You have ₹${(parseFloat(user?.balance) || 0).toFixed(2)} in your wallet. Cannot withdraw ₹${amount}.`,
         life: 3000,
       });
       return;
@@ -327,7 +328,7 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
       <div className={styles.popup}>
         {/* Close Button */}
         <button className={styles.closeButton} onClick={onClose}>
-          &times;
+          <FiX />
         </button>
 
         <Toast ref={toast}></Toast> {/* Use the Toast component */}
@@ -346,7 +347,7 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
 
               {/* Wallet Balance */}
               <p className={styles.wallet}>
-                <strong>Wallet Balance : ₹ {user?.balance || 0}</strong>
+                <strong>Wallet Balance : ₹ {(parseFloat(user?.balance) || 0).toFixed(2)}</strong>
               </p>
             </div>
 

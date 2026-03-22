@@ -115,7 +115,7 @@ const WithdrawalPopup = ({ isOpen, isClose, user }) => {
         </div>
 
         <div className={styles.balanceInfo}>
-          <p>Available Balance: <span className={styles.balanceAmount}>₹{user?.balance || 0}</span></p>
+          <p>Available Balance: <span className={styles.balanceAmount}>₹{(parseFloat(user?.balance) || 0).toFixed(2)}</span></p>
         </div>
 
         <form onSubmit={handleSubmit} className={styles.form}>

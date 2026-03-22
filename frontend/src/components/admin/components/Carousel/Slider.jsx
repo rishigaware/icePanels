@@ -80,7 +80,7 @@ const Slider = () => {
                             aria-label={`Blog item: ${item.name}`}
                         >
                             <div className="flex flex-col items-center justify-center">
-                                <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105 focus-within:ring-2 focus-within:ring-blue-500">
+                                <div className="bg-black bg-opacity-40 backdrop-blur-md rounded-lg shadow-xl overflow-hidden transition-transform duration-300 hover:scale-105 border border-white border-opacity-10 focus-within:ring-2 focus-within:ring-yellow-500">
                                     <img
                                         src={`${url}${item.picture}`}
                                         alt={item.name}
@@ -91,13 +91,13 @@ const Slider = () => {
                                         }}
                                     />
                                     <div className="p-4 text-center">
-                                        <span className="inline-block px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded-full mb-2">
+                                        <span className="inline-block px-2 py-1 text-xs font-semibold text-white bg-yellow-500 rounded-full mb-2">
                                             {item.name}
                                         </span>
-                                        <p className="text-gray-600 text-sm">Age: {item.age || "Unknown"}</p>
-                                        <p className="text-gray-600 text-sm">City: {item.city}</p>
-                                        <p className="text-gray-600 text-sm">State: {item.state}</p>
-                                        <p className="text-gray-600 text-sm">Contact Number: {item.phone}</p>
+                                        <p className="text-gray-300 text-sm">Age: {item.age || "Unknown"}</p>
+                                        <p className="text-gray-300 text-sm">City: {item.city}</p>
+                                        <p className="text-gray-300 text-sm">State: {item.state}</p>
+                                        <p className="text-gray-300 text-sm">Contact Number: {item.phone}</p>
                                     </div>
                                 </div>
                             </div>
@@ -106,14 +106,14 @@ const Slider = () => {
                 </div>
                 <button
                     onClick={prevSlide}
-                    className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 hover:bg-opacity-75 rounded-full p-2 ml-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 rounded-full p-2 ml-2 focus:outline-none focus:ring-2 focus:ring-yellow-500 border border-white border-opacity-20"
                     aria-label="Previous slide"
                 >
                     <FaChevronLeft className="text-gray-800" />
                 </button>
                 <button
                     onClick={nextSlide}
-                    className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 hover:bg-opacity-75 rounded-full p-2 mr-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 rounded-full p-2 mr-2 focus:outline-none focus:ring-2 focus:ring-yellow-500 border border-white border-opacity-20"
                     aria-label="Next slide"
                 >
                     <FaChevronRight className="text-gray-800" />

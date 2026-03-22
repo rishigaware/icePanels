@@ -27,7 +27,7 @@
 
 .uploadBtn {
   padding: 8px 18px;
-  background: linear-gradient(135deg, #4592ef, #2563eb);
+  background: linear-gradient(135deg, #4592ef, var(--primary-color));
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -53,7 +53,7 @@
   background: rgba(255,255,255,0.04);
   border: 2px dashed rgba(255,255,255,0.15);
   border-radius: 0 0 12px 12px;
-  color: #888;
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
@@ -170,7 +170,7 @@
 .dot:hover { transform: scale(1.2); }
 .dotActive {
   background: #4592ef;
-  border-color: #4592ef;
+  border-color: var(--link-color);
   transform: scale(1.25);
 }
 
@@ -184,7 +184,7 @@
 
 .adminGridLabel {
   margin: 0 0 10px;
-  color: #999;
+  color: var(--text-secondary);
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;

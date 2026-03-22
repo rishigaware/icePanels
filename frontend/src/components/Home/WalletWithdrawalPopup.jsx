@@ -27,7 +27,7 @@ export default function WalletWithdrawalPopup({ onClose }) {
     };
   }, []);
 
-  const availableBalance = user?.balance || 0;
+  const availableBalance = parseFloat(user?.balance) || 0;
 
   // Input Change Handler
   const handleInputChange = (e) => {
