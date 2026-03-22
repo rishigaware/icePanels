@@ -45,6 +45,14 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
     }
   }, [user?.id, refreshUserBalance]); // Refetch balance whenever the user changes
 
+  // Prevent background scroll when popup is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
+
 
 
   const openModal = () => setIsModalOpen(true);
@@ -67,7 +75,8 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
         // console.log(data);
         setAccountDetails(data); // Store account details in state
       } catch (error) {
-        
+        console.error("Error fetching account details:", error);
+        setAccountDetails(null); // Explicitly set to null on error
       }
     };
 
@@ -107,6 +116,10 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
 
   // Function to copy text to clipboard
   const handleCopy = (text) => {
+    if (!text) {
+      toast.current.show({ severity: "warn", summary: "Error", detail: "Nothing to copy", life: 1000 });
+      return;
+    }
     navigator.clipboard
       .writeText(text)
       .then(() => toast.current.show({ severity: "info", summary: "Copied", detail: "Copied to clipboard", life: 1000 }))
@@ -333,305 +346,312 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
 
         <Toast ref={toast}></Toast> {/* Use the Toast component */}
 
-        {/* Initial Deposit View */}
-        {!isDetailedView ? (
-          <div className={styles.initialView}>
-            <h2 className={styles.depositName}>Deposit</h2>
+        <div className={styles.scrollContent}>
+          {/* Initial Deposit View */}
+          {!isDetailedView ? (
+            <div className={styles.initialView}>
+              <h2 className={styles.depositName}>Deposit</h2>
 
-            {/* Rectangular Container */}
-            <div className={styles.balanceContainer}>
-              {/* Deposit Amount */}
-              <div className={styles.amount}>
-                <strong>₹ {depositAmount || "0.00"}</strong>
+              {/* Rectangular Container */}
+              <div className={styles.balanceContainer}>
+                {/* Deposit Amount */}
+                <div className={styles.amount}>
+                  <strong>₹ {depositAmount || "0.00"}</strong>
+                </div>
+
+                {/* Wallet Balance */}
+                <p className={styles.wallet}>
+                  <strong>Wallet Balance : ₹ {(parseFloat(user?.balance) || 0).toFixed(2)}</strong>
+                </p>
               </div>
 
-              {/* Wallet Balance */}
-              <p className={styles.wallet}>
-                <strong>Wallet Balance : ₹ {(parseFloat(user?.balance) || 0).toFixed(2)}</strong>
-              </p>
-            </div>
-
-            {/* Input Section */}
-            <div className={styles.inputSection}>
-              <label className={styles.inputLabel}>
-                <strong>Enter Amount:</strong>
-              </label>
-              <input
-                type="number"
-                className={styles.input}
-                value={depositAmount}
-                onChange={handleInputChange}
-                onWheel={(e) => e.target.blur()}
-                placeholder="Enter deposit amount"
-                min="0"
-                step="0.01"
-              />
-            </div>
-
-            {/* Error Message */}
-            {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
-
-            {/* Submit Button */}
-            <button className={styles.submitButton} onClick={handlePayment}>
-              <strong>Make Payment</strong>
-            </button>
-          </div>
-        ) : (
-          // Detailed Deposit View
-          <div className={styles.detailedView}>
-           {depositAmount && (
-                <div className={styles.amountDisplay}>
-                <strong>Pay ₹{depositAmount}</strong>
-                </div>
-            )}
-            
-            {/* Tab Buttons */}
-            <div className={styles.tabButtons}>
-              <button
-                className={`${styles.tabButton} ${
-                  activeTab === "depositFunds" ? styles.activeTab : ""
-                }`}
-                onClick={() => handleTabChange("depositFunds")}
-              >
-                Deposit Funds
-              </button>
-              <button
-                className={`${styles.tabButton} ${
-                  activeTab === "withdrawFunds" ? styles.activeTab : ""
-                }`}
-                onClick={() => handleTabChange("withdrawFunds")}
-              >
-                Withdraw Funds
-              </button>
-              <button
-                className={`${styles.tabButton} ${
-                  activeTab === "bankDetails" ? styles.activeTab : ""
-                }`}
-                onClick={() => handleTabChange("bankDetails")}
-              >
-                Bank Details
-              </button>
-              <button
-                className={`${styles.tabButton} ${
-                  activeTab === "upiDetails" ? styles.activeTab : ""
-                }`}
-                onClick={() => handleTabChange("upiDetails")}
-              >
-                UPI ID
-              </button>
-            </div>
-
-            {/* Tab Content */}
-            <div className={styles.tabContent}>
-                
-              {activeTab === "depositFunds" && (
-                <div className={styles.depositFunds}>
-                  <h2>
-                    <strong>Deposit Funds</strong>
-                  </h2>
-                  <p>Deposit money only in the below available accounts to get the fastest credits and avoid possible delays.</p>
-                </div>
-              )}
-
-              {activeTab === "withdrawFunds" && (
-                <div className={styles.withdrawFunds}>
-                  <h2>
-                    <strong>Withdraw Funds</strong>
-                  </h2>
-                  <p>Withdraw money from your wallet to your bank account or UPI ID.</p>
-                  
-                  {/* Withdrawal Amount Input */}
-                  <div className={styles.inputSection}>
-                    <label className={styles.inputLabel}>
-                      <strong>Withdrawal Amount:</strong>
-                    </label>
-                    <input
-                      type="number"
-                      className={styles.input}
-                      value={withdrawalAmount}
-                      onChange={(e) => setWithdrawalAmount(e.target.value)}
-                      onWheel={(e) => e.target.blur()}
-                      placeholder="Enter withdrawal amount"
-                      min="0"
-                      step="0.01"
-                    />
-                  </div>
-
-                  {/* Withdrawal Method Selection */}
-                  <div className={styles.dropdownSection}>
-                    <label className={styles.dropdownLabel}>
-                      <strong>Withdrawal Method:</strong>
-                      <select
-                        className={styles.dropdown}
-                        value={withdrawalMethod}
-                        onChange={(e) => setWithdrawalMethod(e.target.value)}
-                        required
-                      >
-                        <option value="">-- Select withdrawal method --</option>
-                        <option value="upi">UPI</option>
-                        <option value="bank">Bank Transfer</option>
-                      </select>
-                    </label>
-                  </div>
-
-                  {/* UPI Details */}
-                  {withdrawalMethod === "upi" && (
-                    <div className={styles.withdrawalDetails}>
-                      <label className={styles.inputLabel}>
-                        <strong>UPI ID:</strong>
-                      </label>
-                      <input
-                        type="text"
-                        className={styles.input}
-                        value={withdrawalDetails.upiId}
-                        onChange={(e) => setWithdrawalDetails(prev => ({...prev, upiId: e.target.value}))}
-                        placeholder="Enter your UPI ID (e.g., user@paytm)"
-                      />
-                    </div>
-                  )}
-
-                  {/* Bank Details */}
-                  {withdrawalMethod === "bank" && (
-                    <div className={styles.withdrawalDetails}>
-                      <label className={styles.inputLabel}>
-                        <strong>Account Number:</strong>
-                      </label>
-                      <input
-                        type="text"
-                        className={styles.input}
-                        value={withdrawalDetails.accountNumber}
-                        onChange={(e) => setWithdrawalDetails(prev => ({...prev, accountNumber: e.target.value}))}
-                        placeholder="Enter account number"
-                      />
-                      
-                      <label className={styles.inputLabel}>
-                        <strong>Account Holder Name:</strong>
-                      </label>
-                      <input
-                        type="text"
-                        className={styles.input}
-                        value={withdrawalDetails.accountHolderName}
-                        onChange={(e) => setWithdrawalDetails(prev => ({...prev, accountHolderName: e.target.value}))}
-                        placeholder="Enter account holder name"
-                      />
-                      
-                      <label className={styles.inputLabel}>
-                        <strong>IFSC Code:</strong>
-                      </label>
-                      <input
-                        type="text"
-                        className={styles.input}
-                        value={withdrawalDetails.ifscCode}
-                        onChange={(e) => setWithdrawalDetails(prev => ({...prev, ifscCode: e.target.value}))}
-                        placeholder="Enter IFSC code"
-                      />
-                      
-                      <label className={styles.inputLabel}>
-                        <strong>Bank Name:</strong>
-                      </label>
-                      <input
-                        type="text"
-                        className={styles.input}
-                        value={withdrawalDetails.bankName}
-                        onChange={(e) => setWithdrawalDetails(prev => ({...prev, bankName: e.target.value}))}
-                        placeholder="Enter bank name"
-                      />
-                    </div>
-                  )}
-
-                  {/* Withdrawal Submit Button */}
-                  <button 
-                    className={styles.submitButton} 
-                    onClick={handleWithdrawalSubmit}
-                    disabled={!withdrawalAmount || !withdrawalMethod}
-                  >
-                    <strong>Request Withdrawal</strong>
-                  </button>
-                </div>
-              )}
-
-              {activeTab === "bankDetails" && (
-                <div className={styles.bankDetails}>
-                  <h2>
-                    <strong>Bank Details</strong>
-                  </h2>
-                  {accountDetails && (
-                    <>
-                      <p className={styles.copyContainer}>
-                        <strong>Bank Name :</strong>&nbsp; {accountDetails.bankName}
-                        <FaCopy onClick={() => handleCopy(accountDetails.bankName)} className={styles.copyIcon} />
-                      </p>
-                      <p className={styles.copyContainer}>
-                        <strong>Account Holder Name :</strong>&nbsp; {accountDetails.accountHolderName}
-                        <FaCopy onClick={() => handleCopy(accountDetails.accountHolderName)} className={styles.copyIcon} />
-                      </p>
-                      <p className={styles.copyContainer}>
-                        <strong>Account Number :</strong>&nbsp; {accountDetails.accountNumber}
-                        <FaCopy onClick={() => handleCopy(accountDetails.accountNumber)} className={styles.copyIcon} />
-                      </p>
-                      <p className={styles.copyContainer}>
-                        <strong>IFSC Code :</strong>&nbsp; {accountDetails.ifscCode}
-                        <FaCopy onClick={() => handleCopy(accountDetails.ifscCode)} className={styles.copyIcon} />
-                      </p>
-                    </>
-                  )}
-                </div>
-              )}
-
-              {activeTab === "upiDetails" && (
-                <div className={styles.upiDetails}>
-                  <p className={styles.copyContainer}>
-                    <strong>UPI ID : </strong>&nbsp;{accountDetails.upiId}
-                    <FaCopy onClick={() => handleCopy("yourapp@upi")} className={styles.copyIcon} />
-                  </p>
-                </div>
-              )}
-
-             {/* Upload Payment Photo */}
-              <div className={styles.uploadSection}>
-              <FileUpload
-                mode="basic"
-                name="image" // Adjust this based on your backend's expected field name
-                url="/api/upload"
-                accept="image/*"
-                maxFileSize={1000000}
-                onSelect={onFileSelect}
+              {/* Input Section */}
+              <div className={styles.inputSection}>
+                <label className={styles.inputLabel}>
+                  <strong>Enter Amount:</strong>
+                </label>
+                <input
+                  type="number"
+                  className={styles.input}
+                  value={depositAmount}
+                  onChange={handleInputChange}
+                  onWheel={(e) => e.target.blur()}
+                  placeholder="Enter deposit amount"
+                  min="0"
+                  step="0.01"
                 />
               </div>
 
-              {/* Select Payment Method */}
-              <div className={styles.dropdownSection}>
-                <label className={styles.dropdownLabel}>
-                  <strong>Select Payment Method:</strong>
-                  <select
-                    className={styles.dropdown}
-                    value={paymentMethod}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                    required
-                  >
-                    <option value="">-- Select a payment method --</option>
-                    <option value="imps">IMPS (Immediate Payment Service)</option>
-                    <option value="gpay">Google Pay (GPay)</option>
-                    <option value="phonepe">PhonePe</option>
-                    <option value="BHIM UPI">BHIM UPI</option>
-                    <option value="paytm">Paytm</option>
-                    <option value="razorpay">Razorpay</option>
-                    <option value="upi">UPI (Unified Payments Interface)</option>
-                    <option value="emiDebit">EMI on Debit Card</option>
-                    <option value="emiCredit">EMI on Credit Card</option>
-                    <option value="upiAutopay">UPI Autopay</option>
-                    <option value="other">Other</option>
-                    </select>
-                </label>
-              </div>
+              {/* Error Message */}
+              {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
 
-              {/* Submit Button (After Make Payment) */}
-              <button className={styles.submitButton} onClick={handleSubmit}>
-                <strong>Deposit</strong>
+              {/* Submit Button */}
+              <button className={styles.submitButton} onClick={handlePayment}>
+                <strong>Make Payment</strong>
               </button>
             </div>
-          </div>
-        )}
+          ) : (
+            // Detailed Deposit View
+            <div className={styles.detailedView}>
+              {depositAmount && (
+                <div className={styles.amountDisplay}>
+                  <strong>Pay ₹{depositAmount}</strong>
+                </div>
+              )}
+
+              {/* Tab Buttons */}
+              <div className={styles.tabButtons}>
+                <button
+                  className={`${styles.tabButton} ${activeTab === "depositFunds" ? styles.activeTab : ""
+                    }`}
+                  onClick={() => handleTabChange("depositFunds")}
+                >
+                  Deposit Funds
+                </button>
+                <button
+                  className={`${styles.tabButton} ${activeTab === "withdrawFunds" ? styles.activeTab : ""
+                    }`}
+                  onClick={() => handleTabChange("withdrawFunds")}
+                >
+                  Withdraw Funds
+                </button>
+                <button
+                  className={`${styles.tabButton} ${activeTab === "bankDetails" ? styles.activeTab : ""
+                    }`}
+                  onClick={() => handleTabChange("bankDetails")}
+                >
+                  Bank Details
+                </button>
+                <button
+                  className={`${styles.tabButton} ${activeTab === "upiDetails" ? styles.activeTab : ""
+                    }`}
+                  onClick={() => handleTabChange("upiDetails")}
+                >
+                  UPI ID
+                </button>
+              </div>
+
+              {/* Tab Content */}
+              <div className={styles.tabContent}>
+
+                {activeTab === "depositFunds" && (
+                  <div className={styles.depositFunds}>
+                    <h2>
+                      <strong>Deposit Funds</strong>
+                    </h2>
+                    <p>Deposit money only in the below available accounts to get the fastest credits and avoid possible delays.</p>
+                  </div>
+                )}
+
+                {activeTab === "withdrawFunds" && (
+                  <div className={styles.withdrawFunds}>
+                    <h2>
+                      <strong>Withdraw Funds</strong>
+                    </h2>
+                    <p>Withdraw money from your wallet to your bank account or UPI ID.</p>
+
+                    {/* Withdrawal Amount Input */}
+                    <div className={styles.inputSection}>
+                      <label className={styles.inputLabel}>
+                        <strong>Withdrawal Amount:</strong>
+                      </label>
+                      <input
+                        type="number"
+                        className={styles.input}
+                        value={withdrawalAmount}
+                        onChange={(e) => setWithdrawalAmount(e.target.value)}
+                        onWheel={(e) => e.target.blur()}
+                        placeholder="Enter withdrawal amount"
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+
+                    {/* Withdrawal Method Selection */}
+                    <div className={styles.dropdownSection}>
+                      <label className={styles.dropdownLabel}>
+                        <strong>Withdrawal Method:</strong>
+                        <select
+                          className={styles.dropdown}
+                          value={withdrawalMethod}
+                          onChange={(e) => setWithdrawalMethod(e.target.value)}
+                          required
+                        >
+                          <option value="">-- Select withdrawal method --</option>
+                          <option value="upi">UPI</option>
+                          <option value="bank">Bank Transfer</option>
+                        </select>
+                      </label>
+                    </div>
+
+                    {/* UPI Details */}
+                    {withdrawalMethod === "upi" && (
+                      <div className={styles.withdrawalDetails}>
+                        <label className={styles.inputLabel}>
+                          <strong>UPI ID:</strong>
+                        </label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={withdrawalDetails.upiId}
+                          onChange={(e) => setWithdrawalDetails(prev => ({ ...prev, upiId: e.target.value }))}
+                          placeholder="Enter your UPI ID (e.g., user@paytm)"
+                        />
+                      </div>
+                    )}
+
+                    {/* Bank Details */}
+                    {withdrawalMethod === "bank" && (
+                      <div className={styles.withdrawalDetails}>
+                        <label className={styles.inputLabel}>
+                          <strong>Account Number:</strong>
+                        </label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={withdrawalDetails.accountNumber}
+                          onChange={(e) => setWithdrawalDetails(prev => ({ ...prev, accountNumber: e.target.value }))}
+                          placeholder="Enter account number"
+                        />
+
+                        <label className={styles.inputLabel}>
+                          <strong>Account Holder Name:</strong>
+                        </label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={withdrawalDetails.accountHolderName}
+                          onChange={(e) => setWithdrawalDetails(prev => ({ ...prev, accountHolderName: e.target.value }))}
+                          placeholder="Enter account holder name"
+                        />
+
+                        <label className={styles.inputLabel}>
+                          <strong>IFSC Code:</strong>
+                        </label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={withdrawalDetails.ifscCode}
+                          onChange={(e) => setWithdrawalDetails(prev => ({ ...prev, ifscCode: e.target.value }))}
+                          placeholder="Enter IFSC code"
+                        />
+
+                        <label className={styles.inputLabel}>
+                          <strong>Bank Name:</strong>
+                        </label>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          value={withdrawalDetails.bankName}
+                          onChange={(e) => setWithdrawalDetails(prev => ({ ...prev, bankName: e.target.value }))}
+                          placeholder="Enter bank name"
+                        />
+                      </div>
+                    )}
+
+                    {/* Withdrawal Submit Button */}
+                    <button
+                      className={styles.submitButton}
+                      onClick={handleWithdrawalSubmit}
+                      disabled={!withdrawalAmount || !withdrawalMethod}
+                    >
+                      <strong>Request Withdrawal</strong>
+                    </button>
+                  </div>
+                )}
+
+                {activeTab === "bankDetails" && (
+                  <div className={styles.bankDetails}>
+                    <h2>
+                      <strong>Bank Details</strong>
+                    </h2>
+                    {accountDetails ? (
+                      <>
+                        <p className={styles.copyContainer}>
+                          <strong>Bank Name :</strong>&nbsp; {accountDetails.bankName || "N/A"}
+                          <FaCopy onClick={() => handleCopy(accountDetails.bankName)} className={styles.copyIcon} />
+                        </p>
+                        <p className={styles.copyContainer}>
+                          <strong>Account Holder Name :</strong>&nbsp; {accountDetails.accountHolderName || "N/A"}
+                          <FaCopy onClick={() => handleCopy(accountDetails.accountHolderName)} className={styles.copyIcon} />
+                        </p>
+                        <p className={styles.copyContainer}>
+                          <strong>Account Number :</strong>&nbsp; {accountDetails.accountNumber || "N/A"}
+                          <FaCopy onClick={() => handleCopy(accountDetails.accountNumber)} className={styles.copyIcon} />
+                        </p>
+                        <p className={styles.copyContainer}>
+                          <strong>IFSC Code :</strong>&nbsp; {accountDetails.ifscCode || "N/A"}
+                          <FaCopy onClick={() => handleCopy(accountDetails.ifscCode)} className={styles.copyIcon} />
+                        </p>
+                      </>
+                    ) : (
+                      <p className={styles.errorMessage} style={{textAlign: 'center'}}>No bank details available at the moment.</p>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === "upiDetails" && (
+                  <div className={styles.upiDetails}>
+                    <h2>
+                      <strong>UPI ID</strong>
+                    </h2>
+                    {accountDetails ? (
+                      <p className={styles.copyContainer}>
+                        <strong>UPI ID : </strong>&nbsp;{accountDetails.upiId || "N/A"}
+                        <FaCopy onClick={() => handleCopy(accountDetails.upiId)} className={styles.copyIcon} />
+                      </p>
+                    ) : (
+                      <p className={styles.errorMessage} style={{textAlign: 'center'}}>No UPI details available at the moment.</p>
+                    )}
+                  </div>
+                )}
+
+                {/* Upload Payment Photo */}
+                <div className={styles.uploadSection}>
+                  <FileUpload
+                    mode="basic"
+                    name="image" // Adjust this based on your backend's expected field name
+                    url="/api/upload"
+                    accept="image/*"
+                    maxFileSize={1000000}
+                    onSelect={onFileSelect}
+                  />
+                </div>
+
+                {/* Select Payment Method */}
+                <div className={styles.dropdownSection}>
+                  <label className={styles.dropdownLabel}>
+                    <strong>Select Payment Method:</strong>
+                    <select
+                      className={styles.dropdown}
+                      value={paymentMethod}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      required
+                    >
+                      <option value="">-- Select a payment method --</option>
+                      <option value="imps">IMPS (Immediate Payment Service)</option>
+                      <option value="gpay">Google Pay (GPay)</option>
+                      <option value="phonepe">PhonePe</option>
+                      <option value="BHIM UPI">BHIM UPI</option>
+                      <option value="paytm">Paytm</option>
+                      <option value="razorpay">Razorpay</option>
+                      <option value="upi">UPI (Unified Payments Interface)</option>
+                      <option value="emiDebit">EMI on Debit Card</option>
+                      <option value="emiCredit">EMI on Credit Card</option>
+                      <option value="upiAutopay">UPI Autopay</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </label>
+                </div>
+
+                {/* Submit Button (After Make Payment) */}
+                <button className={styles.submitButton} onClick={handleSubmit}>
+                  <strong>Deposit</strong>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
       <LoginPopup isOpen={isModalOpen} isClose={closeModal} />
 

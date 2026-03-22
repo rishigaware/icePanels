@@ -16,6 +16,7 @@ const SignupForm = () => {
         password: '',
         confirmPassword: '',
         phoneNumber: '',
+        agentCode: '',
     });
 
     const [errors, setErrors] = useState({});
@@ -55,6 +56,8 @@ const SignupForm = () => {
         if (!formData.phoneNumber.trim()) newErrors.phoneNumber = 'Phone number is required.';
         else if (!validatePhoneNumber(formData.phoneNumber)) newErrors.phoneNumber = 'Phone number must be 10 digits.';
 
+        if (!formData.agentCode.trim()) newErrors.agentCode = 'Agent code is required.';
+
         setErrors(newErrors);
 
         // If no errors, submit the form
@@ -75,6 +78,7 @@ const SignupForm = () => {
                         password: '',
                         confirmPassword: '',
                         phoneNumber: '',
+                        agentCode: '',
                     });
                     navigate('/login');
 
@@ -179,6 +183,22 @@ const SignupForm = () => {
                         />
                         {errors.phoneNumber && (
                             <p className={styles.errorText}>{errors.phoneNumber}</p>
+                        )}
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <label htmlFor="agentCode" className={styles.label}>Agent Code</label>
+                        <input
+                            type="text"
+                            id="agentCode"
+                            name="agentCode"
+                            placeholder="Enter agent code"
+                            value={formData.agentCode}
+                            onChange={handleChange}
+                            className={styles.input}
+                        />
+                        {errors.agentCode && (
+                            <p className={styles.errorText}>{errors.agentCode}</p>
                         )}
                     </div>
 

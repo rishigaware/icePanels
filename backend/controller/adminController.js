@@ -434,6 +434,32 @@ exports.updateUserBalance = async (req, res) => {
   }
 };
 
+// Update user agent code
+exports.updateUserAgentCode = async (req, res) => {
+  const { id } = req.params;
+  const { agentCode } = req.body;
+
+  if (typeof agentCode === 'undefined') {
+    return res.status(400).json({ message: 'Agent code is required' });
+  }
+
+  try {
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.agentCode = agentCode;
+    await user.save();
+
+    res.status(200).json({ id, agentCode });
+  } catch (error) {
+    console.error('Error updating user agent code:', error);
+    res.status(500).json({ message: 'Error updating user agent code', error: error.message });
+  }
+};
+
 
 
 

@@ -53,6 +53,9 @@ router.patch('/reject-transaction/:txnId', adminController.rejectTransaction);
 // Route to update user balance
 router.patch('/update-user-balance/:id', adminController.updateUserBalance);
 
+// Route to update user agent code
+router.patch('/update-user-agent-code/:id', adminController.updateUserAgentCode);
+
 
 router.delete('/delete-website/:id', adminController.deleteWebsite);
 router.delete('/delete-one/topcarousel', adminController.deleteOneTopCarousel);

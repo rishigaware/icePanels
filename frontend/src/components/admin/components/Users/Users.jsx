@@ -14,9 +14,11 @@ const Users = () => {
     const [error, setError] = useState(null);
     const [tempBalance, setTempBalance] = useState("");
     const [tempPassword, setTempPassword] = useState("");
+    const [tempAgentCode, setTempAgentCode] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
     const [updatingBalance, setUpdatingBalance] = useState(false);
     const [updatingPassword, setUpdatingPassword] = useState(false);
+    const [updatingAgentCode, setUpdatingAgentCode] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [usersPerPage] = useState(12);
     const [showAddUserModal, setShowAddUserModal] = useState(false);
@@ -29,6 +31,7 @@ const Users = () => {
         password: '',
         confirmPassword: '',
         phoneNumber: '',
+        agentCode: '',
     });
     const [addUserErrors, setAddUserErrors] = useState({});
     const [addingUser, setAddingUser] = useState(false);
@@ -111,6 +114,7 @@ const Users = () => {
                         password: '',
                         confirmPassword: '',
                         phoneNumber: '',
+                        agentCode: '',
                     });
                     setAddUserErrors({});
                     setShowAddUserModal(false);
@@ -150,6 +154,7 @@ const Users = () => {
             password: '',
             confirmPassword: '',
             phoneNumber: '',
+            agentCode: '',
         });
         setAddUserErrors({});
     };
@@ -263,11 +268,60 @@ const Users = () => {
         }
     };
 
+    const handleUpdateAgentCode = async () => {
+        if (!selectedUser) return;
+        
+        setUpdatingAgentCode(true);
+        try {
+            const response = await fetch(`${url}/api/admin/update-user-agent-code/${selectedUser.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    agentCode: tempAgentCode 
+                }),
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to update agent code');
+            }
+            
+            toast.current.show({
+                severity: 'success',
+                summary: 'Agent Code Updated',
+                detail: 'User agent code updated successfully',
+                life: 2000,
+            });
+            
+            // Update the users state with the new agent code
+            setUsers((prevUsers) =>
+                prevUsers.map((user) =>
+                    user.id === selectedUser.id ? { ...user, agentCode: tempAgentCode } : user
+                )
+            );
+            
+            setSelectedUser((prev) => ({ ...prev, agentCode: tempAgentCode }));
+            handleClosePopup();
+        } catch (error) {
+            console.error('Error updating agent code:', error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Update Failed',
+                detail: 'Error while updating agent code',
+                life: 2000,
+            });
+        } finally {
+            setUpdatingAgentCode(false);
+        }
+    };
+
     const handleUserClick = async (user) => {
         fetchUsers();
         const latestUser = users.find((u) => u.id === user.id);
         setSelectedUser(latestUser);
         setTempBalance(latestUser.balance || "0");
+        setTempAgentCode(latestUser.agentCode || "");
         
         // Fetch payment details for the user
         await fetchUserPaymentDetails(user.id);
@@ -296,6 +350,7 @@ const Users = () => {
         setSelectedUser(null);
         setTempBalance("");
         setTempPassword("");
+        setTempAgentCode("");
         setUserPaymentDetails(null);
     };
 
@@ -611,6 +666,7 @@ const Users = () => {
                             <p><strong>Email:</strong> {selectedUser.email || 'N/A'}</p>
                             <p><strong>Username:</strong> {selectedUser.username || 'N/A'}</p>
                             <p><strong>Phone Number:</strong> {selectedUser.phoneNumber || 'N/A'}</p>
+                            <p><strong>Agent Code:</strong> {selectedUser.agentCode || 'N/A'}</p>
                              <p><strong>Last Updated Balance:</strong> ₹{(parseFloat(selectedUser.balance) || 0).toFixed(2)}</p>
                             
                             {/* Payment Details Section */}
@@ -691,6 +747,34 @@ const Users = () => {
                                     )}
                                 </button>
                             </div>
+
+                            {/* Update Agent Code Section */}
+                            <div className={styles.updatePassword}>
+                                <label>
+                                    <strong>Update Agent Code:</strong>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={tempAgentCode}
+                                    onChange={(e) => setTempAgentCode(e.target.value)}
+                                    className={styles.passwordInput}
+                                    placeholder="Enter new agent code"
+                                />
+                                <button 
+                                    onClick={handleUpdateAgentCode} 
+                                    className={styles.updateButton}
+                                    disabled={updatingAgentCode}
+                                >
+                                    {updatingAgentCode ? (
+                                        <>
+                                            <PulseLoader color="#000000" size={8} />
+                                            <span style={{ marginLeft: '0.5rem' }}>Updating...</span>
+                                        </>
+                                    ) : (
+                                        'Update Agent Code'
+                                    )}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -763,6 +847,20 @@ const Users = () => {
                                     className={styles.input}
                                 />
                                 {addUserErrors.phoneNumber && <p className={styles.errorText}>{addUserErrors.phoneNumber}</p>}
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label htmlFor="agentCode" className={styles.label}>Agent Code</label>
+                                <input
+                                    type="text"
+                                    id="agentCode"
+                                    name="agentCode"
+                                    placeholder="Enter agent code"
+                                    value={addUserFormData.agentCode}
+                                    onChange={handleAddUserChange}
+                                    className={styles.input}
+                                />
+                                {addUserErrors.agentCode && <p className={styles.errorText}>{addUserErrors.agentCode}</p>}
                             </div>
 
                             <div className={styles.formGroup}>

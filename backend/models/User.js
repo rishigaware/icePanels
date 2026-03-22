@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 'user',
     },
+    agentCode: {
+        type: String,
+        default: '',
+    },
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

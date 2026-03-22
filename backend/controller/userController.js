@@ -60,7 +60,7 @@ exports.getAllUsers = async (req, res) => {
 // Add a new user (Signup)
 // Add a new user (Signup)
 exports.addUser = async (req, res) => {
-  const { name, phoneNumber, email, password, username } = req.body;
+  const { name, phoneNumber, email, password, username, agentCode } = req.body;
 
   if (!name || !phoneNumber || !email || !password || !username) {
     return res.status(400).json({ message: 'All fields are required.' });
@@ -79,6 +79,7 @@ exports.addUser = async (req, res) => {
       email: email.toLowerCase(),
       password, // NOTE: Hash the password before saving in production
       username,
+      agentCode: agentCode || '',
       balance: 0,
       role: 'user',
     });
