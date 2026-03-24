@@ -43,7 +43,9 @@ const allowedOrigins = [
   'https://www.saipunt.info',
   'https://saipuntinfo.vercel.app',
   'https://icepanels.vercel.app',
-  'https://icepanels.pro'
+  'https://icepanels.pro',
+  'https://www.icepanels.info',
+  'https://icepanels.info'
 ];
 
 app.get('/health', (req, res) => res.status(200).send('OK'));
