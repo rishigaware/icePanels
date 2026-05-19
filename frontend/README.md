@@ -1,6 +1,8 @@
-# React + Vite
+# 💻 IcePanels Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🌐 **Official Link:** [https://icepanels.info/](https://icepanels.info/)
+
+This directory contains the client-side application for IcePanels, built with React and Vite. It provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
 
