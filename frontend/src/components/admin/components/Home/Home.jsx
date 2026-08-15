@@ -1,6 +1,7 @@
 import styles from "./Home.module.css";
 import HomeHeading from "./HomeHeading";
 import ImageCarousel from "../../../ImageCarousel/ImageCarousel";
+import { SOCIAL_LINKS } from "../../../../utils/socialLinks";
 
 const Home = () => {
 
@@ -25,19 +26,19 @@ const Home = () => {
 
         {/* Social Media Icons */}
         <div className={styles.socialIcons}>
-          <a href="https://www.instagram.com/ice_panels?igsh=MTM3ZGc3NDhsZDYzMw==" target="_blank" rel="noopener noreferrer">
+          <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer">
             <i className="fab fa-instagram"></i>
           </a>
-          <a href="https://wa.me/6285857878389" target="_blank" rel="noopener noreferrer">
+          <a href={SOCIAL_LINKS.whatsappSupport} target="_blank" rel="noopener noreferrer">
             <i className="fab fa-whatsapp"></i>
           </a>
-          <a href="https://whatsapp.com/channel/0029VbC6sBZId7nLnyyDaE30" target="_blank" rel="noopener noreferrer">
+          <a href={SOCIAL_LINKS.whatsappChannel} target="_blank" rel="noopener noreferrer">
             <i className="fab fa-whatsapp"></i>
           </a>
-          <a href="https://t.me/Icepanelsinfo" target="_blank" rel="noopener noreferrer">
+          <a href={SOCIAL_LINKS.telegram} target="_blank" rel="noopener noreferrer">
             <i className="fab fa-telegram"></i>
           </a>
-          <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
+          <a href={SOCIAL_LINKS.facebook} target="_blank" rel="noopener noreferrer">
             <i className="fab fa-facebook"></i>
           </a>
         </div>    
