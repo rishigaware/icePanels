@@ -1240,29 +1240,34 @@ exports.getAllCategoriesForDropdown = async (req, res) => {
   }
 };
 
-// Remove a category from all websites (set to empty string)
+// Remove/Delete a category (from Category collection and all websites)
 exports.removeCategoryFromWebsites = async (req, res) => {
   try {
     const { categoryName } = req.body;
 
-    if (!categoryName) {
+    if (!categoryName || !categoryName.trim()) {
       return res.status(400).json({ message: 'Category name is required.' });
     }
 
-    // Find all websites using this category
-    const websitesUsingCategory = await Website.find({ category: categoryName });
+    const trimmedName = categoryName.trim();
+    const nameRegex = new RegExp(`^${trimmedName.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}$`, 'i');
 
-    if (websitesUsingCategory.length === 0) {
-      return res.status(404).json({ message: 'No websites found with this category.' });
-    }
+    // 1. Delete from Category collection
+    const categoryDeleteResult = await Category.deleteMany({ name: nameRegex });
 
-    // Update all websites to remove the category
-    await Website.updateMany({ category: categoryName }, { category: '' });
+    // 2. Clear category on all websites using this category (case-insensitive & trimmed)
+    const websiteUpdateResult = await Website.updateMany(
+      { category: nameRegex },
+      { category: '' }
+    );
 
-    // Respond with success message
+    const affectedWebsites = websiteUpdateResult.modifiedCount || 0;
+    const deletedCategories = categoryDeleteResult.deletedCount || 0;
+
     res.status(200).json({
-      message: `Category "${categoryName}" removed from ${websitesUsingCategory.length} website(s).`,
-      affectedWebsites: websitesUsingCategory.length
+      message: `Category "${trimmedName}" deleted successfully.${affectedWebsites > 0 ? ` Removed from ${affectedWebsites} website(s).` : ''}`,
+      affectedWebsites,
+      deletedCategories
     });
   } catch (error) {
     console.error('Error removing category:', error);
