@@ -509,7 +509,7 @@ const HomeHeading = () => {
               <h3>Payment & Submit</h3>
               <p>
                 Make payment, Upload Screenshot and Click on Submit. You will
-                get your Panel detail on SAIPUNT home page
+                get your Panel detail on icepanels.info home page
               </p>
             </div>
             <div className={styles.stepIcon}>✅</div>
@@ -521,7 +521,7 @@ const HomeHeading = () => {
             <div className={styles.slidingTextSection}>
               <div className={styles.slidingTextContainer}>
                 <div className={styles.slidingText}>
-                  🚀 Welcome to The247Panel - Your Ultimate Gaming & Betting Platform! 🎮💰 • 🎯 Multiple Gaming Websites • 💎 Premium Features • 🔥 24/7 Support • ⚡ Instant Deposits & Withdrawals • 🏆 Best Odds Guaranteed • 🎲 Live Casino Games • 🎰 Slot Machines • 🃏 Card Games • 🏈 Sports Betting • 🎪 Live Events • 💰 Daily Bonuses • 🎁 Special Promotions • 🔐 Secure & Safe • 📱 Mobile Friendly • 🌟 VIP Membership • 🎊 Join Now & Win Big! 🎊
+                  🚀 Welcome to Ice Panels - Your Ultimate Gaming & Betting Platform! 🎮💰 • 🎯 Multiple Gaming Websites • 💎 Premium Features • 🔥 24/7 Support • ⚡ Instant Deposits & Withdrawals • 🏆 Best Odds Guaranteed • 🎲 Live Casino Games • 🎰 Slot Machines • 🃏 Card Games • 🏈 Sports Betting • 🎪 Live Events • 💰 Daily Bonuses • 🎁 Special Promotions • 🔐 Secure & Safe • 📱 Mobile Friendly • 🌟 VIP Membership • 🎊 Join Now & Win Big! 🎊
                 </div>
               </div>
             </div> 
@@ -539,7 +539,7 @@ const HomeHeading = () => {
 
       {/* Copyright Section */}
       <div className={styles.copyrightSection}>
-        <p>© 2019 The247Panel. All rights reserved.</p>
+        <p>© 2024 icepanels.info. All rights reserved.</p>
       </div>
 
       {/* Certifications Section */}

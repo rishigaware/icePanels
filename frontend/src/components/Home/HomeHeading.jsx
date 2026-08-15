@@ -458,7 +458,7 @@ const HomeHeading = () => {
               <h3>Payment & Submit</h3>
               <p>
                 Make payment, Upload Screenshot and Click on Submit. You will
-                get your Panel detail on SAIPUNT home page
+                get your Panel detail on icepanels.info home page
               </p>
             </div>
             <div className={styles.stepIcon}>✅</div>
@@ -468,7 +468,7 @@ const HomeHeading = () => {
 
       {/* Copyright Section */}
       <div className={styles.copyrightSection}>
-        <p>© 2019 The247Panel. All rights reserved.</p>
+        <p>© 2024 icepanels.info. All rights reserved.</p>
       </div>
 
       {/* Certifications Section */}

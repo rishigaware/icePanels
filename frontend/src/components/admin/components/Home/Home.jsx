@@ -34,7 +34,7 @@ const Home = () => {
           <a href="https://whatsapp.com/channel/0029VbC6sBZId7nLnyyDaE30" target="_blank" rel="noopener noreferrer">
             <i className="fab fa-whatsapp"></i>
           </a>
-          <a href="https://t.me/icepanelsdaily" target="_blank" rel="noopener noreferrer">
+          <a href="https://t.me/Icepanelsinfo" target="_blank" rel="noopener noreferrer">
             <i className="fab fa-telegram"></i>
           </a>
           <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
