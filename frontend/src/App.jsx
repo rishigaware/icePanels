@@ -18,6 +18,7 @@ import IdRequests from './components/admin/components/IdRequests/IdRequests';
 import Users from './components/admin/components/Users/Users';
 import Signup from './components/Signup/Signup';
 import Login from './components/Login/Login';
+import FloatingSocialWidget from './components/FloatingSocialWidget/FloatingSocialWidget';
 
 import ProtectedRoute from './components/Login/ProtectedRoute'; // Import ProtectedRoute
 
@@ -127,6 +128,9 @@ function App() {
             }
           />
         </Routes>
+
+          {/* Floating Expandable Social / Support Widget */}
+          <FloatingSocialWidget />
         </Router>
       </BalanceProvider>
     </UserProvider>

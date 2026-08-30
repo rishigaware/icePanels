@@ -1,0 +1,326 @@
+/* Floating Social Widget Styles */
+
+.floatingContainer {
+  position: fixed;
+  bottom: 85px;
+  right: 24px;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  pointer-events: auto;
+  user-select: none;
+}
+
+/* Subtle dark backdrop when expanded to enhance focus */
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 1090;
+  opacity: 0;
+  animation: fadeInBackdrop 0.3s ease-out forwards;
+}
+
+@keyframes fadeInBackdrop {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Main Trigger Button */
+.triggerButton {
+  position: relative;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #222222 0%, #111111 100%);
+  border: 2px solid var(--primary-color, #ffcc00);
+  color: var(--primary-color, #ffcc00);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(255, 204, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.6);
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  padding: 0;
+  outline: none;
+  z-index: 1105;
+}
+
+.triggerButton:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 12px 30px rgba(255, 204, 0, 0.45), 0 6px 16px rgba(0, 0, 0, 0.8);
+  border-color: #ffe066;
+}
+
+.triggerButton:active {
+  transform: scale(0.96);
+}
+
+.triggerButtonOpen {
+  background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+  border-color: #ff6b6b;
+  color: #ffffff;
+  box-shadow: 0 8px 25px rgba(255, 68, 68, 0.4), 0 4px 12px rgba(0, 0, 0, 0.7);
+  transform: rotate(0deg);
+}
+
+.triggerButtonOpen:hover {
+  background: linear-gradient(135deg, #ff5555 0%, #dd0000 100%);
+  border-color: #ffffff;
+  box-shadow: 0 12px 30px rgba(255, 68, 68, 0.6), 0 6px 16px rgba(0, 0, 0, 0.8);
+}
+
+/* Pulsing rings around the closed launcher button */
+.pulseRing,
+.pulseRingOuter {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-color, #ffcc00);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pulseRing {
+  animation: pulseGlow 2.5s infinite ease-out;
+}
+
+.pulseRingOuter {
+  animation: pulseGlow 2.5s infinite ease-out 0.8s;
+}
+
+.triggerButtonOpen .pulseRing,
+.triggerButtonOpen .pulseRingOuter {
+  display: none;
+}
+
+@keyframes pulseGlow {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+}
+
+/* Icon Wrapper & Smooth Transition between Headset and X */
+.buttonIconWrapper {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.launcherIcon {
+  font-size: 24px;
+}
+
+.closeIcon {
+  font-size: 22px;
+}
+
+.iconVisible {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.iconHidden {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.5);
+  pointer-events: none;
+}
+
+/* Menu list container */
+.menuList {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 12px;
+  margin-bottom: 14px;
+  pointer-events: none;
+  visibility: hidden;
+  z-index: 1105;
+}
+
+.menuListOpen {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+/* Individual speed dial menu item */
+.menuItem {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  text-decoration: none;
+  opacity: 0;
+  transform: translateY(20px) scale(0.7);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity 0.25s ease-out,
+              box-shadow 0.25s ease;
+}
+
+.menuListOpen .menuItem {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  animation: slideUpItem 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation-delay: calc(var(--item-index) * 0.05s);
+}
+
+@keyframes slideUpItem {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.7);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Tooltip / Label beside each icon */
+.itemLabel {
+  background: rgba(20, 20, 24, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+  transition: all 0.25s ease;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.menuItem:hover .itemLabel {
+  opacity: 1;
+  color: var(--item-color);
+  border-color: var(--item-border);
+  box-shadow: 0 4px 20px var(--item-glow);
+  transform: translateX(-4px);
+}
+
+/* Icon Circle */
+.iconCircle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(22, 22, 26, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid var(--item-border);
+  color: var(--item-color);
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), 0 0 10px var(--item-bg);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.menuItem:hover .iconCircle {
+  transform: scale(1.15) rotate(8deg);
+  background: var(--item-bg);
+  border-color: var(--item-color);
+  box-shadow: 0 8px 25px var(--item-glow), 0 0 15px var(--item-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .floatingContainer {
+    bottom: 80px;
+    right: 18px;
+  }
+
+  .triggerButton {
+    width: 52px;
+    height: 52px;
+  }
+
+  .launcherIcon {
+    font-size: 21px;
+  }
+
+  .closeIcon {
+    font-size: 20px;
+  }
+
+  .iconCircle {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+  }
+
+  .itemLabel {
+    font-size: 0.78rem;
+    padding: 5px 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .floatingContainer {
+    bottom: 72px;
+    right: 14px;
+  }
+
+  .triggerButton {
+    width: 48px;
+    height: 48px;
+  }
+
+  .launcherIcon {
+    font-size: 19px;
+  }
+
+  .closeIcon {
+    font-size: 18px;
+  }
+
+  .iconCircle {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .itemLabel {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+  }
+}
