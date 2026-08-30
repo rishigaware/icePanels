@@ -1,13 +1,24 @@
 /* Main Container */
 .container {
-  min-height: 100vh;
-  width: 100vw;
-  margin: 0;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 15px 1rem 80px 1rem;
   box-sizing: border-box;
-  background: var(--main-gradient);
-  overflow-y: auto;
-  padding: 20px 10px 100px 10px;
-  /* Accounts for TopNavbar + BottomNavbar + spacing */
+  position: relative;
+}
+
+/* Loading Spinner */
+.loading,
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1rem;
+  gap: 12px;
+  color: var(--text-white, #ffffff);
+  font-size: 0.95rem;
 }
 
 /* Header Section */
@@ -15,3180 +26,900 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
-  gap: 12px;
+  gap: 1rem;
+  margin-top: 8px;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  padding: 0.25rem 0;
+}
+
+.headerTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerTitleIcon {
+  color: var(--primary-color, #ffcc00);
+  font-size: 1.6rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+.heading {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary-color, #ffcc00);
+  margin: 0;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.5px;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
-@media (max-width: 576px) {
-  .headerSection {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-}
-
-/* Responsive Button Design for All Screen Sizes */
+/* Action Buttons */
 .addWebsiteButton,
 .categoryManageButton {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: center;
-  min-height: 44px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 8px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  text-transform: none;
+  letter-spacing: 0.3px;
 }
 
 .addWebsiteButton {
   background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: var(--text-white);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(40, 167, 69, 0.35);
 }
 
 .addWebsiteButton:hover {
   background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.5);
 }
 
 .categoryManageButton {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-  color: var(--text-white);
+  background: linear-gradient(135deg, #ffaa00 0%, #ff8800 100%);
+  color: #000000;
+  box-shadow: 0 4px 14px rgba(255, 170, 0, 0.35);
 }
 
 .categoryManageButton:hover {
-  background: linear-gradient(135deg, var(--secondary-color) 0%, #004085 100%);
+  background: linear-gradient(135deg, #ffbb00 0%, #ffa000 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 6px 20px rgba(255, 170, 0, 0.5);
 }
 
-/* Website List Container */
-.websiteList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 0 1rem;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-/* Websites Count */
-.websitesCount {
-  text-align: center;
-  margin-bottom: 0.75rem;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: 0 1rem;
+.btnIcon {
+  font-size: 1rem;
+  flex-shrink: 0;
 }
 
 /* Search and Filter Section */
+.searchSortWrapper {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
 .searchSection {
   display: flex;
   gap: 1rem;
-  margin-bottom: 1rem;
-  padding: 0 1rem;
-  flex-wrap: wrap;
   align-items: center;
+  flex-wrap: wrap;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .searchInput {
   flex: 1;
-  min-width: 200px;
-  padding: 10px 14px;
-  border: 1px solid var(--glass-border);
-  border-radius: 8px;
-  font-size: 14px;
+  min-width: 220px;
+  padding: 11px 16px;
+  background: rgba(0, 0, 0, 0.45) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  color: var(--text-white, #ffffff);
+  font-size: 0.95rem;
   transition: all 0.3s ease;
-  background: var(--glass-bg) !important;
-  color: var(--text-primary);
-}
-
-@media (max-width: 480px) {
-  .searchInput {
-    min-width: 100%;
-    font-size: 16px;
-    /* Prevents auto-zoom on iOS */
-  }
+  box-sizing: border-box;
 }
 
 .searchInput:focus {
   outline: none;
-  border-color: var(--link-color);
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-  background: var(--glass-bg) !important;
-  color: var(--text-primary);
-  /* Maintain text color on focus */
+  border-color: var(--primary-color, #ffcc00);
+  box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.2);
+  background: rgba(0, 0, 0, 0.6) !important;
 }
 
 .searchInput::placeholder {
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 /* Filter Section */
 .filterSection {
   display: flex;
-  gap: 0.75rem;
   align-items: center;
+  gap: 0.75rem;
   flex-wrap: wrap;
+  flex: 1.5;
+  min-width: 300px;
 }
 
 .filterSection label {
-  display: block;
-  margin-bottom: 8px;
+  color: rgba(255, 255, 255, 0.9);
   font-weight: 600;
-  color: var(--text-primary);
-  font-size: 14px;
-}
-
-/* Searchable Dropdown */
-.searchableDropdown {
-  position: relative;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.searchInput {
-  flex: 1;
-  padding: 10px 12px;
-  border: 2px solid var(--glass-border);
-  border-radius: 6px;
-  font-size: 14px;
-  transition: border-color 0.3s ease;
-}
-
-.searchInput:focus {
-  outline: none;
-  border-color: var(--link-color);
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .categorySelect {
   flex: 1;
-  padding: 10px 12px;
-  border: 2px solid var(--glass-border);
-  border-radius: 6px;
-  font-size: 14px;
-  background: var(--glass-bg) !important;
+  min-width: 160px;
+  padding: 11px 14px;
+  background: #181822;
+  color: var(--text-white, #ffffff);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  font-size: 0.95rem;
   cursor: pointer;
-  transition: border-color 0.3s ease;
-  color: var(--text-primary);
-  /* Dark text color for visibility */
+  outline: none;
+  transition: all 0.3s ease;
 }
 
 .categorySelect:focus {
-  outline: none;
-  border-color: var(--link-color);
-  background: var(--glass-bg) !important;
-  color: var(--text-primary);
-  /* Maintain text color on focus */
+  border-color: var(--primary-color, #ffcc00);
+  box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.2);
 }
 
 .categorySelect option {
-  background: var(--glass-bg) !important;
-  color: var(--text-primary);
+  background: #181822;
+  color: #ffffff;
   padding: 8px;
 }
 
-/* Website Cards */
-.websiteCard {
-  background: var(--glass-bg) !important;
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  position: relative;
-  width: 100%;
-  box-sizing: border-box;
-  margin-bottom: 1rem;
+.categoryLoading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary-color, #ffcc00);
+  font-size: 0.85rem;
 }
 
-@media (max-width: 600px) {
-  .websiteCard {
-    padding: 1rem;
-  }
+/* Websites Count */
+.websitesCount {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  padding: 0 4px;
+}
+
+/* Website Card */
+.websiteCard {
+  background: rgba(18, 18, 26, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.85rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
 }
 
 .websiteCard:hover {
+  border-color: rgba(255, 204, 0, 0.35);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .websiteInfo {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
-  width: 100%;
-  flex-wrap: wrap; /* Allows wrapping on very small screens if needed */
+  gap: 1.25rem;
+  flex-wrap: wrap;
 }
 
 .cardHeader {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-  min-width: fit-content;
+  gap: 14px;
+  min-width: 180px;
+}
+
+.cardHeader h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--text-white, #ffffff);
+  font-weight: 700;
 }
 
 .websiteLogo {
-  width: 44px;
-  height: 44px;
-  border-radius: 8px;
+  width: 46px;
+  height: 46px;
   object-fit: contain;
-  background: white; /* Contrast for logos with transparent bgs */
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   padding: 4px;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .websiteDetails {
-  flex: 1;
   display: flex;
-  flex-direction: row;
   align-items: center;
-  gap: 0.5rem;
-  min-width: 0;
-}
-
-.websiteDetails h3 {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--text-primary);
-  line-height: 1.2;
-  white-space: nowrap; /* Prevent ugly name wrapping */
+  gap: 1rem;
+  flex-wrap: wrap;
+  flex: 1;
 }
 
 .websiteDetails p {
-  font-size: 13px;
-  margin: 5px 0;
-  color: var(--text-secondary);
-  line-height: 1.4;
-  word-break: break-all;
-}
-
-.coinInfo {
-  font-size: 11px !important;
-  margin: 2px 0 !important;
-  color: var(--link-color) !important;
-  font-weight: 500;
-  line-height: 1.4;
-  word-break: break-all;
-}
-
-.coinInfo strong {
-  color: var(--text-primary);
-  margin-right: 4px;
-}
-
-.dateInfo {
-  font-size: 11px !important;
-  margin: 2px 0 !important;
-  color: #888 !important;
-  font-style: italic;
-  line-height: 1.4;
-  word-break: break-all;
-}
-
-.dateInfo strong {
-  color: var(--text-secondary);
-  margin-right: 4px;
-}
-
-.statusTag {
-  display: inline-block;
-  padding: 1px 4px;
-  border-radius: 8px;
-  font-size: 7px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  margin: 1px 0;
-  line-height: 1.1;
-}
-
-.activeStatus {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.inactiveStatus {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
+  margin: 0;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .categoryTag {
   display: inline-block;
   padding: 4px 10px;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--primary-color);
+  background: rgba(255, 204, 0, 0.15);
+  color: var(--primary-color, #ffcc00);
+  border: 1px solid rgba(255, 204, 0, 0.3);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.coinInfo {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 4px 8px;
   border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  margin: 5px 0;
-  line-height: 1.3;
-  border: 1px solid rgba(255, 204, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.statusTag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.activeStatus {
+  background: rgba(40, 167, 69, 0.2);
+  color: #28a745;
+  border: 1px solid rgba(40, 167, 69, 0.4);
+}
+
+.inactiveStatus {
+  background: rgba(220, 53, 69, 0.2);
+  color: #dc3545;
+  border: 1px solid rgba(220, 53, 69, 0.4);
+}
+
+/* Actions */
 .websiteActions {
-  display: flex;
-  gap: 0.3rem;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-/* Website Action Buttons */
-.actionButton,
-.editButton,
-.deleteButton {
-  padding: 0.6rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  min-height: 40px;
-  min-width: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-@media (max-width: 600px) {
-  .websiteActions {
-    width: 100%;
-    justify-content: flex-end;
-    margin-top: 10px;
-  }
-}
-
-.actionButton {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-  color: var(--text-white);
-}
-
-.actionButton:hover {
-  background: linear-gradient(135deg, var(--secondary-color) 0%, #004085 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-}
-
-.editButton {
-  background: transparent !important;
-  color: #28a745 !important;
-  box-shadow: none !important;
-  font-size: 1.2rem;
-  padding: 0.5rem;
-}
-
-.editButton:hover {
-  background: rgba(40, 167, 69, 0.1) !important;
-  transform: scale(1.1);
-}
-
-.deleteButton {
-  background: transparent !important;
-  color: #dc3545 !important;
-  box-shadow: none !important;
-  font-size: 1.2rem;
-  padding: 0.5rem;
-}
-
-.deleteButton:hover {
-  background: rgba(220, 53, 69, 0.1) !important;
-  transform: scale(1.1);
-}
-
-/* Modal Styles */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.85); /* Reduced transparency for better focus */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000; /* Higher z-index to stay above navbars */
-  backdrop-filter: blur(8px);
-}
-
-.modalContent {
-  background: #1a1a1a !important;
-  padding: 0; /* Changed to 0 to manage padding in sub-elements */
-  border-radius: 16px;
-  max-width: 1000px !important;
-  width: 95%;
-  max-height: 85vh;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  border: 1px solid rgba(255, 204, 0, 0.2);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-  overflow: hidden; /* Prevent background scroll inside wrapper */
-}
-
-/* Scrollable part of the modal */
-.modalBody {
-  padding: 30px;
-  overflow-y: auto;
-  flex: 1;
-}
-
-/* Header stays stuck at the top */
-.modalHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 30px;
-  background: #1a1a1a;
-  border-bottom: 2px solid var(--glass-border);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-
-/* Close Button */
-.closeButton {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  color: var(--text-primary);
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
-}
-
-.closeButton:hover {
-  background: rgba(255, 0, 0, 0.2);
-  color: #ff4d4d;
-  transform: rotate(90deg);
-}
-
-
-/* Modal Actions */
-.modalActions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
-
-.submitButton {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: var(--text-white);
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 8px;
-  min-width: 120px;
-  justify-content: center;
 }
 
-.submitButton:hover:not(:disabled) {
-  background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-}
-
-.submitButton:disabled {
-  background: #6c757d;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.modalCloseButton {
-  background: #6c757d;
-  color: var(--text-white);
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.modalCloseButton:hover {
-  background: #5a6268;
-  transform: translateY(-1px);
-}
-
-/* Form Styles */
-.formGroup {
-  margin-bottom: 20px;
-}
-
-.formGroup label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: var(--text-primary);
-  font-size: 14px;
-}
-
-.formGroup input,
-.formGroup select {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid var(--glass-border);
-  border-radius: 8px;
-  font-size: 14px;
-  transition: border-color 0.3s ease;
-}
-
-.formGroup input:focus,
-.formGroup select:focus {
-  outline: none;
-  border-color: var(--link-color);
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-}
-
-/* Form Buttons */
-.submitButton,
-.cancelButton {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-height: 44px;
-  display: flex;
+.editButton,
+.deleteButton {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.submitButton {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: var(--text-white);
-}
-
-.submitButton:hover:not(:disabled) {
-  background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-}
-
-.submitButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.cancelButton {
-  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
-  color: var(--text-white);
-}
-
-.cancelButton:hover {
-  background: linear-gradient(135deg, #5a6268 0%, #343a40 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
-}
-
-/* Category Management Modal */
-.categorySection {
-  margin-bottom: 30px;
-  padding: 20px;
-  background: var(--main-gradient);
-  border-radius: 8px;
-  border: 1px solid var(--glass-border);
-}
-
-.categorySection h3 {
-  margin: 0 0 15px 0;
-  color: var(--text-primary);
-  font-size: 18px;
-  border-bottom: 2px solid var(--primary-color);
-  padding-bottom: 8px;
-}
-
-/* Add Category Section */
-.addCategorySection {
-  margin-bottom: 30px;
-  padding: 20px;
-  background: var(--glass-bg);
-  border-radius: 8px;
-  border: 1px solid var(--primary-color);
-}
-
-.addCategorySection h3 {
-  margin: 0 0 15px 0;
-  color: var(--primary-color);
-  font-size: 18px;
-  border-bottom: 2px solid var(--primary-color);
-  padding-bottom: 8px;
-}
-
-.addCategorySection input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid var(--glass-border);
-  border-radius: 6px;
-  font-size: 14px;
-  margin-bottom: 15px;
-  transition: border-color 0.3s ease;
-  background: var(--glass-bg) !important;
-  color: var(--text-primary);
-  /* Dark text color for visibility */
-}
-
-.addCategorySection input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  background: var(--glass-bg) !important;
-  color: var(--text-primary);
-  /* Maintain text color on focus */
-}
-
-.addCategorySection input::placeholder {
-  color: var(--text-secondary);
-}
-
-/* Category Management Buttons */
-.addCategoryButton {
-  padding: 0.6rem 1rem;
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: var(--text-white);
-  border: none;
-  border-radius: 6px;
+  border-radius: 9px;
   cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  min-height: 44px;
-  min-width: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.3rem;
-  white-space: nowrap;
-  box-shadow: 0 2px 6px rgba(40, 167, 69, 0.2);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+  padding: 0;
 }
 
-.addCategoryButton:hover:not(:disabled) {
-  background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+.editButton {
+  background: rgba(255, 204, 0, 0.18) !important;
+  color: #ffcc00 !important;
+  border: 1px solid rgba(255, 204, 0, 0.45) !important;
 }
 
-.addCategoryButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.editButton svg {
+  width: 18px !important;
+  height: 18px !important;
+  fill: #ffcc00 !important;
+  color: #ffcc00 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
-/* Categories List */
-.categoriesList {
-  margin-top: 20px;
+.editButton:hover {
+  background: #ffcc00 !important;
+  color: #000000 !important;
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(255, 204, 0, 0.4);
 }
 
-.categoryItem {
+.editButton:hover svg {
+  fill: #000000 !important;
+  color: #000000 !important;
+}
+
+.deleteButton {
+  background: rgba(239, 68, 68, 0.18) !important;
+  color: #ff5252 !important;
+  border: 1px solid rgba(239, 68, 68, 0.45) !important;
+}
+
+.deleteButton svg {
+  width: 17px !important;
+  height: 17px !important;
+  fill: #ff5252 !important;
+  color: #ff5252 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.deleteButton:hover {
+  background: #dc3545 !important;
+  color: #ffffff !important;
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+.deleteButton:hover svg {
+  fill: #ffffff !important;
+  color: #ffffff !important;
+}
+
+/* Pagination */
+.paginationContainer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px;
-  background: var(--glass-bg) !important;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  border: 1px solid var(--glass-border);
-}
-
-.categoryInfo {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.categoryInfo strong {
-  display: block;
-  color: var(--text-primary);
-  font-size: 16px;
-  margin: 0;
-}
-
-.categoryInfo p {
-  margin: 0;
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
-/* Category Management Buttons */
-.removeButton {
-  padding: 0.5rem 0.75rem;
-  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-  color: var(--text-white);
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  min-height: 36px;
-  min-width: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.3rem;
-  white-space: nowrap;
-  box-shadow: 0 2px 6px rgba(220, 53, 69, 0.2);
-}
-
-.removeButton:hover {
-  background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-}
-
-/* Loading State */
-.loading {
-  text-align: center;
-  padding: 40px;
-  color: var(--text-secondary);
-  font-size: 16px;
-}
-
-/* Error State */
-.error {
-  text-align: center;
-  padding: 40px;
-  color: #dc3545;
-  font-size: 16px;
-}
-
-/* Pagination Styles */
-.paginationContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   margin-top: 1.5rem;
-  padding: 0 1rem;
-  gap: 0.4rem;
+  padding: 1rem 0;
+  flex-wrap: wrap;
+  gap: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .paginationInfo {
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  margin: 0 0.75rem;
-  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
 }
 
 .paginationControls {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-/* Pagination Buttons */
 .paginationButton,
 .pageButton {
-  padding: 0.6rem 1rem;
-  border: 2px solid var(--glass-border);
-  background: var(--glass-bg) !important;
-  color: var(--primary-color);
+  padding: 7px 14px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-white, #ffffff);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   cursor: pointer;
+  font-size: 0.88rem;
   font-weight: 600;
-  transition: all 0.3s ease;
-  min-width: 44px;
-  min-height: 44px;
+  transition: all 0.25s ease;
+  min-width: 36px;
   text-align: center;
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
 }
 
 .paginationButton:hover:not(:disabled),
-.pageButton:hover:not(:disabled) {
-  border-color: var(--primary-color);
-  background: var(--primary-color);
-  color: var(--text-white);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 204, 0, 0.3);
+.pageButton:hover {
+  background: rgba(255, 204, 0, 0.2);
+  border-color: var(--primary-color, #ffcc00);
+  color: var(--primary-color, #ffcc00);
 }
 
-.paginationButton:disabled,
-.pageButton:disabled {
-  opacity: 0.5;
+.paginationButton:disabled {
+  opacity: 0.4;
   cursor: not-allowed;
-  transform: none;
 }
 
 .pageNumbers {
   display: flex;
-  gap: 0.3rem;
   align-items: center;
+  gap: 4px;
 }
 
-.pageButton {
-  padding: 0.6rem 1rem;
-  border: 2px solid var(--glass-border);
-  background: var(--glass-bg) !important;
-  color: var(--primary-color);
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  min-width: 44px;
-  min-height: 44px;
-  text-align: center;
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-}
-
-.pageButton:hover {
-  border-color: var(--link-color);
-  color: var(--link-color);
-  transform: translateY(-1px);
-}
-
-.pageButton.activePage {
-  background: var(--primary-color);
-  color: var(--text-white);
-  border-color: var(--link-color);
-}
-
-.pageButton.activePage:hover {
-  background: var(--secondary-color);
-  transform: translateY(-1px);
+.activePage {
+  background: var(--primary-color, #ffcc00) !important;
+  color: #000000 !important;
+  border-color: var(--primary-color, #ffcc00) !important;
+  font-weight: 700;
 }
 
 .pageEllipsis {
-  color: var(--text-secondary);
-  font-weight: 600;
-  padding: 0 0.5rem;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 0 4px;
 }
 
-/* Responsive Design */
-@media (max-width: 1200px) {
-  .container {
-    padding: 15px;
-  }
-
-  .headerSection {
-    gap: 15px;
-  }
-
-  .addWebsiteButton,
-  .categoryManageButton {
-    padding: 10px 20px;
-    font-size: 13px;
-    min-width: 120px;
-  }
-}
-
-@media (max-width: 992px) {
-  .headerSection {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 15px;
-  }
-
-  .addWebsiteButton,
-  .categoryManageButton {
-    width: 100%;
-    text-align: center;
-  }
-
-  .searchSection {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .searchInput {
-    min-width: 100%;
-  }
-
-  .websiteInfo {
-    flex-direction: row; /* Keep it horizontal */
-    text-align: left;
-    gap: 1rem;
-    justify-content: space-between;
-  }
-
-  .cardHeader {
-    width: auto;
-  }
-
-  .websiteActions {
-    justify-content: flex-end;
-    width: auto;
-  }
-}
-
-/* Large Screens */
-@media (min-width: 1024px) {
-  .modalContent {
-    width: 90%;
-    max-width: 900px !important;
-    padding: 36px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .modalContent {
-    width: 85%;
-    max-width: 1000px !important;
-    padding: 40px;
-  }
-}
-
-@media (min-width: 1400px) {
-  .modalContent {
-    width: 80%;
-    max-width: 1200px !important;
-    padding: 48px;
-  }
-}
-
-@media (min-width: 1600px) {
-  .modalContent {
-    width: 75%;
-    max-width: 1400px !important;
-    padding: 56px;
-  }
-}
-
-@media (max-width: 768px) {
-  .container {
-    padding: 10px;
-  }
-
-  .modalContent {
-    padding: 20px;
-    width: 90%;
-    max-width: 700px !important;
-  }
-
-  .websiteCard {
-    padding: 12px;
-  }
-
-  .websiteInfo {
-    gap: 0.75rem;
-  }
-
-  .cardHeader {
-    gap: 8px;
-  }
-
-  .websiteLogo {
-    width: 36px;
-    height: 36px;
-    padding: 2px;
-  }
-
-  .websiteDetails h3 {
-    font-size: 1rem;
-  }
-
-  .websiteDetails p {
-    font-size: 12px;
-  }
-
-  .actionButton,
-  .deleteButton {
-    padding: 6px 12px;
-    font-size: 12px;
-    min-width: 70px;
-  }
-
-  .searchableDropdown {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .searchInput,
-  .categorySelect {
-    width: 100%;
-  }
-}
-
-@media (max-width: 600px) {
-  .container {
-    padding: 8px;
-  }
-
-  .headerSection {
-    gap: 10px;
-  }
-
-  .addWebsiteButton,
-  .categoryManageButton {
-    padding: 8px 16px;
-    font-size: 12px;
-    min-width: 100px;
-  }
-
-  .websiteCard {
-    padding: 12px;
-    margin-bottom: 15px;
-  }
-
-  .websiteInfo {
-    gap: 12px;
-  }
-
-  .websiteLogo {
-    width: 45px;
-    height: 45px;
-  }
-
-  .websiteDetails h3 {
-    font-size: 15px;
-  }
-
-  .websiteDetails p {
-    font-size: 12px;
-  }
-
-  .websiteActions {
-    gap: 8px;
-  }
-
-  .actionButton,
-  .deleteButton {
-    padding: 5px 10px;
-    font-size: 11px;
-    min-width: 60px;
-  }
-
-  .modalContent {
-    padding: 15px;
-    width: 98%;
-  }
-
-  .modalHeader h2 {
-    font-size: 20px;
-  }
-
-  .formGroup input,
-  .formGroup select {
-    padding: 10px 14px;
-    font-size: 13px;
-  }
-
-  .submitButton {
-    padding: 10px 20px;
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: 5px;
-  }
-
-  .headerSection {
-    gap: 8px;
-  }
-
-  .addWebsiteButton,
-  .categoryManageButton {
-    padding: 6px 12px;
-    font-size: 11px;
-    min-width: 80px;
-  }
-
-  .websiteCard {
-    padding: 10px;
-    margin-bottom: 12px;
-  }
-
-  .websiteInfo {
-    gap: 10px;
-  }
-
-  .websiteLogo {
-    width: 40px;
-    height: 40px;
-  }
-
-  .websiteDetails h3 {
-    font-size: 14px;
-  }
-
-  .websiteDetails p {
-    font-size: 11px;
-  }
-
-  .websiteActions {
-    gap: 6px;
-  }
-
-  .actionButton,
-  .deleteButton {
-    padding: 4px 8px;
-    font-size: 10px;
-    min-width: 50px;
-  }
-
-  .modalContent {
-    padding: 12px;
-    width: 99%;
-  }
-
-  .modalHeader h2 {
-    font-size: 18px;
-  }
-
-  .formGroup input,
-  .formGroup select {
-    padding: 8px 12px;
-    font-size: 12px;
-  }
-
-  .submitButton {
-    padding: 8px 16px;
-    font-size: 13px;
-  }
-
-  .categorySection,
-  .addCategorySection {
-    padding: 15px;
-  }
-
-  .categorySection h3,
-  .addCategorySection h3 {
-    font-size: 16px;
-  }
-
-  .categoryItem {
-    padding: 12px;
-  }
-
-  .categoryInfo strong {
-    font-size: 14px;
-  }
-
-  .categoryInfo p {
-    font-size: 12px;
-  }
-
-  .removeButton {
-    padding: 6px 12px;
-    font-size: 11px;
-  }
-}
-
-@media (max-width: 360px) {
-  .container {
-    padding: 3px;
-  }
-
-  .headerSection {
-    gap: 6px;
-  }
-
-  .addWebsiteButton,
-  .categoryManageButton {
-    padding: 5px 10px;
-    font-size: 10px;
-    min-width: 70px;
-  }
-
-  .websiteCard {
-    padding: 8px;
-    margin-bottom: 10px;
-  }
-
-  .websiteInfo {
-    gap: 8px;
-  }
-
-  .websiteLogo {
-    width: 35px;
-    height: 35px;
-  }
-
-  .websiteDetails h3 {
-    font-size: 13px;
-  }
-
-  .websiteDetails p {
-    font-size: 10px;
-  }
-
-  .websiteActions {
-    gap: 5px;
-  }
-
-  .actionButton,
-  .deleteButton {
-    padding: 3px 6px;
-    font-size: 9px;
-    min-width: 45px;
-  }
-
-  .modalContent {
-    padding: 10px;
-    width: 100%;
-  }
-
-  .modalHeader h2 {
-    font-size: 16px;
-  }
-
-  .formGroup input,
-  .formGroup select {
-    padding: 6px 10px;
-    font-size: 11px;
-  }
-
-  .submitButton {
-    padding: 6px 12px;
-    font-size: 12px;
-  }
-}
-
-/* Landscape Mobile */
-@media (max-height: 500px) and (orientation: landscape) {
-  .container {
-    padding: 10px;
-  }
-
-  .headerSection {
-    flex-direction: row;
-    gap: 15px;
-  }
-
-  .addWebsiteButton,
-  .categoryManageButton {
-    width: auto;
-  }
-
-  .modalContent {
-    max-height: 80vh;
-    padding: 15px;
-  }
-}
-
-/* Touch Device Optimizations */
-@media (hover: none) and (pointer: coarse) {
-
-  .addWebsiteButton,
-  .categoryManageButton,
-  .actionButton,
-  .deleteButton,
-  .submitButton,
-  .addCategoryButton,
-  .removeButton {
-    min-height: 44px;
-  }
-
-  .searchInput,
-  .categorySelect,
-  .formGroup input,
-  .formGroup select {
-    min-height: 44px;
-  }
-
-  .closeButton {
-    min-width: 44px;
-    min-height: 44px;
-  }
-}
-
-/* Responsive Pagination */
-@media (max-width: 768px) {
-  .paginationContainer {
-    padding: 15px;
-    margin-top: 20px;
-  }
-
-  .paginationControls {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .paginationButton {
-    width: 100%;
-    max-width: 200px;
-  }
-
-  .pageNumbers {
-    gap: 6px;
-  }
-
-  .pageButton {
-    padding: 6px 10px;
-    font-size: 12px;
-    min-width: 35px;
-  }
-}
-
-@media (max-width: 480px) {
-  .paginationContainer {
-    padding: 12px;
-  }
-
-  .paginationInfo {
-    font-size: 13px;
-    margin-bottom: 15px;
-  }
-
-  .paginationButton {
-    padding: 8px 16px;
-    font-size: 13px;
-    min-width: 80px;
-  }
-
-  .pageButton {
-    padding: 5px 8px;
-    font-size: 11px;
-    min-width: 30px;
-  }
-}
-
-/* Category Loading State */
-.categoryLoading {
+/* Modals */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px;
-  background: var(--main-gradient);
-  border: 1px solid var(--glass-border);
-  border-radius: 6px;
-  color: var(--text-secondary);
-  font-size: 14px;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
-.categoryLoading span {
-  margin-left: 5px;
+.modalContent {
+  background: #14141e;
+  border: 1px solid rgba(255, 204, 0, 0.25);
+  border-radius: 18px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  box-sizing: border-box;
 }
 
-/* Add Website Modal Styles */
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modalHeader h2 {
+  color: var(--primary-color, #ffcc00);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.closeButton:hover {
+  color: #ff5555;
+}
+
+.modalBody {
+  padding: 1.5rem;
+}
+
 .formContainer {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1.2rem;
 }
 
 .formRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 1rem;
 }
 
 .formGroup {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .formGroup label {
+  font-size: 0.88rem;
   font-weight: 600;
-  color: var(--text-primary);
-  font-size: 14px;
-  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
 }
 
-.formGroup input,
-.formGroup select {
-  padding: 12px 16px;
-  border: 2px solid var(--glass-border);
-  border-radius: 8px;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  background: var(--glass-bg) !important;
-  color: var(--text-primary);
-  /* Dark text color for visibility */
-}
-
-.formGroup input:focus,
-.formGroup select:focus {
-  outline: none;
-  border-color: var(--link-color);
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-  background: var(--glass-bg) !important;
-  color: var(--text-primary);
-  /* Maintain text color on focus */
-}
-
-.formGroup input::placeholder {
-  color: var(--text-secondary);
-}
-
-.formGroup select option {
-  background: var(--glass-bg) !important;
-  color: var(--text-primary);
-  padding: 8px;
-}
-
+.inputField,
 .selectField {
-  cursor: pointer;
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: var(--text-white, #ffffff);
+  font-size: 0.92rem;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+.inputField:focus,
+.selectField:focus {
+  outline: none;
+  border-color: var(--primary-color, #ffcc00);
+  box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.2);
+}
+
+.selectField option {
+  background: #181822;
+  color: #ffffff;
 }
 
 .fileUploadContainer {
-  border: 2px dashed var(--glass-border);
-  border-radius: 8px;
-  padding: 20px;
-  text-align: center;
-  transition: all 0.3s ease;
-  background: var(--main-gradient);
-}
-
-.fileUploadContainer:hover {
-  border-color: var(--link-color);
-  background: var(--glass-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .fileUpload {
   width: 100%;
 }
 
-.formActions {
-  display: flex;
-  gap: 15px;
-  justify-content: flex-end;
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid var(--glass-border);
-}
-
-/* Responsive Design for Add Website Modal */
-@media (max-width: 768px) {
-  .formRow {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-
-  .formGroup input,
-  .formGroup select {
-    padding: 10px 14px;
-    font-size: 13px;
-  }
-
-  .formActions {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .submitButton,
-  .cancelButton {
-    width: 100%;
-    padding: 10px 20px;
-    font-size: 13px;
-    min-width: auto;
-  }
-
-  .fileUploadContainer {
-    padding: 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .formContainer {
-    gap: 15px;
-  }
-
-  .formGroup {
-    gap: 6px;
-  }
-
-  .formGroup label {
-    font-size: 13px;
-  }
-
-  .formGroup input,
-  .formGroup select {
-    padding: 8px 12px;
-    font-size: 12px;
-  }
-
-  .formActions {
-    margin-top: 15px;
-    padding-top: 15px;
-  }
-
-  .submitButton,
-  .cancelButton {
-    padding: 8px 16px;
-    font-size: 12px;
-  }
-
-  .fileUploadContainer {
-    padding: 12px;
-  }
-}
-
-@media (max-width: 360px) {
-  .formContainer {
-    gap: 12px;
-  }
-
-  .formGroup label {
-    font-size: 12px;
-  }
-
-  .formGroup input,
-  .formGroup select {
-    padding: 6px 10px;
-    font-size: 11px;
-  }
-
-  .submitButton,
-  .cancelButton {
-    padding: 6px 12px;
-    font-size: 11px;
-  }
-}
-
-/* Touch Device Optimizations */
-@media (hover: none) and (pointer: coarse) {
-
-  .formGroup input,
-  .formGroup select {
-    min-height: 44px;
-  }
-
-  .submitButton,
-  .cancelButton {
-    min-height: 44px;
-  }
-
-  .fileUploadContainer {
-    min-height: 60px;
-  }
-}
-
-/* Input Fields */
-.inputField {
-  width: 100%;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 8px 12px;
-  background: var(--glass-bg) !important;
-  color: var(--text-primary);
-  /* Dark text color for visibility */
-}
-
-.inputField::placeholder {
-  color: #a9a9a9;
-  /* Placeholder color */
-}
-
-.inputField:focus {
-  outline: none;
-  border-color: var(--link-color);
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
-  background: var(--glass-bg) !important;
-  color: var(--text-primary);
-  /* Maintain text color on focus */
-}
-
-/* Responsive styles for new information fields */
-@media (max-width: 768px) {
-
-  .coinInfo,
-  .dateInfo {
-    font-size: 9px !important;
-    margin: 1px 0 !important;
-  }
-
-  .statusTag {
-    font-size: 8px;
-    padding: 1px 6px;
-  }
-
-  .websiteDetails h3 {
-    font-size: 14px;
-    margin-bottom: 4px;
-  }
-
-  .websiteDetails p {
-    font-size: 11px;
-    margin: 1px 0;
-  }
-}
-
-@media (max-width: 480px) {
-
-  .coinInfo,
-  .dateInfo {
-    font-size: 8px !important;
-  }
-
-  .statusTag {
-    font-size: 7px;
-    padding: 1px 4px;
-  }
-
-  .websiteDetails h3 {
-    font-size: 13px;
-  }
-
-  .websiteDetails p {
-    font-size: 10px;
-  }
-}
-
-.editButton {
-  padding: 8px 16px;
-  background: #28a745;
-  color: var(--text-white);
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  min-width: 60px;
-}
-
-.editButton:hover {
-  background: #218838;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
-}
-
-.editButton:active {
-  transform: translateY(0);
-}
-
 .currentLogo {
-  font-size: 11px;
-  color: var(--text-secondary);
-  margin: 5px 0 0 0;
-  font-style: italic;
-  background: var(--main-gradient);
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: 1px solid var(--glass-border);
+  font-size: 0.8rem;
+  color: var(--primary-color, #ffcc00);
+  margin: 2px 0 0 0;
 }
 
-/* Responsive optimizations for compact design */
-@media (max-width: 768px) {
-  .websiteCard {
-    padding: 0.6rem;
-    margin-bottom: 0.5rem;
+.error {
+  color: #ff5555;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.formActions,
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.submitButton {
+  padding: 10px 22px;
+  background: linear-gradient(135deg, var(--primary-color, #ffcc00) 0%, #ff9900 100%);
+  color: #000000;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 204, 0, 0.4);
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cancelButton,
+.modalCloseButton {
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-white, #ffffff);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.cancelButton:hover,
+.modalCloseButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Category Management in Modal */
+.categorySection {
+  margin-bottom: 1.5rem;
+}
+
+.categorySection h3,
+.addCategorySection h3 {
+  color: var(--primary-color, #ffcc00);
+  font-size: 1.1rem;
+  margin: 0 0 10px 0;
+}
+
+.categoriesList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.categoryItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.categoryInfo strong {
+  color: var(--text-white, #ffffff);
+  font-size: 0.92rem;
+}
+
+.removeButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: rgba(220, 53, 69, 0.15);
+  color: #ff5555;
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.removeButton:hover {
+  background: #dc3545;
+  color: #ffffff;
+}
+
+.addCategorySection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1.25rem;
+}
+
+.addCategoryButton {
+  padding: 10px 16px;
+  background: var(--primary-color, #ffcc00);
+  color: #000000;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.addCategoryButton:hover:not(:disabled) {
+  background: #ffbb00;
+  box-shadow: 0 4px 12px rgba(255, 204, 0, 0.35);
+}
+
+.addCategoryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+@media (max-width: 992px) {
+  .headerSection {
+    gap: 1rem;
   }
 
   .websiteInfo {
-    gap: 0.4rem;
+    gap: 1rem;
   }
 
-  .websiteLogo {
-    width: 35px;
-    height: 35px;
-  }
-
-  .websiteDetails h3 {
-    font-size: 12px;
-  }
-
-  .websiteDetails p {
-    font-size: 9px;
-  }
-
-  .categoryTag {
-    font-size: 8px;
-    padding: 1px 5px;
-  }
-
-  .coinInfo,
-  .dateInfo {
-    font-size: 7px !important;
-  }
-
-  .statusTag {
-    font-size: 6px;
-    padding: 1px 3px;
-  }
-
-  .actionButton,
-  .editButton,
-  .deleteButton {
-    padding: 4px 8px;
-    font-size: 9px;
-    min-width: 50px;
-  }
-
-  .websiteActions {
-    gap: 0.3rem;
-  }
-
-  .searchSection {
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .searchInput {
-    padding: 8px 12px;
-    font-size: 12px;
-  }
-
-  .websitesCount {
-    margin-bottom: 0.5rem;
-    font-size: 0.8rem;
-  }
-
-  .paginationContainer {
-    margin-top: 1rem;
-    gap: 0.3rem;
-  }
-
-  .paginationButton,
-  .pageButton {
-    padding: 0.5rem 0.7rem;
-    font-size: 0.8rem;
-    min-width: 35px;
+  .cardHeader {
+    min-width: 150px;
   }
 }
 
-@media (max-width: 480px) {
-  .websiteCard {
-    padding: 0.5rem;
-    margin-bottom: 0.4rem;
-  }
-
-  .websiteLogo {
-    width: 30px;
-    height: 30px;
-  }
-
-  .websiteDetails h3 {
-    font-size: 11px;
-  }
-
-  .websiteDetails p {
-    font-size: 8px;
-  }
-
-  .actionButton,
-  .editButton,
-  .deleteButton {
-    padding: 3px 6px;
-    font-size: 8px;
-    min-width: 45px;
-  }
-
-  .searchInput {
-    padding: 6px 10px;
-    font-size: 11px;
-  }
-
-  .paginationButton,
-  .pageButton {
-    padding: 0.4rem 0.6rem;
-    font-size: 0.75rem;
-    min-width: 30px;
-  }
-}
-
-/* Comprehensive Mobile Responsive Design */
 @media (max-width: 768px) {
   .container {
-    padding: 0.5rem;
+    padding: 8px 10px 50px 10px;
   }
 
   .headerSection {
     flex-direction: column;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 1.25rem;
+  }
+
+  .headerTitleGroup {
+    justify-content: center;
+  }
+
+  .headerActions {
+    width: 100%;
+    display: flex;
   }
 
   .addWebsiteButton,
   .categoryManageButton {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    font-size: 0.9rem;
+    flex: 1;
+    padding: 10px 14px;
+    font-size: 0.88rem;
+    min-height: 42px;
   }
 
   .searchSection {
     flex-direction: column;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-    padding: 0 0.5rem;
+    align-items: stretch;
+    gap: 10px;
+    padding: 0.85rem;
   }
 
   .searchInput {
+    min-width: 100%;
     width: 100%;
-    min-width: unset;
-    padding: 0.75rem 1rem;
-    font-size: 0.9rem;
   }
 
   .filterSection {
+    min-width: 100%;
     width: 100%;
-    justify-content: space-between;
-    gap: 0.5rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
   }
 
   .categorySelect {
-    flex: 1;
-    min-width: 0;
-    padding: 0.75rem 0.5rem;
-    font-size: 0.85rem;
-  }
-
-  .websitesCount {
-    font-size: 0.8rem;
-    margin-bottom: 0.75rem;
-    padding: 0 0.5rem;
+    width: 100%;
+    min-width: 100%;
   }
 
   .websiteCard {
-    padding: 0.75rem;
-    margin-bottom: 0.75rem;
-    border-radius: 10px;
+    padding: 0.9rem 1rem;
   }
 
   .websiteInfo {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.75rem;
+    gap: 10px;
   }
 
-  .websiteLogo {
-    width: 50px;
-    height: 50px;
-    align-self: center;
+  .cardHeader {
+    width: 100%;
   }
 
   .websiteDetails {
     width: 100%;
-    text-align: center;
-  }
-
-  .websiteDetails h3 {
-    font-size: 1rem;
-    margin-bottom: 0.25rem;
-  }
-
-  .websiteDetails p {
-    font-size: 0.85rem;
-    margin-bottom: 0.25rem;
-  }
-
-  .categoryTag {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-    margin: 0.25rem auto;
-    display: inline-block;
-  }
-
-  .coinInfo,
-  .dateInfo {
-    font-size: 0.7rem !important;
-    margin: 0.1rem 0 !important;
-    text-align: center;
-  }
-
-  .statusTag {
-    font-size: 0.65rem;
-    padding: 0.2rem 0.4rem;
-    margin: 0.25rem auto;
-    display: inline-block;
   }
 
   .websiteActions {
     width: 100%;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 0.75rem;
+    justify-content: flex-end;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 8px;
   }
 
-  .actionButton,
-  .editButton,
-  .deleteButton {
-    padding: 0.6rem 1rem;
-    font-size: 0.8rem;
-    min-width: 80px;
-    flex: 1;
-    max-width: 120px;
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .paginationContainer {
-    margin-top: 1.5rem;
-    padding: 0 0.5rem;
     flex-direction: column;
-    gap: 1rem;
-  }
-
-  .paginationControls {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-
-  .paginationButton,
-  .pageButton {
-    padding: 0.6rem 0.8rem;
-    font-size: 0.8rem;
-    min-width: 45px;
-  }
-
-  .pageNumbers {
-    gap: 0.25rem;
-  }
-
-  .paginationInfo {
-    font-size: 0.8rem;
-    margin: 0;
+    align-items: center;
+    text-align: center;
   }
 }
 
 @media (max-width: 480px) {
   .container {
-    padding: 0.25rem;
+    padding: 6px 8px 50px 8px;
   }
 
-  .headerSection {
-    margin-bottom: 1rem;
+  .heading {
+    font-size: 1.3rem;
+  }
+
+  .headerTitleIcon {
+    font-size: 1.3rem;
+  }
+
+  .headerActions {
+    flex-direction: column;
+    gap: 8px;
   }
 
   .addWebsiteButton,
   .categoryManageButton {
-    padding: 0.6rem 0.8rem;
-    font-size: 0.8rem;
-  }
-
-  .searchSection {
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
-    padding: 0 0.25rem;
-  }
-
-  .searchInput {
-    padding: 0.6rem 0.8rem;
-    font-size: 0.8rem;
-  }
-
-  .filterSection {
-    gap: 0.4rem;
-  }
-
-  .categorySelect {
-    padding: 0.6rem 0.4rem;
-    font-size: 0.8rem;
-  }
-
-  .websitesCount {
-    font-size: 0.75rem;
-    margin-bottom: 0.5rem;
-    padding: 0 0.25rem;
-  }
-
-  .websiteCard {
-    padding: 0.6rem;
-    margin-bottom: 0.6rem;
-    border-radius: 8px;
-  }
-
-  .websiteInfo {
-    gap: 0.6rem;
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    min-height: 40px;
   }
 
   .websiteLogo {
-    width: 45px;
-    height: 45px;
+    width: 38px;
+    height: 38px;
   }
 
-  .websiteDetails h3 {
-    font-size: 0.9rem;
-    margin-bottom: 0.2rem;
+  .cardHeader h3 {
+    font-size: 1rem;
   }
 
-  .websiteDetails p {
-    font-size: 0.8rem;
-    margin-bottom: 0.2rem;
+  .modalContent {
+    max-width: 96%;
+    border-radius: 14px;
   }
 
-  .categoryTag {
-    font-size: 0.7rem;
-    padding: 0.2rem 0.4rem;
-    margin: 0.2rem auto;
+  .modalHeader {
+    padding: 1rem;
   }
 
-  .coinInfo,
-  .dateInfo {
-    font-size: 0.65rem !important;
-    margin: 0.1rem 0 !important;
-  }
-
-  .statusTag {
-    font-size: 0.6rem;
-    padding: 0.15rem 0.3rem;
-    margin: 0.2rem auto;
-  }
-
-  .websiteActions {
-    gap: 0.4rem;
-    margin-top: 0.6rem;
-  }
-
-  .actionButton,
-  .editButton,
-  .deleteButton {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.75rem;
-    min-width: 70px;
-    max-width: 100px;
-  }
-
-  .paginationContainer {
-    margin-top: 1rem;
-    padding: 0 0.25rem;
-    gap: 0.75rem;
-  }
-
-  .paginationControls {
-    gap: 0.4rem;
+  .modalBody {
+    padding: 1rem;
   }
 
   .paginationButton,
   .pageButton {
-    padding: 0.5rem 0.7rem;
-    font-size: 0.75rem;
-    min-width: 40px;
-  }
-
-  .paginationInfo {
-    font-size: 0.75rem;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    min-width: 30px;
   }
 }
 
 @media (max-width: 360px) {
-  .container {
-    padding: 0.2rem;
+  .heading {
+    font-size: 1.15rem;
   }
-
-  .websiteCard {
-    padding: 0.5rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .websiteInfo {
-    gap: 0.5rem;
-  }
-
-  .websiteLogo {
-    width: 40px;
-    height: 40px;
-  }
-
-  .websiteDetails h3 {
-    font-size: 0.85rem;
-  }
-
-  .websiteDetails p {
-    font-size: 0.75rem;
-  }
-
-  .actionButton,
-  .editButton,
-  .deleteButton {
-    padding: 0.4rem 0.6rem;
-    font-size: 0.7rem;
-    min-width: 60px;
-    max-width: 90px;
-  }
-
-  .websiteActions {
-    gap: 0.3rem;
-  }
-
-  .paginationButton,
-  .pageButton {
-    padding: 0.4rem 0.6rem;
-    font-size: 0.7rem;
-    min-width: 35px;
-  }
-}
-
-/* Landscape Mobile Optimizations */
-@media (max-height: 500px) and (orientation: landscape) {
-  .container {
-    padding: 0.3rem;
-  }
-
-  .headerSection {
-    margin-bottom: 0.75rem;
-  }
-
-  .searchSection {
-    margin-bottom: 0.5rem;
-  }
-
-  .websiteCard {
-    padding: 0.5rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .websiteInfo {
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .websiteLogo {
-    width: 35px;
-    height: 35px;
-  }
-
-  .websiteDetails {
-    text-align: left;
-  }
-
-  .websiteActions {
-    margin-top: 0;
-  }
-
-  .paginationContainer {
-    margin-top: 0.75rem;
-  }
-}
-
-/* Touch Device Optimizations */
-@media (hover: none) and (pointer: coarse) {
-
-  .actionButton,
-  .editButton,
-  .deleteButton {
-    min-height: 44px;
-    min-width: 80px;
-  }
-
-  .searchInput,
-  .categorySelect {
-    min-height: 44px;
-  }
-
-  .paginationButton,
-  .pageButton {
-    min-height: 44px;
-    min-width: 44px;
-  }
-
-  .websiteCard {
-    cursor: pointer;
-  }
-
-  .websiteCard:active {
-    transform: scale(0.98);
-  }
-}
-
-/* High DPI Display Optimizations */
-@media (-webkit-min-device-pixel-ratio: 2),
-(min-resolution: 192dpi) {
-  .websiteLogo {
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
-  }
-
-  .actionButton,
-  .editButton,
-  .deleteButton {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-}
-
-/* Mobile Modal Optimizations */
-@media (max-width: 768px) {
-  .modal {
-    padding: 0.5rem;
-  }
-
-  .modalContent {
-    width: 95%;
-    max-width: 95vw;
-    max-height: 90vh;
-    padding: 1rem;
-    border-radius: 12px;
-  }
-
-  .modalHeader {
-    padding: 0.75rem;
-    margin: -1rem -1rem 1rem -1rem;
-    border-bottom: 1px solid var(--glass-border);
-  }
-
-  .modalHeader h2 {
-    font-size: 1.2rem;
-    margin: 0;
-  }
-
-  .closeButton {
-    width: 32px;
-    height: 32px;
-    font-size: 1.2rem;
-    top: 0.5rem;
-    right: 0.5rem;
-  }
-
-  .formContainer {
-    gap: 1rem;
-  }
-
-  .formRow {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .formGroup {
-    width: 100%;
-  }
-
-  .formGroup label {
-    font-size: 0.9rem;
-    margin-bottom: 0.4rem;
-  }
-
-  .formGroup input,
-  .formGroup select {
-    padding: 0.75rem;
-    font-size: 0.9rem;
-    min-height: 44px;
-  }
-
-  .fileUploadContainer {
-    width: 100%;
-  }
-
-  .fileUpload {
-    width: 100%;
-  }
-
-  .formActions {
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 1.5rem;
-  }
-
-  .submitButton,
-  .cancelButton {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    font-size: 0.9rem;
-    min-height: 44px;
-  }
-
-  .error {
-    font-size: 0.85rem;
-    padding: 0.5rem;
-    margin: 0.75rem 0;
-  }
-}
-
-@media (max-width: 480px) {
-  .modal {
-    padding: 0.25rem;
-  }
-
-  .modalContent {
-    width: 98%;
-    max-width: 98vw;
-    padding: 0.75rem;
-    border-radius: 10px;
-  }
-
-  .modalHeader {
-    padding: 0.5rem;
-    margin: -0.75rem -0.75rem 0.75rem -0.75rem;
-  }
-
-  .modalHeader h2 {
-    font-size: 1.1rem;
-  }
-
-  .closeButton {
-    width: 28px;
-    height: 28px;
-    font-size: 1.1rem;
-    top: 0.25rem;
-    right: 0.25rem;
-  }
-
-  .formContainer {
-    gap: 0.75rem;
-  }
-
-  .formRow {
-    gap: 0.5rem;
-  }
-
-  .formGroup label {
-    font-size: 0.85rem;
-    margin-bottom: 0.3rem;
-  }
-
-  .formGroup input,
-  .formGroup select {
-    padding: 0.6rem;
-    font-size: 0.85rem;
-    min-height: 40px;
-  }
-
-  .formActions {
-    gap: 0.5rem;
-    margin-top: 1.25rem;
-  }
-
-  .submitButton,
-  .cancelButton {
-    padding: 0.6rem 0.8rem;
-    font-size: 0.85rem;
-    min-height: 40px;
-  }
-
-  .error {
-    font-size: 0.8rem;
-    padding: 0.4rem;
-    margin: 0.5rem 0;
-  }
-}
-
-/* Landscape Modal Optimizations */
-@media (max-height: 500px) and (orientation: landscape) {
-  .modal {
-    padding: 0.25rem;
-  }
-
-  .modalContent {
-    max-height: 95vh;
-    padding: 0.75rem;
-  }
-
-  .modalHeader {
-    padding: 0.5rem;
-    margin: -0.75rem -0.75rem 0.5rem -0.75rem;
-  }
-
-  .formContainer {
-    gap: 0.5rem;
-  }
-
-  .formRow {
-    flex-direction: row;
-    gap: 0.5rem;
-  }
-
-  .formGroup {
-    flex: 1;
-  }
-
-  .formActions {
-    flex-direction: row;
-    gap: 0.5rem;
-    margin-top: 1rem;
-  }
-
-  .submitButton,
-  .cancelButton {
-    width: auto;
-    flex: 1;
-  }
-}
-
-/* Touch Device Modal Optimizations */
-@media (hover: none) and (pointer: coarse) {
-  .modalContent {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .closeButton {
-    min-width: 44px;
-    min-height: 44px;
-  }
-
-  .formGroup input,
-  .formGroup select {
-    min-height: 44px;
-  }
-
-  .submitButton,
-  .cancelButton {
-    min-height: 44px;
-  }
-}
-
-/* Category Management Modal Mobile Optimizations */
-@media (max-width: 768px) {
-  .categorySection {
-    padding: 0.75rem;
-  }
-
-  .categorySection h3 {
-    font-size: 1.1rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .addCategorySection {
-    margin-bottom: 1rem;
-  }
-
-  .addCategorySection h3 {
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .addCategorySection input {
-    padding: 0.75rem;
-    font-size: 0.9rem;
-    min-height: 44px;
-    margin-bottom: 0.75rem;
-  }
-
-  .addCategoryButton {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    font-size: 0.9rem;
-    min-height: 44px;
-  }
-
-  .categoriesList {
-    gap: 0.5rem;
-  }
-
-  .categoryItem {
-    padding: 0.75rem;
-    border-radius: 8px;
-  }
-
-  .categoryInfo {
-    font-size: 0.9rem;
-  }
-
-  .removeButton {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.8rem;
-    min-height: 36px;
-    min-width: 60px;
-  }
-}
-
-@media (max-width: 480px) {
-  .categorySection {
-    padding: 0.5rem;
-  }
-
-  .categorySection h3 {
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .addCategorySection h3 {
-    font-size: 0.9rem;
-    margin-bottom: 0.4rem;
-  }
-
-  .addCategorySection input {
-    padding: 0.6rem;
-    font-size: 0.85rem;
-    min-height: 40px;
-    margin-bottom: 0.5rem;
-  }
-
-  .addCategoryButton {
-    padding: 0.6rem 0.8rem;
-    font-size: 0.85rem;
-    min-height: 40px;
-  }
-
-  .categoryItem {
-    padding: 0.6rem;
-    border-radius: 6px;
-  }
-
-  .categoryInfo {
-    font-size: 0.85rem;
-  }
-
-  .removeButton {
-    padding: 0.4rem 0.6rem;
-    font-size: 0.75rem;
-    min-height: 32px;
-    min-width: 50px;
-  }
-}
-
-/* Touch Device Category Management Optimizations */
-@media (hover: none) and (pointer: coarse) {
-  .addCategoryButton {
-    min-height: 44px;
-  }
-
-  .removeButton {
-    min-height: 44px;
-    min-width: 60px;
-  }
-
-  .addCategorySection input {
-    min-height: 44px;
-  }
-}
-
-/* Button Focus States for Accessibility */
-.addWebsiteButton:focus,
-.categoryManageButton:focus,
-.actionButton:focus,
-.editButton:focus,
-.deleteButton:focus,
-.paginationButton:focus,
-.pageButton:focus,
-.submitButton:focus,
-.cancelButton:focus,
-.addCategoryButton:focus,
-.removeButton:focus,
-.closeButton:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-}
-
-/* Button Active States */
-.addWebsiteButton:active,
-.categoryManageButton:active,
-.actionButton:active,
-.editButton:active,
-.deleteButton:active,
-.paginationButton:active,
-.pageButton:active,
-.submitButton:active,
-.cancelButton:active,
-.addCategoryButton:active,
-.removeButton:active,
-.closeButton:active {
-  transform: translateY(0);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* Comprehensive Responsive Button Styles for All Screen Sizes */
-
-/* Large Desktop (1200px+) */
-@media (min-width: 1200px) {
 
   .addWebsiteButton,
   .categoryManageButton {
-    padding: 0.6rem 1.25rem;
-    font-size: 0.85rem;
-    min-height: 40px;
-    max-width: 200px;
-  }
-
-  .actionButton,
-  .editButton,
-  .deleteButton {
-    padding: 0.5rem 0.875rem;
     font-size: 0.8rem;
-    min-height: 38px;
-    min-width: 75px;
-    max-width: 100px;
+    padding: 8px 10px;
   }
 
-  .submitButton,
-  .cancelButton {
-    padding: 0.6rem 1.25rem;
-    font-size: 0.85rem;
-    min-height: 40px;
-    max-width: 180px;
+  .paginationControls {
+    gap: 3px;
   }
 
-  .paginationButton,
-  .pageButton {
-    padding: 0.5rem 0.875rem;
-    font-size: 0.8rem;
-    min-height: 38px;
-    min-width: 38px;
-    max-width: 45px;
-  }
-
-  .addCategoryButton {
-    padding: 0.5rem 0.875rem;
-    font-size: 0.8rem;
-    min-height: 38px;
-    min-width: 100px;
-    max-width: 150px;
-  }
-
-  .removeButton {
-    padding: 0.4rem 0.75rem;
-    font-size: 0.75rem;
-    min-height: 34px;
-    min-width: 70px;
-    max-width: 90px;
-  }
-}
-
-/* Extra Large Desktop (1400px+) - Even Smaller Buttons */
-@media (min-width: 1400px) {
-
-  .addWebsiteButton,
-  .categoryManageButton {
-    padding: 0.5rem 1rem;
-    font-size: 0.8rem;
-    min-height: 36px;
-    max-width: 180px;
-  }
-
-  .actionButton,
-  .editButton,
-  .deleteButton {
-    padding: 0.4rem 0.75rem;
-    font-size: 0.75rem;
-    min-height: 34px;
-    min-width: 70px;
-    max-width: 90px;
-  }
-
-  .submitButton,
-  .cancelButton {
-    padding: 0.5rem 1rem;
-    font-size: 0.8rem;
-    min-height: 36px;
-    max-width: 160px;
-  }
-
-  .paginationButton,
-  .pageButton {
-    padding: 0.4rem 0.75rem;
-    font-size: 0.75rem;
-    min-height: 34px;
-    min-width: 34px;
-    max-width: 40px;
-  }
-
-  .addCategoryButton {
-    padding: 0.4rem 0.75rem;
-    font-size: 0.75rem;
-    min-height: 34px;
-    min-width: 90px;
-    max-width: 130px;
-  }
-
-  .removeButton {
-    padding: 0.35rem 0.65rem;
-    font-size: 0.7rem;
-    min-height: 32px;
-    min-width: 65px;
-    max-width: 80px;
-  }
-}
-
-/* Ultra Large Desktop (1600px+) - Minimal Button Sizes */
-@media (min-width: 1600px) {
-
-  .addWebsiteButton,
-  .categoryManageButton {
-    padding: 0.45rem 0.875rem;
-    font-size: 0.75rem;
-    min-height: 34px;
-    max-width: 160px;
-  }
-
-  .actionButton,
-  .editButton,
-  .deleteButton {
-    padding: 0.35rem 0.65rem;
-    font-size: 0.7rem;
-    min-height: 32px;
-    min-width: 65px;
-    max-width: 85px;
-  }
-
-  .submitButton,
-  .cancelButton {
-    padding: 0.45rem 0.875rem;
-    font-size: 0.75rem;
-    min-height: 34px;
-    max-width: 140px;
-  }
-
-  .paginationButton,
-  .pageButton {
-    padding: 0.35rem 0.65rem;
-    font-size: 0.7rem;
-    min-height: 32px;
-    min-width: 32px;
-    max-width: 38px;
-  }
-
-  .addCategoryButton {
-    padding: 0.35rem 0.65rem;
-    font-size: 0.7rem;
-    min-height: 32px;
-    min-width: 80px;
-    max-width: 120px;
-  }
-
-  .removeButton {
-    padding: 0.3rem 0.6rem;
-    font-size: 0.65rem;
-    min-height: 30px;
-    min-width: 60px;
-    max-width: 75px;
-  }
-}
-
-/* Medium Desktop (992px - 1199px) */
-@media (min-width: 992px) and (max-width: 1199px) {
-
-  .addWebsiteButton,
-  .categoryManageButton {
-    padding: 0.7rem 1.5rem;
-    font-size: 0.9rem;
-    min-height: 42px;
-    max-width: 220px;
-  }
-
-  .actionButton,
-  .editButton,
-  .deleteButton {
-    padding: 0.6rem 1rem;
-    font-size: 0.85rem;
-    min-height: 40px;
-    min-width: 80px;
-    max-width: 110px;
-  }
-
-  .submitButton,
-  .cancelButton {
-    padding: 0.7rem 1.5rem;
-    font-size: 0.9rem;
-    min-height: 42px;
-    max-width: 200px;
-  }
-
-  .paginationButton,
-  .pageButton {
-    padding: 0.6rem 1rem;
-    font-size: 0.85rem;
-    min-height: 40px;
-    min-width: 40px;
-    max-width: 48px;
-  }
-
-  .addCategoryButton {
-    padding: 0.6rem 1rem;
-    font-size: 0.85rem;
-    min-height: 40px;
-    min-width: 110px;
-    max-width: 160px;
-  }
-
-  .removeButton {
-    padding: 0.5rem 0.875rem;
-    font-size: 0.8rem;
-    min-height: 36px;
-    min-width: 75px;
-    max-width: 100px;
-  }
-}
-
-/* Small Desktop (768px - 991px) */
-@media (min-width: 768px) and (max-width: 991px) {
-
-  .addWebsiteButton,
-  .categoryManageButton {
-    padding: 0.75rem 1.5rem;
-    font-size: 0.9rem;
-    min-height: 44px;
-    max-width: 240px;
-  }
-
-  .actionButton,
-  .editButton,
-  .deleteButton {
-    padding: 0.6rem 1rem;
-    font-size: 0.85rem;
-    min-height: 44px;
-    min-width: 80px;
-    max-width: 120px;
-  }
-
-  .submitButton,
-  .cancelButton {
-    padding: 0.75rem 1.5rem;
-    font-size: 0.9rem;
-    min-height: 44px;
-    max-width: 220px;
-  }
-
-  .paginationButton,
-  .pageButton {
-    padding: 0.6rem 1rem;
-    font-size: 0.85rem;
-    min-height: 44px;
-    min-width: 44px;
-    max-width: 50px;
-  }
-
-  .addCategoryButton {
-    padding: 0.6rem 1rem;
-    font-size: 0.85rem;
-    min-height: 44px;
-    min-width: 120px;
-    max-width: 180px;
-  }
-
-  .removeButton {
-    padding: 0.5rem 0.875rem;
-    font-size: 0.8rem;
-    min-height: 38px;
-    min-width: 80px;
-    max-width: 110px;
-  }
-}
-
-/* Tablet (481px - 767px) */
-@media (min-width: 481px) and (max-width: 767px) {
-
-  .addWebsiteButton,
-  .categoryManageButton {
-    padding: 0.7rem 1.25rem;
-    font-size: 0.85rem;
-    min-height: 42px;
-    width: 100%;
-    margin-bottom: 0.5rem;
-    max-width: none;
-  }
-
-  .actionButton,
-  .editButton,
-  .deleteButton {
-    padding: 0.55rem 0.9rem;
-    font-size: 0.8rem;
-    min-height: 42px;
-    min-width: 75px;
-    flex: 1;
-    max-width: 110px;
-  }
-
-  .submitButton,
-  .cancelButton {
-    padding: 0.7rem 1.25rem;
-    font-size: 0.85rem;
-    min-height: 42px;
-    width: 100%;
-    max-width: none;
-  }
-
-  .paginationButton,
-  .pageButton {
-    padding: 0.55rem 0.9rem;
-    font-size: 0.8rem;
-    min-height: 42px;
-    min-width: 42px;
-    max-width: 48px;
-  }
-
-  .addCategoryButton {
-    padding: 0.55rem 0.9rem;
-    font-size: 0.8rem;
-    min-height: 42px;
-    min-width: 110px;
-    width: 100%;
-    max-width: none;
-  }
-
-  .removeButton {
-    padding: 0.45rem 0.7rem;
-    font-size: 0.75rem;
-    min-height: 38px;
-    min-width: 75px;
-    max-width: 100px;
-  }
-}
-
-/* Mobile (320px - 480px) */
-@media (min-width: 320px) and (max-width: 480px) {
-
-  .addWebsiteButton,
-  .categoryManageButton {
-    padding: 0.6rem 1rem;
-    font-size: 0.8rem;
-    min-height: 40px;
-    width: 100%;
-    margin-bottom: 0.4rem;
-    max-width: none;
-  }
-
-  .actionButton,
-  .editButton,
-  .deleteButton {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.75rem;
-    min-height: 40px;
-    min-width: 70px;
-    flex: 1;
-    max-width: 100px;
-  }
-
-  .submitButton,
-  .cancelButton {
-    padding: 0.6rem 1rem;
-    font-size: 0.8rem;
-    min-height: 40px;
-    width: 100%;
-    max-width: none;
-  }
-
-  .paginationButton,
-  .pageButton {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.75rem;
-    min-height: 40px;
-    min-width: 40px;
-    max-width: 45px;
-  }
-
-  .addCategoryButton {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.75rem;
-    min-height: 40px;
-    min-width: 100px;
-    width: 100%;
-    max-width: none;
-  }
-
-  .removeButton {
-    padding: 0.4rem 0.6rem;
-    font-size: 0.7rem;
-    min-height: 36px;
-    min-width: 70px;
-    max-width: 90px;
-  }
-
-  .closeButton {
-    width: 36px;
-    height: 36px;
-    font-size: 1.3rem;
-    top: 0.5rem;
-    right: 0.5rem;
-  }
-}
-
-/* Extra Small Mobile (≤319px) */
-@media (max-width: 319px) {
-
-  .addWebsiteButton,
-  .categoryManageButton {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.75rem;
-    min-height: 38px;
-    width: 100%;
-    margin-bottom: 0.3rem;
-    max-width: none;
-  }
-
-  .actionButton,
-  .editButton,
-  .deleteButton {
-    padding: 0.4rem 0.7rem;
-    font-size: 0.7rem;
-    min-height: 38px;
-    min-width: 65px;
-    flex: 1;
-    max-width: 90px;
-  }
-
-  .submitButton,
-  .cancelButton {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.75rem;
-    min-height: 38px;
-    width: 100%;
-    max-width: none;
-  }
-
-  .paginationButton,
-  .pageButton {
-    padding: 0.4rem 0.7rem;
-    font-size: 0.7rem;
-    min-height: 38px;
-    min-width: 38px;
-    max-width: 42px;
-  }
-
-  .addCategoryButton {
-    padding: 0.4rem 0.7rem;
-    font-size: 0.7rem;
-    min-height: 38px;
-    min-width: 90px;
-    width: 100%;
-    max-width: none;
-  }
-
-  .removeButton {
-    padding: 0.35rem 0.55rem;
-    font-size: 0.65rem;
-    min-height: 34px;
-    min-width: 65px;
-    max-width: 80px;
-  }
-
-  .closeButton {
-    width: 32px;
-    height: 32px;
-    font-size: 1.2rem;
-    top: 0.25rem;
-    right: 0.25rem;
-  }
-}
-
-/* Landscape Mobile Optimizations */
-@media (max-height: 500px) and (orientation: landscape) {
-
-  .addWebsiteButton,
-  .categoryManageButton {
-    padding: 0.5rem 1rem;
-    min-height: 36px;
-    margin-bottom: 0.3rem;
-  }
-
-  .actionButton,
-  .editButton,
-  .deleteButton {
-    padding: 0.4rem 0.8rem;
-    min-height: 36px;
-    min-width: 70px;
-  }
-
-  .submitButton,
-  .cancelButton {
-    padding: 0.5rem 1rem;
-    min-height: 36px;
-  }
-
-  .paginationButton,
-  .pageButton {
-    padding: 0.4rem 0.8rem;
-    min-height: 36px;
-    min-width: 36px;
-  }
-
-  .addCategoryButton {
-    padding: 0.4rem 0.8rem;
-    min-height: 36px;
-  }
-
-  .removeButton {
-    padding: 0.3rem 0.6rem;
-    min-height: 32px;
-    min-width: 65px;
-  }
-}
-
-/* Touch Device Specific Optimizations */
-@media (hover: none) and (pointer: coarse) {
-
-  .addWebsiteButton,
-  .categoryManageButton,
-  .actionButton,
-  .editButton,
-  .deleteButton,
-  .submitButton,
-  .cancelButton,
-  .addCategoryButton,
-  .removeButton,
-  .paginationButton,
-  .pageButton {
-    min-height: 44px;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .closeButton {
-    min-height: 44px;
-    min-width: 44px;
-  }
-
-  /* Touch feedback */
-  .addWebsiteButton:active,
-  .categoryManageButton:active,
-  .actionButton:active,
-  .editButton:active,
-  .deleteButton:active,
-  .submitButton:active,
-  .cancelButton:active,
-  .addCategoryButton:active,
-  .removeButton:active,
-  .paginationButton:active,
-  .pageButton:active {
-    transform: scale(0.98);
-    transition: transform 0.1s ease;
-  }
-}
-
-/* High DPI Display Button Optimizations */
-@media (-webkit-min-device-pixel-ratio: 2),
-(min-resolution: 192dpi) {
-
-  .addWebsiteButton,
-  .categoryManageButton,
-  .actionButton,
-  .editButton,
-  .deleteButton,
-  .submitButton,
-  .cancelButton,
-  .addCategoryButton,
-  .removeButton,
-  .paginationButton,
-  .pageButton {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-}
-
-/* Print Media Query for Buttons */
-@media print {
-
-  .addWebsiteButton,
-  .categoryManageButton,
-  .actionButton,
-  .editButton,
-  .deleteButton,
-  .submitButton,
-  .cancelButton,
-  .addCategoryButton,
-  .removeButton,
-  .paginationButton,
-  .pageButton,
-  .closeButton {
-    display: none !important;
+  .pageNumbers {
+    gap: 2px;
   }
 }

@@ -9,7 +9,7 @@ import "primereact/resources/themes/lara-dark-amber/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import { MdDeleteForever } from "react-icons/md";
-import { FaTrash, FaEdit } from "react-icons/fa";
+import { FaTrash, FaEdit, FaPlus, FaTools, FaGlobe } from "react-icons/fa";
 import DepositPopup from "../Navbar/DepositPopup";
 
 const CreateId = () => {
@@ -22,6 +22,7 @@ const CreateId = () => {
     id: "",
     website: "",
     url: "",
+    adminUrl: "",
     logo: "",
     category: "",
     coinRate: "",
@@ -401,6 +402,7 @@ const CreateId = () => {
       const formData = new FormData();
       formData.append("website", newWebsite.website);
       formData.append("url", newWebsite.url);
+      formData.append("adminUrl", newWebsite.adminUrl || "");
       formData.append("category", newWebsite.category);
       formData.append("coinRate", newWebsite.coinRate);
       formData.append("minimumCoins", newWebsite.minimumCoins);
@@ -420,7 +422,7 @@ const CreateId = () => {
           life: 1000,
         });
         setShowAddModal(false);
-        setNewWebsite({ id: "", website: "", url: "", category: "", logo: "", coinRate: "", minimumCoins: "" });
+        setNewWebsite({ id: "", website: "", url: "", adminUrl: "", category: "", logo: "", coinRate: "", minimumCoins: "" });
         setFile(null);
         fetchWebsites(); // Re-fetch the data after adding a new website
         fetchCategories(); // Also refresh categories
@@ -606,6 +608,7 @@ const CreateId = () => {
       const formData = new FormData();
       formData.append("website", editingWebsite.website);
       formData.append("url", editingWebsite.url);
+      formData.append("adminUrl", editingWebsite.adminUrl || "");
       formData.append("category", editingWebsite.category);
       formData.append("coinRate", editingWebsite.coinRate);
       formData.append("minimumCoins", editingWebsite.minimumCoins);
@@ -649,6 +652,7 @@ const CreateId = () => {
       id: website.id,
       website: website.name || website.website || "",
       url: website.url || "",
+      adminUrl: website.adminUrl || "",
       category: website.category || "",
       coinRate: website.coinRate || "",
       minimumCoins: website.minimumCoins || "",
@@ -707,19 +711,27 @@ const CreateId = () => {
       )}
 
       <div className={styles.headerSection}>
-        <button
-          className={styles.addWebsiteButton}
-          onClick={() => setShowAddModal(true)}
-        >
-          Add Website
-        </button>
-        
-        <button
-          className={styles.categoryManageButton}
-          onClick={() => setShowCategoryModal(true)}
-        >
-          Manage Categories
-        </button>
+        <div className={styles.headerTitleGroup}>
+          <FaGlobe className={styles.headerTitleIcon} />
+          <h2 className={styles.heading}>Websites Management</h2>
+        </div>
+        <div className={styles.headerActions}>
+          <button
+            className={styles.addWebsiteButton}
+            onClick={() => setShowAddModal(true)}
+          >
+            <FaPlus className={styles.btnIcon} />
+            <span>Add Website</span>
+          </button>
+          
+          <button
+            className={styles.categoryManageButton}
+            onClick={() => setShowCategoryModal(true)}
+          >
+            <FaTools className={styles.btnIcon} />
+            <span>Manage Categories</span>
+          </button>
+        </div>
       </div>
 
       <div className={styles.searchSortWrapper}>
@@ -809,6 +821,11 @@ const CreateId = () => {
                     </div>
                     <div className={styles.websiteDetails}>
                       <p>{website.url || 'No URL'}</p>
+                      {website.adminUrl && (
+                        <p style={{ fontSize: '12px', color: '#ffcc00', margin: '2px 0', wordBreak: 'break-all' }}>
+                          <strong>Admin URL:</strong> {website.adminUrl}
+                        </p>
+                      )}
                       <span className={styles.categoryTag}>
                         {website.category || 'No Category'}
                       </span>
@@ -833,14 +850,17 @@ const CreateId = () => {
                         onClick={() => openEditModal(website)}
                         className={styles.editButton}
                         title="Edit Website"
+                        aria-label="Edit Website"
                       >
-                        <FaEdit />
+                        <FaEdit size={17} />
                       </button>
                       <button
                         onClick={() => handleDelete(website)}
                         className={styles.deleteButton}
+                        title="Delete Website"
+                        aria-label="Delete Website"
                       >
-                        <FaTrash />
+                        <FaTrash size={16} />
                       </button>
                     </div>
                   </div>
@@ -1010,6 +1030,21 @@ const CreateId = () => {
                 
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
+                    <label htmlFor="adminUrl">Admin URL</label>
+                    <input
+                      id="adminUrl"
+                      type="text"
+                      placeholder="Enter Admin URL"
+                      value={newWebsite.adminUrl || ""}
+                      onChange={(e) =>
+                        setNewWebsite({ ...newWebsite, adminUrl: e.target.value })
+                      }
+                      className={styles.inputField}
+                      onFocus={handleFocus}
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
                     <label htmlFor="category">Category</label>
                     <select
                       id="category"
@@ -1028,7 +1063,9 @@ const CreateId = () => {
                       ))}
                     </select>
                   </div>
-                  
+                </div>
+                
+                <div className={styles.formRow}>
                   <div className={styles.formGroup}>
                     <label htmlFor="coinRate">Coin Rate</label>
                     <input
@@ -1043,9 +1080,7 @@ const CreateId = () => {
                       onFocus={handleFocus}
                     />
                   </div>
-                </div>
-                
-                <div className={styles.formRow}>
+
                   <div className={styles.formGroup}>
                     <label htmlFor="minimumCoins">Minimum Coins</label>
                     <input
@@ -1060,7 +1095,9 @@ const CreateId = () => {
                       onFocus={handleFocus}
                     />
                   </div>
-                  
+                </div>
+                
+                <div className={styles.formRow}>
                   <div className={styles.formGroup}>
                     <label htmlFor="websiteLogo">Website Logo</label>
                     <div className={styles.fileUploadContainer}>
@@ -1141,6 +1178,18 @@ const CreateId = () => {
                 </div>
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
+                    <label htmlFor="editAdminUrl">Admin URL</label>
+                    <input
+                      id="editAdminUrl"
+                      type="text"
+                      placeholder="Enter Admin URL"
+                      value={editingWebsite.adminUrl || ""}
+                      onChange={(e) => setEditingWebsite({ ...editingWebsite, adminUrl: e.target.value })}
+                      className={styles.inputField}
+                      onFocus={() => setEditErrorMessage("")}
+                    />
+                  </div>
+                  <div className={styles.formGroup}>
                     <label htmlFor="editCategory">Category</label>
                     <select
                       id="editCategory"
@@ -1156,6 +1205,8 @@ const CreateId = () => {
                       ))}
                     </select>
                   </div>
+                </div>
+                <div className={styles.formRow}>
                   <div className={styles.formGroup}>
                     <label htmlFor="editCoinRate">Coin Rate</label>
                     <input
@@ -1168,8 +1219,6 @@ const CreateId = () => {
                       onFocus={() => setEditErrorMessage("")}
                     />
                   </div>
-                </div>
-                <div className={styles.formRow}>
                   <div className={styles.formGroup}>
                     <label htmlFor="editMinimumCoins">Minimum Coins</label>
                     <input
@@ -1182,6 +1231,8 @@ const CreateId = () => {
                       onFocus={() => setEditErrorMessage("")}
                     />
                   </div>
+                </div>
+                <div className={styles.formRow}>
                   <div className={styles.formGroup}>
                     <label htmlFor="editLogo">Update Logo (Optional)</label>
                     <div className={styles.fileUploadContainer}>

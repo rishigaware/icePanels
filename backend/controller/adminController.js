@@ -49,7 +49,53 @@ exports.getAllUsers = async (req, res) => {
 
 
 
-// Controller to fetch all IDs
+const buildWebsiteAdminMap = (websites) => {
+  const websiteMap = {};
+  websites.forEach(w => {
+    const admin = (w.adminUrl || '').trim();
+    if (!admin) return;
+    if (w.website) {
+      websiteMap[w.website.toLowerCase().trim()] = admin;
+    }
+    if (w.url) {
+      const cleanUrl = w.url.toLowerCase().trim();
+      websiteMap[cleanUrl] = admin;
+      websiteMap[cleanUrl.replace(/\/+$/, '')] = admin;
+      try {
+        const parsed = new URL(cleanUrl);
+        websiteMap[parsed.hostname.replace(/^www\./, '')] = admin;
+      } catch (e) {}
+    }
+  });
+  return websiteMap;
+};
+
+const resolveAdminUrl = (item, websiteMap) => {
+  if (item.adminUrl && item.adminUrl.trim()) return item.adminUrl.trim();
+  const nameKey = (item.websiteName || item.website || '').toLowerCase().trim();
+  const urlKey = (item.websiteUrl || item.url || '').toLowerCase().trim();
+  const cleanUrlKey = urlKey.replace(/\/+$/, '');
+
+  if (nameKey && websiteMap[nameKey]) return websiteMap[nameKey];
+  if (urlKey && websiteMap[urlKey]) return websiteMap[urlKey];
+  if (cleanUrlKey && websiteMap[cleanUrlKey]) return websiteMap[cleanUrlKey];
+
+  try {
+    if (urlKey.startsWith('http')) {
+      const parsed = new URL(urlKey);
+      const host = parsed.hostname.replace(/^www\./, '');
+      if (websiteMap[host]) return websiteMap[host];
+    }
+  } catch (e) {}
+
+  for (const [k, v] of Object.entries(websiteMap)) {
+    if (v && nameKey && (k.includes(nameKey) || nameKey.includes(k))) {
+      return v;
+    }
+  }
+  return '';
+};
+
 // Controller to fetch all IDs
 exports.getAllIds = async (req, res) => {
   try {
@@ -59,8 +105,16 @@ exports.getAllIds = async (req, res) => {
       return res.status(404).json({ message: "No IDs found" });
     }
 
+    const websites = await Website.find();
+    const websiteMap = buildWebsiteAdminMap(websites);
+
     const formattedIds = ids.map(doc => {
-      return { id: doc._id, ...doc.toObject() };
+      const obj = doc.toObject();
+      return {
+        id: doc._id,
+        ...obj,
+        adminUrl: resolveAdminUrl(obj, websiteMap)
+      };
     });
 
     res.status(200).json(formattedIds);
@@ -170,7 +224,7 @@ exports.addAdmin = async (req, res) => {
 
 // Controller for handling the addition of a new website
 exports.addWebsite = async (req, res) => {
-  const { website, url, coinRate, minimumCoins, category } = req.body;
+  const { website, url, adminUrl, coinRate, minimumCoins, category } = req.body;
 
   // Validation: Ensure all fields are provided
   if (!website || !url || !coinRate || !minimumCoins) {
@@ -186,6 +240,7 @@ exports.addWebsite = async (req, res) => {
     const newWebsite = new Website({
       website,
       url,
+      adminUrl: adminUrl || '',
       coinRate: parseFloat(coinRate),
       minimumCoins: parseInt(minimumCoins, 10),
       category: category || '', // Add category field
@@ -647,7 +702,7 @@ exports.updateId = async (req, res) => {
 exports.updateWebsite = async (req, res) => {
   try {
     const { id } = req.params;
-    const { website: newName, url, coinRate, minimumCoins, category } = req.body;
+    const { website: newName, url, adminUrl, coinRate, minimumCoins, category } = req.body;
 
     const website = await Website.findById(id);
 
@@ -657,6 +712,7 @@ exports.updateWebsite = async (req, res) => {
 
     if (newName) website.website = newName;
     if (url) website.url = url;
+    if (adminUrl !== undefined) website.adminUrl = adminUrl;
     if (coinRate) website.coinRate = parseFloat(coinRate);
     if (minimumCoins) website.minimumCoins = parseInt(minimumCoins, 10);
     if (category !== undefined) website.category = category;
@@ -1413,6 +1469,7 @@ exports.updateIdRequestStatus = async (req, res) => {
       const newId = new WebsiteId({
         websiteName: requestDoc.websiteName,
         websiteUrl: requestDoc.websiteUrl,
+        adminUrl: requestDoc.adminUrl || '',
         username: requestDoc.username,
         password: requestDoc.password || '', // Include password from request
         imgUrl: requestDoc.imgUrl,

@@ -1,85 +1,3 @@
-// import React, { useState } from "react";
-// import styles from "./Id.module.css";
-// import TopNavbar from "../Navbar/TopNavbar";
-// import MyIds from "./MyId";
-// import CreateId from "./CreateId";
-// import LoginPopup from '../Login/LoginPopup'
-// import { useUser } from "../../context/UserContext";
-
-
-// const Id = () => {
-//   const { user } = useUser();
-
-//   const [activeSection, setActiveSection] = useState("createId");
-//   const [myIds, setMyIds] = useState([]);
-//   const [newIdInputs, setNewIdInputs] = useState({});
-
-//   const websites = ["Google", "Facebook", "Twitter", "LinkedIn", "Instagram"];
-
-//   const handleInputChange = (event, website) => {
-//     setNewIdInputs({
-//       ...newIdInputs,
-//       [website]: event.target.value,
-//     });
-//   };
-
-//   const createId = (website) => {
-//     if (newIdInputs[website]) {
-//       setMyIds((prev) => [...prev, { website, id: newIdInputs[website] }]);
-//       setNewIdInputs((prev) => ({ ...prev, [website]: "" }));
-//     } else {
-//       alert(`Please enter an ID for ${website}`);
-//     }
-//   };
-
-//   const openModal = () => setIsModalOpen(true);
-//   const closeModal = () => setIsModalOpen(false);
-
-//   return (
-//     <div className={styles.pageContainer}>
-//       {/* Fixed Top Navbar */}
-//       <TopNavbar />
-
-//       {/* Bottom Navbar */}
-//       <div className={styles.bottomNavbar}>
-//         <button
-//           onClick={() => setActiveSection("myIds")}
-//           className={`${styles.navButton} ${activeSection === "myIds" ? styles.navButtonActive : ""}`}
-//         >
-//           My IDs
-//         </button>
-//         <div className={styles.centerDivider}></div>
-//         <button
-//           onClick={() => setActiveSection("createId")}
-//           className={`${styles.navButton} ${activeSection === "createId" ? styles.navButtonActive : ""}`}
-//         >
-//           Create ID
-//         </button>
-//       </div>
-
-//       {/* Scrollable Content */}
-//       <div className={styles.content}>
-//         {activeSection === "myIds" ? (
-//           <MyIds myIds={myIds} />
-//         ) : (
-//           <CreateId
-//             websites={websites}
-//             newIdInputs={newIdInputs}
-//             handleInputChange={handleInputChange}
-//             createId={createId}
-//           />
-//         )}
-//       </div>
-
-//       <LoginPopup isOpen={isModalOpen} closeModal={closeModal} />
-
-//     </div>
-//   );
-// };
-
-// export default Id;
-
-
 import React, { useState, useEffect } from "react";
 import styles from "./id.module.css";
 import TopNavbar from "../Navbar/TopNavbar";
@@ -128,7 +46,7 @@ const Id = () => {
       {/* Fixed Top Navbar */}
       <TopNavbar />
 
-      {/* Bottom Navbar */}
+      {/* Tabs */}
       <div className={styles.bottomNavbar}>
         <button
           onClick={() => setActiveSection("myIds")}

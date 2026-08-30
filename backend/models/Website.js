@@ -9,6 +9,10 @@ const websiteSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    adminUrl: {
+        type: String,
+        default: '',
+    },
     category: {
         type: String,
         required: true,

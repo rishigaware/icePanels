@@ -136,16 +136,81 @@ const MyId = () => {
     });
   };
 
+  const [websites, setWebsites] = useState([]);
+
+  useEffect(() => {
+    const fetchWebsites = async () => {
+      try {
+        const response = await fetch(`${safeUrl}/api/admin/get-websites`);
+        if (response.ok) {
+          const data = await response.json();
+          setWebsites(Array.isArray(data) ? data : []);
+        }
+      } catch (err) {
+        console.error("Failed to fetch websites for admin links:", err);
+      }
+    };
+    fetchWebsites();
+  }, [safeUrl]);
+
+  const getAdminUrl = useCallback((item) => {
+    if (item?.adminUrl && item.adminUrl.trim()) return item.adminUrl.trim();
+    if (!websites || websites.length === 0) return '';
+    
+    const name = (item?.websiteName || item?.website || '').toLowerCase().trim();
+    const urlStr = (item?.websiteUrl || item?.url || '').toLowerCase().trim().replace(/\/+$/, '');
+
+    // 1. Direct name or URL match
+    const directMatch = websites.find(w => {
+      const wAdmin = (w.adminUrl || '').trim();
+      if (!wAdmin) return false;
+      const wName = (w.website || w.name || '').toLowerCase().trim();
+      const wUrl = (w.url || '').toLowerCase().trim().replace(/\/+$/, '');
+      return (name && wName === name) || (urlStr && wUrl === urlStr);
+    });
+    if (directMatch?.adminUrl) return directMatch.adminUrl.trim();
+
+    // 2. Hostname match
+    try {
+      if (urlStr.startsWith('http')) {
+        const host = new URL(urlStr).hostname.replace(/^www\./, '');
+        const hostMatch = websites.find(w => {
+          const wAdmin = (w.adminUrl || '').trim();
+          if (!wAdmin || !w.url) return false;
+          try {
+            const wHost = new URL(w.url.toLowerCase().trim()).hostname.replace(/^www\./, '');
+            return host && wHost && (host === wHost || host.includes(wHost) || wHost.includes(host));
+          } catch (e) {
+            return false;
+          }
+        });
+        if (hostMatch?.adminUrl) return hostMatch.adminUrl.trim();
+      }
+    } catch (e) {}
+
+    // 3. Partial name match
+    const partialMatch = websites.find(w => {
+      const wAdmin = (w.adminUrl || '').trim();
+      if (!wAdmin) return false;
+      const wName = (w.website || w.name || '').toLowerCase().trim();
+      return name && wName && (name.includes(wName) || wName.includes(name));
+    });
+    if (partialMatch?.adminUrl) return partialMatch.adminUrl.trim();
+
+    return '';
+  }, [websites]);
+
   // Combine regular IDs and ID requests
   const allIds = [
-    ...(myIds || []).map(id => ({ ...id, type: 'active' })),
-    ...(idRequests || []).filter(request => request.status === 'Pending').map(request => ({ ...request, type: 'request' }))
+    ...(myIds || []).map(id => ({ ...id, adminUrl: id.adminUrl || getAdminUrl(id), type: 'active' })),
+    ...(idRequests || []).filter(request => request.status === 'Pending').map(request => ({ ...request, adminUrl: request.adminUrl || getAdminUrl(request), type: 'request' }))
   ];
 
   const filteredIds = allIds.filter(
     (id) =>
       (id.websiteName && id.websiteName.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (id.websiteUrl && id.websiteUrl.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (id.adminUrl && id.adminUrl.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (id.username && id.username.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
@@ -315,9 +380,16 @@ const MyId = () => {
             </div>
             <div className={styles.details}>
               <p className={styles.websiteName}>{item.websiteName || 'N/A'}</p>
-              <a href={item.websiteUrl || '#'} target="_blank" rel="noopener noreferrer" className={styles.websiteLink}>
-                {item.websiteUrl || 'N/A'}
-              </a>
+              {item.websiteUrl && (
+                <a href={item.websiteUrl} target="_blank" rel="noopener noreferrer" className={styles.websiteLink}>
+                  {item.websiteUrl}
+                </a>
+              )}
+              {item.adminUrl && (
+                <a href={item.adminUrl} target="_blank" rel="noopener noreferrer" className={styles.adminUrlLink}>
+                  Admin: {item.adminUrl}
+                </a>
+              )}
               <p className={styles.userId}><strong>username : </strong>{item.username || 'N/A'}</p>
               {item.type === 'request' ? (
                 <>
@@ -447,6 +519,16 @@ const MyId = () => {
               <div className={styles.headerText}>
                 <h2>{selectedId.websiteName}</h2>
                 <p>{selectedId.websiteUrl}</p>
+                {selectedId.adminUrl && (
+                  <a
+                    href={selectedId.adminUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.adminUrlLink}
+                  >
+                    Admin: {selectedId.adminUrl}
+                  </a>
+                )}
               </div>
             </div>
             <div className={styles.popupBody}>

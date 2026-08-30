@@ -505,6 +505,53 @@ exports.createId = async (req, res) => {
     res.status(500).json({ message: 'Error adding ID', error: error.message });
   }
 };
+const buildWebsiteAdminMap = (websites) => {
+  const websiteMap = {};
+  websites.forEach(w => {
+    const admin = (w.adminUrl || '').trim();
+    if (!admin) return;
+    if (w.website) {
+      websiteMap[w.website.toLowerCase().trim()] = admin;
+    }
+    if (w.url) {
+      const cleanUrl = w.url.toLowerCase().trim();
+      websiteMap[cleanUrl] = admin;
+      websiteMap[cleanUrl.replace(/\/+$/, '')] = admin;
+      try {
+        const parsed = new URL(cleanUrl);
+        websiteMap[parsed.hostname.replace(/^www\./, '')] = admin;
+      } catch (e) {}
+    }
+  });
+  return websiteMap;
+};
+
+const resolveAdminUrl = (item, websiteMap) => {
+  if (item.adminUrl && item.adminUrl.trim()) return item.adminUrl.trim();
+  const nameKey = (item.websiteName || item.website || '').toLowerCase().trim();
+  const urlKey = (item.websiteUrl || item.url || '').toLowerCase().trim();
+  const cleanUrlKey = urlKey.replace(/\/+$/, '');
+
+  if (nameKey && websiteMap[nameKey]) return websiteMap[nameKey];
+  if (urlKey && websiteMap[urlKey]) return websiteMap[urlKey];
+  if (cleanUrlKey && websiteMap[cleanUrlKey]) return websiteMap[cleanUrlKey];
+
+  try {
+    if (urlKey.startsWith('http')) {
+      const parsed = new URL(urlKey);
+      const host = parsed.hostname.replace(/^www\./, '');
+      if (websiteMap[host]) return websiteMap[host];
+    }
+  } catch (e) {}
+
+  for (const [k, v] of Object.entries(websiteMap)) {
+    if (v && nameKey && (k.includes(nameKey) || nameKey.includes(k))) {
+      return v;
+    }
+  }
+  return '';
+};
+
 exports.getAllIds = async (req, res) => {
   try {
     const { userId } = req.query;
@@ -519,19 +566,31 @@ exports.getAllIds = async (req, res) => {
     // Fetch closed IDs
     const closedIds = await ClosedId.find({ createdBy: userId });
 
+    // Fetch websites to resolve adminUrl
+    const websites = await Website.find();
+    const websiteMap = buildWebsiteAdminMap(websites);
+
     // Combine both active and closed IDs
     const allIds = [
-      ...activeIds.map((doc) => ({
-        id: doc._id,
-        ...doc.toObject(),
-        type: 'active'
-      })),
-      ...closedIds.map((doc) => ({
-        id: doc._id,
-        ...doc.toObject(),
-        status: 'Closed', // Ensure status is set to Closed
-        type: 'closed'
-      }))
+      ...activeIds.map((doc) => {
+        const obj = doc.toObject();
+        return {
+          id: doc._id,
+          ...obj,
+          adminUrl: resolveAdminUrl(obj, websiteMap),
+          type: 'active'
+        };
+      }),
+      ...closedIds.map((doc) => {
+        const obj = doc.toObject();
+        return {
+          id: doc._id,
+          ...obj,
+          adminUrl: resolveAdminUrl(obj, websiteMap),
+          status: 'Closed',
+          type: 'closed'
+        };
+      })
     ];
 
     if (allIds.length === 0) {
@@ -550,6 +609,7 @@ exports.createIdRequest = async (req, res) => {
   const {
     websiteName,
     websiteUrl,
+    adminUrl,
     username,
     imgUrl,
     createdBy,
@@ -592,11 +652,23 @@ exports.createIdRequest = async (req, res) => {
       });
     }
 
+    // Resolve adminUrl if not provided
+    let resolvedAdminUrl = adminUrl || '';
+    if (!resolvedAdminUrl) {
+      const matchedWebsite = await Website.findOne({
+        $or: [{ website: websiteName }, { url: websiteUrl }]
+      });
+      if (matchedWebsite?.adminUrl) {
+        resolvedAdminUrl = matchedWebsite.adminUrl;
+      }
+    }
+
     const createdAt = new Date();
 
     const idRequest = new IdRequest({
       websiteName,
       websiteUrl,
+      adminUrl: resolvedAdminUrl,
       username,
       imgUrl,
       createdBy,
@@ -1008,10 +1080,17 @@ exports.getUserIdRequests = async (req, res) => {
       return res.status(200).json([]);
     }
 
-    const formattedRequests = userRequests.map((doc) => ({
-      id: doc._id,
-      ...doc.toObject(),
-    }));
+    const websites = await Website.find();
+    const websiteMap = buildWebsiteAdminMap(websites);
+
+    const formattedRequests = userRequests.map((doc) => {
+      const obj = doc.toObject();
+      return {
+        id: doc._id,
+        ...obj,
+        adminUrl: resolveAdminUrl(obj, websiteMap)
+      };
+    });
 
     formattedRequests.sort((a, b) => {
       const dateA = new Date(a.createdAt);

@@ -9,6 +9,10 @@ const idRequestSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    adminUrl: {
+        type: String,
+        default: '',
+    },
     username: {
         type: String,
         required: true,

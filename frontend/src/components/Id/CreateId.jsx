@@ -280,11 +280,12 @@ const CreateId = () => {
     setSelectedCategory(e.target.value);
   };
   const filteredWebsites = (websites || []).filter((item) => {
-    // Matches search query for website name or URL
+    // Matches search query for website name, URL, or adminUrl
     const websiteName = item.name || item.website || '';
     const matchesSearchQuery =
       websiteName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (item.url && item.url.toLowerCase().includes(searchQuery.toLowerCase()));
+      (item.url && item.url.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (item.adminUrl && item.adminUrl.toLowerCase().includes(searchQuery.toLowerCase()));
   
     // Matches the selected category
     const matchesCategory =
@@ -375,9 +376,10 @@ const CreateId = () => {
       return;
     }
   
-    const { websiteName, websiteUrl, imgUrl } = {
+    const { websiteName, websiteUrl, adminUrl, imgUrl } = {
       websiteName: selectedWebsite.website,
       websiteUrl: selectedWebsite.url,
+      adminUrl: selectedWebsite.adminUrl || '',
       imgUrl: selectedWebsite.logo,
     };
   
@@ -387,6 +389,7 @@ const CreateId = () => {
       console.log("Sending create-id-request with body:", {
           websiteName,
           websiteUrl,
+          adminUrl,
           username,
           imgUrl,
           createdBy: user.username,
@@ -408,6 +411,7 @@ const CreateId = () => {
         body: JSON.stringify({
           websiteName,
           websiteUrl,
+          adminUrl,
           username,
           imgUrl,
           createdBy: user.id,
@@ -533,7 +537,26 @@ const CreateId = () => {
                 />
                 <div className={styles.websiteDetails}>
                   <h3>{item.name || item.website || 'Unnamed Website'}</h3>
-                  <p>{item.url || 'No URL'}</p>
+                  {item.url && (
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.websiteUrlLink}
+                    >
+                      {item.url}
+                    </a>
+                  )}
+                  {item.adminUrl && (
+                    <a
+                      href={item.adminUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.adminUrlLink}
+                    >
+                      Admin: {item.adminUrl}
+                    </a>
+                  )}
                   <span className={styles.categoryTag}>
                     {item.category || 'No Category'}
                   </span>
@@ -637,14 +660,26 @@ const CreateId = () => {
                 className={styles.websiteLogo}
               />
               <h2>{selectedWebsite.website}</h2>
-              <a
-                href={selectedWebsite.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.websiteLink}
-              >
-                {selectedWebsite.url}
-              </a>
+              <div className={styles.modalLinksGroup}>
+                <a
+                  href={selectedWebsite.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.websiteLink}
+                >
+                  {selectedWebsite.url}
+                </a>
+                {selectedWebsite.adminUrl && (
+                  <a
+                    href={selectedWebsite.adminUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.adminModalLink}
+                  >
+                    Admin: {selectedWebsite.adminUrl}
+                  </a>
+                )}
+              </div>
             </div>
 
              {/* Modal Body */}

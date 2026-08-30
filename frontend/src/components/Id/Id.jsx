@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import styles from "./id.module.css";
 import TopNavbar from "../Navbar/TopNavbar";
@@ -47,7 +46,7 @@ const Id = () => {
       {/* Fixed Top Navbar */}
       <TopNavbar />
 
-      {/* Bottom Navbar */}
+      {/* Tabs */}
       <div className={styles.bottomNavbar}>
         <button
           onClick={() => setActiveSection("myIds")}
