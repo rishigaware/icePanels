@@ -968,3 +968,72 @@
     display: none;
   }
 }
+
+/* Sub-admin Filter Styles */
+.filterContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding: 0 1rem;
+  flex-wrap: wrap;
+}
+
+.filterLabel {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary, #fff);
+}
+
+.subAdminFilterSelect {
+  padding: 0.65rem 1.25rem;
+  border-radius: 20px;
+  background: rgba(30, 30, 45, 0.85);
+  color: #fff;
+  border: 1.5px solid rgba(255, 204, 0, 0.4);
+  font-size: 0.95rem;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.subAdminFilterSelect:focus {
+  border-color: var(--primary-color, #ffcc00);
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+}
+
+.assignedAdminBadge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  background: rgba(255, 204, 0, 0.15);
+  border: 1px solid rgba(255, 204, 0, 0.35);
+  border-radius: 8px;
+  color: #ffcc00;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 0.35rem;
+}
+
+@media (max-width: 600px) {
+  .filterContainer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    padding: 0 0.5rem;
+  }
+
+  .filterLabel {
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  .subAdminFilterSelect {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.8rem;
+    width: 100%;
+  }
+}
+

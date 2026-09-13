@@ -53,7 +53,11 @@ const websiteIdSchema = new mongoose.Schema({
     },
     updatedAt: {
         type: String,
-    }
+    },
+    adminId: {
+        type: String,
+        default: '',
+    },
 }, { timestamps: true });
 
 module.exports = mongoose.model('WebsiteId', websiteIdSchema);

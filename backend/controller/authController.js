@@ -22,17 +22,18 @@ exports.loginController = async (req, res) => {
       }
 
       // Structure the admin object to match the user structure
+      const adminObj = admin.toObject();
+      delete adminObj.password;
+
       const adminWithId = {
         id: admin._id,
-        username: admin.username,
-        email: admin.email || '', // Add email if available
-        role: 'admin', // Explicitly define the role
-        ...admin.toObject(), // Include other admin fields
+        ...adminObj,
+        role: admin.role || 'admin', // Preserve superadmin or admin
+        permissions: admin.permissions || {},
       };
-      delete adminWithId.password; // Exclude the password
 
       return res.status(200).json({
-        message: 'Admin login successful',
+        message: `${admin.role === 'superadmin' ? 'Superadmin' : 'Admin'} login successful`,
         user: adminWithId,
       });
     }

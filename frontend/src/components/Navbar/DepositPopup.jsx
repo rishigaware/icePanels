@@ -67,7 +67,8 @@ export default function DepositPopup({ onClose, walletBalance = 0, setWalletBala
 
     const fetchAccountDetails = async () => {
       try {
-        const response = await fetch(`${url}/api/user/get-accountdetails-deposit`);
+        const userId = user?.id || user?._id || '';
+        const response = await fetch(`${url}/api/user/get-accountdetails-deposit${userId ? `?userId=${userId}` : ''}`);
         if (!response.ok) {
           throw new Error("Failed to fetch account details");
         }

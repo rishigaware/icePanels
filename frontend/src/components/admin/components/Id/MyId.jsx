@@ -17,6 +17,16 @@ const MyId = () => {
   const { user, url } = useUser();
   const safeUser = user || {};
   const safeUrl = url || '';
+
+  const isSuperAdmin = safeUser?.role === 'superadmin';
+  const canManageIdRequests = isSuperAdmin || safeUser?.permissions?.canManageIdRequests !== false;
+  const canEditIdCredentials = isSuperAdmin || safeUser?.permissions?.canEditIdCredentials !== false;
+  const canManageTransactions = isSuperAdmin || safeUser?.permissions?.canManageTransactions !== false;
+  const adminHeaderId = safeUser?.id || safeUser?._id || safeUser?.username || '';
+
+  const [subAdmins, setSubAdmins] = useState([]);
+  const [selectedSubAdminFilter, setSelectedSubAdminFilter] = useState("all");
+
   const [myIds, setMyIds] = useState([]);
   const [pendingRequests, setPendingRequests] = useState([]);
   const [menuOpen, setMenuOpen] = useState(null);
@@ -51,14 +61,33 @@ const MyId = () => {
 
   const navigate = useNavigate();
 
-  // COMPLETELY DISABLED: fetchPendingRequests to prevent infinite API calls
-  const fetchIds = async () => {
+  // Fetch sub-admins for superadmin
+  const fetchSubAdmins = async () => {
+    if (!isSuperAdmin) return;
+    try {
+      const response = await fetch(`${safeUrl}/api/admin/get-subadmins`, {
+        headers: { 'x-admin-id': adminHeaderId }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setSubAdmins(Array.isArray(data) ? data : []);
+      }
+    } catch (err) {
+      console.error("Error fetching sub-admins:", err);
+    }
+  };
+
+  const fetchIds = async (filterId = selectedSubAdminFilter) => {
     try {
       setLoading(true);
-      const response = await fetch(`${safeUrl}/api/admin/get-all-ids`);
+      const queryParam = isSuperAdmin && filterId && filterId !== 'all'
+        ? `?filterAdminId=${filterId}`
+        : '';
+      const response = await fetch(`${safeUrl}/api/admin/get-all-ids${queryParam}`, {
+        headers: { 'x-admin-id': adminHeaderId }
+      });
       const data = await response.json();
       if (response.ok) {
-        // Handle both array and object response formats for robustness
         const idsData = Array.isArray(data) ? data : (data.ids || []);
         setMyIds(idsData);
       } else {
@@ -73,12 +102,16 @@ const MyId = () => {
     }
   };
 
-  const fetchPendingRequests = async () => {
+  const fetchPendingRequests = async (filterId = selectedSubAdminFilter) => {
     try {
-      const response = await fetch(`${safeUrl}/api/admin/pending-requests`);
+      const queryParam = isSuperAdmin && filterId && filterId !== 'all'
+        ? `?filterAdminId=${filterId}`
+        : '';
+      const response = await fetch(`${safeUrl}/api/admin/pending-requests${queryParam}`, {
+        headers: { 'x-admin-id': adminHeaderId }
+      });
       const data = await response.json();
       if (response.ok) {
-        // Handle both array and object response formats for robustness
         const requestsData = Array.isArray(data) ? data : (data.requests || []);
         setPendingRequests(requestsData);
       } else {
@@ -91,6 +124,15 @@ const MyId = () => {
 
   // Handle request approval/rejection
   const handleRequestAction = async (requestId, requestType, action) => {
+    if (!canManageTransactions) {
+      toast.current.show({
+        severity: 'error',
+        summary: 'Permission Denied',
+        detail: 'You do not have permission to manage requests',
+        life: 3000,
+      });
+      return;
+    }
     try {
       const endpoint = action === 'approve' 
         ? `approve-${requestType.replace('_', '-')}` 
@@ -98,6 +140,10 @@ const MyId = () => {
       
       const response = await fetch(`${safeUrl}/api/admin/${endpoint}/${requestId}`, {
         method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-id': adminHeaderId
+        }
       });
 
       if (!response.ok) {
@@ -140,17 +186,31 @@ const MyId = () => {
     }
   };
 
-  // DISABLED: Automatic IDs fetching to prevent infinite API calls
+  useEffect(() => {
+    if (isSuperAdmin) {
+      fetchSubAdmins();
+    }
+  }, [isSuperAdmin]);
+
   useEffect(() => {
     if (safeUser?.id || needRefetch) {
-      fetchIds();
-      fetchPendingRequests();
+      fetchIds(selectedSubAdminFilter);
+      fetchPendingRequests(selectedSubAdminFilter);
       setNeedRefetch(false);
     }
-  }, [safeUser?.id, needRefetch]);
+  }, [safeUser?.id, needRefetch, selectedSubAdminFilter]);
   
 // Accept API Call
 const handleAccept = async (item) => {
+  if (!canManageIdRequests) {
+    toast.current.show({
+      severity: 'error',
+      summary: 'Permission Denied',
+      detail: 'You do not have permission to manage ID requests',
+      life: 3000,
+    });
+    return;
+  }
   try {
     const response = await fetch(
       `${safeUrl}/api/admin/accept-id`,
@@ -158,6 +218,7 @@ const handleAccept = async (item) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-admin-id": adminHeaderId
         },
         body: JSON.stringify({
           id: item.id, // Send the current ID
@@ -180,14 +241,23 @@ const handleAccept = async (item) => {
     toast.current.show({
       severity: 'error',
       summary: 'Error accepting',
-      detail: 'Error accepting ID',
-      life: 1000,
+      detail: err.message || 'Error accepting ID',
+      life: 3000,
     });
   }
 };
 
 // Reject API Call
 const handleReject = async (item) => {
+  if (!canManageIdRequests) {
+    toast.current.show({
+      severity: 'error',
+      summary: 'Permission Denied',
+      detail: 'You do not have permission to manage ID requests',
+      life: 3000,
+    });
+    return;
+  }
   try {
     const response = await fetch(
       `${safeUrl}/api/admin/reject-id`,
@@ -195,6 +265,7 @@ const handleReject = async (item) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-admin-id": adminHeaderId
         },
         body: JSON.stringify({
           id: item.id, // Send the current ID
@@ -217,9 +288,9 @@ const handleReject = async (item) => {
     console.error(err.message);
     toast.current.show({
       severity: 'error',
-      summary: 'Rejecting erro',
-      detail: 'Error rejecting ID',
-      life: 1000,
+      summary: 'Rejecting error',
+      detail: err.message || 'Error rejecting ID',
+      life: 3000,
     });
 
   }
@@ -287,11 +358,22 @@ const handleReject = async (item) => {
       return;
     }
 
+    if (!canEditIdCredentials) {
+      toast.current.show({
+        severity: 'error',
+        summary: 'Permission Denied',
+        detail: 'You do not have permission to edit ID credentials',
+        life: 3000,
+      });
+      return;
+    }
+
     try {
       const response = await fetch(`${safeUrl}/api/admin/update-id`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          "x-admin-id": adminHeaderId
         },
         body: JSON.stringify({
           id: selectedId.id,
@@ -619,23 +701,25 @@ const handleReject = async (item) => {
             </p>
           </div>
 
-          <div className={styles.actionIcons}>
-            <button
-              className={`${styles.icon} ${styles.acceptIcon}`}
-              title="Approve Request"
-              onClick={() => handleRequestAction(request.id, request.requestType, 'approve')}
-            >
-              <AiOutlineCheckCircle />
-            </button>
+          {canManageTransactions && (
+            <div className={styles.actionIcons}>
+              <button
+                className={`${styles.icon} ${styles.acceptIcon}`}
+                title="Approve Request"
+                onClick={() => handleRequestAction(request.id, request.requestType, 'approve')}
+              >
+                <AiOutlineCheckCircle />
+              </button>
 
-            <button
-              className={`${styles.icon} ${styles.rejectIcon}`}
-              title="Reject Request"
-              onClick={() => handleRequestAction(request.id, request.requestType, 'reject')}
-            >
-              <AiOutlineCloseCircle />
-            </button>
-          </div>
+              <button
+                className={`${styles.icon} ${styles.rejectIcon}`}
+                title="Reject Request"
+                onClick={() => handleRequestAction(request.id, request.requestType, 'reject')}
+              >
+                <AiOutlineCloseCircle />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -695,6 +779,35 @@ const handleReject = async (item) => {
 
   return (
     <div className={styles.container}>
+      {/* Superadmin Sub-Admin Filter */}
+      {isSuperAdmin && (
+        <div style={{ marginBottom: "15px", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", width: "100%", boxSizing: "border-box" }}>
+          <label style={{ color: "#aaa", fontSize: "0.9rem", fontWeight: "600" }}>Filter by Admin Master:</label>
+          <select
+            value={selectedSubAdminFilter}
+            onChange={(e) => setSelectedSubAdminFilter(e.target.value)}
+            style={{
+              padding: "8px 14px",
+              background: "#1e293b",
+              color: "#fff",
+              border: "1px solid #334155",
+              borderRadius: "8px",
+              fontSize: "0.88rem",
+              cursor: "pointer",
+              maxWidth: "100%",
+              boxSizing: "border-box"
+            }}
+          >
+            <option value="all">All Admin Masters</option>
+            {subAdmins.map(sa => (
+              <option key={sa._id} value={sa._id}>
+                {sa.username} (Admin Master)
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       {/* Tabs */}
       <div className={styles.tabsContainer}>
         <button
@@ -848,27 +961,33 @@ const handleReject = async (item) => {
               </div>
 
               <div className={styles.actionIcons}>
-                    <button
-                      className={`${styles.icon} ${styles.editIcon}`}
-                      title="Edit ID"
-                      onClick={() => handleIdClick(item)}
-                    >
-                      <FiEdit3 />
-                    </button>
+                {canEditIdCredentials && (
+                  <button
+                    className={`${styles.icon} ${styles.editIcon}`}
+                    title="Edit ID"
+                    onClick={() => handleIdClick(item)}
+                  >
+                    <FiEdit3 />
+                  </button>
+                )}
 
-                <AiOutlineCheckCircle
-                  style={{ color: "green", fontSize: "30px" }}
-                  className={`${styles.icon} ${styles.acceptIcon}`}
-                  title="Accept"
-                  onClick={() => handleAccept(item)}
-                />
+                {canManageIdRequests && (
+                  <>
+                    <AiOutlineCheckCircle
+                      style={{ color: "green", fontSize: "30px", cursor: "pointer" }}
+                      className={`${styles.icon} ${styles.acceptIcon}`}
+                      title="Accept"
+                      onClick={() => handleAccept(item)}
+                    />
 
-                <AiOutlineCloseCircle
-                  style={{ color: "red", fontSize: "30px" }}
-                  className={`${styles.icon} ${styles.rejectIcon}`}
-                  title="Reject"
-                  onClick={() => handleReject(item)}
-                />
+                    <AiOutlineCloseCircle
+                      style={{ color: "red", fontSize: "30px", cursor: "pointer" }}
+                      className={`${styles.icon} ${styles.rejectIcon}`}
+                      title="Reject"
+                      onClick={() => handleReject(item)}
+                    />
+                  </>
+                )}
               </div>
             </div>
               </div>
@@ -1071,12 +1190,14 @@ const handleReject = async (item) => {
             <div className={styles.popupActions}>
               {!isEditMode ? (
                 <>
-                  <button
-                    onClick={handleEditModeToggle}
-                    className={styles.editButton}
-                  >
-                    <FiEdit3 /> Edit
-                  </button>
+                  {canEditIdCredentials && (
+                    <button
+                      onClick={handleEditModeToggle}
+                      className={styles.editButton}
+                    >
+                      <FiEdit3 /> Edit
+                    </button>
+                  )}
                   <button
                     onClick={handleClosePopup}
                     className={styles.cancelButton}

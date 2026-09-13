@@ -5,6 +5,7 @@ const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const authRoutes = require('./routes/authRoutes');
 const imageRoutes = require('./routes/imageRoutes');
+const supportRoutes = require('./routes/supportRoutes');
 const cors = require('cors');
 const connectDB = require('./config/db');
 connectDB();
@@ -72,6 +73,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/images', imageRoutes);
+app.use('/api/support', supportRoutes);
 
 // Handling dynamic port for Vercel or fallback to local port 5000
 const PORT = process.env.PORT || 5000;

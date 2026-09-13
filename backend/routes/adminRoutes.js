@@ -12,6 +12,14 @@ router.get("/get-all-users", adminController.getAllUsers);//get all users
 router.get('/get-all-ids', adminController.getAllIds);
 router.get('/get-balance/:adminId', adminController.getAdminBalance);
 
+// Sub-admin management routes (Superadmin only)
+router.get('/subadmins', adminController.getAllSubAdmins);
+router.get('/get-subadmins', adminController.getAllSubAdmins);
+router.post('/subadmins', adminController.createSubAdmin);
+router.patch('/subadmins/:id/permissions', adminController.updateSubAdminPermissions);
+router.delete('/subadmins/:id', adminController.deleteSubAdmin);
+router.post('/create-user', adminController.addAdminUser);
+
 router.post('/signup', adminController.addAdmin);    // Add a new admin
 router.patch('/update-transaction', adminController.updateTransaction); // Update transaction
 router.patch('/update-id-status', adminController.updateIdStatus); // Update website status to Accepted

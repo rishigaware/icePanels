@@ -52,7 +52,9 @@ const ProfilePage = () => {
       }
 
     // Send GET request with user.id as a query parameter
-    fetch(`${url}/api/admin/get-accountdetails?userId=${user.id}`)
+    fetch(`${url}/api/admin/get-accountdetails?userId=${user.id}`, {
+      headers: { 'x-admin-id': user?.id || user?._id || user?.username || '' }
+    })
       .then(response => {
         if (response.ok) {
           return response.json();
@@ -112,6 +114,7 @@ const ProfilePage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-admin-id': user?.id || user?._id || user?.username || ''
         },
         body: JSON.stringify({
           userId,
@@ -167,6 +170,7 @@ const ProfilePage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-admin-id': user?.id || user?._id || user?.username || ''
         },
         body: JSON.stringify(updatedProfile),
       });

@@ -54,6 +54,10 @@ const transactionSchema = new mongoose.Schema({
     refundable: Boolean,
     accountType: String,
     currency: String,
+    adminId: {
+        type: String,
+        default: '',
+    },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Transaction', transactionSchema);

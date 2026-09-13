@@ -67,8 +67,8 @@ const CreateId = () => {
   // Function to fetch websites data
   const fetchWebsites = async () => {
     try {
-      setIsLoading(true);
-      const response = await fetch(`${url}/api/admin/get-websites`);
+      const userId = user?.id || user?._id || '';
+      const response = await fetch(`${url}/api/admin/get-websites${userId ? `?userId=${userId}` : ''}`);
       const data = await response.json();
       if (response.ok) {
         // console.log(data,"<<<")
