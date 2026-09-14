@@ -12,16 +12,20 @@ const PasswordChangeRequest = require('../models/PasswordChangeRequest');
 const ClosedId = require('../models/ClosedId');
 const mongoose = require('mongoose');
 const { cloudinary } = require('../config/cloudinaryConfig');
-
+const { getAdminFromReq, getAdminUserIdentifiers } = require('./subAdminHelper');
 
 // Fetch all admins
 exports.getAllAdmins = async (req, res) => {
   try {
     const admins = await Admin.find();
-    const formattedAdmins = admins.map(doc => ({
-      id: doc._id,
-      ...doc.toObject(),
-    }));
+    const formattedAdmins = admins.map(doc => {
+      const obj = doc.toObject();
+      delete obj.password;
+      return {
+        id: doc._id,
+        ...obj,
+      };
+    });
     res.status(200).json(formattedAdmins);
   } catch (error) {
     console.error('Error fetching admins:', error);
@@ -29,11 +33,242 @@ exports.getAllAdmins = async (req, res) => {
   }
 };
 
-// Fetch all users
-// Fetch all users
+// Sub-admin management (Superadmin only)
+exports.getAllSubAdmins = async (req, res) => {
+  try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin') {
+      return res.status(403).json({ message: 'Access denied. Superadmin only.' });
+    }
+
+    const subAdmins = await Admin.find({ role: { $ne: 'superadmin' } }).sort({ createdAt: -1 });
+    const subAdminsWithStats = await Promise.all(
+      subAdmins.map(async (doc) => {
+        const userCount = await User.countDocuments({ assignedAdmin: doc._id });
+        const adminObj = doc.toObject();
+        delete adminObj.password;
+        return {
+          id: doc._id,
+          ...adminObj,
+          userCount,
+        };
+      })
+    );
+    res.status(200).json(subAdminsWithStats);
+  } catch (error) {
+    console.error('Error fetching sub-admins:', error);
+    res.status(500).json({ message: 'Error retrieving sub-admins', error: error.message });
+  }
+};
+
+exports.createSubAdmin = async (req, res) => {
+  try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin') {
+      return res.status(403).json({ message: 'Access denied. Superadmin only.' });
+    }
+
+    const { username, password, name, email, phoneNumber, agentCode, permissions } = req.body;
+    if (!username || !password || !name || !email || !phoneNumber) {
+      return res.status(400).json({ message: 'All required fields must be provided.' });
+    }
+
+    const existing = await Admin.findOne({ username });
+    if (existing) {
+      return res.status(400).json({ message: 'Username is already taken.' });
+    }
+
+    const newAdmin = new Admin({
+      username,
+      password,
+      name,
+      email,
+      phoneNumber,
+      agentCode: agentCode || '',
+      role: 'admin',
+      permissions: permissions || {
+        canCreateUsers: true,
+        canUpdateUserBalance: true,
+        canChangeUserPassword: true,
+        canDeleteUsers: false,
+        canAddWebsites: true,
+        canEditWebsites: true,
+        canDeleteWebsites: false,
+        canManageCategories: true,
+        canManageIdRequests: true,
+        canManageTransactions: true,
+        canEditIdCredentials: true,
+        canManageBanners: false,
+        canManageSupportLinks: false,
+      },
+    });
+
+    await newAdmin.save();
+    const savedObj = newAdmin.toObject();
+    delete savedObj.password;
+
+    res.status(201).json({
+      message: 'Sub-admin created successfully',
+      admin: { id: newAdmin._id, ...savedObj },
+    });
+  } catch (error) {
+    console.error('Error creating sub-admin:', error);
+    res.status(500).json({ message: 'Error creating sub-admin', error: error.message });
+  }
+};
+
+exports.updateSubAdminPermissions = async (req, res) => {
+  try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin') {
+      return res.status(403).json({ message: 'Access denied. Superadmin only.' });
+    }
+
+    const { id } = req.params;
+    const { permissions } = req.body;
+
+    const targetAdmin = await Admin.findById(id);
+    if (!targetAdmin) {
+      return res.status(404).json({ message: 'Sub-admin not found.' });
+    }
+
+    targetAdmin.permissions = {
+      ...(targetAdmin.permissions ? targetAdmin.permissions.toObject() : {}),
+      ...permissions,
+    };
+
+    await targetAdmin.save();
+
+    res.status(200).json({
+      message: 'Permissions updated successfully',
+      permissions: targetAdmin.permissions,
+    });
+  } catch (error) {
+    console.error('Error updating permissions:', error);
+    res.status(500).json({ message: 'Error updating permissions', error: error.message });
+  }
+};
+
+exports.deleteSubAdmin = async (req, res) => {
+  try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin') {
+      return res.status(403).json({ message: 'Access denied. Superadmin only.' });
+    }
+
+    const { id } = req.params;
+    const targetAdmin = await Admin.findById(id);
+    if (!targetAdmin) {
+      return res.status(404).json({ message: 'Sub-admin not found.' });
+    }
+
+    if (targetAdmin.role === 'superadmin') {
+      return res.status(400).json({ message: 'Cannot delete Superadmin.' });
+    }
+
+    await Admin.findByIdAndDelete(id);
+    res.status(200).json({ message: 'Sub-admin deleted successfully.' });
+  } catch (error) {
+    console.error('Error deleting sub-admin:', error);
+    res.status(500).json({ message: 'Error deleting sub-admin', error: error.message });
+  }
+};
+
+// Create user from Admin Panel
+exports.addAdminUser = async (req, res) => {
+  try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canCreateUsers === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot create users.' });
+    }
+
+    const { name, phoneNumber, email, password, username, agentCode, targetAdminId } = req.body;
+
+    if (!name || !phoneNumber || !email || !password || !username) {
+      return res.status(400).json({ message: 'All fields are required.' });
+    }
+
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Username is already taken.' });
+    }
+
+    let assignedAdminId = null;
+    let assignedAdminUsername = '';
+
+    if (admin?.role === 'superadmin' && targetAdminId) {
+      assignedAdminId = targetAdminId;
+      const targetAdmin = await Admin.findById(targetAdminId);
+      if (targetAdmin) assignedAdminUsername = targetAdmin.username;
+    } else if (admin) {
+      assignedAdminId = admin._id;
+      assignedAdminUsername = admin.username;
+    }
+
+    const newUser = new User({
+      name,
+      phoneNumber,
+      email: email.toLowerCase(),
+      password,
+      username,
+      agentCode: agentCode || admin?.agentCode || '',
+      balance: 0,
+      role: 'user',
+      assignedAdmin: assignedAdminId,
+      assignedAdminUsername,
+    });
+
+    await newUser.save();
+
+    res.status(201).json({
+      message: 'User created successfully',
+      user: { id: newUser._id, ...newUser.toObject() },
+    });
+  } catch (error) {
+    console.error('Error adding user:', error);
+    res.status(500).json({ message: 'Error adding user', error: error.message });
+  }
+};
+
+// Fetch all users (with sub-admin tenant isolation)
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const admin = await getAdminFromReq(req);
+    let filter = {};
+
+    if (admin?.role === 'superadmin') {
+      const filterAdminId = req.query.filterAdminId || req.headers['x-filter-admin-id'];
+      if (filterAdminId && filterAdminId !== 'all') {
+        const adminObjId = mongoose.Types.ObjectId.isValid(filterAdminId)
+          ? new mongoose.Types.ObjectId(filterAdminId)
+          : null;
+        filter = {
+          $or: [
+            { assignedAdmin: filterAdminId },
+            ...(adminObjId ? [{ assignedAdmin: adminObjId }] : []),
+          ],
+        };
+      }
+    } else if (admin) {
+      const adminObjId = mongoose.Types.ObjectId.isValid(admin._id)
+        ? admin._id
+        : null;
+      const orConditions = [
+        { assignedAdmin: admin._id.toString() },
+      ];
+      if (adminObjId) {
+        orConditions.push({ assignedAdmin: adminObjId });
+      }
+      if (admin.username) {
+        orConditions.push({ assignedAdminUsername: admin.username });
+      }
+      if (admin.agentCode) {
+        orConditions.push({ agentCode: admin.agentCode });
+      }
+      filter = { $or: orConditions };
+    }
+
+    const users = await User.find(filter).sort({ createdAt: -1 });
 
     const formattedUsers = users.map(doc => ({
       id: doc._id,
@@ -96,13 +331,37 @@ const resolveAdminUrl = (item, websiteMap) => {
   return '';
 };
 
-// Controller to fetch all IDs
+// Controller to fetch all IDs (tenant-isolated)
 exports.getAllIds = async (req, res) => {
   try {
-    const ids = await WebsiteId.find();
+    const admin = await getAdminFromReq(req);
+    let idFilter = {};
+
+    if (admin?.role === 'superadmin') {
+      const filterAdminId = req.query.filterAdminId || req.headers['x-filter-admin-id'];
+      if (filterAdminId && filterAdminId !== 'all') {
+        const { ids, usernames } = await getAdminUserIdentifiers(filterAdminId);
+        idFilter = {
+          $or: [
+            { adminId: filterAdminId },
+            { createdBy: { $in: [...ids, ...usernames] } }
+          ]
+        };
+      }
+    } else if (admin) {
+      const { ids, usernames } = await getAdminUserIdentifiers(admin._id.toString());
+      idFilter = {
+        $or: [
+          { adminId: admin._id.toString() },
+          { createdBy: { $in: [...ids, ...usernames] } }
+        ]
+      };
+    }
+
+    const ids = await WebsiteId.find(idFilter).sort({ createdAt: -1 });
 
     if (ids.length === 0) {
-      return res.status(404).json({ message: "No IDs found" });
+      return res.status(200).json([]);
     }
 
     const websites = await Website.find();
@@ -154,13 +413,14 @@ exports.getAdminBalance = async (req, res) => {
 
 exports.updateProfileController = async (req, res) => {
   try {
-    const { id, name, email, username, password } = req.body;
+    const { id, userId, name, email, phoneNumber, username, password } = req.body;
+    const targetId = id || userId;
 
-    if (!id) {
+    if (!targetId) {
       return res.status(400).json({ message: "Admin ID is required" });
     }
 
-    const admin = await Admin.findById(id);
+    const admin = await Admin.findById(targetId);
 
     if (!admin) {
       return res.status(404).json({ message: "Admin not found" });
@@ -168,8 +428,18 @@ exports.updateProfileController = async (req, res) => {
 
     if (name) admin.name = name;
     if (email) admin.email = email;
-    if (username) admin.username = username;
+    if (phoneNumber) admin.phoneNumber = phoneNumber;
     if (password) admin.password = password;
+
+    // Requirement: Superadmin username cannot be changed
+    if (username) {
+      if (admin.role === 'superadmin' && username !== 'superadmin') {
+        return res.status(400).json({ message: "Superadmin username cannot be changed." });
+      }
+      if (admin.role !== 'superadmin') {
+        admin.username = username;
+      }
+    }
 
     await admin.save();
 
@@ -224,7 +494,7 @@ exports.addAdmin = async (req, res) => {
 
 // Controller for handling the addition of a new website
 exports.addWebsite = async (req, res) => {
-  const { website, url, adminUrl, coinRate, minimumCoins, category } = req.body;
+  const { website, url, adminUrl, coinRate, minimumCoins, category, targetAdminId } = req.body;
 
   // Validation: Ensure all fields are provided
   if (!website || !url || !coinRate || !minimumCoins) {
@@ -232,9 +502,23 @@ exports.addWebsite = async (req, res) => {
   }
 
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canAddWebsites === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot add websites.' });
+    }
+
     let logoPath = '';
     if (req.file) {
       logoPath = req.file.path; // Cloudinary URL
+    }
+
+    // Determine adminId for the website:
+    // If superadmin provided targetAdminId, use that; otherwise use admin's own ID
+    let assignedAdminId = '';
+    if (admin?.role === 'superadmin') {
+      assignedAdminId = targetAdminId || admin._id.toString();
+    } else if (admin) {
+      assignedAdminId = admin._id.toString();
     }
 
     const newWebsite = new Website({
@@ -244,7 +528,8 @@ exports.addWebsite = async (req, res) => {
       coinRate: parseFloat(coinRate),
       minimumCoins: parseInt(minimumCoins, 10),
       category: category || '', // Add category field
-      logo: logoPath
+      logo: logoPath,
+      adminId: assignedAdminId,
     });
 
     await newWebsite.save();
@@ -323,15 +608,37 @@ exports.updateIdStatus = async (req, res) => {
   }
 };
 
-// Controller function to fetch all transactions
-// Controller function to fetch all transactions
-// Controller function to fetch all transactions
+// Controller function to fetch all transactions (tenant-isolated for sub-admins)
 exports.getAllTransactions = async (req, res) => {
   try {
-    const transactions = await Transaction.find().sort({ createdAt: -1 });
+    const admin = await getAdminFromReq(req);
+    let txnFilter = {};
+
+    if (admin?.role === 'superadmin') {
+      const filterAdminId = req.query.filterAdminId || req.headers['x-filter-admin-id'];
+      if (filterAdminId && filterAdminId !== 'all') {
+        const { ids, usernames } = await getAdminUserIdentifiers(filterAdminId);
+        txnFilter = {
+          $or: [
+            { adminId: filterAdminId },
+            { createdBy: { $in: [...ids, ...usernames] } }
+          ]
+        };
+      }
+    } else if (admin) {
+      const { ids, usernames } = await getAdminUserIdentifiers(admin._id.toString());
+      txnFilter = {
+        $or: [
+          { adminId: admin._id.toString() },
+          { createdBy: { $in: [...ids, ...usernames] } }
+        ]
+      };
+    }
+
+    const transactions = await Transaction.find(txnFilter).sort({ createdAt: -1 });
 
     if (transactions.length === 0) {
-      return res.status(404).json({ message: 'No transactions found.' });
+      return res.status(200).json([]);
     }
 
     // Fetch all users to map names
@@ -342,14 +649,9 @@ exports.getAllTransactions = async (req, res) => {
       if (user.username) userMap[user.username] = user.name;
     });
 
-    console.log('User Map created with', Object.keys(userMap).length, 'entries');
-
     const formattedTransactions = transactions.map(doc => {
       const docObj = doc.toObject();
       let userName = 'Unknown';
-
-      // Debug log for the first few transactions to check createdBy format
-      // if (docObj.amount === 48900) console.log('Transaction 48900 createdBy:', doc.createdBy, 'Type:', typeof doc.createdBy);
 
       if (userMap[doc.createdBy]) {
         userName = userMap[doc.createdBy];
@@ -374,18 +676,20 @@ exports.getAllTransactions = async (req, res) => {
 // Controller to accept a transaction
 exports.acceptTransaction = async (req, res) => {
   const txnId = req.params.txnId;
-  console.log('Accepting transaction:', txnId);
 
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageTransactions === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage transactions.' });
+    }
+
     const transaction = await Transaction.findById(txnId);
 
     if (!transaction) {
-      console.log('Transaction not found');
       return res.status(404).json({ message: 'Transaction not found' });
     }
 
     if (transaction.status === 'Completed' || transaction.status === 'Accepted') {
-      console.log('Transaction already completed');
       return res.status(400).json({ message: 'Transaction already completed' });
     }
 
@@ -398,17 +702,13 @@ exports.acceptTransaction = async (req, res) => {
       transaction.transactionType === 'withdrawal' ||
       transaction.transactionType === 'wallet_withdrawal';
 
-    console.log('Transaction Type:', isWithdrawal ? 'Withdrawal' : 'Deposit', 'Created By:', transaction.createdBy);
-
     // Update user balance based on transaction type
     let user;
     if (mongoose.Types.ObjectId.isValid(transaction.createdBy)) {
-      console.log('Searching user by ID:', transaction.createdBy);
       user = await User.findById(transaction.createdBy);
     }
 
     if (!user) {
-      console.log('Searching user by username:', transaction.createdBy);
       user = await User.findOne({ username: transaction.createdBy });
     }
 
@@ -417,19 +717,13 @@ exports.acceptTransaction = async (req, res) => {
       let newBalance = currentBalance;
 
       if (!isWithdrawal) {
-        // It's a deposit (Bank, UPI, Card, GPay, etc.)
         newBalance = currentBalance + parseFloat(transaction.amount);
-        console.log(`Deposit: Added ${transaction.amount} to user ${user.username} (${user._id}). Old: ${currentBalance}, New: ${newBalance}`);
       } else {
-        // It's a withdrawal
-        newBalance = Math.max(0, currentBalance - parseFloat(transaction.amount)); // Ensure balance doesn't go negative
-        console.log(`Withdrawal: Deducted ${transaction.amount} from user ${user.username}. Old: ${currentBalance}, New: ${newBalance}`);
+        newBalance = Math.max(0, currentBalance - parseFloat(transaction.amount));
       }
 
       user.balance = newBalance;
       await user.save();
-    } else {
-      console.log('User not found for transaction createdBy:', transaction.createdBy);
     }
 
     res.status(200).json({ message: 'Transaction accepted', transactionId: txnId, status: 'Completed' });
@@ -438,12 +732,17 @@ exports.acceptTransaction = async (req, res) => {
     res.status(500).json({ message: 'Failed to accept transaction', error: error.message });
   }
 };
-// Controller to reject a transaction
+
 // Controller to reject a transaction
 exports.rejectTransaction = async (req, res) => {
   const txnId = req.params.txnId;
 
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageTransactions === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage transactions.' });
+    }
+
     const transaction = await Transaction.findById(txnId);
 
     if (!transaction) {
@@ -463,26 +762,34 @@ exports.rejectTransaction = async (req, res) => {
 
 
 // Update user balance
-// Update user balance
 exports.updateUserBalance = async (req, res) => {
   const { id } = req.params;
   const { balance } = req.body;
 
-  if (!balance) {
+  if (balance === undefined || balance === null || balance === '') {
     return res.status(400).json({ message: 'Balance is required' });
   }
 
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canUpdateUserBalance === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot update user balance.' });
+    }
+
     const user = await User.findById(id);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    user.balance = balance;
+    if (admin && admin.role !== 'superadmin' && user.assignedAdmin && user.assignedAdmin.toString() !== admin._id.toString()) {
+      return res.status(403).json({ message: 'Unauthorized: User is assigned to another administrator.' });
+    }
+
+    user.balance = parseFloat(balance);
     await user.save();
 
-    res.status(200).json({ id, balance });
+    res.status(200).json({ id, balance: user.balance });
   } catch (error) {
     console.error('Error updating user balance:', error);
     res.status(500).json({ message: 'Error updating user balance', error: error.message });
@@ -499,10 +806,15 @@ exports.updateUserAgentCode = async (req, res) => {
   }
 
   try {
+    const admin = await getAdminFromReq(req);
     const user = await User.findById(id);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (admin && admin.role !== 'superadmin' && user.assignedAdmin && user.assignedAdmin.toString() !== admin._id.toString()) {
+      return res.status(403).json({ message: 'Unauthorized: User is assigned to another administrator.' });
     }
 
     user.agentCode = agentCode;
@@ -518,42 +830,51 @@ exports.updateUserAgentCode = async (req, res) => {
 
 
 
-// Get Account Details
-// Get Account Details
+// Get Account Details (per-admin or fallback)
 exports.getAccountDetails = async (req, res) => {
   try {
-    const userId = req.query.userId;
-    if (!userId) {
-      return res.status(400).json({ message: "User ID is required" });
-    }
+    const admin = await getAdminFromReq(req);
+    const targetUserId = req.query.userId || admin?._id?.toString() || "1";
 
-    const userAccount = await AdminAccount.findOne({ userId });
+    let userAccount = await AdminAccount.findOne({ userId: targetUserId });
 
     if (!userAccount) {
-      return res.status(404).json({ message: "User account not found" });
+      // Fallback to "1"
+      userAccount = await AdminAccount.findOne({ userId: "1" });
+    }
+
+    if (!userAccount) {
+      return res.status(200).json({
+        accountNumber: "1234567890",
+        accountHolderName: "Admin",
+        ifscCode: "ABCD0123456",
+        bankName: "XYZ Bank",
+        upiId: "sample@upi"
+      });
     }
 
     return res.status(200).json({
-      accountNumber: userAccount.accountNumber,
-      accountHolderName: userAccount.accountHolderName,
-      ifscCode: userAccount.ifscCode,
-      bankName: userAccount.bankName,
-      upiId: userAccount.upiId
+      accountNumber: userAccount.accountNumber || '',
+      accountHolderName: userAccount.accountHolderName || '',
+      ifscCode: userAccount.ifscCode || '',
+      bankName: userAccount.bankName || '',
+      upiId: userAccount.upiId || ''
     });
   } catch (error) {
     console.error('Error fetching account details:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
 exports.updateAccountDetails = async (req, res) => {
   const { accountNumber, accountHolderName, ifscCode, bankName, upiId } = req.body;
-
-  const userId = "1";
+  const admin = await getAdminFromReq(req);
+  const userId = req.body.userId || admin?._id?.toString() || "1";
 
   try {
     const defaultData = {
       accountNumber: "1234567890",
-      accountHolderName: "John Doe",
+      accountHolderName: "Admin",
       ifscCode: "ABCD0123456",
       bankName: "XYZ Bank",
       upiId: "sample@upi",
@@ -578,8 +899,8 @@ exports.updateAccountDetails = async (req, res) => {
       updatedAccount: { userId, ...updatedData },
     });
   } catch (error) {
-    console.error("Error upserting account details:", error);
-    res.status(500).json({ message: "Error handling account details", error: error.message });
+    console.error('Error updating account details:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
@@ -612,6 +933,11 @@ exports.acceptId = async (req, res) => {
   const { id } = req.body;
 
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageIdRequests === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage ID requests.' });
+    }
+
     if (!id) {
       return res.status(400).json({ message: 'ID is required' });
     }
@@ -620,6 +946,14 @@ exports.acceptId = async (req, res) => {
 
     if (!idDoc) {
       return res.status(404).json({ message: 'ID not found' });
+    }
+
+    if (admin && admin.role !== 'superadmin') {
+      const allowedIdentifiers = await getAdminUserIdentifiers(admin._id);
+      const isOwner = idDoc.adminId === admin._id.toString() || allowedIdentifiers.includes(idDoc.createdBy);
+      if (!isOwner) {
+        return res.status(403).json({ message: 'Unauthorized: ID does not belong to your assigned users.' });
+      }
     }
 
     idDoc.status = 'Created';
@@ -636,6 +970,11 @@ exports.rejectId = async (req, res) => {
   const { id } = req.body;
 
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageIdRequests === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage ID requests.' });
+    }
+
     if (!id) {
       return res.status(400).json({ message: 'ID is required' });
     }
@@ -644,6 +983,14 @@ exports.rejectId = async (req, res) => {
 
     if (!idDoc) {
       return res.status(404).json({ message: 'ID not found' });
+    }
+
+    if (admin && admin.role !== 'superadmin') {
+      const allowedIdentifiers = await getAdminUserIdentifiers(admin._id);
+      const isOwner = idDoc.adminId === admin._id.toString() || allowedIdentifiers.includes(idDoc.createdBy);
+      if (!isOwner) {
+        return res.status(403).json({ message: 'Unauthorized: ID does not belong to your assigned users.' });
+      }
     }
 
     idDoc.status = 'Username Exists';
@@ -657,24 +1004,36 @@ exports.rejectId = async (req, res) => {
 };
 
 // Controller to update ID information (username, password, comment)
-// Controller to update ID information (username, password, comment)
 exports.updateId = async (req, res) => {
   const { id, username, password, comment } = req.body;
 
-  // Validation: Ensure required fields are provided
-  if (!id) {
-    return res.status(400).json({ message: 'ID is required to update the information.' });
-  }
-
-  if (!username || !password) {
-    return res.status(400).json({ message: 'Username and password are required.' });
-  }
-
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canEditIdCredentials === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot edit ID credentials.' });
+    }
+
+    // Validation: Ensure required fields are provided
+    if (!id) {
+      return res.status(400).json({ message: 'ID is required to update the information.' });
+    }
+
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username and password are required.' });
+    }
+
     const idDoc = await WebsiteId.findById(id);
 
     if (!idDoc) {
       return res.status(404).json({ message: 'ID not found' });
+    }
+
+    if (admin && admin.role !== 'superadmin') {
+      const allowedIdentifiers = await getAdminUserIdentifiers(admin._id);
+      const isOwner = idDoc.adminId === admin._id.toString() || allowedIdentifiers.includes(idDoc.createdBy);
+      if (!isOwner) {
+        return res.status(403).json({ message: 'Unauthorized: ID does not belong to your assigned users.' });
+      }
     }
 
     idDoc.username = username.trim();
@@ -701,6 +1060,11 @@ exports.updateId = async (req, res) => {
 // Controller for updating a website
 exports.updateWebsite = async (req, res) => {
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canEditWebsites === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot edit websites.' });
+    }
+
     const { id } = req.params;
     const { website: newName, url, adminUrl, coinRate, minimumCoins, category } = req.body;
 
@@ -708,6 +1072,10 @@ exports.updateWebsite = async (req, res) => {
 
     if (!website) {
       return res.status(404).json({ message: 'Website not found.' });
+    }
+
+    if (admin && admin.role !== 'superadmin' && website.adminId && website.adminId !== admin._id.toString()) {
+      return res.status(403).json({ message: 'Unauthorized: Website does not belong to your account.' });
     }
 
     if (newName) website.website = newName;
@@ -733,14 +1101,41 @@ exports.updateWebsite = async (req, res) => {
   }
 };
 
-// Controller to fetch all websites
+// Controller to fetch all websites (tenant-isolated for sub-admins & users)
 exports.getAllWebsites = async (req, res) => {
   try {
-    const websites = await Website.find();
+    const admin = await getAdminFromReq(req);
+    const userId = req.query.userId;
+    let filter = {};
 
-    if (websites.length === 0) {
-      return res.status(404).json({ message: 'No websites found.' });
+    if (userId) {
+      let user = null;
+      if (mongoose.Types.ObjectId.isValid(userId)) {
+        user = await User.findById(userId);
+      } else {
+        user = await User.findOne({ username: userId });
+      }
+
+      if (user && user.assignedAdmin) {
+        filter = { adminId: user.assignedAdmin.toString() };
+      } else {
+        filter = {
+          $or: [
+            { adminId: '' },
+            { adminId: null }
+          ]
+        };
+      }
+    } else if (admin?.role === 'superadmin') {
+      const filterAdminId = req.query.filterAdminId || req.headers['x-filter-admin-id'];
+      if (filterAdminId && filterAdminId !== 'all') {
+        filter = { adminId: filterAdminId };
+      }
+    } else if (admin) {
+      filter = { adminId: admin._id.toString() };
     }
+
+    const websites = await Website.find(filter);
 
     const formattedWebsites = websites.map(doc => ({
       id: doc._id,
@@ -754,15 +1149,23 @@ exports.getAllWebsites = async (req, res) => {
   }
 };
 
-// Controller for deleting a website by its ID
 // Controller to delete a website
 exports.deleteWebsite = async (req, res) => {
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canDeleteWebsites === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot delete websites.' });
+    }
+
     const websiteId = req.params.id;
     const website = await Website.findById(websiteId);
 
     if (!website) {
       return res.status(404).json({ message: 'Website not found.' });
+    }
+
+    if (admin && admin.role !== 'superadmin' && website.adminId && website.adminId !== admin._id.toString()) {
+      return res.status(403).json({ message: 'Unauthorized: Website does not belong to your account.' });
     }
 
     // Cloudinary cleanup for logo
@@ -1176,16 +1579,32 @@ exports.deleteOneBottomCardCarousel = async (req, res) => {
 
 
 // Controller to delete a user
-// Controller to delete a user
 exports.deleteUser = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const user = await User.findByIdAndDelete(userId);
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canDeleteUsers === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot delete users.' });
+    }
+
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+
+    if (admin && admin.role !== 'superadmin') {
+      const allowedIdentifiers = await getAdminUserIdentifiers(admin._id);
+      const isOwner = (user.assignedAdmin && user.assignedAdmin.toString() === admin._id.toString()) ||
+                      allowedIdentifiers.includes(user._id.toString()) ||
+                      allowedIdentifiers.includes(user.username);
+      if (!isOwner) {
+        return res.status(403).json({ message: 'Unauthorized: User does not belong to your assigned users.' });
+      }
+    }
+
+    await User.findByIdAndDelete(userId);
 
     res.status(200).json({ message: 'User deleted successfully' });
   } catch (error) {
@@ -1199,6 +1618,11 @@ exports.changeUserPassword = async (req, res) => {
   const { userId, newPassword } = req.body;
 
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canChangeUserPassword === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot change user passwords.' });
+    }
+
     if (!userId || !newPassword) {
       return res.status(400).json({ message: 'User ID and new password are required' });
     }
@@ -1207,6 +1631,16 @@ exports.changeUserPassword = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (admin && admin.role !== 'superadmin') {
+      const allowedIdentifiers = await getAdminUserIdentifiers(admin._id);
+      const isOwner = (user.assignedAdmin && user.assignedAdmin.toString() === admin._id.toString()) ||
+                      allowedIdentifiers.includes(user._id.toString()) ||
+                      allowedIdentifiers.includes(user.username);
+      if (!isOwner) {
+        return res.status(403).json({ message: 'Unauthorized: User does not belong to your assigned users.' });
+      }
     }
 
     user.password = newPassword;
@@ -1220,11 +1654,35 @@ exports.changeUserPassword = async (req, res) => {
 };
 
 // Get unique categories from existing websites
-// Get unique categories from existing websites
 exports.getWebsiteCategories = async (req, res) => {
   try {
+    const admin = await getAdminFromReq(req);
+    const userId = req.query.userId;
+    let websiteFilter = {};
+    let categoryFilter = {};
+
+    if (userId) {
+      const user = mongoose.Types.ObjectId.isValid(userId) ? await User.findById(userId) : await User.findOne({ username: userId });
+      if (user?.assignedAdmin) {
+        websiteFilter = { adminId: user.assignedAdmin.toString() };
+        categoryFilter = { adminId: user.assignedAdmin.toString() };
+      } else {
+        websiteFilter = { $or: [{ adminId: '' }, { adminId: null }] };
+        categoryFilter = { $or: [{ adminId: '' }, { adminId: null }] };
+      }
+    } else if (admin?.role === 'superadmin') {
+      const filterAdminId = req.query.filterAdminId || req.headers['x-filter-admin-id'];
+      if (filterAdminId && filterAdminId !== 'all') {
+        websiteFilter = { adminId: filterAdminId };
+        categoryFilter = { adminId: filterAdminId };
+      }
+    } else if (admin) {
+      websiteFilter = { adminId: admin._id.toString() };
+      categoryFilter = { adminId: admin._id.toString() };
+    }
+
     // Get categories from websites
-    const websites = await Website.find();
+    const websites = await Website.find(websiteFilter);
     const websiteCategories = new Set();
 
     websites.forEach(website => {
@@ -1234,23 +1692,22 @@ exports.getWebsiteCategories = async (req, res) => {
     });
 
     // Get categories from categories collection
-    const categories = await Category.find();
+    const categories = await Category.find(categoryFilter);
     const dbCategories = [];
 
     categories.forEach(category => {
       if (category.name && category.name.trim()) {
         dbCategories.push(category);
-        websiteCategories.add(category.name.trim()); // Add to set for unique names
+        websiteCategories.add(category.name.trim());
       }
     });
 
-    // Convert set to array and sort alphabetically
     const allCategories = Array.from(websiteCategories).sort();
 
     res.status(200).json({
       message: "Categories retrieved successfully.",
       categories: allCategories,
-      dbCategories: dbCategories // Include the full category objects for reference
+      dbCategories: dbCategories
     });
   } catch (error) {
     console.error('Error fetching categories:', error);
@@ -1261,8 +1718,32 @@ exports.getWebsiteCategories = async (req, res) => {
 // Get all categories for dropdown (combines both sources)
 exports.getAllCategoriesForDropdown = async (req, res) => {
   try {
-    // Get categories from websites
-    const websites = await Website.find();
+    const admin = await getAdminFromReq(req);
+    const userId = req.query.userId;
+    let websiteFilter = {};
+    let categoryFilter = {};
+
+    if (userId) {
+      const user = mongoose.Types.ObjectId.isValid(userId) ? await User.findById(userId) : await User.findOne({ username: userId });
+      if (user?.assignedAdmin) {
+        websiteFilter = { adminId: user.assignedAdmin.toString() };
+        categoryFilter = { adminId: user.assignedAdmin.toString() };
+      } else {
+        websiteFilter = { $or: [{ adminId: '' }, { adminId: null }] };
+        categoryFilter = { $or: [{ adminId: '' }, { adminId: null }] };
+      }
+    } else if (admin?.role === 'superadmin') {
+      const filterAdminId = req.query.filterAdminId || req.headers['x-filter-admin-id'];
+      if (filterAdminId && filterAdminId !== 'all') {
+        websiteFilter = { adminId: filterAdminId };
+        categoryFilter = { adminId: filterAdminId };
+      }
+    } else if (admin) {
+      websiteFilter = { adminId: admin._id.toString() };
+      categoryFilter = { adminId: admin._id.toString() };
+    }
+
+    const websites = await Website.find(websiteFilter);
     const websiteCategories = new Set();
 
     websites.forEach(website => {
@@ -1271,18 +1752,16 @@ exports.getAllCategoriesForDropdown = async (req, res) => {
       }
     });
 
-    // Get categories from categories collection
-    const categories = await Category.find();
+    const categories = await Category.find(categoryFilter);
     const dbCategories = [];
 
     categories.forEach(category => {
       if (category.name && category.name.trim()) {
         dbCategories.push(category);
-        websiteCategories.add(category.name.trim()); // Add to set for unique names
+        websiteCategories.add(category.name.trim());
       }
     });
 
-    // Convert set to array and sort alphabetically
     const allCategories = Array.from(websiteCategories).sort();
 
     res.status(200).json({
@@ -1299,7 +1778,12 @@ exports.getAllCategoriesForDropdown = async (req, res) => {
 // Remove/Delete a category (from Category collection and all websites)
 exports.removeCategoryFromWebsites = async (req, res) => {
   try {
-    const { categoryName } = req.body;
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageCategories === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage categories.' });
+    }
+
+    const { categoryName, targetAdminId } = req.body;
 
     if (!categoryName || !categoryName.trim()) {
       return res.status(400).json({ message: 'Category name is required.' });
@@ -1308,12 +1792,23 @@ exports.removeCategoryFromWebsites = async (req, res) => {
     const trimmedName = categoryName.trim();
     const nameRegex = new RegExp(`^${trimmedName.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}$`, 'i');
 
-    // 1. Delete from Category collection
-    const categoryDeleteResult = await Category.deleteMany({ name: nameRegex });
+    let catQuery = { name: nameRegex };
+    let webQuery = { category: nameRegex };
 
-    // 2. Clear category on all websites using this category (case-insensitive & trimmed)
+    if (admin?.role === 'superadmin' && targetAdminId) {
+      catQuery.adminId = targetAdminId;
+      webQuery.adminId = targetAdminId;
+    } else if (admin && admin.role !== 'superadmin') {
+      catQuery.adminId = admin._id.toString();
+      webQuery.adminId = admin._id.toString();
+    }
+
+    // 1. Delete from Category collection
+    const categoryDeleteResult = await Category.deleteMany(catQuery);
+
+    // 2. Clear category on websites
     const websiteUpdateResult = await Website.updateMany(
-      { category: nameRegex },
+      webQuery,
       { category: '' }
     );
 
@@ -1334,7 +1829,12 @@ exports.removeCategoryFromWebsites = async (req, res) => {
 // Add a new category
 exports.addCategory = async (req, res) => {
   try {
-    const { name } = req.body;
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageCategories === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage categories.' });
+    }
+
+    const { name, targetAdminId } = req.body;
 
     // Validate required fields
     if (!name || !name.trim()) {
@@ -1343,8 +1843,18 @@ exports.addCategory = async (req, res) => {
 
     const trimmedName = name.trim();
 
-    // Check if category already exists
-    const existingCategory = await Category.findOne({ name: trimmedName });
+    let assignedAdminId = '';
+    if (admin?.role === 'superadmin' && targetAdminId) {
+      assignedAdminId = targetAdminId;
+    } else if (admin) {
+      assignedAdminId = admin._id.toString();
+    }
+
+    // Check if category already exists for this admin
+    const existingCategory = await Category.findOne({
+      name: trimmedName,
+      adminId: assignedAdminId || ''
+    });
 
     if (existingCategory) {
       return res.status(400).json({ message: 'Category with this name already exists.' });
@@ -1353,12 +1863,12 @@ exports.addCategory = async (req, res) => {
     // Create a new category object
     const newCategory = new Category({
       name: trimmedName,
+      adminId: assignedAdminId,
     });
 
     // Save the new category
     await newCategory.save();
 
-    // Respond with a success message and the saved category data
     res.status(201).json({
       message: 'Category added successfully.',
       category: { id: newCategory._id, ...newCategory.toObject() },
@@ -1376,11 +1886,34 @@ exports.addCategory = async (req, res) => {
 // Get all ID creation requests
 exports.getAllIdRequests = async (req, res) => {
   try {
-    const idRequests = await IdRequest.find().sort({ createdAt: -1 });
-
-    if (idRequests.length === 0) {
-      return res.status(404).json({ message: 'No ID requests found.' });
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageIdRequests === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage ID requests.' });
     }
+
+    let filter = {};
+    if (admin?.role === 'superadmin') {
+      const filterAdminId = req.query.filterAdminId || req.headers['x-filter-admin-id'];
+      if (filterAdminId && filterAdminId !== 'all') {
+        const targetAdminUsers = await getAdminUserIdentifiers(filterAdminId);
+        filter = {
+          $or: [
+            { adminId: filterAdminId },
+            { createdBy: { $in: targetAdminUsers } }
+          ]
+        };
+      }
+    } else if (admin) {
+      const allowedIdentifiers = await getAdminUserIdentifiers(admin._id);
+      filter = {
+        $or: [
+          { adminId: admin._id.toString() },
+          { createdBy: { $in: allowedIdentifiers } }
+        ]
+      };
+    }
+
+    const idRequests = await IdRequest.find(filter).sort({ createdAt: -1 });
 
     const formattedRequests = idRequests.map(doc => ({
       id: doc._id,
@@ -1395,7 +1928,6 @@ exports.getAllIdRequests = async (req, res) => {
 };
 
 // Update ID request status (Accept/Reject)
-// Update ID request status (Accept/Reject)
 exports.updateIdRequestStatus = async (req, res) => {
   const { requestId, status, adminNotes, processedBy } = req.body;
 
@@ -1408,10 +1940,23 @@ exports.updateIdRequestStatus = async (req, res) => {
   }
 
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageIdRequests === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage ID requests.' });
+    }
+
     const requestDoc = await IdRequest.findById(requestId);
 
     if (!requestDoc) {
       return res.status(404).json({ message: 'ID request not found.' });
+    }
+
+    if (admin && admin.role !== 'superadmin') {
+      const allowedIdentifiers = await getAdminUserIdentifiers(admin._id);
+      const isOwner = requestDoc.adminId === admin._id.toString() || allowedIdentifiers.includes(requestDoc.createdBy);
+      if (!isOwner) {
+        return res.status(403).json({ message: 'Unauthorized: ID request does not belong to your assigned users.' });
+      }
     }
 
     const processedAt = new Date().toISOString();
@@ -1419,7 +1964,7 @@ exports.updateIdRequestStatus = async (req, res) => {
     // Update the ID request
     requestDoc.status = status;
     requestDoc.processedAt = processedAt;
-    requestDoc.processedBy = processedBy || 'admin';
+    requestDoc.processedBy = processedBy || admin?.username || 'admin';
     if (adminNotes) requestDoc.adminNotes = adminNotes;
     await requestDoc.save();
 
@@ -1435,7 +1980,6 @@ exports.updateIdRequestStatus = async (req, res) => {
 
     // If accepted, create the actual ID and deduct balance from user
     if (status === 'Accepted') {
-      // Deduct amount from user balance NOW (when admin accepts)
       let user;
       if (mongoose.Types.ObjectId.isValid(requestDoc.createdBy)) {
         user = await User.findById(requestDoc.createdBy);
@@ -1447,7 +1991,6 @@ exports.updateIdRequestStatus = async (req, res) => {
         const currentBalance = user.balance || 0;
         const amountToDeduct = parseFloat(requestDoc.convertedCoins);
 
-        // Check if user still has sufficient balance
         if (currentBalance < amountToDeduct) {
           return res.status(400).json({
             message: 'User has insufficient balance to complete this request.',
@@ -1471,7 +2014,7 @@ exports.updateIdRequestStatus = async (req, res) => {
         websiteUrl: requestDoc.websiteUrl,
         adminUrl: requestDoc.adminUrl || '',
         username: requestDoc.username,
-        password: requestDoc.password || '', // Include password from request
+        password: requestDoc.password || '',
         imgUrl: requestDoc.imgUrl,
         createdBy: requestDoc.createdBy,
         coinAmount: requestDoc.coinAmount,
@@ -1484,7 +2027,8 @@ exports.updateIdRequestStatus = async (req, res) => {
         status: 'Active',
         createdAt: processedAt,
         idRequestId: requestId,
-        balance: parseFloat(requestDoc.coinAmount) // Initialize balance with the coin amount requested
+        balance: parseFloat(requestDoc.coinAmount),
+        adminId: requestDoc.adminId || (user?.assignedAdmin ? user.assignedAdmin.toString() : (admin?._id?.toString() || ''))
       });
 
       await newId.save();
@@ -1492,8 +2036,6 @@ exports.updateIdRequestStatus = async (req, res) => {
       // Delete the ID request after successful approval to avoid duplication
       await IdRequest.findByIdAndDelete(requestId);
     } else if (status === 'Rejected') {
-      // If rejected, no balance deduction occurs (since we removed it from createIdRequest)
-      // Just delete the request
       await IdRequest.findByIdAndDelete(requestId);
       console.log(`ID request ${requestId} rejected. No balance was deducted.`);
     }
@@ -1512,12 +2054,66 @@ exports.updateIdRequestStatus = async (req, res) => {
 
 exports.getAllPendingRequests = async (req, res) => {
   try {
+    const admin = await getAdminFromReq(req);
     const allRequests = [];
+    let txnScope = {};
+    let closeScope = { status: 'Pending' };
+    let pwdScope = { status: 'Pending' };
+
+    if (admin?.role === 'superadmin') {
+      const filterAdminId = req.query.filterAdminId || req.headers['x-filter-admin-id'];
+      if (filterAdminId && filterAdminId !== 'all') {
+        const allowedIdentifiers = await getAdminUserIdentifiers(filterAdminId);
+        txnScope = {
+          $or: [
+            { adminId: filterAdminId },
+            { createdBy: { $in: allowedIdentifiers } }
+          ]
+        };
+        closeScope = {
+          status: 'Pending',
+          $or: [
+            { adminId: filterAdminId },
+            { createdBy: { $in: allowedIdentifiers } }
+          ]
+        };
+        pwdScope = {
+          status: 'Pending',
+          $or: [
+            { adminId: filterAdminId },
+            { createdBy: { $in: allowedIdentifiers } }
+          ]
+        };
+      }
+    } else if (admin) {
+      const allowedIdentifiers = await getAdminUserIdentifiers(admin._id);
+      txnScope = {
+        $or: [
+          { adminId: admin._id.toString() },
+          { createdBy: { $in: allowedIdentifiers } }
+        ]
+      };
+      closeScope = {
+        status: 'Pending',
+        $or: [
+          { adminId: admin._id.toString() },
+          { createdBy: { $in: allowedIdentifiers } }
+        ]
+      };
+      pwdScope = {
+        status: 'Pending',
+        $or: [
+          { adminId: admin._id.toString() },
+          { createdBy: { $in: allowedIdentifiers } }
+        ]
+      };
+    }
 
     // Get deposit requests
     const depositTransactions = await Transaction.find({
       status: 'Pending',
-      transactionType: 'deposit'
+      transactionType: 'deposit',
+      ...txnScope
     });
 
     depositTransactions.forEach(doc => {
@@ -1534,7 +2130,8 @@ exports.getAllPendingRequests = async (req, res) => {
     // Get withdrawal requests
     const withdrawalTransactions = await Transaction.find({
       status: 'Pending',
-      transactionType: 'withdrawal'
+      transactionType: { $in: ['withdrawal', 'wallet_withdrawal'] },
+      ...txnScope
     });
 
     withdrawalTransactions.forEach(doc => {
@@ -1549,7 +2146,7 @@ exports.getAllPendingRequests = async (req, res) => {
     });
 
     // Get close ID requests
-    const closeRequests = await CloseRequest.find({ status: 'Pending' });
+    const closeRequests = await CloseRequest.find(closeScope);
 
     closeRequests.forEach(doc => {
       allRequests.push({
@@ -1560,7 +2157,7 @@ exports.getAllPendingRequests = async (req, res) => {
     });
 
     // Get password change requests
-    const passwordRequests = await PasswordChangeRequest.find({ status: 'Pending' });
+    const passwordRequests = await PasswordChangeRequest.find(pwdScope);
 
     passwordRequests.forEach(doc => {
       allRequests.push({
@@ -1581,20 +2178,18 @@ exports.getAllPendingRequests = async (req, res) => {
 };
 
 // Approve deposit request
-// Approve deposit request
 exports.approveDepositRequest = async (req, res) => {
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageTransactions === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage transactions.' });
+    }
+
     const { requestId } = req.params;
 
-    console.log('Approving deposit request with ID:', requestId);
-
-    // Get the transaction
     let transaction = await Transaction.findById(requestId);
 
     if (!transaction) {
-      console.log('Transaction not found with ID:', requestId);
-
-      // Try to find transaction by idDocumentId field
       transaction = await Transaction.findOne({
         idDocumentId: requestId,
         transactionType: 'deposit',
@@ -1602,7 +2197,6 @@ exports.approveDepositRequest = async (req, res) => {
       });
 
       if (!transaction) {
-        // Try to find by transactionId field as well
         transaction = await Transaction.findOne({
           transactionId: requestId,
           transactionType: 'deposit',
@@ -1615,17 +2209,23 @@ exports.approveDepositRequest = async (req, res) => {
       }
     }
 
+    if (admin && admin.role !== 'superadmin') {
+      const allowedIdentifiers = await getAdminUserIdentifiers(admin._id);
+      const isOwner = transaction.adminId === admin._id.toString() || allowedIdentifiers.includes(transaction.createdBy);
+      if (!isOwner) {
+        return res.status(403).json({ message: 'Unauthorized: Transaction does not belong to your assigned users.' });
+      }
+    }
+
     if (transaction.transactionType !== 'deposit') {
       return res.status(400).json({ message: 'Invalid transaction type' });
     }
 
-    // Update transaction status
     transaction.status = 'Accepted';
     transaction.acceptedAt = new Date().toISOString();
-    transaction.processedBy = req.user?.id || 'admin';
+    transaction.processedBy = admin?.username || req.user?.id || 'admin';
     await transaction.save();
 
-    // Deduct user balance when deposit is approved
     let user;
     if (mongoose.Types.ObjectId.isValid(transaction.createdBy)) {
       user = await User.findById(transaction.createdBy);
@@ -1637,7 +2237,6 @@ exports.approveDepositRequest = async (req, res) => {
       const currentBalance = user.balance || 0;
       const amountToDeduct = transaction.amount;
 
-      // Check if user has sufficient balance
       if (currentBalance < amountToDeduct) {
         return res.status(400).json({
           message: 'User has insufficient balance for this deposit request.',
@@ -1661,24 +2260,10 @@ exports.approveDepositRequest = async (req, res) => {
 
       if (idDoc) {
         const currentBalance = parseFloat(idDoc.balance) || 0;
-
-        // Validate and parse coinsToReceive
         const coinsToAdd = parseFloat(transaction.coinsToReceive) || 0;
-
-        if (coinsToAdd === 0) {
-          console.warn('Warning: coinsToReceive is 0 or invalid:', transaction.coinsToReceive);
-        }
 
         const newIdBalance = currentBalance + coinsToAdd;
 
-        console.log(`Updating ID balance for ${transaction.idDocumentId}:`);
-        console.log(`- Current balance: ${currentBalance} coins`);
-        console.log(`- Adding: ${coinsToAdd} coins`);
-        console.log(`- New balance: ${newIdBalance} coins`);
-        console.log(`- Deposit amount: ₹${transaction.amount}`);
-        console.log(`- Coin rate: ₹${transaction.coinRate} per coin`);
-
-        // Validate the new balance before saving
         if (isNaN(newIdBalance)) {
           throw new Error(`Invalid balance calculation: currentBalance=${currentBalance}, coinsToAdd=${coinsToAdd}`);
         }
@@ -1699,15 +2284,18 @@ exports.approveDepositRequest = async (req, res) => {
 };
 
 // Reject deposit request
-// Reject deposit request
 exports.rejectDepositRequest = async (req, res) => {
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageTransactions === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage transactions.' });
+    }
+
     const { requestId } = req.params;
 
     let transaction = await Transaction.findById(requestId);
 
     if (!transaction) {
-      // Try to find transaction by idDocumentId field
       transaction = await Transaction.findOne({
         idDocumentId: requestId,
         transactionType: 'deposit',
@@ -1715,7 +2303,6 @@ exports.rejectDepositRequest = async (req, res) => {
       });
 
       if (!transaction) {
-        // Try to find by transactionId field as well
         transaction = await Transaction.findOne({
           transactionId: requestId,
           transactionType: 'deposit',
@@ -1728,17 +2315,22 @@ exports.rejectDepositRequest = async (req, res) => {
       }
     }
 
+    if (admin && admin.role !== 'superadmin') {
+      const allowedIdentifiers = await getAdminUserIdentifiers(admin._id);
+      const isOwner = transaction.adminId === admin._id.toString() || allowedIdentifiers.includes(transaction.createdBy);
+      if (!isOwner) {
+        return res.status(403).json({ message: 'Unauthorized: Transaction does not belong to your assigned users.' });
+      }
+    }
+
     if (transaction.transactionType !== 'deposit') {
       return res.status(400).json({ message: 'Invalid transaction type' });
     }
 
-    // Update transaction status
     transaction.status = 'Rejected';
     transaction.rejectedAt = new Date().toISOString();
-    transaction.processedBy = req.user?.id || 'admin';
+    transaction.processedBy = admin?.username || req.user?.id || 'admin';
     await transaction.save();
-
-    // No refund needed since balance was never deducted on request creation
 
     res.status(200).json({
       message: 'Deposit request rejected successfully',
@@ -1751,27 +2343,28 @@ exports.rejectDepositRequest = async (req, res) => {
 };
 
 // Approve withdrawal request
-// Approve withdrawal request
 exports.approveWithdrawalRequest = async (req, res) => {
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageTransactions === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage transactions.' });
+    }
+
     const { requestId } = req.params;
 
-    // Get the transaction
     let transaction = await Transaction.findById(requestId);
 
     if (!transaction) {
-      // Try to find transaction by idDocumentId field
       transaction = await Transaction.findOne({
         idDocumentId: requestId,
-        transactionType: 'withdrawal',
+        transactionType: { $in: ['withdrawal', 'wallet_withdrawal'] },
         status: 'Pending'
       });
 
       if (!transaction) {
-        // Try to find by transactionId field as well
         transaction = await Transaction.findOne({
           transactionId: requestId,
-          transactionType: 'withdrawal',
+          transactionType: { $in: ['withdrawal', 'wallet_withdrawal'] },
           status: 'Pending'
         });
 
@@ -1781,35 +2374,27 @@ exports.approveWithdrawalRequest = async (req, res) => {
       }
     }
 
-    if (transaction.transactionType !== 'withdrawal') {
-      return res.status(400).json({ message: 'Invalid transaction type' });
+    if (admin && admin.role !== 'superadmin') {
+      const allowedIdentifiers = await getAdminUserIdentifiers(admin._id);
+      const isOwner = transaction.adminId === admin._id.toString() || allowedIdentifiers.includes(transaction.createdBy);
+      if (!isOwner) {
+        return res.status(403).json({ message: 'Unauthorized: Transaction does not belong to your assigned users.' });
+      }
     }
 
-    // Update ID balance
+    // Update ID balance if it's an ID withdrawal
     if (transaction.idDocumentId) {
       const idDoc = await WebsiteId.findById(transaction.idDocumentId);
 
       if (idDoc) {
         const currentBalance = parseFloat(idDoc.balance) || 0;
-
-        // Validate and parse coinsToDeduct
         const coinsToDeduct = parseFloat(transaction.coinsToDeduct) || parseFloat(transaction.coinsNeeded) || parseFloat(transaction.amount) || 0;
 
-        if (coinsToDeduct === 0) {
-          console.warn('Warning: coinsToDeduct is 0 or invalid:', transaction.coinsToDeduct);
-        }
-
-        // Check if balance is sufficient
         if (currentBalance < coinsToDeduct) {
-          // Insufficient balance - update status and return error
           transaction.status = 'Insufficient Balance';
-          transaction.processedBy = req.user?.id || 'admin';
+          transaction.processedBy = admin?.username || req.user?.id || 'admin';
           transaction.processedAt = new Date().toISOString();
           await transaction.save();
-
-          console.log(`Insufficient balance for withdrawal:`);
-          console.log(`- Required: ${coinsToDeduct} coins`);
-          console.log(`- Available: ${currentBalance} coins`);
 
           return res.status(400).json({
             message: 'Insufficient balance',
@@ -1817,23 +2402,15 @@ exports.approveWithdrawalRequest = async (req, res) => {
           });
         }
 
-        // Balance is sufficient - proceed with deduction
         const newIdBalance = currentBalance - coinsToDeduct;
-
-        console.log(`Updating ID balance for withdrawal:`);
-        console.log(`- Current balance: ${currentBalance} coins`);
-        console.log(`- Coins to deduct: ${coinsToDeduct} coins`);
-        console.log(`- New balance: ${newIdBalance} coins`);
-
         idDoc.balance = newIdBalance;
         await idDoc.save();
       }
     }
 
-    // Update transaction status to Accepted (only if balance was sufficient)
     transaction.status = 'Accepted';
     transaction.acceptedAt = new Date().toISOString();
-    transaction.processedBy = req.user?.id || 'admin';
+    transaction.processedBy = admin?.username || req.user?.id || 'admin';
     await transaction.save();
 
     res.status(200).json({
@@ -1849,23 +2426,26 @@ exports.approveWithdrawalRequest = async (req, res) => {
 // Reject withdrawal request
 exports.rejectWithdrawalRequest = async (req, res) => {
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageTransactions === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage transactions.' });
+    }
+
     const { requestId } = req.params;
 
     let transaction = await Transaction.findById(requestId);
 
     if (!transaction) {
-      // Try to find transaction by idDocumentId field
       transaction = await Transaction.findOne({
         idDocumentId: requestId,
-        transactionType: 'withdrawal',
+        transactionType: { $in: ['withdrawal', 'wallet_withdrawal'] },
         status: 'Pending'
       });
 
       if (!transaction) {
-        // Try to find by transactionId field as well
         transaction = await Transaction.findOne({
           transactionId: requestId,
-          transactionType: 'withdrawal',
+          transactionType: { $in: ['withdrawal', 'wallet_withdrawal'] },
           status: 'Pending'
         });
 
@@ -1875,28 +2455,32 @@ exports.rejectWithdrawalRequest = async (req, res) => {
       }
     }
 
-    if (transaction.transactionType !== 'withdrawal') {
-      return res.status(400).json({ message: 'Invalid transaction type' });
+    if (admin && admin.role !== 'superadmin') {
+      const allowedIdentifiers = await getAdminUserIdentifiers(admin._id);
+      const isOwner = transaction.adminId === admin._id.toString() || allowedIdentifiers.includes(transaction.createdBy);
+      if (!isOwner) {
+        return res.status(403).json({ message: 'Unauthorized: Transaction does not belong to your assigned users.' });
+      }
     }
 
-    // Update transaction status
     transaction.status = 'Rejected';
     transaction.rejectedAt = new Date().toISOString();
-    transaction.processedBy = req.user?.id || 'admin';
+    transaction.processedBy = admin?.username || req.user?.id || 'admin';
     await transaction.save();
 
-    // Refund the amount to user balance
-    let user;
-    if (mongoose.Types.ObjectId.isValid(transaction.createdBy)) {
-      user = await User.findById(transaction.createdBy);
-    } else {
-      user = await User.findOne({ username: transaction.createdBy });
-    }
+    // Refund if wallet_withdrawal
+    if (transaction.transactionType === 'wallet_withdrawal') {
+      let user;
+      if (mongoose.Types.ObjectId.isValid(transaction.createdBy)) {
+        user = await User.findById(transaction.createdBy);
+      } else {
+        user = await User.findOne({ username: transaction.createdBy });
+      }
 
-    if (user) {
-      const newBalance = (user.balance || 0) + transaction.amount;
-      user.balance = newBalance;
-      await user.save();
+      if (user) {
+        user.balance = (user.balance || 0) + transaction.amount;
+        await user.save();
+      }
     }
 
     res.status(200).json({
@@ -1912,6 +2496,11 @@ exports.rejectWithdrawalRequest = async (req, res) => {
 // Approve close ID request
 exports.approveCloseIdRequest = async (req, res) => {
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageIdRequests === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage ID requests.' });
+    }
+
     const { requestId } = req.params;
 
     const closeRequest = await CloseRequest.findById(requestId);
@@ -1920,31 +2509,35 @@ exports.approveCloseIdRequest = async (req, res) => {
       return res.status(404).json({ message: 'Close request not found' });
     }
 
-    // Update close request status
+    if (admin && admin.role !== 'superadmin') {
+      const allowedIdentifiers = await getAdminUserIdentifiers(admin._id);
+      const isOwner = closeRequest.adminId === admin._id.toString() || allowedIdentifiers.includes(closeRequest.createdBy);
+      if (!isOwner) {
+        return res.status(403).json({ message: 'Unauthorized: Request does not belong to your assigned users.' });
+      }
+    }
+
     closeRequest.status = 'Accepted';
     closeRequest.processedAt = new Date().toISOString();
-    closeRequest.processedBy = req.user?.id || 'admin';
+    closeRequest.processedBy = admin?.username || req.user?.id || 'admin';
     await closeRequest.save();
 
-    // Update ID status to Closed
     const idDoc = await WebsiteId.findById(closeRequest.originalId);
 
     if (idDoc) {
       idDoc.status = 'Closed';
       await idDoc.save();
 
-      // Create a record in closedIds collection
       const closedId = new ClosedId({
         ...idDoc.toObject(),
-        originalId: closeRequest.originalId, // Add the required originalId field
+        originalId: closeRequest.originalId,
         closedAt: new Date().toISOString(),
-        closedBy: req.user?.id || 'admin',
-        closeRequestId: requestId
+        closedBy: admin?.username || req.user?.id || 'admin',
+        closeRequestId: requestId,
+        adminId: closeRequest.adminId || idDoc.adminId || (admin?._id?.toString() || '')
       });
 
       await closedId.save();
-
-      // Delete the original ID
       await WebsiteId.findByIdAndDelete(closeRequest.originalId);
     }
 
@@ -1961,6 +2554,11 @@ exports.approveCloseIdRequest = async (req, res) => {
 // Reject close ID request
 exports.rejectCloseIdRequest = async (req, res) => {
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageIdRequests === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage ID requests.' });
+    }
+
     const { requestId } = req.params;
 
     const closeRequest = await CloseRequest.findById(requestId);
@@ -1969,10 +2567,17 @@ exports.rejectCloseIdRequest = async (req, res) => {
       return res.status(404).json({ message: 'Close request not found' });
     }
 
-    // Update close request status
+    if (admin && admin.role !== 'superadmin') {
+      const allowedIdentifiers = await getAdminUserIdentifiers(admin._id);
+      const isOwner = closeRequest.adminId === admin._id.toString() || allowedIdentifiers.includes(closeRequest.createdBy);
+      if (!isOwner) {
+        return res.status(403).json({ message: 'Unauthorized: Request does not belong to your assigned users.' });
+      }
+    }
+
     closeRequest.status = 'Rejected';
     closeRequest.processedAt = new Date().toISOString();
-    closeRequest.processedBy = req.user?.id || 'admin';
+    closeRequest.processedBy = admin?.username || req.user?.id || 'admin';
     await closeRequest.save();
 
     res.status(200).json({
@@ -1988,6 +2593,11 @@ exports.rejectCloseIdRequest = async (req, res) => {
 // Approve password change request
 exports.approvePasswordChangeRequest = async (req, res) => {
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageIdRequests === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage ID requests.' });
+    }
+
     const { requestId } = req.params;
 
     const passwordRequest = await PasswordChangeRequest.findById(requestId);
@@ -1996,21 +2606,24 @@ exports.approvePasswordChangeRequest = async (req, res) => {
       return res.status(404).json({ message: 'Password change request not found' });
     }
 
-    // Update password request status
+    if (admin && admin.role !== 'superadmin') {
+      const allowedIdentifiers = await getAdminUserIdentifiers(admin._id);
+      const isOwner = passwordRequest.adminId === admin._id.toString() || allowedIdentifiers.includes(passwordRequest.createdBy);
+      if (!isOwner) {
+        return res.status(403).json({ message: 'Unauthorized: Request does not belong to your assigned users.' });
+      }
+    }
+
     passwordRequest.status = 'Accepted';
     passwordRequest.processedAt = new Date().toISOString();
-    passwordRequest.processedBy = req.user?.id || 'admin';
+    passwordRequest.processedBy = admin?.username || req.user?.id || 'admin';
     await passwordRequest.save();
 
-    // Update ID password
     const idDoc = await WebsiteId.findById(passwordRequest.idDocumentId);
 
-    if (idDoc) {
-      // In a real application, you might want to store the new password or notify the user
-      // For now, we'll just acknowledge the request was approved
-      // If the ID model has a password field, update it here
-      // idDoc.password = passwordRequest.newPassword;
-      // await idDoc.save();
+    if (idDoc && passwordRequest.newPassword) {
+      idDoc.password = passwordRequest.newPassword;
+      await idDoc.save();
     }
 
     res.status(200).json({
@@ -2026,6 +2639,11 @@ exports.approvePasswordChangeRequest = async (req, res) => {
 // Reject password change request
 exports.rejectPasswordChangeRequest = async (req, res) => {
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageIdRequests === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage ID requests.' });
+    }
+
     const { requestId } = req.params;
 
     const passwordRequest = await PasswordChangeRequest.findById(requestId);
@@ -2034,10 +2652,17 @@ exports.rejectPasswordChangeRequest = async (req, res) => {
       return res.status(404).json({ message: 'Password change request not found' });
     }
 
-    // Update password request status
+    if (admin && admin.role !== 'superadmin') {
+      const allowedIdentifiers = await getAdminUserIdentifiers(admin._id);
+      const isOwner = passwordRequest.adminId === admin._id.toString() || allowedIdentifiers.includes(passwordRequest.createdBy);
+      if (!isOwner) {
+        return res.status(403).json({ message: 'Unauthorized: Request does not belong to your assigned users.' });
+      }
+    }
+
     passwordRequest.status = 'Rejected';
     passwordRequest.processedAt = new Date().toISOString();
-    passwordRequest.processedBy = req.user?.id || 'admin';
+    passwordRequest.processedBy = admin?.username || req.user?.id || 'admin';
     await passwordRequest.save();
 
     res.status(200).json({
@@ -2072,6 +2697,11 @@ exports.getHomeBannerImages = async (req, res) => {
 // POST upload a new home banner image
 exports.addHomeBannerImage = async (req, res) => {
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageBanners === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage banners.' });
+    }
+
     if (!req.file) {
       return res.status(400).json({ message: 'No image file uploaded' });
     }
@@ -2097,8 +2727,12 @@ exports.addHomeBannerImage = async (req, res) => {
 // DELETE a home banner image (removes from MongoDB + Cloudinary)
 exports.deleteHomeBannerImage = async (req, res) => {
   const { id } = req.params;
-  console.log('DELETE /api/admin/home-banner called for id:', id);
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageBanners === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage banners.' });
+    }
+
     const image = await Carousel.findById(id);
     if (!image || image.type !== 'homeBanner') {
       return res.status(404).json({ message: 'Home banner image not found' });
@@ -2108,7 +2742,6 @@ exports.deleteHomeBannerImage = async (req, res) => {
     const uploadIndex = urlParts.indexOf('upload');
     if (uploadIndex !== -1) {
       const afterUpload = urlParts.slice(uploadIndex + 1);
-      // Skip optional version segment (e.g., v1234567890)
       const filtered = afterUpload[0]?.match(/^v\d+$/) ? afterUpload.slice(1) : afterUpload;
       const publicIdWithExt = filtered.join('/');
       const publicId = publicIdWithExt.replace(/\.[^/.]+$/, '');
@@ -2129,7 +2762,6 @@ exports.deleteHomeBannerImage = async (req, res) => {
 // --- SQUARE BANNER CAROUSEL ---
 
 exports.getSquareBannerImages = async (req, res) => {
-  console.log('GET /api/admin/square-banner called');
   try {
     const images = await Carousel.find({ type: 'squareBanner' }).sort({ createdAt: -1 });
     const formatted = images.map(img => ({
@@ -2145,8 +2777,12 @@ exports.getSquareBannerImages = async (req, res) => {
 };
 
 exports.addSquareBannerImage = async (req, res) => {
-  console.log('POST /api/admin/square-banner called');
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageBanners === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage banners.' });
+    }
+
     if (!req.file) {
       return res.status(400).json({ message: 'No image file uploaded' });
     }
@@ -2171,8 +2807,12 @@ exports.addSquareBannerImage = async (req, res) => {
 
 exports.deleteSquareBannerImage = async (req, res) => {
   const { id } = req.params;
-  console.log('DELETE /api/admin/square-banner called for id:', id);
   try {
+    const admin = await getAdminFromReq(req);
+    if (admin && admin.role !== 'superadmin' && admin.permissions?.canManageBanners === false) {
+      return res.status(403).json({ message: 'Permission denied: Cannot manage banners.' });
+    }
+
     const image = await Carousel.findById(id);
     if (!image || image.type !== 'squareBanner') {
       return res.status(404).json({ message: 'Square banner image not found' });

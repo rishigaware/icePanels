@@ -76,6 +76,10 @@ const idRequestSchema = new mongoose.Schema({
         type: String,
         default: null,
     },
+    adminId: {
+        type: String,
+        default: '',
+    },
 }, { timestamps: true });
 
 module.exports = mongoose.model('IdRequest', idRequestSchema);

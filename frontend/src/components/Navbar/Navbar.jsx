@@ -77,8 +77,9 @@ export default function Navbar() {
         component={Link}
         to={item.to}
         sx={{
-          minWidth: { xs: '50px', sm: '60px', md: '70px' },
-          padding: { xs: '4px 2px', sm: '6px 3px', md: '8px 4px' }
+          minWidth: 0,
+          flex: '1 1 0',
+          padding: { xs: '3px 1px', sm: '5px 2px', md: '8px 4px' }
         }}
       />
     )), []
@@ -91,42 +92,57 @@ export default function Navbar() {
       onChange={handleChange}
       showLabels
       sx={{
+        width: '100%',
+        minHeight: { xs: '52px', sm: '58px', md: '64px' },
+        height: 'auto',
+        padding: { xs: '4px 0 calc(4px + env(safe-area-inset-bottom, 0px)) 0', sm: '6px 0 calc(6px + env(safe-area-inset-bottom, 0px)) 0' },
+        display: 'flex',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        boxSizing: 'border-box',
+        overflow: 'hidden',
         '& .MuiBottomNavigationAction-root': {
-          minWidth: { xs: '60px', sm: '70px', md: '80px' },
-          padding: { xs: '6px 4px', sm: '8px 5px', md: '10px 6px' },
+          minWidth: 0,
+          maxWidth: 'none',
+          flex: '1 1 0',
+          padding: { xs: '3px 1px', sm: '5px 2px', md: '8px 4px' },
           color: 'rgba(255, 255, 255, 0.8)',
+          transition: 'all 0.2s ease',
           '&.Mui-selected': {
             color: '#ffffff',
             fontWeight: 700,
-            transform: 'scale(1.1)',
-            transition: 'all 0.3s ease'
+            transform: { xs: 'scale(1.04)', sm: 'scale(1.08)' },
+            transition: 'all 0.2s ease'
           }
         },
         '& .MuiBottomNavigationAction-label': {
-          fontSize: { xs: '0.7rem', sm: '0.8rem', md: '0.9rem' },
+          fontSize: { xs: '0.62rem', sm: '0.72rem', md: '0.85rem' },
           fontWeight: 600,
           color: 'rgba(255, 255, 255, 0.8)',
-          marginTop: '6px',
+          marginTop: '3px',
           display: 'block !important',
           opacity: 1,
           visibility: 'visible',
-          transition: 'all 0.3s ease'
+          lineHeight: 1.15,
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          transition: 'all 0.2s ease'
         },
         '& .Mui-selected .MuiBottomNavigationAction-label': {
           color: '#ffffff',
           fontWeight: 700,
           opacity: 1,
           visibility: 'visible',
-          fontSize: { xs: '0.8rem', sm: '0.9rem', md: '1rem' },
-          transform: 'scale(1.05)'
+          fontSize: { xs: '0.66rem', sm: '0.76rem', md: '0.9rem' },
         },
-        '& .MuiBottomNavigationAction-icon': {
-          fontSize: { xs: '1.5rem', sm: '1.7rem', md: '1.9rem' },
-          transition: 'all 0.3s ease'
+        '& .MuiBottomNavigationAction-icon, & .MuiSvgIcon-root': {
+          fontSize: { xs: '1.35rem', sm: '1.55rem', md: '1.75rem' },
+          transition: 'all 0.2s ease',
+          marginBottom: '1px'
         },
-        '& .Mui-selected .MuiBottomNavigationAction-icon': {
-          fontSize: { xs: '1.7rem', sm: '1.9rem', md: '2.1rem' },
-          transform: 'scale(1.1)'
+        '& .Mui-selected .MuiBottomNavigationAction-icon, & .Mui-selected .MuiSvgIcon-root': {
+          fontSize: { xs: '1.45rem', sm: '1.65rem', md: '1.85rem' },
         }
       }}
     >

@@ -34,7 +34,7 @@ const Login = () => {
           localStorage.setItem('user', JSON.stringify(data.user)); // Store user in localStorage
           // Redirect to the homepage ("/") after successful login
           // Redirect based on user role
-          if (data.user.role === 'admin') {
+          if (data.user.role === 'admin' || data.user.role === 'superadmin') {
             navigate('/admin/home');
           } else {
             navigate('/');

@@ -24,6 +24,8 @@ const Users = () => {
     const [showAddUserModal, setShowAddUserModal] = useState(false);
     const [userPaymentDetails, setUserPaymentDetails] = useState(null);
     const [loadingPaymentDetails, setLoadingPaymentDetails] = useState(false);
+    const [subAdmins, setSubAdmins] = useState([]);
+    const [selectedSubAdminFilter, setSelectedSubAdminFilter] = useState("all");
     const [addUserFormData, setAddUserFormData] = useState({
         name: '',
         username: '',
@@ -32,11 +34,21 @@ const Users = () => {
         confirmPassword: '',
         phoneNumber: '',
         agentCode: '',
+        targetAdminId: '',
     });
     const [addUserErrors, setAddUserErrors] = useState({});
     const [addingUser, setAddingUser] = useState(false);
     const toast = useRef(null);
     const { user, url } = useUser();
+
+    // Permission flags
+    const isSuperAdmin = user?.role === 'superadmin';
+    const canCreateUsers = isSuperAdmin || user?.permissions?.canCreateUsers !== false;
+    const canUpdateUserBalance = isSuperAdmin || user?.permissions?.canUpdateUserBalance !== false;
+    const canChangeUserPassword = isSuperAdmin || user?.permissions?.canChangeUserPassword !== false;
+    const canDeleteUsers = isSuperAdmin || user?.permissions?.canDeleteUsers !== false;
+
+    const adminHeaderId = user?.id || user?._id || user?.username || '';
 
     // Function to get user initials
     const getUserInitials = (name) => {
@@ -56,6 +68,22 @@ const Users = () => {
 
     // Validate phone number format
     const validatePhoneNumber = (phoneNumber) => /^\d{10}$/.test(phoneNumber);
+
+    // Fetch list of sub-admins (for superadmin only)
+    const fetchSubAdmins = async () => {
+        if (!isSuperAdmin) return;
+        try {
+            const response = await fetch(`${url}/api/admin/get-subadmins`, {
+                headers: { 'x-admin-id': adminHeaderId }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setSubAdmins(Array.isArray(data) ? data : []);
+            }
+        } catch (err) {
+            console.error("Error fetching sub-admins:", err);
+        }
+    };
 
     // Handle add user form input changes
     const handleAddUserChange = (e) => {
@@ -92,10 +120,23 @@ const Users = () => {
         if (Object.keys(newErrors).length === 0) {
             setAddingUser(true);
             try {
-                const response = await fetch(`${url}/api/user/signup`, {
+                const payload = {
+                    name: addUserFormData.name,
+                    username: addUserFormData.username,
+                    email: addUserFormData.email,
+                    password: addUserFormData.password,
+                    phoneNumber: addUserFormData.phoneNumber,
+                    agentCode: addUserFormData.agentCode,
+                    targetAdminId: isSuperAdmin ? addUserFormData.targetAdminId : adminHeaderId,
+                };
+
+                const response = await fetch(`${url}/api/admin/create-user`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(addUserFormData),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-admin-id': adminHeaderId,
+                    },
+                    body: JSON.stringify(payload),
                 });
 
                 if (response.ok) {
@@ -115,12 +156,13 @@ const Users = () => {
                         confirmPassword: '',
                         phoneNumber: '',
                         agentCode: '',
+                        targetAdminId: '',
                     });
                     setAddUserErrors({});
                     setShowAddUserModal(false);
                     
                     // Refresh users list
-                    fetchUsers();
+                    fetchUsers(selectedSubAdminFilter);
                 } else {
                     const errorData = await response.json();
                     toast.current.show({
@@ -155,19 +197,27 @@ const Users = () => {
             confirmPassword: '',
             phoneNumber: '',
             agentCode: '',
+            targetAdminId: '',
         });
         setAddUserErrors({});
     };
 
-    const fetchUsers = async () => {
+    const fetchUsers = async (subAdminFilter = selectedSubAdminFilter) => {
         setLoading(true);
         try {
-            const response = await fetch(`${url}/api/admin/get-all-users`);
+            const queryParam = isSuperAdmin && subAdminFilter && subAdminFilter !== 'all' 
+                ? `?filterAdminId=${subAdminFilter}` 
+                : '';
+            const response = await fetch(`${url}/api/admin/get-all-users${queryParam}`, {
+                headers: {
+                    'x-admin-id': adminHeaderId,
+                },
+            });
             if (!response.ok) {
                 throw new Error("Failed to fetch users");
             }
             const data = await response.json();
-            setUsers(data);
+            setUsers(Array.isArray(data) ? data : []);
             setCurrentPage(1); // Reset to first page when fetching new data
         } catch (error) {
             console.error("Error fetching users:", error);
@@ -186,6 +236,7 @@ const Users = () => {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-admin-id': adminHeaderId,
                 },
                 body: JSON.stringify({ balance: tempBalance }),
             });
@@ -235,6 +286,7 @@ const Users = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-admin-id': adminHeaderId,
                 },
                 body: JSON.stringify({ 
                     userId: selectedUser.id, 
@@ -277,6 +329,7 @@ const Users = () => {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-admin-id': adminHeaderId,
                 },
                 body: JSON.stringify({ 
                     agentCode: tempAgentCode 
@@ -317,7 +370,7 @@ const Users = () => {
     };
 
     const handleUserClick = async (user) => {
-        fetchUsers();
+        fetchUsers(selectedSubAdminFilter);
         const latestUser = users.find((u) => u.id === user.id);
         setSelectedUser(latestUser);
         setTempBalance(latestUser.balance || "0");
@@ -362,6 +415,9 @@ const Users = () => {
         try {
             const response = await fetch(`${url}/api/admin/delete-user/${userId}`, {
                 method: 'DELETE',
+                headers: {
+                    'x-admin-id': adminHeaderId,
+                },
             });
       
             if (!response.ok) {
@@ -388,10 +444,13 @@ const Users = () => {
         }
     };
 
-    // Fetch users on component mount
+    // Fetch users and subadmins on mount or filter change
     useEffect(() => {
-        fetchUsers();
-    }, []);
+        fetchUsers(selectedSubAdminFilter);
+        if (isSuperAdmin) {
+            fetchSubAdmins();
+        }
+    }, [selectedSubAdminFilter]);
 
     // Prevent background scroll when modals are open
     useEffect(() => {
@@ -525,14 +584,38 @@ const Users = () => {
                 <h2 className={styles.heading}>
                     <strong>Users Management</strong>
                 </h2>
-                <button 
-                    className={styles.addUserButton}
-                    onClick={() => setShowAddUserModal(true)}
-                >
-                    <AddIcon className={styles.addIcon} />
-                    Add User
-                </button>
+                {canCreateUsers && (
+                    <button 
+                        className={styles.addUserButton}
+                        onClick={() => setShowAddUserModal(true)}
+                    >
+                        <AddIcon className={styles.addIcon} />
+                        Add User
+                    </button>
+                )}
             </div>
+
+            {/* Superadmin Sub-admin Filter */}
+            {isSuperAdmin && (
+                <div className={styles.filterContainer}>
+                    <span className={styles.filterLabel}>Filter by Admin Master:</span>
+                    <select
+                        value={selectedSubAdminFilter}
+                        onChange={(e) => {
+                            setSelectedSubAdminFilter(e.target.value);
+                            setCurrentPage(1);
+                        }}
+                        className={styles.subAdminFilterSelect}
+                    >
+                        <option value="all">All Admin Masters</option>
+                        {subAdmins.map((sa) => (
+                            <option key={sa.id} value={sa.id}>
+                                {sa.username} {sa.name ? `(${sa.name})` : ''} - {sa.userCount || 0} users
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            )}
 
             {/* Search Container */}
             <div className={styles.searchContainer}>
@@ -590,16 +673,23 @@ const Users = () => {
                                     <p>
                                         <strong>Balance:</strong> ₹{(parseFloat(user.balance) || 0).toFixed(2)}
                                     </p>
+                                    {isSuperAdmin && (
+                                        <div className={styles.assignedAdminBadge}>
+                                            Admin: {user.assignedAdminUsername || 'Superadmin'}
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Delete Icon */}
-                                <DeleteOutlineIcon
-                                    className={styles.deleteIcon}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleDeleteUser(user.id, user.name || user.username);
-                                    }}
-                                />
+                                {canDeleteUsers && (
+                                    <DeleteOutlineIcon
+                                        className={styles.deleteIcon}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDeleteUser(user.id, user.name || user.username);
+                                        }}
+                                    />
+                                )}
                             </div>
                         </div>
                     ))
@@ -667,7 +757,10 @@ const Users = () => {
                             <p><strong>Username:</strong> {selectedUser.username || 'N/A'}</p>
                             <p><strong>Phone Number:</strong> {selectedUser.phoneNumber || 'N/A'}</p>
                             <p><strong>Agent Code:</strong> {selectedUser.agentCode || 'N/A'}</p>
-                             <p><strong>Last Updated Balance:</strong> ₹{(parseFloat(selectedUser.balance) || 0).toFixed(2)}</p>
+                            <p><strong>Last Updated Balance:</strong> ₹{(parseFloat(selectedUser.balance) || 0).toFixed(2)}</p>
+                            {isSuperAdmin && (
+                                <p><strong>Assigned Admin Master:</strong> {selectedUser.assignedAdminUsername || 'Superadmin'}</p>
+                            )}
                             
                             {/* Payment Details Section */}
                             <div className={styles.paymentDetailsSection}>
@@ -691,62 +784,66 @@ const Users = () => {
                             </div>
                             
                             {/* Update Balance Section */}
-                            <div className={styles.updateBalance}>
-                                <label>
-                                    <strong>Update Balance:</strong>
-                                </label>
-                                <input
-                                    type="number"
-                                    value={tempBalance}
-                                    onChange={(e) => setTempBalance(e.target.value)}
-                                    className={styles.balanceInput}
-                                    placeholder="Enter new balance amount"
-                                    min="0"
-                                    step="0.01"
-                                />
-                                <button 
-                                    onClick={handleUpdateBalance} 
-                                    className={styles.updateButton}
-                                    disabled={updatingBalance || tempBalance === ""}
-                                >
-                                    {updatingBalance ? (
-                                        <>
-                                            <PulseLoader color="#ffffff" size={8} />
-                                            <span style={{ marginLeft: '0.5rem' }}>Updating...</span>
-                                        </>
-                                    ) : (
-                                        'Update Balance'
-                                    )}
-                                </button>
-                            </div>
+                            {canUpdateUserBalance && (
+                                <div className={styles.updateBalance}>
+                                    <label>
+                                        <strong>Update Balance:</strong>
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={tempBalance}
+                                        onChange={(e) => setTempBalance(e.target.value)}
+                                        className={styles.balanceInput}
+                                        placeholder="Enter new balance amount"
+                                        min="0"
+                                        step="0.01"
+                                    />
+                                    <button 
+                                        onClick={handleUpdateBalance} 
+                                        className={styles.updateButton}
+                                        disabled={updatingBalance || tempBalance === ""}
+                                    >
+                                        {updatingBalance ? (
+                                            <>
+                                                <PulseLoader color="#ffffff" size={8} />
+                                                <span style={{ marginLeft: '0.5rem' }}>Updating...</span>
+                                            </>
+                                        ) : (
+                                            'Update Balance'
+                                        )}
+                                    </button>
+                                </div>
+                            )}
 
                             {/* Update Password Section */}
-                            <div className={styles.updatePassword}>
-                                <label>
-                                    <strong>Update Password:</strong>
-                                </label>
-                                <input
-                                    type="password"
-                                    value={tempPassword}
-                                    onChange={(e) => setTempPassword(e.target.value)}
-                                    className={styles.passwordInput}
-                                    placeholder="Enter new password"
-                                />
-                                <button 
-                                    onClick={handleUpdatePassword} 
-                                    className={styles.updateButton}
-                                    disabled={updatingPassword || tempPassword === ""}
-                                >
-                                    {updatingPassword ? (
-                                        <>
-                                            <PulseLoader color="#000000" size={8} />
-                                            <span style={{ marginLeft: '0.5rem' }}>Updating...</span>
-                                        </>
-                                    ) : (
-                                        'Update Password'
-                                    )}
-                                </button>
-                            </div>
+                            {canChangeUserPassword && (
+                                <div className={styles.updatePassword}>
+                                    <label>
+                                        <strong>Update Password:</strong>
+                                    </label>
+                                    <input
+                                        type="password"
+                                        value={tempPassword}
+                                        onChange={(e) => setTempPassword(e.target.value)}
+                                        className={styles.passwordInput}
+                                        placeholder="Enter new password"
+                                    />
+                                    <button 
+                                        onClick={handleUpdatePassword} 
+                                        className={styles.updateButton}
+                                        disabled={updatingPassword || tempPassword === ""}
+                                    >
+                                        {updatingPassword ? (
+                                            <>
+                                                <PulseLoader color="#000000" size={8} />
+                                                <span style={{ marginLeft: '0.5rem' }}>Updating...</span>
+                                            </>
+                                        ) : (
+                                            'Update Password'
+                                        )}
+                                    </button>
+                                </div>
+                            )}
 
                             {/* Update Agent Code Section */}
                             <div className={styles.updatePassword}>
@@ -793,6 +890,26 @@ const Users = () => {
                         </div>
                         
                         <form onSubmit={handleAddUserSubmit} className={styles.addUserForm}>
+                            {isSuperAdmin && (
+                                <div className={styles.formGroup}>
+                                    <label htmlFor="targetAdminId" className={styles.label}>Assign to Admin Master</label>
+                                    <select
+                                        id="targetAdminId"
+                                        name="targetAdminId"
+                                        value={addUserFormData.targetAdminId || ''}
+                                        onChange={handleAddUserChange}
+                                        className={styles.input}
+                                    >
+                                        <option value="">Superadmin (Self)</option>
+                                        {subAdmins.map((sa) => (
+                                            <option key={sa.id} value={sa.id}>
+                                                {sa.username} {sa.name ? `(${sa.name})` : ''}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
+
                             <div className={styles.formGroup}>
                                 <label htmlFor="name" className={styles.label}>Name</label>
                                 <input

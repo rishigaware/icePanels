@@ -26,7 +26,8 @@ const CreateId = () => {
     logo: "",
     category: "",
     coinRate: "",
-    minimumCoins: ""
+    minimumCoins: "",
+    targetAdminId: "",
   });
 
   const [websites, setWebsites] = useState([]);
@@ -49,8 +50,19 @@ const CreateId = () => {
   const [showCategoryModal, setShowCategoryModal] = useState(false); // State for Category management modal
   const [showDepositPopup, setShowDepositPopup] = useState(false); // State for deposit popup
   
+  // Sub-admin & Permission states
+  const isSuperAdmin = user?.role === 'superadmin';
+  const canAddWebsites = isSuperAdmin || user?.permissions?.canAddWebsites !== false;
+  const canEditWebsites = isSuperAdmin || user?.permissions?.canEditWebsites !== false;
+  const canDeleteWebsites = isSuperAdmin || user?.permissions?.canDeleteWebsites !== false;
+  const canManageCategories = isSuperAdmin || user?.permissions?.canManageCategories !== false;
+  const adminHeaderId = user?.id || user?._id || user?.username || '';
+
+  const [subAdmins, setSubAdmins] = useState([]);
+  const [selectedSubAdminFilter, setSelectedSubAdminFilter] = useState("all");
+
   // Category management states
-  const [newCategory, setNewCategory] = useState({ name: "" });
+  const [newCategory, setNewCategory] = useState({ name: "", targetAdminId: "" });
   const [editingCategory, setEditingCategory] = useState(null);
   const [isCategoryLoading, setIsCategoryLoading] = useState(false);
 
@@ -62,14 +74,37 @@ const CreateId = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5); // Show 5 websites per page
 
+  // Fetch sub-admins for superadmin
+  const fetchSubAdmins = async () => {
+    if (!isSuperAdmin) return;
+    try {
+      const response = await fetch(`${url}/api/admin/get-subadmins`, {
+        headers: { 'x-admin-id': adminHeaderId }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setSubAdmins(Array.isArray(data) ? data : []);
+      }
+    } catch (err) {
+      console.error("Error fetching sub-admins:", err);
+    }
+  };
+
   // Function to fetch websites data
-  const fetchWebsites = async () => {
+  const fetchWebsites = async (filterId = selectedSubAdminFilter) => {
     try {
       setIsLoading(true);
-      const response = await fetch(`${url}/api/admin/get-websites`);
+      const queryParam = isSuperAdmin && filterId && filterId !== 'all' 
+        ? `?filterAdminId=${filterId}` 
+        : '';
+      const response = await fetch(`${url}/api/admin/get-websites${queryParam}`, {
+        headers: {
+          'x-admin-id': adminHeaderId,
+        },
+      });
       const data = await response.json();
       if (response.ok) {
-        setWebsites(data);
+        setWebsites(Array.isArray(data) ? data : []);
       } else {
         console.error("Error fetching websites:", data);
       }
@@ -83,7 +118,11 @@ const CreateId = () => {
   // Function to fetch categories from websites
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`${url}/api/admin/get-all-categories`);
+      const response = await fetch(`${url}/api/admin/get-all-categories`, {
+        headers: {
+          'x-admin-id': adminHeaderId,
+        },
+      });
       const data = await response.json();
       if (response.ok) {
         setCategories(data.categories || []);
@@ -99,7 +138,11 @@ const CreateId = () => {
   const fetchCategoriesForDropdown = async () => {
     try {
       setIsCategoriesLoading(true);
-      const response = await fetch(`${url}/api/admin/get-all-categories`);
+      const response = await fetch(`${url}/api/admin/get-all-categories`, {
+        headers: {
+          'x-admin-id': adminHeaderId,
+        },
+      });
       const data = await response.json();
       if (response.ok) {
         setCategories(data.categories || []);
@@ -122,11 +165,14 @@ const CreateId = () => {
     }
   };
 
-  // Fetch data when the component loads
+  // Fetch data when the component loads or filter changes
   useEffect(() => {
-    fetchWebsites();
+    fetchWebsites(selectedSubAdminFilter);
     fetchCategoriesForDropdown();
-  }, []);
+    if (isSuperAdmin) {
+      fetchSubAdmins();
+    }
+  }, [selectedSubAdminFilter]);
 
   // Lock body scroll when any modal is open
   useEffect(() => {
@@ -263,8 +309,12 @@ const CreateId = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-admin-id": adminHeaderId,
         },
-        body: JSON.stringify(newCategory),
+        body: JSON.stringify({
+          name: newCategory.name,
+          targetAdminId: isSuperAdmin ? (newCategory.targetAdminId || '') : adminHeaderId,
+        }),
       });
 
       const data = await response.json();
@@ -275,7 +325,7 @@ const CreateId = () => {
           detail: 'Category added successfully',
           life: 2000,
         });
-        setNewCategory({ name: "" });
+        setNewCategory({ name: "", targetAdminId: "" });
         setCategorySearch(""); // Reset category search
         fetchCategoriesForDropdown(); // Refresh categories
       } else {
@@ -307,6 +357,7 @@ const CreateId = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "x-admin-id": adminHeaderId,
           },
           body: JSON.stringify({ categoryName }),
         });
@@ -407,9 +458,15 @@ const CreateId = () => {
       formData.append("coinRate", newWebsite.coinRate);
       formData.append("minimumCoins", newWebsite.minimumCoins);
       formData.append("logo", file);
+      if (isSuperAdmin && newWebsite.targetAdminId) {
+        formData.append("targetAdminId", newWebsite.targetAdminId);
+      }
 
       const response = await fetch(`${url}/api/admin/add-website`, {
         method: "POST",
+        headers: {
+          "x-admin-id": adminHeaderId,
+        },
         body: formData,
       });
 
@@ -422,13 +479,11 @@ const CreateId = () => {
           life: 1000,
         });
         setShowAddModal(false);
-        setNewWebsite({ id: "", website: "", url: "", adminUrl: "", category: "", logo: "", coinRate: "", minimumCoins: "" });
+        setNewWebsite({ id: "", website: "", url: "", adminUrl: "", category: "", logo: "", coinRate: "", minimumCoins: "", targetAdminId: "" });
         setFile(null);
-        fetchWebsites(); // Re-fetch the data after adding a new website
+        fetchWebsites(selectedSubAdminFilter); // Re-fetch the data after adding a new website
         fetchCategories(); // Also refresh categories
-        // console.log("Website added successfully:");
       } else {
-        
         console.error("Error adding website:");
         setErrorMessage(data.message || "An error occurred.");
       }
@@ -573,22 +628,30 @@ const CreateId = () => {
   const handleDelete = async (item) => {
     try {
       const itemId = item.id
-      // Replace with your API endpoint
       const response = await fetch(`${url}/api/admin/delete-website/${itemId}`, {
         method: 'DELETE',
+        headers: {
+          'x-admin-id': adminHeaderId,
+        },
       });
       
       if (response.ok) {
-        fetchWebsites();
+        fetchWebsites(selectedSubAdminFilter);
         fetchCategories(); // Also refresh categories
         toast.current.show({
-          severity: 'error',
+          severity: 'success',
           summary: 'Website deleted',
-          detail: 'Website deleted successfully:',
-          life: 1000,
+          detail: 'Website deleted successfully',
+          life: 2000,
         });
-        // console.log('Item deleted successfully');
       } else {
+        const errorData = await response.json().catch(() => ({}));
+        toast.current.show({
+          severity: 'error',
+          summary: 'Delete failed',
+          detail: errorData.message || 'Failed to delete website',
+          life: 2000,
+        });
         console.error('Failed to delete item');
       }
     } catch (error) {
@@ -618,6 +681,9 @@ const CreateId = () => {
 
       const response = await fetch(`${url}/api/admin/update-website/${editingWebsite.id}`, {
         method: "PUT",
+        headers: {
+          'x-admin-id': adminHeaderId,
+        },
         body: formData,
       });
 
@@ -633,7 +699,7 @@ const CreateId = () => {
         setEditingWebsite(null);
         setEditFile(null);
         setEditErrorMessage("");
-        fetchWebsites(); // Re-fetch the data after updating
+        fetchWebsites(selectedSubAdminFilter); // Re-fetch the data after updating
         fetchCategories(); // Also refresh categories
       } else {
         setEditErrorMessage(data.message || "An error occurred while updating.");
@@ -716,23 +782,60 @@ const CreateId = () => {
           <h2 className={styles.heading}>Websites Management</h2>
         </div>
         <div className={styles.headerActions}>
-          <button
-            className={styles.addWebsiteButton}
-            onClick={() => setShowAddModal(true)}
-          >
-            <FaPlus className={styles.btnIcon} />
-            <span>Add Website</span>
-          </button>
+          {canAddWebsites && (
+            <button
+              className={styles.addWebsiteButton}
+              onClick={() => setShowAddModal(true)}
+            >
+              <FaPlus className={styles.btnIcon} />
+              <span>Add Website</span>
+            </button>
+          )}
           
-          <button
-            className={styles.categoryManageButton}
-            onClick={() => setShowCategoryModal(true)}
-          >
-            <FaTools className={styles.btnIcon} />
-            <span>Manage Categories</span>
-          </button>
+          {canManageCategories && (
+            <button
+              className={styles.categoryManageButton}
+              onClick={() => setShowCategoryModal(true)}
+            >
+              <FaTools className={styles.btnIcon} />
+              <span>Manage Categories</span>
+            </button>
+          )}
         </div>
       </div>
+
+      {/* Superadmin Sub-admin Filter */}
+      {isSuperAdmin && (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem', flexWrap: 'wrap', padding: '0 1rem', width: '100%', boxSizing: 'border-box' }}>
+          <span style={{ color: '#ffcc00', fontWeight: '600', fontSize: '0.95rem', textAlign: 'center' }}>Filter Websites by Admin Master:</span>
+          <select
+            value={selectedSubAdminFilter}
+            onChange={(e) => {
+              setSelectedSubAdminFilter(e.target.value);
+              setCurrentPage(1);
+            }}
+            style={{
+              padding: '0.6rem 1.2rem',
+              borderRadius: '20px',
+              background: 'rgba(30, 30, 45, 0.95)',
+              color: '#fff',
+              border: '1.5px solid rgba(255, 204, 0, 0.5)',
+              outline: 'none',
+              cursor: 'pointer',
+              fontSize: '0.95rem',
+              maxWidth: '100%',
+              boxSizing: 'border-box'
+            }}
+          >
+            <option value="all">All Admin Masters</option>
+            {subAdmins.map((sa) => (
+              <option key={sa.id} value={sa.id}>
+                {sa.username} {sa.name ? `(${sa.name})` : ''}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div className={styles.searchSortWrapper}>
         {/* Search and Filter Section */}
@@ -844,24 +947,33 @@ const CreateId = () => {
                           {website.isActive ? 'Active' : 'Inactive'}
                         </span>
                       )}
+                      {isSuperAdmin && website.adminId && (
+                        <p style={{ fontSize: '12px', color: '#ffcc00', margin: '4px 0 0 0' }}>
+                          <strong>Admin Master:</strong> {subAdmins.find(s => s.id === website.adminId || s._id === website.adminId)?.username || (website.adminId === '1' ? 'Default' : website.adminId)}
+                        </p>
+                      )}
                     </div>
                     <div className={styles.websiteActions}>
-                      <button
-                        onClick={() => openEditModal(website)}
-                        className={styles.editButton}
-                        title="Edit Website"
-                        aria-label="Edit Website"
-                      >
-                        <FaEdit size={17} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(website)}
-                        className={styles.deleteButton}
-                        title="Delete Website"
-                        aria-label="Delete Website"
-                      >
-                        <FaTrash size={16} />
-                      </button>
+                      {canEditWebsites && (
+                        <button
+                          onClick={() => openEditModal(website)}
+                          className={styles.editButton}
+                          title="Edit Website"
+                          aria-label="Edit Website"
+                        >
+                          <FaEdit size={17} />
+                        </button>
+                      )}
+                      {canDeleteWebsites && (
+                        <button
+                          onClick={() => handleDelete(website)}
+                          className={styles.deleteButton}
+                          title="Delete Website"
+                          aria-label="Delete Website"
+                        >
+                          <FaTrash size={16} />
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -996,6 +1108,28 @@ const CreateId = () => {
             </div>
             <div className={styles.modalBody}>
               <div className={styles.formContainer}>
+                {isSuperAdmin && (
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup} style={{ width: '100%' }}>
+                      <label htmlFor="targetAdminId">Assign Website to Admin Master</label>
+                      <select
+                        id="targetAdminId"
+                        value={newWebsite.targetAdminId || ''}
+                        onChange={(e) =>
+                          setNewWebsite({ ...newWebsite, targetAdminId: e.target.value })
+                        }
+                        className={styles.selectField}
+                      >
+                        <option value="">Self (Superadmin - All)</option>
+                        {subAdmins.map((sa) => (
+                          <option key={sa.id} value={sa.id}>
+                            {sa.username} {sa.name ? `(${sa.name})` : ''}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                )}
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
                     <label htmlFor="websiteName">Website Name</label>
@@ -1314,6 +1448,26 @@ const CreateId = () => {
               {/* Add New Category Section */}
               <div className={styles.addCategorySection}>
                 <h3>Add New Category</h3>
+                {isSuperAdmin && (
+                  <div style={{ marginBottom: '12px' }}>
+                    <label style={{ display: 'block', fontSize: '13px', color: '#ffcc00', marginBottom: '5px', fontWeight: '600' }}>
+                      Assign Category to Admin Master:
+                    </label>
+                    <select
+                      value={newCategory.targetAdminId || ''}
+                      onChange={(e) => setNewCategory({ ...newCategory, targetAdminId: e.target.value })}
+                      className={styles.selectField}
+                      style={{ width: '100%', marginBottom: '10px' }}
+                    >
+                      <option value="">Self (Superadmin)</option>
+                      {subAdmins.map((sa) => (
+                        <option key={sa.id} value={sa.id}>
+                          {sa.username} {sa.name ? `(${sa.name})` : ''}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
                 <input
                   type="text"
                   placeholder="Enter category name"

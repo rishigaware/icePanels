@@ -18,10 +18,16 @@ const Transactions = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [transactionsPerPage] = useState(10);
 
+  const [subAdmins, setSubAdmins] = useState([]);
+  const [selectedSubAdminFilter, setSelectedSubAdminFilter] = useState("all");
+
   const navigate = useNavigate();
   const { user, url } = useUser();
   const toast = useRef(null); // Add a reference for Toast
 
+  const isSuperAdmin = user?.role === 'superadmin';
+  const canManageTransactions = isSuperAdmin || user?.permissions?.canManageTransactions !== false;
+  const adminHeaderId = user?.id || user?._id || user?.username || '';
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => {
@@ -29,8 +35,24 @@ const Transactions = () => {
     setSelectedImage(null); // Clear selected image when modal closes
   };
 
+  // Fetch sub-admins for superadmin
+  const fetchSubAdmins = async () => {
+    if (!isSuperAdmin) return;
+    try {
+      const response = await fetch(`${url}/api/admin/get-subadmins`, {
+        headers: { 'x-admin-id': adminHeaderId }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setSubAdmins(Array.isArray(data) ? data : []);
+      }
+    } catch (err) {
+      console.error("Error fetching sub-admins:", err);
+    }
+  };
+
   // Fetch transactions from API
-  const fetchTransactions = async () => {
+  const fetchTransactions = async (filterId = selectedSubAdminFilter) => {
     if (!user || !user.id) {
       setError("User ID is not available");
       setLoading(false);
@@ -39,16 +61,22 @@ const Transactions = () => {
 
     try {
       setLoading(true);
-      const response = await fetch(`${url}/api/admin/admin-transaction`);
+      const queryParam = isSuperAdmin && filterId && filterId !== 'all'
+        ? `?filterAdminId=${filterId}`
+        : '';
+      const response = await fetch(`${url}/api/admin/admin-transaction${queryParam}`, {
+        headers: {
+          'x-admin-id': adminHeaderId,
+        },
+      });
 
       if (!response.ok) {
         throw new Error(`Failed to fetch transactions: ${response.status} - ${response.statusText}`);
       }
 
       const data = await response.json();
-      // console.log(data);
       // Sort transactions by creation date (newest first)
-      const sortedTransactions = data.sort(
+      const sortedTransactions = (Array.isArray(data) ? data : []).sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
 
@@ -67,6 +95,9 @@ const Transactions = () => {
     try {
       const response = await fetch(`${url}/api/admin/accept-transaction/${txnId}`, {
         method: 'PATCH',
+        headers: {
+          'x-admin-id': adminHeaderId,
+        },
       });
 
       if (!response.ok) {
@@ -76,7 +107,7 @@ const Transactions = () => {
       toast.current.show({
         severity: 'success',
         summary: 'Accepted',
-        detail: 'ID created successfully:',
+        detail: 'Transaction accepted successfully',
         life: 1000,
       });
       const updatedTxn = await response.json();
@@ -102,6 +133,9 @@ const Transactions = () => {
     try {
       const response = await fetch(`${url}/api/admin/reject-transaction/${txnId}`, {
         method: 'PATCH',
+        headers: {
+          'x-admin-id': adminHeaderId,
+        },
       });
 
       if (!response.ok) {
@@ -132,7 +166,7 @@ const Transactions = () => {
     }
   };
 
-  // Effect to fetch transactions when user changes
+  // Effect to fetch transactions when user or filter changes
   useEffect(() => {
     if (!user) {
       setLoading(false);
@@ -140,8 +174,11 @@ const Transactions = () => {
       return;
     }
 
-    fetchTransactions();
-  }, [user?.id]); // Only depend on user ID, not the entire user object
+    fetchTransactions(selectedSubAdminFilter);
+    if (isSuperAdmin) {
+      fetchSubAdmins();
+    }
+  }, [user?.id, selectedSubAdminFilter]);
 
   // Pagination logic
   const indexOfLastTransaction = currentPage * transactionsPerPage;
@@ -244,6 +281,39 @@ const Transactions = () => {
     <div className={styles.transactionHistory}>
       <TopNavbar />
       <h3 className={styles.heading}><strong>Transaction History</strong></h3>
+
+      {/* Superadmin Sub-admin Filter */}
+      {isSuperAdmin && (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem', flexWrap: 'wrap', padding: '0 1rem', width: '100%', boxSizing: 'border-box' }}>
+          <span style={{ color: '#ffcc00', fontWeight: '600', fontSize: '0.95rem', textAlign: 'center' }}>Filter by Admin Master:</span>
+          <select
+            value={selectedSubAdminFilter}
+            onChange={(e) => {
+              setSelectedSubAdminFilter(e.target.value);
+              setCurrentPage(1);
+            }}
+            style={{
+              padding: '0.6rem 1.2rem',
+              borderRadius: '20px',
+              background: 'rgba(30, 30, 45, 0.95)',
+              color: '#fff',
+              border: '1.5px solid rgba(255, 204, 0, 0.5)',
+              outline: 'none',
+              cursor: 'pointer',
+              fontSize: '0.95rem',
+              maxWidth: '100%',
+              boxSizing: 'border-box'
+            }}
+          >
+            <option value="all">All Admin Masters</option>
+            {subAdmins.map((sa) => (
+              <option key={sa.id} value={sa.id}>
+                {sa.username} {sa.name ? `(${sa.name})` : ''}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       
       {/* Transactions Count */}
       <div className={styles.transactionsCount}>
@@ -290,20 +360,24 @@ const Transactions = () => {
               <div className={styles.column}>
                 {/* Action Buttons */}
                 {txn.status === 'Pending' && !(txn.transactionType === 'deposit' || txn.description?.includes('ID Creation Request') || txn.paymentMethod === 'ID Creation Request' || txn.transactionType === 'withdrawal' || txn.transactionType === 'close_id' || txn.transactionType === 'password_change') ? (
-                  <div className={styles.actions}>
-                    <button
-                      className={styles.acceptButton}
-                      onClick={() => acceptTransaction(txn.id)}
-                    >
-                      <FaCheck /> Accept
-                    </button>
-                    <button
-                      className={styles.deleteButton}
-                      onClick={() => rejectTransaction(txn.id)}
-                    >
-                      <FaTrash /> Reject
-                    </button>
-                  </div>
+                  canManageTransactions ? (
+                    <div className={styles.actions}>
+                      <button
+                        className={styles.acceptButton}
+                        onClick={() => acceptTransaction(txn.id)}
+                      >
+                        <FaCheck /> Accept
+                      </button>
+                      <button
+                        className={styles.deleteButton}
+                        onClick={() => rejectTransaction(txn.id)}
+                      >
+                        <FaTrash /> Reject
+                      </button>
+                    </div>
+                  ) : (
+                    <span style={{ color: '#888', fontSize: '12px' }}>View Only</span>
+                  )
                 ) : (
                   (txn.description?.includes('ID Creation Request') || txn.paymentMethod === 'ID Creation Request') ? (
                     <div className={styles.actions}>

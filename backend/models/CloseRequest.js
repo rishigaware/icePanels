@@ -23,6 +23,10 @@ const closeRequestSchema = new mongoose.Schema({
     websiteName: String,
     websiteUrl: String,
     username: String,
+    adminId: {
+        type: String,
+        default: '',
+    },
 }, { timestamps: true });
 
 module.exports = mongoose.model('CloseRequest', closeRequestSchema);

@@ -9,10 +9,23 @@ const ClosedId = require('../models/ClosedId');
 const PasswordChangeRequest = require('../models/PasswordChangeRequest');
 const AdminAccount = require('../models/AdminAccount');
 const bcrypt = require('bcrypt');
-const { uploadUserDeposite } = require('../config/multerConfig');
 const mongoose = require('mongoose');
 
-
+const getUserAdminId = async (userIdentifier) => {
+  if (!userIdentifier) return '';
+  try {
+    let user = null;
+    if (mongoose.Types.ObjectId.isValid(userIdentifier)) {
+      user = await User.findById(userIdentifier);
+    }
+    if (!user) {
+      user = await User.findOne({ username: userIdentifier });
+    }
+    return user?.assignedAdmin ? user.assignedAdmin.toString() : '';
+  } catch (e) {
+    return '';
+  }
+};
 
 exports.getUserByUsername = async (req, res) => {
   try {
@@ -57,40 +70,11 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-// Add a new user (Signup)
-// Add a new user (Signup)
+// Add a new user (Signup) - Restricted to admin creation
 exports.addUser = async (req, res) => {
-  const { name, phoneNumber, email, password, username, agentCode } = req.body;
-
-  if (!name || !phoneNumber || !email || !password || !username) {
-    return res.status(400).json({ message: 'All fields are required.' });
-  }
-
-  try {
-    const existingUser = await User.findOne({ username });
-
-    if (existingUser) {
-      return res.status(400).json({ message: 'Username is already taken.' });
-    }
-
-    const newUser = new User({
-      name,
-      phoneNumber,
-      email: email.toLowerCase(),
-      password, // NOTE: Hash the password before saving in production
-      username,
-      agentCode: agentCode || '',
-      balance: 0,
-      role: 'user',
-    });
-
-    await newUser.save();
-
-    res.status(201).json({ message: 'User signed up successfully', user: { id: newUser._id, ...newUser.toObject() } });
-  } catch (error) {
-    console.error('Error details:', error);
-    res.status(500).json({ message: 'Error adding user', error: error.message });
-  }
+  return res.status(403).json({
+    message: 'Public registration is restricted. Please contact an administrator to create your account.'
+  });
 };
 
 
@@ -218,6 +202,7 @@ exports.createTransaction = async (req, res) => {
   try {
     // Generate a unique transaction ID
     const transactionId = `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const adminId = await getUserAdminId(createdBy);
     // Prepare the transaction data
     const transactionData = {
       description: "Payment For Deposite",
@@ -228,6 +213,7 @@ exports.createTransaction = async (req, res) => {
       status: "Pending",           // Default status
       amount,
       createdBy,
+      adminId,
       imagePath: imageFile.path,   // Store the path to the uploaded file
     };
 
@@ -270,6 +256,7 @@ exports.createTransactionById = async (req, res) => {
 
   try {
     const transactionId = `txn_${Date.now()}`;
+    const adminId = await getUserAdminId(createdBy);
 
     const transactionData = {
       description: `Payment For Deposit - ${websiteName} (${username})`,
@@ -280,6 +267,7 @@ exports.createTransactionById = async (req, res) => {
       status: "Pending",
       amount,
       createdBy: createdBy,
+      adminId,
     };
 
     const transaction = new Transaction(transactionData);
@@ -332,6 +320,7 @@ exports.createWithdrawalTransactionBy = async (req, res) => {
     }
 
     const transactionId = `withdrawal_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const adminId = await getUserAdminId(createdBy);
 
     const transactionData = {
       description: `Withdrawal Request - ${websiteName} (${username}) - ₹${amount} (${coinsNeeded} coins)`,
@@ -350,6 +339,7 @@ exports.createWithdrawalTransactionBy = async (req, res) => {
       username,
       idDocumentId: id,
       createdBy,
+      adminId,
       imagePath: 'No path',
       transactionType: 'withdrawal'
     };
@@ -371,7 +361,6 @@ exports.createWithdrawalTransactionBy = async (req, res) => {
   }
 };
 
-// Create wallet withdrawal request
 // Create wallet withdrawal request
 exports.createWalletWithdrawal = async (req, res) => {
   try {
@@ -408,6 +397,7 @@ exports.createWalletWithdrawal = async (req, res) => {
     }
 
     const transactionId = `wallet_withdrawal_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const adminId = user.assignedAdmin ? user.assignedAdmin.toString() : '';
 
     const transactionData = {
       description: `Wallet Withdrawal Request - ₹${amount} via ${withdrawalMethod === 'upi' ? 'UPI' : 'Bank Transfer'}`,
@@ -420,6 +410,7 @@ exports.createWalletWithdrawal = async (req, res) => {
       withdrawalMethod,
       withdrawalDetails: withdrawalDetails,
       createdBy,
+      adminId,
       imagePath: 'No path',
       transactionType: 'wallet_withdrawal'
     };
@@ -479,6 +470,7 @@ exports.createId = async (req, res) => {
     }
 
     const createdAt = new Date();
+    const adminId = user.assignedAdmin ? user.assignedAdmin.toString() : '';
 
     const newWebsite = new WebsiteId({
       websiteName,
@@ -492,6 +484,7 @@ exports.createId = async (req, res) => {
       coinRate,
       minimumCoins,
       createdAt: createdAt.toISOString(),
+      adminId,
     });
 
     await newWebsite.save();
@@ -665,6 +658,8 @@ exports.createIdRequest = async (req, res) => {
 
     const createdAt = new Date();
 
+    const adminId = user.assignedAdmin ? user.assignedAdmin.toString() : '';
+
     const idRequest = new IdRequest({
       websiteName,
       websiteUrl,
@@ -672,6 +667,7 @@ exports.createIdRequest = async (req, res) => {
       username,
       imgUrl,
       createdBy,
+      adminId,
       coinAmount: parseFloat(coinAmount),
       convertedCoins: parseFloat(convertedCoins),
       coinRate: parseFloat(coinRate),
@@ -700,6 +696,7 @@ exports.createIdRequest = async (req, res) => {
       status: "Pending", // Transaction is pending admin approval
       amount: parseFloat(convertedCoins), // Store the deducted amount (Rupees)
       createdBy: createdBy,
+      adminId,
       idRequestId: idRequest._id.toString(),
       websiteName: websiteName,
       websiteUrl: websiteUrl,
@@ -748,9 +745,12 @@ exports.closeId = async (req, res) => {
       return res.status(403).json({ message: 'You are not authorized to close this ID.' });
     }
 
+    const adminId = idDoc.adminId || await getUserAdminId(createdBy);
+
     const closeRequest = new CloseRequest({
       originalId: id,
       createdBy,
+      adminId,
       reason: reason || 'User requested to close ID',
       status: 'Pending',
       createdAt: new Date().toISOString(),
@@ -861,9 +861,12 @@ exports.requestPasswordChange = async (req, res) => {
       return res.status(403).json({ message: 'You are not authorized to change password for this ID.' });
     }
 
+    const adminId = idDoc.adminId || await getUserAdminId(createdBy);
+
     const passwordChangeRequest = new PasswordChangeRequest({
       originalId: id,
       createdBy,
+      adminId,
       newPassword,
       reason: reason || 'User requested password change',
       status: 'Pending',
@@ -915,24 +918,50 @@ exports.changeIdPassword = async (req, res) => {
 };
 
 
-// Get Account Details (Record where id == 1)
-// Get Account Details (Record where id == 1)
+// Get Account Details (Lookup per assigned admin with fallback)
 exports.getAccountDetailsDeposit = async (req, res) => {
   try {
-    const userId = "1";
+    const userId = req.query.userId;
+    let targetAdminId = null;
 
-    const userAccount = await AdminAccount.findOne({ userId });
+    if (userId) {
+      let user = null;
+      if (mongoose.Types.ObjectId.isValid(userId)) {
+        user = await User.findById(userId);
+      } else {
+        user = await User.findOne({ username: userId });
+      }
+
+      if (user && user.assignedAdmin) {
+        targetAdminId = user.assignedAdmin.toString();
+      }
+    }
+
+    let userAccount = null;
+    if (targetAdminId) {
+      userAccount = await AdminAccount.findOne({ userId: targetAdminId });
+    }
 
     if (!userAccount) {
-      return res.status(404).json({ message: "No account found with id = 1" });
+      userAccount = (await AdminAccount.findOne({ userId: "1" })) || (await AdminAccount.findOne());
+    }
+
+    if (!userAccount) {
+      return res.status(200).json({
+        accountNumber: "1234567890",
+        accountHolderName: "Admin",
+        ifscCode: "ABCD0123456",
+        bankName: "XYZ Bank",
+        upiId: "sample@upi",
+      });
     }
 
     return res.status(200).json({
-      accountNumber: userAccount.accountNumber,
-      accountHolderName: userAccount.accountHolderName,
-      ifscCode: userAccount.ifscCode,
-      bankName: userAccount.bankName,
-      upiId: userAccount.upiId,
+      accountNumber: userAccount.accountNumber || '',
+      accountHolderName: userAccount.accountHolderName || '',
+      ifscCode: userAccount.ifscCode || '',
+      bankName: userAccount.bankName || '',
+      upiId: userAccount.upiId || '',
     });
   } catch (error) {
     console.error('Error fetching account details:', error);
@@ -1214,6 +1243,7 @@ exports.createNewDepositTransaction = async (req, res) => {
     }
 
     const transactionId = `DEP_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const adminId = user.assignedAdmin ? user.assignedAdmin.toString() : '';
 
     const transactionData = {
       description: `Deposit Request - ${websiteName} (${username}) - ₹${amount} (${coinsToReceive} coins)`,
@@ -1231,6 +1261,7 @@ exports.createNewDepositTransaction = async (req, res) => {
       username,
       idDocumentId: id,
       createdBy,
+      adminId,
       imagePath: 'No image required for deposit',
       transactionType: 'deposit'
     };

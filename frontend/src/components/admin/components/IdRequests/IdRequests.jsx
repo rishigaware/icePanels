@@ -9,7 +9,7 @@ import TopNavbar from '../Navbar/TopNavbar';
 import { Chip } from '@mui/material';
 
 const IdRequests = () => {
-  const { url } = useUser();
+  const { user, url } = useUser();
   const toast = useRef(null);
   const [idRequests, setIdRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -17,23 +17,56 @@ const IdRequests = () => {
   const [showModal, setShowModal] = useState(false);
   const [adminNotes, setAdminNotes] = useState('');
   const [actionLoading, setActionLoading] = useState(null);
+
+  const isSuperAdmin = user?.role === 'superadmin';
+  const canManageIdRequests = isSuperAdmin || user?.permissions?.canManageIdRequests !== false;
+  const adminHeaderId = user?.id || user?._id || user?.username || '';
+
+  const [subAdmins, setSubAdmins] = useState([]);
+  const [selectedSubAdminFilter, setSelectedSubAdminFilter] = useState("all");
   
   // Pagination state
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  useEffect(() => {
-    fetchIdRequests();
-  }, []);
+  // Fetch sub-admins for superadmin
+  const fetchSubAdmins = async () => {
+    if (!isSuperAdmin) return;
+    try {
+      const response = await fetch(`${url}/api/admin/get-subadmins`, {
+        headers: { 'x-admin-id': adminHeaderId }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setSubAdmins(Array.isArray(data) ? data : []);
+      }
+    } catch (err) {
+      console.error("Error fetching sub-admins:", err);
+    }
+  };
 
-  const fetchIdRequests = async () => {
+  useEffect(() => {
+    fetchIdRequests(selectedSubAdminFilter);
+    if (isSuperAdmin) {
+      fetchSubAdmins();
+    }
+  }, [selectedSubAdminFilter]);
+
+  const fetchIdRequests = async (filterId = selectedSubAdminFilter) => {
     try {
       setIsLoading(true);
-      const response = await fetch(`${url}/api/admin/id-requests`);
+      const queryParam = isSuperAdmin && filterId && filterId !== 'all'
+        ? `?filterAdminId=${filterId}`
+        : '';
+      const response = await fetch(`${url}/api/admin/id-requests${queryParam}`, {
+        headers: {
+          'x-admin-id': adminHeaderId,
+        },
+      });
       const data = await response.json();
       
       if (response.ok) {
-        setIdRequests(data);
+        setIdRequests(Array.isArray(data) ? data : []);
       } else {
         console.error('Error fetching ID requests:', data);
         toast.current.show({
@@ -75,12 +108,13 @@ const IdRequests = () => {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+          'x-admin-id': adminHeaderId,
         },
         body: JSON.stringify({
           requestId: requestId,
           status: status,
           adminNotes: adminNotes,
-          processedBy: 'admin'
+          processedBy: user?.username || 'admin',
         }),
       });
 
@@ -93,7 +127,7 @@ const IdRequests = () => {
           detail: `ID request ${status.toLowerCase()} successfully`,
           life: 3000,
         });
-        fetchIdRequests();
+        fetchIdRequests(selectedSubAdminFilter);
         handleCloseModal();
       } else {
         console.error('Error updating status:', data);
@@ -129,6 +163,12 @@ const IdRequests = () => {
         color={color} 
         size="small" 
         variant={status === 'Pending' ? 'outlined' : 'filled'}
+        sx={{
+          fontWeight: 700,
+          fontSize: '0.72rem',
+          height: '24px',
+          letterSpacing: '0.3px',
+        }}
       />
     );
   };
@@ -170,11 +210,34 @@ const IdRequests = () => {
 
   return (
     <div className={styles.container}>
+      <Toast ref={toast} />
       <TopNavbar />
-      <div className={styles.header} style={{ marginTop: '20px', marginBottom: '20px' }}>
+      <div className={styles.header}>
         <h1 className={styles.title}>ID Creation Requests</h1>
         <p className={styles.subtitle}>Manage user ID creation requests with coin conversion</p>
       </div>
+
+      {/* Superadmin Sub-admin Filter */}
+      {isSuperAdmin && (
+        <div className={styles.filterContainer}>
+          <span className={styles.filterLabel}>Filter by Admin Master:</span>
+          <select
+            value={selectedSubAdminFilter}
+            onChange={(e) => {
+              setSelectedSubAdminFilter(e.target.value);
+              setPage(0);
+            }}
+            className={styles.filterSelect}
+          >
+            <option value="all">All Admin Masters</option>
+            {subAdmins.map((sa) => (
+              <option key={sa.id} value={sa.id}>
+                {sa.username} {sa.name ? `(${sa.name})` : ''}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {idRequests.length === 0 ? (
         <div className={styles.emptyState}>
@@ -262,7 +325,7 @@ const IdRequests = () => {
                         >
                           <FaEye />
                         </button>
-                        {request.status === 'Pending' && (
+                        {request.status === 'Pending' && canManageIdRequests && (
                           <>
                             <button
                               className={styles.tableAcceptBtn}
@@ -298,25 +361,20 @@ const IdRequests = () => {
             </table>
           </div>
 
-          {/* Card View for Mobile */}
+          {/* Card View for Mobile & Tablets */}
           <div className={styles.cardView}>
             <div className={styles.requestsGrid}>
               {paginatedRequests.map((request, index) => (
                 <div key={request.id} className={styles.requestCard}>
-                  {/* Serial Number Badge */}
-                  <div className={styles.serialBadge}>
-                    #{page * rowsPerPage + index + 1}
-                  </div>
-
                   {/* Card Header */}
                   <div className={styles.cardHeader}>
-                    <div className={styles.websiteInfo}>
+                    <div className={styles.cardHeaderLeft}>
                       <img
                         src={getImageUrl(request.imgUrl, url)}
                         alt={request.websiteName}
                         className={styles.websiteLogo}
                       />
-                      <div>
+                      <div className={styles.websiteDetails}>
                         <h3 className={styles.websiteName}>{request.websiteName}</h3>
                         <a 
                           href={request.websiteUrl} 
@@ -328,7 +386,12 @@ const IdRequests = () => {
                         </a>
                       </div>
                     </div>
-                    {getStatusChip(request.status)}
+                    <div className={styles.cardHeaderRight}>
+                      <span className={styles.serialBadge}>
+                        #{page * rowsPerPage + index + 1}
+                      </span>
+                      {getStatusChip(request.status)}
+                    </div>
                   </div>
 
                   {/* Card Body */}
@@ -336,14 +399,14 @@ const IdRequests = () => {
                     <div className={styles.infoRow}>
                       <div className={styles.infoItem}>
                         <FaUser className={styles.infoIcon} />
-                        <div>
+                        <div className={styles.infoContent}>
                           <span className={styles.infoLabel}>Username</span>
                           <span className={styles.infoValue}>{request.username}</span>
                         </div>
                       </div>
                       <div className={styles.infoItem}>
                         <FaUser className={styles.infoIcon} />
-                        <div>
+                        <div className={styles.infoContent}>
                           <span className={styles.infoLabel}>Created By</span>
                           <span className={styles.infoValue}>{request.createdBy}</span>
                         </div>
@@ -353,16 +416,16 @@ const IdRequests = () => {
                     <div className={styles.infoRow}>
                       <div className={styles.infoItem}>
                         <FaRupeeSign className={styles.infoIcon} />
-                        <div>
+                        <div className={styles.infoContent}>
                           <span className={styles.infoLabel}>Amount</span>
-                          <span className={styles.infoValue} style={{ color: '#28a745', fontWeight: 'bold' }}>
+                          <span className={`${styles.infoValue} ${styles.amountValue}`}>
                             ₹{request.convertedCoins}
                           </span>
                         </div>
                       </div>
                       <div className={styles.infoItem}>
                         <FaCoins className={styles.infoIcon} style={{ color: 'var(--warning-color)' }} />
-                        <div>
+                        <div className={styles.infoContent}>
                           <span className={styles.infoLabel}>Coins</span>
                           <span className={styles.infoValue}>{request.coinAmount}</span>
                         </div>
@@ -372,7 +435,7 @@ const IdRequests = () => {
                     <div className={styles.infoRow}>
                       <div className={styles.infoItem}>
                         <FaClock className={styles.infoIcon} />
-                        <div>
+                        <div className={styles.infoContent}>
                           <span className={styles.infoLabel}>Created</span>
                           <span className={styles.infoValue}>{formatDate(request.createdAt)}</span>
                         </div>
@@ -380,7 +443,7 @@ const IdRequests = () => {
                       {request.processedAt && (
                         <div className={styles.infoItem}>
                           <FaClock className={styles.infoIcon} />
-                          <div>
+                          <div className={styles.infoContent}>
                             <span className={styles.infoLabel}>Processed</span>
                             <span className={styles.infoValue}>{formatDate(request.processedAt)}</span>
                           </div>
@@ -395,10 +458,10 @@ const IdRequests = () => {
                       className={styles.viewButton}
                       onClick={() => handleViewDetails(request)}
                     >
-                      <FaEye /> View
+                      <FaEye className={styles.buttonIcon} /> View
                     </button>
                     
-                    {request.status === 'Pending' && (
+                    {request.status === 'Pending' && canManageIdRequests && (
                       <>
                         <button
                           className={styles.acceptButton}
@@ -406,10 +469,10 @@ const IdRequests = () => {
                           disabled={actionLoading === request.id}
                         >
                           {actionLoading === request.id ? (
-                            <PulseLoader size={8} color="#000000" />
+                            <PulseLoader size={7} color="#000000" />
                           ) : (
                             <>
-                              <FaCheck /> Accept
+                              <FaCheck className={styles.buttonIcon} /> Accept
                             </>
                           )}
                         </button>
@@ -419,10 +482,10 @@ const IdRequests = () => {
                           disabled={actionLoading === request.id}
                         >
                           {actionLoading === request.id ? (
-                            <PulseLoader size={8} color="#ffffff" />
+                            <PulseLoader size={7} color="#ffffff" />
                           ) : (
                             <>
-                              <FaTimes /> Reject
+                              <FaTimes className={styles.buttonIcon} /> Reject
                             </>
                           )}
                         </button>
@@ -547,7 +610,7 @@ const IdRequests = () => {
               </div>
             </div>
 
-            {selectedRequest.status === 'Pending' && (
+            {selectedRequest.status === 'Pending' && canManageIdRequests && (
               <div className={styles.modalActions}>
                 <button
                   onClick={() => handleUpdateStatus(selectedRequest.id, 'Accepted')}

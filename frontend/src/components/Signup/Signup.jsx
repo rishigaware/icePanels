@@ -98,122 +98,45 @@ const SignupForm = () => {
         <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
                 <FaTimes className={styles.closeIcon} onClick={() => navigate('/')} />
-                <h2 className={styles.heading}>Signup Form</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className={styles.formGroup}>
-                        <label htmlFor="name" className={styles.label}>Name</label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            placeholder="Enter your name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            className={styles.input}
-                        />
-                        {errors.name && <p className={styles.errorText}>{errors.name}</p>}
-                    </div>
+                <h2 className={styles.heading}>Registration Notice</h2>
+                
+                <div style={{
+                    backgroundColor: '#fff3cd',
+                    color: '#856404',
+                    border: '1px solid #ffeeba',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    marginBottom: '20px',
+                    fontSize: '14px',
+                    lineHeight: '1.5'
+                }}>
+                    <strong>Public registration is restricted.</strong><br />
+                    All user accounts are assigned and created directly by administrators. Please contact your admin or customer support to obtain your login credentials.
+                </div>
 
-                    <div className={styles.formGroup}>
-                        <label htmlFor="username" className={styles.label}>Username</label>
-                        <input
-                            type="text"
-                            id="username"
-                            name="username"
-                            placeholder="Enter your username"
-                            value={formData.username}
-                            onChange={handleChange}
-                            className={styles.input}
-                        />
-                        {errors.username && <p className={styles.errorText}>{errors.username}</p>}
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <label htmlFor="email" className={styles.label}>Email</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="Enter your email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            className={styles.input}
-                        />
-                        {errors.email && <p className={styles.errorText}>{errors.email}</p>}
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <label htmlFor="password" className={styles.label}>Password</label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="Enter your password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            className={styles.input}
-                        />
-                        {errors.password && <p className={styles.errorText}>{errors.password}</p>}
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <label htmlFor="confirmPassword" className={styles.label}>Confirm Password</label>
-                        <input
-                            type="password"
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            placeholder="Re-enter your password"
-                            value={formData.confirmPassword}
-                            onChange={handleChange}
-                            className={styles.input}
-                        />
-                        {errors.confirmPassword && (
-                            <p className={styles.errorText}>{errors.confirmPassword}</p>
-                        )}
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <label htmlFor="phoneNumber" className={styles.label}>Phone Number</label>
-                        <input
-                            type="text"
-                            id="phoneNumber"
-                            name="phoneNumber"
-                            placeholder="Enter your phone number"
-                            value={formData.phoneNumber}
-                            onChange={handleChange}
-                            className={styles.input}
-                        />
-                        {errors.phoneNumber && (
-                            <p className={styles.errorText}>{errors.phoneNumber}</p>
-                        )}
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <label htmlFor="agentCode" className={styles.label}>Agent Code</label>
-                        <input
-                            type="text"
-                            id="agentCode"
-                            name="agentCode"
-                            placeholder="Enter agent code"
-                            value={formData.agentCode}
-                            onChange={handleChange}
-                            className={styles.input}
-                        />
-                        {errors.agentCode && (
-                            <p className={styles.errorText}>{errors.agentCode}</p>
-                        )}
-                    </div>
-
-                    <button type="submit" className={styles.submitButton}>
-                        Signup
-                    </button>
-                </form>
-                <div className={styles.signupLink}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <button
-                        className={styles.signupTrigger}
-                        onClick={() => navigate('/login')} // Navigate to /login
+                        type="button"
+                        onClick={() => navigate('/login')}
+                        className={styles.submitButton}
+                        style={{ cursor: 'pointer' }}
                     >
-                        Already have an account? Login
+                        Go to Login
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => navigate('/')}
+                        style={{
+                            padding: '12px',
+                            background: '#f8f9fa',
+                            border: '1px solid #dee2e6',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontWeight: 'bold',
+                            color: '#495057'
+                        }}
+                    >
+                        Back to Home
                     </button>
                 </div>
             </div>

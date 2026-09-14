@@ -5,9 +5,10 @@ const UserContext = createContext();
 
 // UserProvider component to wrap the app and provide user data
 export const UserProvider = ({ children }) => {
-  // State to manage the user object  
-  const [url, setUrl] = useState("https://betting-accounts-manager.onrender.com");
-  // const [url, setUrl] = useState("http://localhost:3000");
+  const defaultUrl = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
+    ? "http://localhost:3000"
+    : "https://betting-accounts-manager.onrender.com";
+  const [url, setUrl] = useState(defaultUrl);
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem('user');
     try {
@@ -51,7 +52,7 @@ export const UserProvider = ({ children }) => {
       // If user is null, remove from localStorage
       localStorage.removeItem('user');
     }
-  }, [user?.id, user?.name, user?.email, user?.phoneNumber, user?.balance]); // Include balance in dependencies
+  }, [user]);
 
   // Memoize the context value to prevent unnecessary re-renders
   const contextValue = useMemo(() => ({
