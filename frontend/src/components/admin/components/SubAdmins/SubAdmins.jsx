@@ -335,14 +335,23 @@ export default function SubAdmins() {
               <div 
                 key={adminId} 
                 className={`${styles.adminCard} ${isExpanded ? styles.adminCardExpanded : styles.adminCardCollapsed}`}
+                onClick={() => {
+                  if (!isExpanded) {
+                    toggleExpand(adminId);
+                  }
+                }}
               >
-                {/* Header row - Always visible, click to toggle */}
+                {/* Header bar - Click anywhere on this bar to expand/collapse */}
                 <div 
                   className={styles.cardHeader}
-                  onClick={() => toggleExpand(adminId)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleExpand(adminId);
+                  }}
                   role="button"
                   tabIndex={0}
                   aria-expanded={isExpanded}
+                  title={isExpanded ? "Click anywhere to collapse" : "Click anywhere to expand"}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
@@ -371,13 +380,8 @@ export default function SubAdmins() {
                   </div>
 
                   <div className={styles.cardHeaderActions}>
-                    <button 
-                      type="button"
+                    <div 
                       className={`${styles.expandBtn} ${isExpanded ? styles.expandBtnActive : ''}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleExpand(adminId);
-                      }}
                       aria-label={isExpanded ? "Collapse Admin Master details" : "Expand Admin Master details and permissions"}
                     >
                       <span className={styles.expandBtnText}>
@@ -388,7 +392,7 @@ export default function SubAdmins() {
                       ) : (
                         <FaChevronDown className={styles.expandIcon} />
                       )}
-                    </button>
+                    </div>
                   </div>
                 </div>
 
