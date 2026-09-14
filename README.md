@@ -1,8 +1,12 @@
+<p align="center">
+  <img src="./frontend/public/logo.png" width="380" alt="IcePanels Logo" />
+</p>
+
 # 🪩 IcePanels - Premium Self-Admin Panel Provision Platform 🚀
 
-🌐 **Official Link:** [https://icepanels.info/](https://icepanels.info/)
+🌐 **Official Link:** [https://the247panel.shop/](https://the247panel.shop/) & [https://icepanels.info/](https://icepanels.info/)
 
-Welcome to **Ice Panels**, India's premier, fully automated, self-admin & master panel creation platform! Built on a modern full-stack architecture with a stunning dark-glassmorphic aesthetic, Ice Panels allows users to easily manage, create, and top-up administrative credentials for premium exchange platforms securely—without any fraud, risk, or middleman interference.
+Welcome to **Ice Panels** (The247Panel), India's premier, fully automated, self-admin & master panel creation platform! Built on a modern full-stack architecture with a stunning dark-glassmorphic aesthetic, Ice Panels allows users to easily manage, create, and top-up administrative credentials for premium exchange platforms securely—without any fraud, risk, or middleman interference.
 
 ---
 
@@ -16,11 +20,25 @@ Below is a visual representation of the highly polished, gold-accented, dark-gla
 
 ---
 
+## 🌐 Supported Exchange Websites & Platforms
+
+IcePanels provides automated, instant panel provisioning, rate conversion, and balance top-ups across 16+ top-tier exchange platforms:
+
+| | | | |
+|:---:|:---:|:---:|:---:|
+| <img src="./frontend/src/assets/websites/Radheexch.jpg" width="160" alt="Radhe Exchange" /><br/>**Radhe Exchange** | <img src="./frontend/src/assets/websites/Kingexch9.jpg" width="160" alt="King Exchange" /><br/>**King Exchange** | <img src="./frontend/src/assets/websites/Diamondexch99.jpg" width="160" alt="Diamond Exchange" /><br/>**Diamond Exchange** | <img src="./frontend/src/assets/websites/Goexch9.jpg" width="160" alt="Go Exchange" /><br/>**Go Exchange** |
+| <img src="./frontend/src/assets/websites/world777.jpg" width="160" alt="World777" /><br/>**World777** | <img src="./frontend/src/assets/websites/taj777.jpg" width="160" alt="Taj777" /><br/>**Taj777** | <img src="./frontend/src/assets/websites/mylaser247.jpg" width="160" alt="Laser247" /><br/>**Laser247** | <img src="./frontend/src/assets/websites/baazi888.jpg" width="160" alt="Baazi888" /><br/>**Baazi888** |
+| <img src="./frontend/src/assets/websites/the100exch.jpg" width="160" alt="The100 Exchange" /><br/>**The100 Exchange** | <img src="./frontend/src/assets/websites/allpanelexch.jpg" width="160" alt="All Panel Exch" /><br/>**All Panel Exch** | <img src="./frontend/src/assets/websites/Bikajiexch.jpg" width="160" alt="Bikaji Exchange" /><br/>**Bikaji Exchange** | <img src="./frontend/src/assets/websites/betonly777.jpg" width="160" alt="BetOnly777" /><br/>**BetOnly777** |
+| <img src="./frontend/src/assets/websites/jsk1.jpg" width="160" alt="JSK1" /><br/>**JSK1** | <img src="./frontend/src/assets/websites/ps777.jpg" width="160" alt="PS777" /><br/>**PS777** | <img src="./frontend/src/assets/websites/t10exchange.jpg" width="160" alt="T10 Exchange" /><br/>**T10 Exchange** | <img src="./frontend/src/assets/websites/Allowexch999.jpg" width="160" alt="Allow Exchange" /><br/>**Allow Exchange** |
+
+---
+
 ## ⚡ Core Philosophy & Identity
 
 - **Zero Intermediaries**: Eliminates risky middlemen. Users interact directly with automated systems to create their self-admin panels.
 - **24/7 Availability**: Automated instant panel refills, secure deposits, and swift withdrawals available round-the-clock.
 - **Next-Gen Aesthetics**: Clean glassmorphism overlays, fluid slide-in and hover transitions, responsive card designs, and vibrant status badges.
+- **Multi-Tenant Isolation**: Complete isolation between Admin Masters (sub-admins) with private user assignments, custom exchange catalogs, and isolated banking gateways.
 
 ---
 
@@ -31,7 +49,7 @@ IcePanels utilizes a powerful and scalable full-stack ecosystem:
 ### 💻 Client Side (Frontend)
 - **Framework**: `React 18` + `Vite` (for ultra-fast Hot Module Replacement)
 - **Styling**: `TailwindCSS` + `Vanilla CSS Modules` (highly custom components with performance in mind)
-- **UI Components**: `Flowbite React` (responsive widgets), `PrimeReact` (advanced UI inputs), `Material UI (MUI)` (sleek SVG icons and typography elements)
+- **UI Components**: `Flowbite React` (responsive widgets), `PrimeReact` (advanced UI inputs & toast notifications), `Material UI (MUI)` (sleek SVG icons, chips, and typography elements)
 - **Slide Carousels**: `react-slick` + `slick-carousel` (for horizontal and square banner announcements)
 - **State Management**: React Context (`UserProvider` & `BalanceProvider`) for global authentication, balance updates, and API synchronizations
 - **Services**: Firebase Web SDK (Auth helper integration)
@@ -39,8 +57,8 @@ IcePanels utilizes a powerful and scalable full-stack ecosystem:
 ### ⚙️ Server Side (Backend)
 - **Runtime**: `Node.js` + `Express`
 - **Database**: `MongoDB` via `Mongoose ODM`
-- **Authentication**: JWT & Local authentication strategies
-- **Middlewares**: custom CORS policy configurations, Express file uploads, static file routing, and server-side request verification.
+- **Authentication**: JWT & Local authentication strategies with password hashing (`bcryptjs`)
+- **Middlewares**: custom CORS policy configurations, Express file uploads (`multer`), static file routing, and role-based request verification.
 
 ---
 
@@ -48,15 +66,28 @@ IcePanels utilizes a powerful and scalable full-stack ecosystem:
 
 ### 👤 User Panel Features
 - **💳 Interactive Glass Wallet**: Live-updating wallet balances with beautiful green-glowing balance badges.
-- **📥 Instant Deposit/Withdrawal Request**: Interactive modals to place transactions, upload receipt screenshots, and verify payments.
+- **📥 Instant Deposit/Withdrawal Request**: Interactive modals to place transactions, upload receipt screenshots, and verify payments to their designated Admin Master's accounts.
 - **🚀 One-Click Self-Admin Creation**: Customized panels configuration where users specify coin amounts, custom transaction rates, and website of choice.
 - **📱 Live ID Manager**: Interactive portal displaying website credentials (URL, username, passwords) once approved by the admin.
 - **🔄 Account Actions**: Requests to close existing accounts or request quick password changes for security.
-- **💬 Direct Support Channels**: Beautifully animated float widgets linking users directly to VIP WhatsApp channels and Telegram support.
+- **💬 Role-Based Dynamic Support**: Auth-gated floating widget automatically routing users to their assigned Admin Master's official WhatsApp, Telegram, Instagram, and Facebook support channels.
 
-### 👑 Admin Panel Features
-- **📊 Real-time Dashboard**: Overview of active platform statistics, transaction approvals, and user accounts.
-- **📝 ID Request Pipeline**: Interactive dashboard to review user panel requests, assign portal credentials, and approve/reject with automated notes.
+### 👑 Admin & Multi-Tenant Panel Features
+- **👑 Superadmin Oversight**:
+  - Global oversight across all users, transactions, ID requests, and exchange websites.
+  - Provisions and manages isolated **Admin Masters** (`/admin/subadmins`) with a granular 13-point permission matrix.
+  - Multi-tenant filtering to inspect or audit any Admin Master's users, transactions, and requests.
+  - Configures global platform support links and manages any Admin Master's support links on the fly.
+  - Auto-seeded on startup (`superadmin` / `Super@1234`).
+- **🛡️ Admin Master (Sub-Admin) Management**:
+  - **Isolated Tenancy**: Admin Masters only see and manage users directly assigned to them; public registration is restricted.
+  - **Custom Exchange Catalogs**: Each Admin Master registers and prices their own list of exchange websites (`WebsiteId`), setting custom coin rates and minimum coin requirements.
+  - **Dedicated Banking Gateways**: Each Admin Master manages their own bank accounts and UPI IDs (`AdminAccount`) for user deposits.
+  - **13-Point Granular Permissions**: Features are permission-gated (user creation, balance updates, password resets, deletions, catalog control, transaction moderation, and support link editing).
+  - **Modern Collapsible UI**: Default-collapsed accordion cards with user count and permission badges, styled to match the Users Management theme.
+- **📝 ID Request Pipeline**:
+  - Dual responsive view: 7-column table on desktop ($> 880\text{px}$) and ultra-compact cards on mobile ($\le 880\text{px}$) with zero horizontal overflow down to 320px.
+  - Automated coin conversion (1 INR = X coins), admin notes, and one-click accept/reject controls.
 - **💼 Transaction Moderation**: View submitted screenshots of bank transfers to quickly approve/reject wallet deposits and process payouts.
 - **🖼️ Banner & Carousel Manager**: Upload and sequence horizontal and square banner slide graphics directly to the landing page.
 - **👥 User Accounts Audits**: Access, inspect, and modify active user databases, balances, and registered exchange websites.
@@ -77,8 +108,8 @@ graph TD
     F --> G[7. Upload Receipt & Receive Login Details]
 ```
 
-1. **Open Google & Visit**: Access the platform through the secure portal at `IcePanels.info`.
-2. **Register/Login**: Securely register using your mobile number and Google credentials.
+1. **Open Google & Visit**: Access the platform through the secure portal at `IcePanels.info` or `The247Panel.shop`.
+2. **Register/Login**: Securely register or log in using your credentials.
 3. **Select Panel**: Navigate to `Panels` -> `Create Panel`.
 4. **Choose Platform**: Choose one of the 16+ premium exchanges supported (e.g. Radhe Exchange, King Exchange, Go Exchange, world777, Diamond Exchange).
 5. **Set Configuration**: Fill in panel details, desired coins, and rates.
@@ -92,18 +123,19 @@ graph TD
 ```text
 icePanels/
 ├── backend/
-│   ├── config/            # DB Connections & config files
-│   ├── controller/        # API Controller logics (Auth, Users, ID Requests)
-│   ├── models/            # Mongoose Schemas (Transaction, User, WebsiteId, CloseRequest)
-│   ├── routes/            # Express API Routes (User, Admin, Auth, Images)
-│   ├── uploads/           # User upload directories for transaction screenshots
+│   ├── config/            # DB connection & Superadmin auto-seeder
+│   ├── controller/        # API Controller logics (Auth, Users, SubAdmins, Support, ID Requests)
+│   ├── models/            # Mongoose Schemas (Admin, User, SupportLinks, WebsiteId, Transaction, IdRequest)
+│   ├── routes/            # Express API Routes (User, Admin, Auth, Support, Images)
+│   ├── uploads/           # User upload directories for transaction screenshots & banners
 │   ├── server.js          # Node.js Server entrypoint
 │   └── package.json
 └── frontend/
     ├── public/            # Static assets
     ├── src/
     │   ├── assets/        # Core image assets, certifications, and logo badges
-    │   ├── components/    # Reusable components (Navbar, Popups, Carousels, ID Managers)
+    │   │   └── websites/  # Supported exchange website graphics & logos
+    │   ├── components/    # Reusable components (SubAdmins, Users, IdRequests, FloatingSocialWidget, Navbars)
     │   ├── context/       # UserContext & BalanceProvider React State
     │   ├── firebase/      # Client-side Firebase configs
     │   ├── hooks/         # Custom React hooks
@@ -122,7 +154,7 @@ icePanels/
 Follow these instructions to run the entire system locally.
 
 ### 📥 Prerequisites
-- **Node.js** (v16.x or higher)
+- **Node.js** (v18.x or higher recommended)
 - **npm** or **yarn**
 - **MongoDB Database** (Local instance or MongoDB Atlas Cloud Cluster)
 
@@ -150,6 +182,7 @@ Follow these instructions to run the entire system locally.
    npm run dev
    ```
    *The server will boot up and listen on `http://localhost:5000`.*
+   > 💡 **Default Superadmin:** On first boot, `seedSuperAdmin.js` automatically creates the Superadmin account if not present (`superadmin` / `Super@1234`).
 
 ---
 
@@ -173,7 +206,19 @@ Follow these instructions to run the entire system locally.
 ---
 
 ## 🏅 Certifications & Responsible Gaming
-IcePanels is committed to providing a secure and authenticated environment for its partners and users. The platform integrates:
+
+IcePanels is committed to providing a secure and authenticated environment for its partners and users. The platform integrates certified standards for security and player protection:
+
+<p align="center">
+  <img src="./frontend/src/assets/certification_rng_verified.png" width="90" alt="RNG Verified" />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="./frontend/src/assets/certification_ssl_secure.png" width="90" alt="SSL Secure" />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="./frontend/src/assets/responsible_gaming_play_safe.png" width="90" alt="Play Safe" />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="./frontend/src/assets/responsible_gaming_18_plus.png" width="90" alt="18+ Responsible Gaming" />
+</p>
+
 - **RNG Verified Engine**: Certified Random Number Generation for fair operations.
 - **SSL Secure Protocols**: Industry-standard encryption for client-server communication.
 - **Responsible Gaming Framework**: Enforces safe parameters, age verification checks (+18 restriction), and support hotlines.
